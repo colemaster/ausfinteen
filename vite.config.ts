@@ -10,11 +10,11 @@ export default defineConfig({
     tailwindcss(),
   ],
   server: {
-    host: '192.168.50.23',
+    host: '0.0.0.0',
     port: 31000,
   },
   preview: {
-    host: '192.168.50.23',
+    host: '0.0.0.0',
     port: 31001,
   },
   resolve: {

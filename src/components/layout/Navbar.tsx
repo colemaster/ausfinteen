@@ -1,143 +1,220 @@
 import { useState } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
-import { useTheme } from '../../hooks/useTheme';
-
-const NAV_ITEMS = [
-  { path: '/portfolio',            label: 'Portfolio' },
-  { path: '/tax-savings',          label: 'Tax Savings' },
-  { path: '/savings-rate',         label: 'Savings Rate' },
-  { path: '/fire',                 label: 'FIRE' },
-  { path: '/investment-compare',   label: 'Investment Comparison' },
-  { path: '/house-affordability',  label: 'House Affordability' },
-  { path: '/property-research',    label: 'Property Research' },
-];
-
-const DR_ITEMS = [
-  { path: '/offset-vs-debt-recycling', label: 'Offset vs Debt Recycling' },
-  { path: '/direct-vs-debt-recycling', label: 'Direct vs Debt Recycling' },
-];
+import { Link, useLocation } from 'react-router-dom';
+import { MANDY_MODULES } from '@/data/mandy-topics';
+import { useTeenProfile } from '@/context/TeenProfileContext';
+import {
+  Sparkles,
+  User,
+  Sun,
+  Moon,
+  Menu,
+  X,
+  ChevronDown,
+  BookOpen,
+  MapPin,
+} from 'lucide-react';
+import { useTheme } from '@/hooks/useTheme';
+import { AnimatePresence, motion } from 'motion/react';
+import { slideInLeft } from '@/lib/animations';
 
 export function Navbar() {
-  const [theme, toggleTheme] = useTheme();
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [drOpen, setDrOpen] = useState(false);
   const location = useLocation();
-  const drActive = DR_ITEMS.some(item => location.pathname.startsWith(item.path));
+  const [theme, toggleTheme] = useTheme();
+  const { profile } = useTeenProfile();
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [modulesDropdownOpen, setModulesDropdownOpen] = useState(false);
 
   return (
-    <nav className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="flex items-center justify-between h-14">
-          {/* Logo */}
-          <NavLink to="/" className="flex items-center gap-2 font-bold text-blue-600 dark:text-blue-400 text-lg shrink-0">
-            <span className="font-mono">$</span>
-            <span>AU Personal Finance</span>
-          </NavLink>
+    <header className="sticky top-0 z-40 w-full glass-nav">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16">
+          {/* Logo & Teen Branding */}
+          <Link to="/" className="flex items-center gap-2.5 group">
+            <div className="p-2 rounded-xl bg-gradient-to-tr from-amber-500 to-primary text-white shadow-xs group-hover:scale-105 transition-transform">
+              <Sparkles className="w-5 h-5" />
+            </div>
+            <div>
+              <span className="font-extrabold text-base sm:text-lg text-foreground tracking-tight block leading-tight">
+                AusTeen Money
+              </span>
+              <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider block">
+                Cole Family Edition 🤠
+              </span>            </div>
+          </Link>
 
-          {/* Desktop nav */}
-          <div className="hidden md:flex items-center gap-0.5">
-            {NAV_ITEMS.map(item => (
-              <NavLink
-                key={item.path}
-                to={item.path}
-                className={({ isActive }) =>
-                  `px-3 py-1.5 text-xs font-medium rounded-md whitespace-nowrap transition-colors ${
-                    isActive
-                      ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'
-                      : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-100'
-                  }`
-                }
-              >
-                {item.label}
-              </NavLink>
-            ))}
-
-            {/* Debt Recycling dropdown */}
-            <div
-              className="relative"
-              onMouseEnter={() => setDrOpen(true)}
-              onMouseLeave={() => setDrOpen(false)}
+          {/* Desktop Nav Links */}
+          <nav className="hidden md:flex items-center gap-1.5 text-xs font-semibold">
+            <Link
+              to="/profile"
+              className={`px-3 py-2 rounded-lg transition-all flex items-center gap-1.5 ${
+                location.pathname === '/profile'
+                  ? 'bg-primary/10 text-primary font-bold'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-muted/60'
+              }`}
             >
+              <User className="w-3.5 h-3.5" />
+              <span>My Profile ({profile.age}yo)</span>
+            </Link>
+
+            <Link
+              to="/brisbane-qld"
+              className={`px-3 py-2 rounded-lg transition-all flex items-center gap-1.5 ${
+                location.pathname === '/brisbane-qld'
+                  ? 'bg-primary/10 text-primary font-bold'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-muted/60'
+              }`}
+              title="Change your location in My Profile"
+            >
+              <MapPin className="w-3.5 h-3.5" />
+              <span>{profile.location}</span>
+            </Link>
+
+            {/* Modules Dropdown */}
+            <div className="relative">
               <button
-                className={`px-3 py-1.5 text-xs font-medium rounded-md whitespace-nowrap transition-colors flex items-center gap-1 ${
-                  drActive
-                    ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'
-                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-100'
+                type="button"
+                onClick={() => setModulesDropdownOpen(!modulesDropdownOpen)}
+                onBlur={() => setTimeout(() => setModulesDropdownOpen(false), 200)}
+                className={`px-3 py-2 rounded-lg transition-all flex items-center gap-1.5 ${
+                  location.pathname !== '/' && location.pathname !== '/profile'
+                    ? 'bg-primary/10 text-primary font-bold'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/60'
                 }`}
               >
-                Debt Recycling
-                <span className="text-[10px] opacity-60">▾</span>
+                <BookOpen className="w-3.5 h-3.5" />
+                <span>11 Real-World Modules</span>
+                <ChevronDown className={`w-3 h-3 transition-transform ${modulesDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
-              {drOpen && (
-                <div className="absolute top-full right-0 mt-0.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg py-1 z-50 min-w-[220px]">
-                  {DR_ITEMS.map(item => (
-                    <NavLink
-                      key={item.path}
-                      to={item.path}
-                      onClick={() => setDrOpen(false)}
-                      className={({ isActive }) =>
-                        `block px-4 py-2 text-xs font-medium transition-colors ${
-                          isActive
-                            ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20'
-                            : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
-                        }`
-                      }
+
+              {modulesDropdownOpen && (
+                <div className="absolute top-full left-0 mt-2 w-72 p-2 rounded-2xl bg-card border border-border shadow-xl grid grid-cols-1 gap-1 z-50 animate-scale-in">
+                  {MANDY_MODULES.map(m => (
+                    <Link
+                      key={m.id}
+                      to={m.route}
+                      onClick={() => setModulesDropdownOpen(false)}
+                      className={`px-3 py-2 rounded-xl flex items-center gap-2 text-xs transition-all ${
+                        location.pathname === m.route
+                          ? 'bg-primary/10 text-primary font-bold'
+                          : 'text-foreground hover:bg-muted'
+                      }`}
                     >
-                      {item.label}
-                    </NavLink>
+                      <span className="text-base">{m.emoji}</span>
+                      <span className="truncate">{m.title}</span>
+                    </Link>
                   ))}
                 </div>
               )}
             </div>
-          </div>
 
-          <div className="flex items-center gap-2">
-            {/* Theme toggle */}
-            <button
-              onClick={toggleTheme}
-              className="p-1.5 rounded-md text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-              aria-label="Toggle theme"
+            {/* Direct Links to top modules */}
+            <Link
+              to="/careers-employment"
+              className={`px-3 py-2 rounded-lg transition-all ${
+                location.pathname === '/careers-employment'
+                  ? 'bg-primary/10 text-primary font-bold'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-muted/60'
+              }`}
             >
-              {theme === 'dark' ? '☀' : '◑'}
+              🎓 First Job Pay
+            </Link>
+
+            <Link
+              to="/tax-guide"
+              className={`px-3 py-2 rounded-lg transition-all ${
+                location.pathname === '/tax-guide'
+                  ? 'bg-primary/10 text-primary font-bold'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-muted/60'
+              }`}
+            >
+              💰 $18.2k Tax
+            </Link>
+
+            <Link
+              to="/teen-budgeting"
+              className={`px-3 py-2 rounded-lg transition-all ${
+                location.pathname === '/teen-budgeting'
+                  ? 'bg-primary/10 text-primary font-bold'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-muted/60'
+              }`}
+            >
+              🌈 Budget
+            </Link>
+          </nav>
+
+          {/* Right Controls */}
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={toggleTheme}
+              className="p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted transition-all"
+              title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`}
+            >
+              {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-700" />}
             </button>
 
-            {/* Mobile hamburger */}
+            {/* Mobile Hamburger Toggle */}
             <button
-              onClick={() => setMenuOpen(o => !o)}
-              className="md:hidden p-1.5 rounded-md text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-              aria-label="Toggle menu"
+              type="button"
+              onClick={() => setMobileOpen(!mobileOpen)}
+              className="md:hidden p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted transition-all"
             >
-              <div className="w-5 flex flex-col gap-1">
-                <span className={`block h-0.5 bg-current transition-transform ${menuOpen ? 'rotate-45 translate-y-1.5' : ''}`} />
-                <span className={`block h-0.5 bg-current transition-opacity ${menuOpen ? 'opacity-0' : ''}`} />
-                <span className={`block h-0.5 bg-current transition-transform ${menuOpen ? '-rotate-45 -translate-y-1.5' : ''}`} />
-              </div>
+              {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </div>
-
-        {/* Mobile menu — flat list, no dropdown needed */}
-        {menuOpen && (
-          <div className="md:hidden py-2 border-t border-slate-200 dark:border-slate-800 flex flex-col gap-0.5">
-            {[...NAV_ITEMS, ...DR_ITEMS].map(item => (
-              <NavLink
-                key={item.path}
-                to={item.path}
-                onClick={() => setMenuOpen(false)}
-                className={({ isActive }) =>
-                  `px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-                    isActive
-                      ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'
-                      : 'text-slate-600 dark:text-slate-400'
-                  }`
-                }
-              >
-                {item.label}
-              </NavLink>
-            ))}
-          </div>
-        )}
       </div>
-    </nav>
+
+      {/* Mobile Drawer */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            variants={slideInLeft}
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+            className="md:hidden border-t border-border bg-card/95 backdrop-blur-xl px-4 py-4 space-y-2 max-h-[80vh] overflow-y-auto"
+          >
+            <Link
+              to="/profile"
+              onClick={() => setMobileOpen(false)}
+              className="flex items-center gap-2 p-2.5 rounded-xl bg-primary/10 text-primary font-bold text-xs"
+            >
+              <User className="w-4 h-4" />
+              <span>My Profile ({profile.name}, {profile.age}yo)</span>
+            </Link>
+
+            <Link
+              to="/brisbane-qld"
+              onClick={() => setMobileOpen(false)}
+              className="flex items-center gap-2 p-2.5 rounded-xl bg-sky-500/10 text-sky-600 dark:text-sky-400 font-bold text-xs"
+            >
+              <MapPin className="w-4 h-4" />
+              <span>My Location: {profile.location}</span>
+            </Link>
+
+            <div className="pt-2 text-[11px] font-bold text-muted-foreground uppercase tracking-wider px-2">
+              11 Mandy Money Modules
+            </div>
+
+            {MANDY_MODULES.map(m => (
+              <Link
+                key={m.id}
+                to={m.route}
+                onClick={() => setMobileOpen(false)}
+                className={`flex items-center gap-2.5 p-2.5 rounded-xl text-xs transition-all ${
+                  location.pathname === m.route
+                    ? 'bg-primary/10 text-primary font-bold'
+                    : 'text-foreground hover:bg-muted'
+                }`}
+              >
+                <span className="text-lg">{m.emoji}</span>
+                <span>{m.title}</span>
+              </Link>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </header>
   );
 }

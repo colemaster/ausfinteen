@@ -1,12 +1,13 @@
+import { memo } from 'react';
 import { CURRENT_TAX_YEAR } from '../../data/constants';
 
 interface DisclaimerProps {
   calculatorName?: string;
 }
 
-export function Disclaimer({ calculatorName }: DisclaimerProps) {
+export const Disclaimer = memo(function Disclaimer({ calculatorName }: DisclaimerProps) {
   return (
-    <div className="mt-6 rounded-lg border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-950/30 px-4 py-3 text-xs text-red-700 dark:text-red-400 leading-relaxed">
+    <div className="mt-6 rounded-lg border border-red-200 bg-[var(--danger)]/10 px-4 py-3 text-xs text-[var(--danger)] leading-relaxed">
       <strong>Disclaimer:</strong> This {calculatorName ?? 'calculator'} is for educational
       purposes only and does not constitute financial advice. All figures are estimates based
       on {CURRENT_TAX_YEAR} ATO rates and may not reflect your personal circumstances.
@@ -15,4 +16,4 @@ export function Disclaimer({ calculatorName }: DisclaimerProps) {
       acting on any calculation.
     </div>
   );
-}
+});

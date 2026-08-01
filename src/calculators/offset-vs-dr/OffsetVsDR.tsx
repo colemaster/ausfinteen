@@ -1,10 +1,14 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useDeferredValue } from 'react';
+import { motion } from 'motion/react';
+import { fadeInUp } from '@/lib/animations';
 import { useUrlParams } from '../../hooks/useUrlParams';
 import { SliderControl } from '../../components/ui/SliderControl';
 import { NumberInput } from '../../components/ui/NumberInput';
 import { PortfolioField } from '../../components/ui/PortfolioField';
 import { StatCard } from '../../components/ui/StatCard';
-import { BarCompare } from '../../components/ui/BarCompare';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
+import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent } from '@/components/ui/chart';
+import { offsetVsDRConfig } from '@/lib/chart-configs';
 import { Assumptions } from '../../components/shared/Assumptions';
 import { Disclaimer } from '../../components/shared/Disclaimer';
 import { AboutCalc } from '../../components/shared/AboutCalc';
@@ -115,6 +119,8 @@ export function OffsetVsDR() {
       .filter((r): r is NonNullable<typeof r> => r !== null);
   }, [sel]);
 
+  const deferredYearlyComp = useDeferredValue(yearlyComp);
+
   const snapYearData = useMemo(() => {
     if (!yearlyComp.length) return null;
     return (
@@ -144,27 +150,23 @@ export function OffsetVsDR() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 border-b border-slate-200 dark:border-slate-700 pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 border-b border-[var(--border)] pb-4">
         <div>
-          <h1 className="text-xl font-extrabold text-slate-900 dark:text-slate-50 tracking-tight">
+          <h1 className="text-xl font-extrabold text-[var(--foreground)] tracking-tight">
             Offset vs Debt Recycling
           </h1>
-          <p className="text-xs text-slate-400 dark:text-slate-500 mt-1 font-mono">
-            Loan: <span className="text-slate-700 dark:text-slate-300">{formatCurrency(effectiveLoan)}</span>
-            {' · '}Term: <span className="text-slate-700 dark:text-slate-300">{effectiveYears} yr P&amp;I</span>
-            {' · '}Repayment: <span className="text-slate-700 dark:text-slate-300">{formatCurrency(mPmt)}/mo</span>
-            {' · '}Debt Recycling loan: <span className="text-blue-600 dark:text-blue-400">{drLoanType === 'io' ? 'Interest-Only' : 'P&I'}</span>
+          <p className="text-xs text-[var(--muted-foreground)] mt-1 font-mono">
+            Loan: <span className="text-[var(--foreground)]">{formatCurrency(effectiveLoan)}</span>
+            {' · '}Term: <span className="text-[var(--foreground)]">{effectiveYears} yr P&amp;I</span>
+            {' · '}Repayment: <span className="text-[var(--foreground)]">{formatCurrency(mPmt)}/mo</span>
+            {' · '}Debt Recycling loan: <span className="text-[var(--primary)]">{drLoanType === 'io' ? 'Interest-Only' : 'P&I'}</span>
             {' · '}After-tax DR cost:{' '}
-            <span className="text-blue-600 dark:text-blue-400">{afterTaxDRCost}%</span>
+            <span className="text-[var(--primary)]">{afterTaxDRCost}%</span>
           </p>
         </div>
         <button
           onClick={() => setSettingsOpen(o => !o)}
-          className={`flex items-center gap-1.5 px-2.5 py-1.5 text-xs rounded-md transition-all shrink-0
-            ${settingsOpen
-              ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20'
-              : 'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-            }`}
+          className={`flex items-center gap-1.5 px-2.5 py-1.5 text-xs rounded-md transition-all shrink-0 ${settingsOpen ? 'text-[var(--primary)] bg-[var(--primary)]/10 ' : 'text-[var(--muted-foreground)] hover:text-[var(--muted-foreground)] hover:bg-[var(--background)] ' }`}
           aria-label="Toggle settings"
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor">
@@ -203,24 +205,24 @@ export function OffsetVsDR() {
 
       {/* Settings Panel */}
       {settingsOpen && (
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-5 space-y-4">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-blue-600 dark:text-blue-400">
+        <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-5 space-y-4">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--primary)]">
             All Parameters
           </p>
           {/* IO vs P&I toggle */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs uppercase tracking-wide text-slate-400 dark:text-slate-500 font-medium">
+            <label className="text-xs uppercase tracking-wide text-[var(--muted-foreground)] font-medium">
               DR Investment Loan Type
             </label>
             <div className="flex gap-2">
               {(['io', 'pi'] as const).map(t => (
                 <button key={t} onClick={() => setDrLoanType(t)}
-                  className={`px-3 py-1.5 text-xs font-semibold rounded-md border transition-all ${drLoanType === t ? 'bg-blue-600 text-white border-blue-600' : 'bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:border-blue-400'}`}>
+                  className={`px-3 py-1.5 text-xs font-semibold rounded-md border transition-all ${drLoanType === t ? 'bg-[var(--primary)] text-[var(--background)] border-[var(--primary)]' : 'bg-[var(--background)] text-[var(--muted-foreground)] border-[var(--border)] hover:border-blue-400'}`}>
                   {t === 'io' ? 'Interest-Only (IO)' : 'Principal & Interest (P&I)'}
                 </button>
               ))}
             </div>
-            <p className="text-[10px] text-slate-400 dark:text-slate-500">
+            <p className="text-[10px] text-[var(--muted-foreground)]">
               {drLoanType === 'io'
                 ? 'IO: loan balance stays fixed; maximum tax deductions throughout. Most common in practice.'
                 : 'P&I: loan repays over the term; deductions reduce as balance falls but you build equity.'}
@@ -268,7 +270,7 @@ export function OffsetVsDR() {
               suffix="%"
             />
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs uppercase tracking-wide text-slate-400 dark:text-slate-500 font-medium">
+              <label className="text-xs uppercase tracking-wide text-[var(--muted-foreground)] font-medium">
                 Comparison Amounts
               </label>
               <input
@@ -276,13 +278,13 @@ export function OffsetVsDR() {
                 value={params.amountsStr}
                 onChange={e => setParams({ amountsStr: e.target.value })}
                 placeholder="50000,100000,150000..."
-                className="bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md px-3 py-2 text-xs font-mono text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="bg-[var(--background)] border border-[var(--border)] rounded-md px-3 py-2 text-xs font-mono text-[var(--foreground)] focus:outline-none focus:ring-1 focus:ring-[var(--ring)]"
               />
-              <span className="text-[10px] text-slate-400 dark:text-slate-500">Comma-separated AUD values</span>
+              <span className="text-[10px] text-[var(--muted-foreground)]">Comma-separated AUD values</span>
             </div>
           </div>
-          <div className="bg-slate-50 dark:bg-slate-800 rounded-lg px-4 py-2 text-xs text-slate-500 dark:text-slate-400 leading-relaxed border border-slate-200 dark:border-slate-700">
-            <strong className="text-slate-700 dark:text-slate-300">Model: </strong>
+          <div className="bg-[var(--background)] rounded-lg px-4 py-2 text-xs text-[var(--muted-foreground)] leading-relaxed border border-[var(--border)]">
+            <strong className="text-[var(--foreground)]">Model: </strong>
             Home loan {effectiveRate}% P&amp;I / {effectiveYears} yr. DR invest loan IO same rate. ETF {effectiveEtfReturn}% pa ({params.divYield}% div +{' '}
             {(effectiveEtfReturn - params.divYield).toFixed(1)}% growth). Tax {effectiveMargTax}%. CGT {params.cgtDiscount}% discount.
           </div>
@@ -292,7 +294,7 @@ export function OffsetVsDR() {
       {/* Quick Controls (when settings closed) */}
       {!settingsOpen && (
         <div className="space-y-3">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-[var(--background)] border border-[var(--border)] rounded-xl p-4">
             {portfolio.mortgageRate > 0
               ? <PortfolioField label="Mortgage Rate" value={effectiveRate} suffix="%" decimals={1} />
               : <SliderControl label="Mortgage Rate" value={params.rate} onChange={v => setParams({ rate: v })} min={2} max={12} step={0.1} suffix="%" />
@@ -307,15 +309,15 @@ export function OffsetVsDR() {
             }
           </div>
           {/* IO/PI quick toggle */}
-          <div className="flex items-center gap-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3">
-            <span className="text-xs text-slate-500 dark:text-slate-400 font-medium shrink-0">Debt Recycling Loan:</span>
+          <div className="flex items-center gap-3 bg-[var(--background)] border border-[var(--border)] rounded-xl px-4 py-3">
+            <span className="text-xs text-[var(--muted-foreground)] font-medium shrink-0">Debt Recycling Loan:</span>
             {(['io', 'pi'] as const).map(t => (
               <button key={t} onClick={() => setDrLoanType(t)}
-                className={`px-3 py-1.5 text-xs font-semibold rounded-md border transition-all ${drLoanType === t ? 'bg-blue-600 text-white border-blue-600' : 'bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:border-blue-400'}`}>
+                className={`px-3 py-1.5 text-xs font-semibold rounded-md border transition-all ${drLoanType === t ? 'bg-[var(--primary)] text-[var(--background)] border-[var(--primary)]' : 'bg-[var(--background)] text-[var(--muted-foreground)] border-[var(--border)] hover:border-blue-400'}`}>
                 {t === 'io' ? 'Interest-Only' : 'P&I'}
               </button>
             ))}
-            <span className="text-[10px] text-slate-400 dark:text-slate-500">
+            <span className="text-[10px] text-[var(--muted-foreground)]">
               {drLoanType === 'io'
                 ? 'Loan balance stays fixed; maximum tax deductions.'
                 : 'Loan repays over the term; deductions decrease as balance falls.'}
@@ -326,15 +328,15 @@ export function OffsetVsDR() {
 
       {/* Summary Table */}
       {results.length > 0 ? (
-        <>
-          <div className="text-xs text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-lg px-4 py-3 leading-relaxed">
-            Each row compares using the same amount of cash in two ways: parking it in your offset account (reducing interest charged on your loan) vs investing via debt recycling (borrowing to invest, making interest tax-deductible). <strong className="text-slate-700 dark:text-slate-300">Debt Recycling Net Wealth = portfolio value minus the outstanding investment loan minus estimated CGT if sold today.</strong> For IO loans this will appear low early on — Debt Recycling's advantage grows via compounding tax deductions.{' '}
-            <a href="https://www.ato.gov.au/individuals-and-families/investments-and-assets/interest-deductions-and-borrowing-expenses" target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:text-blue-600 dark:text-blue-400">ATO: Interest deductions ↗</a>
+        <motion.div variants={fadeInUp} initial="hidden" animate="visible" className="space-y-6">
+          <div className="text-xs text-[var(--muted-foreground)] bg-[var(--background)] border border-slate-100 rounded-lg px-4 py-3 leading-relaxed">
+            Each row compares using the same amount of cash in two ways: parking it in your offset account (reducing interest charged on your loan) vs investing via debt recycling (borrowing to invest, making interest tax-deductible). <strong className="text-[var(--foreground)]">Debt Recycling Net Wealth = portfolio value minus the outstanding investment loan minus estimated CGT if sold today.</strong> For IO loans this will appear low early on — Debt Recycling's advantage grows via compounding tax deductions.{' '}
+            <a href="https://www.ato.gov.au/individuals-and-families/investments-and-assets/interest-deductions-and-borrowing-expenses" target="_blank" rel="noopener noreferrer" className="text-[var(--primary)] hover:text-[var(--primary)]">ATO: Interest deductions ↗</a>
           </div>
-          <div className="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700">
+          <div className="overflow-x-auto rounded-xl border border-[var(--border)]">
           <table className="w-full text-xs border-collapse">
             <thead>
-              <tr className="bg-slate-50 dark:bg-slate-800">
+              <tr className="bg-[var(--background)]">
                 {[
                   'Amount',
                   'Offset Interest Saved',
@@ -347,7 +349,7 @@ export function OffsetVsDR() {
                 ].map(h => (
                   <th
                     key={h}
-                    className="px-3 py-2.5 text-right text-[10px] uppercase tracking-wide text-slate-400 dark:text-slate-500 font-medium border-b border-slate-200 dark:border-slate-700 whitespace-nowrap"
+                    className="px-3 py-2.5 text-right text-[10px] uppercase tracking-wide text-[var(--muted-foreground)] font-medium border-b border-[var(--border)] whitespace-nowrap"
                   >
                     {h}
                   </th>
@@ -362,34 +364,30 @@ export function OffsetVsDR() {
                   <tr
                     key={r.amount}
                     onClick={() => setSelectedAmount(r.amount)}
-                    className={`cursor-pointer border-l-4 transition-colors
-                      ${isSel
-                        ? 'border-l-blue-500 bg-blue-50 dark:bg-blue-950/30'
-                        : 'border-l-transparent hover:bg-slate-50 dark:hover:bg-slate-800/50'
-                      }`}
+                    className={`cursor-pointer border-l-4 transition-colors ${isSel ? 'border-l-blue-500 bg-[var(--primary)]/10 ' : 'border-l-transparent hover:bg-[var(--background)] ' }`}
                   >
-                    <td className="px-3 py-2.5 text-right font-semibold font-mono text-slate-800 dark:text-slate-100">
+                    <td className="px-3 py-2.5 text-right font-semibold font-mono text-[var(--foreground)]">
                       {formatCurrency(r.amount)}
                     </td>
-                    <td className="px-3 py-2.5 text-right font-mono text-green-600 dark:text-green-400">
+                    <td className="px-3 py-2.5 text-right font-mono text-[var(--success)]">
                       {formatCurrency(r.offset.interestSaved)}
                     </td>
-                    <td className="px-3 py-2.5 text-right font-mono text-slate-600 dark:text-slate-300">
+                    <td className="px-3 py-2.5 text-right font-mono text-[var(--muted-foreground)]">
                       {r.offset.yearsToPayoff} yrs
                     </td>
-                    <td className="px-3 py-2.5 text-right font-mono font-semibold text-blue-600 dark:text-blue-400">
+                    <td className="px-3 py-2.5 text-right font-mono font-semibold text-[var(--primary)]">
                       {formatCurrency(r.dr.portfolioValue)}
                     </td>
-                    <td className="px-3 py-2.5 text-right font-mono text-violet-600 dark:text-violet-400">
+                    <td className="px-3 py-2.5 text-right font-mono text-violet-600">
                       {formatCurrency(r.dr.taxDeductions)}
                     </td>
-                    <td className="px-3 py-2.5 text-right font-mono font-semibold text-cyan-600 dark:text-cyan-400">
+                    <td className="px-3 py-2.5 text-right font-mono font-semibold text-cyan-600">
                       {formatCurrency(r.dr.netWealthPostCGT)}
                     </td>
-                    <td className="px-3 py-2.5 text-right font-mono text-slate-600 dark:text-slate-300">
+                    <td className="px-3 py-2.5 text-right font-mono text-[var(--muted-foreground)]">
                       {formatCurrency(r.amount)}
                     </td>
-                    <td className={`px-3 py-2.5 text-right font-mono font-bold ${adv >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                    <td className={`px-3 py-2.5 text-right font-mono font-bold ${adv >= 0 ? 'text-[var(--success)] ' : 'text-[var(--danger)] '}`}>
                       {formatDiff(adv)}
                     </td>
                   </tr>
@@ -398,20 +396,20 @@ export function OffsetVsDR() {
             </tbody>
           </table>
         </div>
-        </>
+        </motion.div>
       ) : (
-        <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-8 text-center text-sm text-slate-400">
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--background)] p-8 text-center text-sm text-[var(--muted-foreground)]">
           Enter your loan details and comparison amounts above to see results.
         </div>
       )}
 
       {/* Detail Cards */}
       {sel && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <motion.div variants={fadeInUp} initial="hidden" animate="visible" className="grid grid-cols-1 md:grid-cols-2 gap-5">
           {/* Offset */}
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-5">
-            <h3 className="text-sm font-bold text-green-600 dark:text-green-400 mb-4 flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-green-500 inline-block" />
+          <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-5">
+            <h3 className="text-sm font-bold text-[var(--success)] mb-4 flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-[var(--success)] inline-block" />
               Offset — {formatCurrency(sel.amount)}
             </h3>
             <dl className="space-y-2">
@@ -423,18 +421,18 @@ export function OffsetVsDR() {
                 [`Net Wealth at ${effectiveYears} yr`, formatCurrency(sel.amount)],
                 ['Tax Benefit', '$0 (no deduction)'],
               ] as [string, string][]).map(([k, v]) => (
-                <div key={k} className="flex justify-between border-b border-slate-100 dark:border-slate-800 pb-1.5 last:border-0">
-                  <dt className="text-xs text-slate-400 dark:text-slate-500">{k}</dt>
-                  <dd className="text-xs font-semibold font-mono text-slate-700 dark:text-slate-200">{v}</dd>
+                <div key={k} className="flex justify-between border-b border-slate-100 pb-1.5 last:border-0">
+                  <dt className="text-xs text-[var(--muted-foreground)]">{k}</dt>
+                  <dd className="text-xs font-semibold font-mono text-[var(--foreground)]">{v}</dd>
                 </div>
               ))}
             </dl>
           </div>
 
           {/* Debt Recycling */}
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-5">
-            <h3 className="text-sm font-bold text-blue-600 dark:text-blue-400 mb-4 flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-blue-500 inline-block" />
+          <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-5">
+            <h3 className="text-sm font-bold text-[var(--primary)] mb-4 flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-[var(--primary)] inline-block" />
               Debt Recycling — {formatCurrency(sel.amount)}
             </h3>
             <dl className="space-y-2">
@@ -446,39 +444,35 @@ export function OffsetVsDR() {
                 [`CGT if Sold (${params.cgtDiscount}% discount)`, formatCurrency(sel.dr.cgtIfSold)],
                 ['Net Wealth Post-CGT', formatCurrency(sel.dr.netWealthPostCGT)],
               ] as [string, string][]).map(([k, v]) => (
-                <div key={k} className="flex justify-between border-b border-slate-100 dark:border-slate-800 pb-1.5 last:border-0">
-                  <dt className="text-xs text-slate-400 dark:text-slate-500">{k}</dt>
-                  <dd className="text-xs font-semibold font-mono text-slate-700 dark:text-slate-200">{v}</dd>
+                <div key={k} className="flex justify-between border-b border-slate-100 pb-1.5 last:border-0">
+                  <dt className="text-xs text-[var(--muted-foreground)]">{k}</dt>
+                  <dd className="text-xs font-semibold font-mono text-[var(--foreground)]">{v}</dd>
                 </div>
               ))}
             </dl>
           </div>
-        </div>
+        </motion.div>
       )}
 
       {/* Year-by-Year Chart */}
       {sel && yearlyComp.length > 0 && (
-        <>
-          <div className="text-xs text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-lg px-4 py-3 leading-relaxed">
-            The chart tracks <strong className="text-slate-700 dark:text-slate-300">net wealth over time</strong> for the selected amount. Offset net wealth = your cash (flat line, since the offset funds aren't invested). Debt Recycling net wealth = portfolio value minus loan minus CGT. Click a year button to see a snapshot. The crossover point (where Debt Recycling exceeds Offset) depends on your ETF return, tax rate, and loan type.{' '}
-            <a href="https://moneysmart.gov.au/shares/how-investments-are-taxed" target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:text-blue-600 dark:text-blue-400">MoneySmart: How investments are taxed ↗</a>
+        <motion.div variants={fadeInUp} initial="hidden" animate="visible" className="space-y-6">
+          <div className="text-xs text-[var(--muted-foreground)] bg-[var(--background)] border border-slate-100 rounded-lg px-4 py-3 leading-relaxed">
+            The chart tracks <strong className="text-[var(--foreground)]">net wealth over time</strong> for the selected amount. Offset net wealth = your cash (flat line, since the offset funds aren't invested). Debt Recycling net wealth = portfolio value minus loan minus CGT. Click a year button to see a snapshot. The crossover point (where Debt Recycling exceeds Offset) depends on your ETF return, tax rate, and loan type.{' '}
+            <a href="https://moneysmart.gov.au/shares/how-investments-are-taxed" target="_blank" rel="noopener noreferrer" className="text-[var(--primary)] hover:text-[var(--primary)]">MoneySmart: How investments are taxed ↗</a>
           </div>
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-5 space-y-4">
+          <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-5 space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100">
+            <h3 className="text-sm font-bold text-[var(--foreground)]">
               Year-by-Year — {formatCurrency(sel.amount)}
             </h3>
             <div className="flex flex-wrap gap-1.5 items-center">
-              <span className="text-[10px] text-slate-400 mr-1">Snapshot:</span>
+              <span className="text-[10px] text-[var(--muted-foreground)] mr-1">Snapshot:</span>
               {yearBtns.map(y => (
                 <button
                   key={y}
                   onClick={() => setViewYear(y)}
-                  className={`px-2.5 py-1 text-[10px] font-medium rounded border transition-colors
-                    ${viewYear === y
-                      ? 'bg-blue-600 text-white border-blue-600'
-                      : 'bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:border-blue-400'
-                    }`}
+                  className={`px-2.5 py-1 text-[10px] font-medium rounded border transition-colors ${viewYear === y ? 'bg-[var(--primary)] text-[var(--background)] border-[var(--primary)]' : 'bg-[var(--background)] text-[var(--muted-foreground)] border-[var(--border)] hover:border-blue-400' }`}
                 >
                   {y}
                 </button>
@@ -513,17 +507,19 @@ export function OffsetVsDR() {
           )}
 
           {/* Bar Chart */}
-          <BarCompare
-            data={yearlyComp}
-            keys={[
-              { key: 'Offset', label: 'Offset Net Wealth', color: '#22c55e' },
-              { key: 'Debt Recycling', label: 'Debt Recycling Net Wealth (post-CGT)', color: '#3b82f6' },
-            ]}
-            xKey="year"
-            height={260}
-          />
+          <ChartContainer config={offsetVsDRConfig} className="h-[350px] w-full mt-4">
+            <BarChart data={deferredYearlyComp} margin={{ top: 4, right: 16, left: 8, bottom: 4 }}>
+              <CartesianGrid vertical={false} strokeDasharray="3 3" />
+              <XAxis dataKey="year" tickLine={false} axisLine={false} tick={{ fontSize: 11 }} />
+              <YAxis tickLine={false} axisLine={false} tickFormatter={v => formatCompact(v as number)} tick={{ fontSize: 11 }} />
+              <ChartTooltip content={<ChartTooltipContent />} />
+              <ChartLegend content={<ChartLegendContent />} />
+              <Bar dataKey="Offset" fill="var(--color-offset)" radius={[4, 4, 0, 0]} animationDuration={1200} animationEasing="ease-in-out" />
+              <Bar dataKey="Debt Recycling" fill="var(--color-dr)" radius={[4, 4, 0, 0]} animationDuration={1200} animationEasing="ease-in-out" />
+            </BarChart>
+          </ChartContainer>
         </div>
-        </>
+        </motion.div>
       )}
 
       <Assumptions items={ASSUMPTIONS} />

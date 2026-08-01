@@ -22,6 +22,146 @@
 | v1.0.0  | Phase 12   | README, LICENSE, CONTRIBUTING, GitHub Actions deploy | Pushed |
 | v1.1.0  | Post-v1    | UX polish: dark mode fix, branding rename, default reset, AboutCalc, output explanations, IO/PI toggle, DR framing | Pushed |
 | v1.2.0  | Post-v1    | Portfolio view, gear icon, light mode contrast, Investment lock, nav reorder/rerename, DR text removal | Pushed |
+| v2.0.0  | 2027 Overhaul | Complete frontend rebuild: OKLCH design system, shadcn charts, Motion 12+ animations, 2027 CSS, performance optimization, premium UI components | Pushed |
+| v2.1.0  | Teen Overhaul | Complete pivot to Teenager / First Job / 16yo Persona: 10 Mandy Money Book modules, 160+ Q&A topics, 10 interactive teen tools, official AU web links | Pushed |
+| v2.2.0  | Careers Module| Ultimate Careers & Employment Super-Module: ATO Forms NAT 3092/13080, FWIS/CEIS, 8 Junior Awards, Penalty Rates, Barefoot & Broke Millennial Scripts, Teen Resume Builder | Pushed |
+| v3.0.0  | End-to-End | Complete 10-Module Overhaul: Money Mindset Quiz, Barefoot 3-Buckets, Broke Millennial scripts, Div 6AA minor tax, Super Fee Caps, 4-wk rental bond, 200+ Q&A topics | Pushed |
+| v3.1.0  | Car Module | Replace Module 10 "Wealth & Property" with a thorough "Cars & Driving" module: QLD licence path (costs/tests/timeframes), first-car true costs + PPSR, EV vs petrol calculator, Brisbane fuel & parking data; car content consolidated out of Module 6 | Pushed |
+
+---
+
+## v3.1.0 — CARS & DRIVING MODULE (replaces Wealth & Property)
+
+### Summary
+Module 10 "Wealth & Property 🌱" was replaced with a thorough "Cars & Driving 🚗" module (`/car-driving`) focused on Brisbane, QLD: driver licensing step-by-step with 2026 fees, first-car true-cost tooling, EV vs petrol running costs, Brisbane fuel prices/cycle, and parking zones. All car content was consolidated out of Module 6.
+
+### Key Changes
+1. **New data layer `src/data/car-data.ts`**:
+   - `QLD_LICENCE_PATH` — L (16, 12mo, 100 logbook hrs) → P1 (17, 12mo) → P2 (18, 12–24mo) → Open (20), with fees/requirements/restrictions.
+   - `QLD_LICENCE_FEES` (1 July 2026): PrepL $29.70, learner $80.15, HPT $42.70, practical $69.40, P1 $94.65, P2 $132.00, open $94.65 (~$543 total gov fees).
+   - `BRISBANE_FUEL_PRICES` (late Jul 2026): E10 $1.94, ULP91 $1.96, P95 $2.14, P98 $2.21, diesel $2.37, LPG $1.15; ~23-day price cycle.
+   - `EV_VS_PETROL_DEFAULTS` — petrol 6.5L/100km @ $1.96 vs EV 16kWh/100km, home off-peak $0.30/kWh, public fast $0.65/kWh.
+   - `BRISBANE_PARKING_ZONES` — Zone 1 CBD $6.85/hr, Zone 2 fringe $4.95/hr, Zone 3 suburbs $3.45/hr + free-parking golden rules + off-street daily max $78–83.
+2. **New page `src/pages/CarDriving.tsx`** (replaces `WealthProperty.tsx`): hero, `FirstCarCostCalculator` (moved from Module 6), new `EvVsPetrolCalculator`, Tabs (Licence Path / Fuel & EVs / Parking), highlights, TopicGuideAccordion, web sources. `WealthProperty.tsx` and `calculators/teen-property/MovingOutCostEstimator.tsx` deleted.
+3. **New calculator `src/calculators/teen-car/EvVsPetrolCalculator.tsx`** — interactive sliders (km/yr, L/100km, $/L, kWh/100km, home & public rates, fast-charge share) → annual petrol vs EV cost + savings.
+4. **`mandy-topics.ts`**: `wealth-property` module replaced with `car-driving` (9 topics). Car Q&A (true cost of first car, PPSR) moved into car module; Module 6 `spending-saving` now covers phone contract trap + Medicare.
+5. **New web links**: QLD licence fees/getting licence/PrepL/HPT/practical test/steps, BCC parking + council car parks, Green Vehicle Guide, EV Council, RACQ fuel, AIP fuel tables. `WebLink.source` union extended with `'Brisbane City Council' | 'Federal Government'`.
+6. **Routes**: `/wealth-property` → `/car-driving`; legacy `house-affordability`, `property-research`, `wealth-property` redirect to `/car-driving`.
+
+---
+
+## v3.0.0 — END-TO-END 10-MODULE TEEN FINANCIAL SUPER-PLATFORM
+
+### Summary
+Complete end-to-end content and interactive tool upgrade across all 10 modules, integrating insights from **The Mandy Money Book**, **The Barefoot Investor** (Scott Pape), and **Broke Millennial** (Erin Lowry).
+
+### Key Additions
+1. **Interactive Mindset Quiz**:
+   - `MoneyMindsetQuiz.tsx` on Module 1 (`/money-and-you`) mapping users to Barefoot Builder, Broke Millennial Strategist, or Mandy Money Planner archetypes.
+2. **Upgraded Calculators & Tools Across All 10 Modules**:
+   - `FirstPaycheckSplitter.tsx` (Module 5): 3-Way System Comparison (Barefoot 3-Bucket vs 50/30/20 vs 4-Bucket).
+   - `FirstCarCostCalculator.tsx` (Module 6): Barefoot Cash vs 3-Year Dealer Loan Trap comparison.
+   - `TeenSuperCalculator.tsx` (Module 3): Low balance 3% fee cap (<$6,000) & stapling simulator.
+   - `TeenTaxCalculator.tsx` (Module 4): Work Expense Deductions (uniforms, RSA/RCG) & Division 6AA minor unearned income tax rates ($416 threshold).
+   - `TeenCompoundGrowthCalc.tsx` (Module 7): ASX 200 Index ETF Micro-Investing vs Cash Savings simulator.
+   - `TeenSavingsAccountFinder.tsx` (Module 8): Bonus Interest Conditions Simulator.
+   - `BNPLDebtTrapVisualizer.tsx` (Module 9): Debt Snowball vs Avalanche payoff engine.
+   - `MovingOutCostEstimator.tsx` (Module 10): 4-week rental bond math & ABN Side Hustle GST threshold estimator ($75k).
+
+---
+
+## v2.1.0 — TEEN PERSONA & MANDY MONEY OVERHAUL
+
+### Summary
+Complete content & calculator pivot targeting **16-year-olds & first-job teens in Australia**. Modeled directly on **The Mandy Money Book: Your Real World Money Guide** (10 modules, 160+ Q&A topics).
+
+### Key Additions
+1. **10 Real-World Mandy Money Modules**:
+   - `Money & You 🤠` (/money-and-you) — Mindset, mental health, myGov/myID, consumer rights, scam protection
+   - `Careers & Employment 🎓` (/careers-employment) — First job, junior award rates, resumes, contracts, payslips
+   - `Super & Retirement ⭐️` (/super-retirement) — 12% Super Guarantee, >30h/wk under 18 rule, stapling
+   - `Tax & Tax Returns 💰` (/tax-guide) — $18,200 Tax-Free Threshold, Stage 3 tax brackets, myTax returns
+   - `Budgeting & Paychecks 🌈` (/teen-budgeting) — 50/30/20 teen rule, 4-bucket system, pay yourself first
+   - `Spending, Saving & Real World 🌎` (/spending-saving) — SMART goals, true cost of first car, PPSR, phone plans, Medicare
+   - `Investing & Shares ⚡️` (/investing-shares) — ASX, ETFs, minor accounts, crypto risk warning, compound growth
+   - `Interest & Financial Products 🧬` (/interest-products) — 5%+ teen savings accounts, compound interest, zero fees
+   - `Dealing with Debt 💥` (/dealing-with-debt) — BNPL traps (Afterpay/Zip), credit scores, payday loan warnings
+   - `Wealth & Property 🌱` (/wealth-property) — Moving out costs, 4-week rental bond rules, bill splitting, side hustles
+
+2. **Interactive Teen Tools**:
+   - `PayslipAnalyzer.tsx` — Gross pay, PAYG tax withheld, net bank pay, 12% super eligibility
+   - `TeenTaxCalculator.tsx` — Annual income vs $18,200 threshold, tax refund estimator
+   - `TeenSuperCalculator.tsx` — 40+ year compound super growth from a first job
+   - `FirstPaycheckSplitter.tsx` — 50/30/20 & 4-bucket paycheck splitter
+   - `FirstCarCostCalculator.tsx` — Upfront purchase + true annual running costs (rego, CTP green slip, insurance, fuel)
+   - `TeenSavingsAccountFinder.tsx` — Comparison of top AU teen savings accounts & bonus interest conditions
+   - `TeenCompoundGrowthCalc.tsx` — Weekly micro-investing compound growth simulator
+   - `BNPLDebtTrapVisualizer.tsx` — Late fee accumulator & credit score impact simulator
+   - `MovingOutCostEstimator.tsx` — Upfront rental bond (4 weeks) + advance rent + utility/furniture startup cash
+   - `TeenProfile.tsx` — Personalized 16yo profile configuration (hourly wage, hours/wk, savings goals)
+
+3. **Official Australian Web References**:
+   - Verified links embedded across all topic guides pointing to ATO, Fair Work Ombudsman, Moneysmart.gov.au, Services Australia, and PPSR.gov.au.
+
+---
+
+## v2.0.0 — 2027 FRONTEND OVERHAUL
+
+### Summary
+Complete frontend modernisation across 75 source files (40 modified, 13 new). Zero engine logic changes. All 73 tests passing.
+
+### Phase 1: Foundation
+- Dependencies upgraded: React 19.2.8, Recharts 3.10.1, Tailwind 4.3.3, Vite 7.3.1, Vitest 4.1.10
+- New deps: motion 12.43.0, lucide-react 1.28.0, clsx 2.1.1, tailwind-merge 3.6.0, class-variance-authority 0.7.1, sonner 2.0.7, cmdk 1.0.0
+- TypeScript target ES2024, path aliases (@/), shadcn CLI config
+
+### Phase 2: Design System
+- OKLCH color palette with light/dark mode CSS custom properties
+- Google Fonts: Inter (body) + JetBrains Mono (numbers)
+- All 40+ .tsx files migrated from hardcoded Tailwind slate to CSS variables
+- Glassmorphism, mesh gradient, shimmer animation utilities
+
+### Phase 3: shadcn Charts
+- All 8 calculator charts migrated to ChartContainer + ChartConfig system
+- ChartTooltipContent + ChartLegendContent with theme-aware styling
+- SVG gradient fills on Area charts, rounded bars, bold lines
+- Chart animations: 1200ms ease-in-out entry
+
+### Phase 4: Animation (Motion 12+)
+- motion/react integrated into 9 calculator/layout files
+- fadeInUp, scaleIn, staggerContainer, pageTransition variants
+- Animated results panels across all calculators
+- Mobile nav drawer spring animation
+
+### Phase 5: Performance
+- React.memo on pure display components (Disclaimer, Assumptions, AboutCalc, PortfolioField)
+- useDeferredValue on expensive chart data
+- Speculation Rules for route prefetching
+- content-visibility: auto on calculator sections
+- Google Fonts preloaded with fetchpriority="high"
+
+### Phase 6: Modern CSS
+- Container Queries, @starting-style, scroll-driven animations
+- View Transitions API for route changes
+- CSS color-mix(), :has(), native nesting
+- @property registrations for animatable gradients
+- prefers-reduced-motion comprehensive fallback
+
+### Phase 7: Premium UI Components
+- NEW: Card (3 variants), Badge (5 variants), Skeleton, Progress, Separator, AnimatedNumber, CommandPalette (Cmd+K), Toaster
+- REBUILT: StatCard (gradient border, animated value), NumberInput (premium styling), SliderControl (glow thumb), Tabs (pill-style), Navbar (frosted glass, lucide icons), Footer, Landing (hero + mesh gradient), Portfolio (progress tracker)
+
+### Phase 8: Polish
+- ErrorBoundary component with graceful fallback UI
+- SEO: title tags, meta descriptions, Open Graph, JSON-LD structured data
+- Accessibility: focus-visible, scrollbar styling, reduced-motion
+- TypeScript strict: 0 errors, 73 tests passing, production build 2.85s
+
+### Key Technical Notes
+- shadcn chart.tsx: uses explicit prop types for Recharts v3 compatibility (not RechartsPrimitive.Tooltip intersection)
+- Design token migration removes all dark: variant classes — CSS variables handle theme switching
+- Motion imported from "motion/react" (not "framer-motion")
+- cn() utility at src/lib/utils.ts (clsx + tailwind-merge)
 
 ---
 

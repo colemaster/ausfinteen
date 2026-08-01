@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
 } from 'recharts';
@@ -12,7 +13,7 @@ interface BarCompareProps {
   height?: number;
 }
 
-export function BarCompare({ data, keys, xKey, height = 280 }: BarCompareProps) {
+export const BarCompare = memo(function BarCompare({ data, keys, xKey, height = 280 }: BarCompareProps) {
   return (
     <ResponsiveContainer width="100%" height={height}>
       <BarChart data={data} margin={{ top: 4, right: 16, left: 8, bottom: 4 }}>
@@ -38,4 +39,4 @@ export function BarCompare({ data, keys, xKey, height = 280 }: BarCompareProps) 
       </BarChart>
     </ResponsiveContainer>
   );
-}
+});

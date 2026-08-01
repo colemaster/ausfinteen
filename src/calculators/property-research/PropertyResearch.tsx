@@ -1,4 +1,6 @@
 import { useState, useMemo } from 'react';
+import { motion } from 'motion/react';
+import { scaleIn } from '@/lib/animations';
 import { CRITERIA, LAYERS, type Layer } from './criteria';
 import { calculateScore, getRecommendationColor, getRecommendationBg } from './scoring';
 import { Disclaimer } from '../../components/shared/Disclaimer';
@@ -27,11 +29,11 @@ const ASSUMPTIONS = [
 ];
 
 const SCORE_GUIDE: [string, string, string][] = [
-  ['Strong Buy', '>100 pts',            'text-green-600 dark:text-green-400'],
-  ['Buy',        '80\u2013100',         'text-green-500'],
-  ['Hold',       '60\u201380',          'text-amber-600 dark:text-amber-400'],
-  ['Caution',    '40\u201360',          'text-orange-600 dark:text-orange-400'],
-  ['Avoid',      '<40 or dealbreaker',  'text-red-600 dark:text-red-400'],
+  ['Strong Buy', '>100 pts',            'text-[var(--success)] '],
+  ['Buy',        '80\u2013100',         'text-[var(--success)]'],
+  ['Hold',       '60\u201380',          'text-amber-600 '],
+  ['Caution',    '40\u201360',          'text-orange-600 '],
+  ['Avoid',      '<40 or dealbreaker',  'text-[var(--danger)] '],
 ];
 
 function ScoreButtons({ id, value, onChange }: { id: string; value: number; onChange: (id: string, v: number) => void }) {
@@ -40,16 +42,12 @@ function ScoreButtons({ id, value, onChange }: { id: string; value: number; onCh
       <div className="flex gap-1">
         {[0,1,2,3,4,5].map(v => (
           <button key={v} onClick={() => onChange(id, v)}
-            className={`w-8 h-8 text-xs font-bold rounded-md border transition-all ${
-              value === v
-                ? 'bg-blue-600 text-white border-blue-600'
-                : 'bg-white dark:bg-slate-800 text-slate-400 border-slate-200 dark:border-slate-700 hover:border-blue-400'
-            }`}>
+            className={`w-8 h-8 text-xs font-bold rounded-md border transition-all ${ value === v ? 'bg-[var(--primary)] text-[var(--background)] border-[var(--primary)]' : 'bg-[var(--background)] text-[var(--muted-foreground)] border-[var(--border)] hover:border-blue-400' }`}>
             {v}
           </button>
         ))}
       </div>
-      <div className="text-[10px] text-slate-400">{value} / 5</div>
+      <div className="text-[10px] text-[var(--muted-foreground)]">{value} / 5</div>
     </div>
   );
 }
@@ -60,17 +58,9 @@ function DealBreakerButtons({ id, value, onChange }: {
   return (
     <div className="flex items-center gap-2 shrink-0">
       <button onClick={() => onChange(id, true)}
-        className={`px-3 py-1.5 text-xs font-semibold rounded-md border transition-all ${
-          value
-            ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 border-green-300 dark:border-green-700'
-            : 'bg-white dark:bg-slate-800 text-slate-400 border-slate-200 dark:border-slate-700'
-        }`}>Pass</button>
+        className={`px-3 py-1.5 text-xs font-semibold rounded-md border transition-all ${ value ? 'bg-green-100 text-green-700 border-green-300 ' : 'bg-[var(--background)] text-[var(--muted-foreground)] border-[var(--border)] ' }`}>Pass</button>
       <button onClick={() => onChange(id, false)}
-        className={`px-3 py-1.5 text-xs font-semibold rounded-md border transition-all ${
-          !value
-            ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 border-red-300 dark:border-red-700'
-            : 'bg-white dark:bg-slate-800 text-slate-400 border-slate-200 dark:border-slate-700'
-        }`}>Fail</button>
+        className={`px-3 py-1.5 text-xs font-semibold rounded-md border transition-all ${ !value ? 'bg-red-100 text-[var(--danger)] border-red-300 ' : 'bg-[var(--background)] text-[var(--muted-foreground)] border-[var(--border)] ' }`}>Fail</button>
     </div>
   );
 }
@@ -90,37 +80,37 @@ function LayerAccordion({ layer, openLayers, onToggle, scores, dealbreakers, onS
   const hasDealbreaker = criteria.some(c => c.type === 'dealbreaker' && dealbreakers[c.id] === false);
 
   return (
-    <div className="border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden">
+    <div className="border border-[var(--border)] rounded-xl overflow-hidden">
       <button onClick={() => onToggle(layer.id)}
-        className="w-full flex items-center justify-between px-5 py-4 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 transition-colors">
+        className="w-full flex items-center justify-between px-5 py-4 bg-[var(--background)] hover:bg-[var(--background)] transition-colors">
         <div className="flex items-center gap-3">
-          <span className="font-semibold text-slate-800 dark:text-slate-100">{layer.label}</span>
+          <span className="font-semibold text-[var(--foreground)]">{layer.label}</span>
           {hasDealbreaker && (
-            <span className="text-xs font-bold text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/40 px-2 py-0.5 rounded-full border border-red-200 dark:border-red-800">
+            <span className="text-xs font-bold text-[var(--danger)] bg-[var(--danger)]/10 px-2 py-0.5 rounded-full border border-red-200">
               DEAL BREAKER
             </span>
           )}
         </div>
         <div className="flex items-center gap-3">
-          <span className="text-sm font-mono font-bold text-blue-600 dark:text-blue-400">{currentScore} / {layer.maxScore}</span>
-          <span className="text-slate-400 text-sm">{isOpen ? '\u25b2' : '\u25bc'}</span>
+          <span className="text-sm font-mono font-bold text-[var(--primary)]">{currentScore} / {layer.maxScore}</span>
+          <span className="text-[var(--muted-foreground)] text-sm">{isOpen ? '\u25b2' : '\u25bc'}</span>
         </div>
       </button>
       {isOpen && (
-        <div className="divide-y divide-slate-100 dark:divide-slate-800">
+        <div className="divide-y divide-slate-100 dark:divide-[var(--border)]">
           {criteria.map(c => (
-            <div key={c.id} className="px-5 py-4 bg-white dark:bg-slate-900">
+            <div key={c.id} className="px-5 py-4 bg-[var(--background)]">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1 min-w-0">
-                  <div className="text-sm font-medium text-slate-800 dark:text-slate-100 mb-0.5">
+                  <div className="text-sm font-medium text-[var(--foreground)] mb-0.5">
                     {c.label}
                     {c.type === 'dealbreaker' && (
-                      <span className="ml-2 text-xs text-red-500 font-semibold">DEAL BREAKER</span>
+                      <span className="ml-2 text-xs text-[var(--danger)] font-semibold">DEAL BREAKER</span>
                     )}
                   </div>
-                  <div className="text-xs text-slate-400 dark:text-slate-500 leading-relaxed">{c.description}</div>
+                  <div className="text-xs text-[var(--muted-foreground)] leading-relaxed">{c.description}</div>
                   {c.dataSource && (
-                    <div className="text-xs text-blue-500 dark:text-blue-400 mt-0.5">Source: {c.dataSource}</div>
+                    <div className="text-xs text-[var(--primary)] mt-0.5">Source: {c.dataSource}</div>
                   )}
                 </div>
                 {c.type === 'dealbreaker'
@@ -163,10 +153,10 @@ export function PropertyResearch() {
   return (
     <div className="max-w-4xl mx-auto">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-50 mb-1">
+        <h1 className="text-2xl font-bold text-[var(--foreground)] mb-1">
           Property Research Tool
         </h1>
-        <p className="text-sm text-slate-500 dark:text-slate-400">
+        <p className="text-sm text-[var(--muted-foreground)]">
           130-point investment property checklist — suburb, location, and property scoring.
         </p>
       </div>
@@ -196,14 +186,14 @@ export function PropertyResearch() {
         {/* Left — criteria */}
         <div className="lg:col-span-2 space-y-4">
           <div>
-            <label className="text-xs uppercase tracking-wide text-slate-400 font-medium block mb-1.5">
+            <label className="text-xs uppercase tracking-wide text-[var(--muted-foreground)] font-medium block mb-1.5">
               Property address (optional)
             </label>
             <input
               type="text" value={address}
               onChange={e => setAddress(e.target.value)}
               placeholder="e.g. 12 Example St, Suburb VIC 3000"
-              className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-blue-500 text-slate-800 dark:text-slate-100"
+              className="w-full bg-[var(--background)] border border-[var(--border)] rounded-lg px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-[var(--ring)] text-[var(--foreground)]"
             />
           </div>
 
@@ -218,7 +208,7 @@ export function PropertyResearch() {
           ))}
 
           <button onClick={handleReset}
-            className="text-xs text-slate-400 hover:text-red-500 transition-colors">
+            className="text-xs text-[var(--muted-foreground)] hover:text-[var(--danger)] transition-colors">
             Reset all scores
           </button>
 
@@ -227,19 +217,19 @@ export function PropertyResearch() {
         </div>
 
         {/* Right — score panel */}
-        <div className="space-y-4">
+        <motion.div variants={scaleIn} initial="hidden" animate="visible" className="space-y-4">
           <div className={`sticky top-20 rounded-xl border-2 p-5 ${getRecommendationBg(result.recommendation)}`}>
-            <div className="text-xs uppercase tracking-wide text-slate-400 font-medium mb-2">
+            <div className="text-xs uppercase tracking-wide text-[var(--muted-foreground)] font-medium mb-2">
               {address || 'Your Property'}
             </div>
 
             <div className="text-center mb-4">
-              <div className="text-5xl font-bold font-mono text-slate-800 dark:text-slate-100">
+              <div className="text-5xl font-bold font-mono text-[var(--foreground)]">
                 {result.totalScore}
               </div>
-              <div className="text-sm text-slate-400 mt-0.5">out of {result.maxScore}</div>
-              <div className="mt-1.5 h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
-                <div className="h-full bg-blue-500 rounded-full transition-all duration-300"
+              <div className="text-sm text-[var(--muted-foreground)] mt-0.5">out of {result.maxScore}</div>
+              <div className="mt-1.5 h-2 bg-slate-200 rounded-full overflow-hidden">
+                <div className="h-full bg-[var(--primary)] rounded-full transition-all duration-300"
                   style={{ width: `${result.percentage}%` }} />
               </div>
             </div>
@@ -249,12 +239,12 @@ export function PropertyResearch() {
             </div>
 
             {result.dealbreakersTriggered.length > 0 && (
-              <div className="bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 rounded-lg px-3 py-2 mb-4">
-                <div className="text-xs font-bold text-red-700 dark:text-red-400 mb-1">
+              <div className="bg-[var(--danger)]/10 border border-red-200 rounded-lg px-3 py-2 mb-4">
+                <div className="text-xs font-bold text-[var(--danger)] mb-1">
                   Deal Breakers Triggered:
                 </div>
                 {result.dealbreakersTriggered.map(d => (
-                  <div key={d} className="text-xs text-red-600 dark:text-red-400">&bull; {d}</div>
+                  <div key={d} className="text-xs text-[var(--danger)]">&bull; {d}</div>
                 ))}
               </div>
             )}
@@ -262,15 +252,15 @@ export function PropertyResearch() {
             <div className="space-y-2">
               {LAYERS.map(layer => (
                 <div key={layer.id} className="flex justify-between items-center">
-                  <span className="text-xs text-slate-500 dark:text-slate-400">
+                  <span className="text-xs text-[var(--muted-foreground)]">
                     {layer.label.split('\u2014 ')[1]}
                   </span>
                   <div className="flex items-center gap-2">
-                    <div className="w-16 h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
-                      <div className="h-full bg-blue-500 rounded-full transition-all"
+                    <div className="w-16 h-1.5 bg-slate-200 rounded-full overflow-hidden">
+                      <div className="h-full bg-[var(--primary)] rounded-full transition-all"
                         style={{ width: `${Math.round((result.layerScores[layer.id] / layer.maxScore) * 100)}%` }} />
                     </div>
-                    <span className="font-mono text-xs text-slate-600 dark:text-slate-300">
+                    <span className="font-mono text-xs text-[var(--muted-foreground)]">
                       {result.layerScores[layer.id]}/{layer.maxScore}
                     </span>
                   </div>
@@ -278,7 +268,7 @@ export function PropertyResearch() {
               ))}
             </div>
 
-            <div className="mt-4 pt-3 border-t border-slate-200 dark:border-slate-700 space-y-1 text-xs text-slate-400">
+            <div className="mt-4 pt-3 border-t border-[var(--border)] space-y-1 text-xs text-[var(--muted-foreground)]">
               {SCORE_GUIDE.map(([label, range, cls]) => (
                 <div key={label} className="flex justify-between">
                   <span className={`font-medium ${cls}`}>{label}</span>
@@ -289,20 +279,20 @@ export function PropertyResearch() {
           </div>
 
           {/* Data sources */}
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-4">
-            <div className="text-xs font-semibold uppercase tracking-wide text-slate-400 mb-3">
+          <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-4">
+            <div className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)] mb-3">
               Research Sources
             </div>
             <div className="space-y-1.5">
               {DATA_SOURCES.map(s => (
-                <div key={s.label} className="text-xs text-slate-500 dark:text-slate-400">
-                  <span className="font-medium text-slate-600 dark:text-slate-300">{s.label}</span>
+                <div key={s.label} className="text-xs text-[var(--muted-foreground)]">
+                  <span className="font-medium text-[var(--muted-foreground)]">{s.label}</span>
                   <span className="ml-1">&mdash; {s.url}</span>
                 </div>
               ))}
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </div>
   );

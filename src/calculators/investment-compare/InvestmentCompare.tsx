@@ -1,4 +1,6 @@
 import { useState, useMemo } from 'react';
+import { motion } from 'motion/react';
+import { fadeInUp } from '@/lib/animations';
 import { SliderControl } from '../../components/ui/SliderControl';
 import { NumberInput } from '../../components/ui/NumberInput';
 import { PortfolioField } from '../../components/ui/PortfolioField';
@@ -9,8 +11,10 @@ import { AboutCalc } from '../../components/shared/AboutCalc';
 import { runAllScenarios, SCENARIO_COLORS, type ScenarioParams, type TaxTreatment } from './engine';
 import { formatCurrency, formatCompact, formatPct } from '../../utils/formatters';
 import {
-  LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer,
+  LineChart, Line, XAxis, YAxis, CartesianGrid,
 } from 'recharts';
+import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent } from '@/components/ui/chart';
+import { buildInvestmentCompareConfig } from '@/lib/chart-configs';
 import { usePortfolio } from '../../context/PortfolioContext';
 
 const DEFAULT_SCENARIOS: ScenarioParams[] = [
@@ -74,7 +78,9 @@ export function InvestmentCompare() {
       });
       return row;
     });
-  }, [results]);
+  }, [results, years]);
+
+
 
   const addScenario = () => {
     if (scenarios.length >= 4) return;
@@ -90,11 +96,11 @@ export function InvestmentCompare() {
 
   return (
     <div className="space-y-6">
-      <div className="border-b border-slate-200 dark:border-slate-700 pb-4">
-        <h1 className="text-xl font-extrabold text-slate-900 dark:text-slate-50 tracking-tight">
+      <div className="border-b border-[var(--border)] pb-4">
+        <h1 className="text-xl font-extrabold text-[var(--foreground)] tracking-tight">
           Investment Comparison
         </h1>
-        <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
+        <p className="text-xs text-[var(--muted-foreground)] mt-1">
           Compare up to 4 investment scenarios with different tax treatments, fees, and return rates.
         </p>
       </div>
@@ -115,7 +121,7 @@ export function InvestmentCompare() {
       ]} />
 
       {/* Shared settings */}
-      <div className="grid grid-cols-2 gap-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-4">
+      <div className="grid grid-cols-2 gap-4 bg-[var(--background)] border border-[var(--border)] rounded-xl p-4">
         <SliderControl label="Time Horizon" value={years} onChange={v => setYears(Math.round(v))} min={1} max={40} step={1} suffix=" yrs" />
         {portfolio.margTax > 0
           ? <PortfolioField label="Marginal Tax Rate (shared)" value={sharedMarginalRate} suffix="%" />
@@ -126,16 +132,16 @@ export function InvestmentCompare() {
       {/* Scenario cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {scenarios.map((s, i) => (
-          <div key={i} className="bg-white dark:bg-slate-900 border-2 rounded-xl p-4 space-y-3" style={{ borderColor: SCENARIO_COLORS[i] }}>
+          <div key={i} className="bg-[var(--background)] border-2 rounded-xl p-4 space-y-3" style={{ borderColor: SCENARIO_COLORS[i] }}>
             <div className="flex items-center justify-between">
               <input
                 value={s.label}
                 onChange={e => updateScenario(i, { label: e.target.value })}
-                className="text-sm font-bold bg-transparent border-none outline-none text-slate-800 dark:text-slate-100 w-full"
+                className="text-sm font-bold bg-transparent border-none outline-none text-[var(--foreground)] w-full"
                 placeholder="Scenario name"
               />
               {scenarios.length > 1 && i >= DEFAULT_SCENARIOS.length && (
-                <button onClick={() => removeScenario(i)} className="text-xs text-red-400 hover:text-red-600 shrink-0 ml-2">Remove</button>
+                <button onClick={() => removeScenario(i)} className="text-xs text-red-400 hover:text-[var(--danger)] shrink-0 ml-2">Remove</button>
               )}
             </div>
             <div className="grid grid-cols-2 gap-3">
@@ -151,11 +157,11 @@ export function InvestmentCompare() {
               <SliderControl label="MER" value={s.mer} onChange={v => updateScenario(i, { mer: v })} min={0} max={3} step={0.05} suffix="%" />
             </div>
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs uppercase tracking-wide text-slate-400 dark:text-slate-500 font-medium">Tax Treatment</label>
+              <label className="text-xs uppercase tracking-wide text-[var(--muted-foreground)] font-medium">Tax Treatment</label>
               <select
                 value={s.taxTreatment}
                 onChange={e => updateScenario(i, { taxTreatment: e.target.value as TaxTreatment })}
-                className="bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md px-3 py-2 text-xs font-semibold text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="bg-[var(--background)] border border-[var(--border)] rounded-md px-3 py-2 text-xs font-semibold text-[var(--foreground)] focus:outline-none focus:ring-1 focus:ring-[var(--ring)]"
               >
                 {(Object.entries(TAX_LABELS) as [TaxTreatment, string][]).map(([v, l]) => (
                   <option key={v} value={v}>{l}</option>
@@ -167,7 +173,7 @@ export function InvestmentCompare() {
         {scenarios.length < 4 && (
           <button
             onClick={addScenario}
-            className="border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl p-4 text-sm text-slate-400 hover:border-blue-400 hover:text-blue-500 transition-colors"
+            className="border-2 border-dashed border-[var(--border)] rounded-xl p-4 text-sm text-[var(--muted-foreground)] hover:border-blue-400 hover:text-[var(--primary)] transition-colors"
           >
             + Add Scenario
           </button>
@@ -175,23 +181,25 @@ export function InvestmentCompare() {
       </div>
 
       {/* Chart */}
-      <div className="text-xs text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-lg px-4 py-3 leading-relaxed">
-        Each line shows the <strong className="text-slate-700 dark:text-slate-300">total portfolio balance</strong> (initial + contributions + compounded growth, minus tax and fees) over your chosen time horizon. Lines that diverge steeply benefit most from either lower fees or preferential tax treatment. <strong className="text-slate-700 dark:text-slate-300">Final balance</strong> is before any withdrawal tax or CGT.{' '}
-        <a href="https://moneysmart.gov.au/saving-and-budgeting/compound-interest" target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:text-blue-600 dark:text-blue-400">MoneySmart: How compound interest works ↗</a>
+      <motion.div variants={fadeInUp} initial="hidden" animate="visible" className="space-y-6">
+      <div className="text-xs text-[var(--muted-foreground)] bg-[var(--background)] border border-slate-100 rounded-lg px-4 py-3 leading-relaxed">
+        Each line shows the <strong className="text-[var(--foreground)]">total portfolio balance</strong> (initial + contributions + compounded growth, minus tax and fees) over your chosen time horizon. Lines that diverge steeply benefit most from either lower fees or preferential tax treatment. <strong className="text-[var(--foreground)]">Final balance</strong> is before any withdrawal tax or CGT.{' '}
+        <a href="https://moneysmart.gov.au/saving-and-budgeting/compound-interest" target="_blank" rel="noopener noreferrer" className="text-[var(--primary)] hover:text-[var(--primary)]">MoneySmart: How compound interest works ↗</a>
       </div>
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-5">
-        <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100 mb-4">Portfolio Balance Over Time</h3>
-        <ResponsiveContainer width="100%" height={280}>
+      <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-5">
+        <h3 className="text-sm font-bold text-[var(--foreground)] mb-4">Portfolio Balance Over Time</h3>
+        <ChartContainer config={buildInvestmentCompareConfig(results.map(r => ({ name: r.label })))} className="h-[350px] w-full">
           <LineChart data={chartData} margin={{ top: 4, right: 16, left: 8, bottom: 4 }}>
-            <XAxis dataKey="year" tick={{ fontSize: 10 }} interval={Math.max(0, Math.floor(years / 6) - 1)} />
-            <YAxis tickFormatter={v => formatCompact(typeof v === 'number' ? v : 0)} tick={{ fontSize: 10 }} />
-            <Tooltip formatter={(v, n) => [formatCurrency(typeof v === 'number' ? v : 0), n]} contentStyle={{ fontSize: 11 }} />
-            <Legend wrapperStyle={{ fontSize: 11 }} />
+            <CartesianGrid vertical={false} strokeDasharray="3 3" />
+            <XAxis dataKey="year" tickLine={false} axisLine={false} tick={{ fontSize: 10 }} interval={Math.max(0, Math.floor(years / 6) - 1)} />
+            <YAxis tickLine={false} axisLine={false} tickFormatter={v => formatCompact(typeof v === 'number' ? v : 0)} tick={{ fontSize: 10 }} />
+            <ChartTooltip content={<ChartTooltipContent />} />
+            <ChartLegend content={<ChartLegendContent />} />
             {results.map(r => (
-              <Line key={r.label} type="monotone" dataKey={r.label} stroke={r.color} strokeWidth={2} dot={false} />
+              <Line key={r.label} type="monotone" dataKey={r.label} stroke={`var(--color-${r.label.replace(/\s+/g, '')})`} strokeWidth={2.5} dot={false} animationDuration={1200} animationEasing="ease-in-out" />
             ))}
           </LineChart>
-        </ResponsiveContainer>
+        </ChartContainer>
       </div>
 
       {/* Summary stat cards */}
@@ -208,24 +216,24 @@ export function InvestmentCompare() {
       </div>
 
       {/* Final values table */}
-      <div className="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700">
+      <div className="overflow-x-auto rounded-xl border border-[var(--border)]">
         <table className="w-full text-xs border-collapse">
           <thead>
-            <tr className="bg-slate-50 dark:bg-slate-800">
+            <tr className="bg-[var(--background)]">
               {['Scenario', 'Tax Treatment', `Final Balance (${years} yr)`, 'Total Fees', 'Total Contributions', 'Net Return'].map(h => (
-                <th key={h} className="px-4 py-2.5 text-right text-[10px] uppercase tracking-wide text-slate-400 font-medium border-b border-slate-200 dark:border-slate-700 first:text-left">{h}</th>
+                <th key={h} className="px-4 py-2.5 text-right text-[10px] uppercase tracking-wide text-[var(--muted-foreground)] font-medium border-b border-[var(--border)] first:text-left">{h}</th>
               ))}
             </tr>
           </thead>
           <tbody>
             {results.map((r, i) => (
-              <tr key={r.label} className="border-b border-slate-100 dark:border-slate-800 last:border-0">
+              <tr key={r.label} className="border-b border-slate-100 last:border-0">
                 <td className="px-4 py-2 font-semibold" style={{ color: SCENARIO_COLORS[i] }}>{r.label}</td>
-                <td className="px-4 py-2 text-right text-slate-500 dark:text-slate-400">{TAX_LABELS[syncedScenarios[i].taxTreatment]}</td>
-                <td className="px-4 py-2 text-right font-mono font-semibold text-slate-700 dark:text-slate-200">{formatCurrency(r.finalBalance)}</td>
-                <td className="px-4 py-2 text-right font-mono text-red-500">{formatCurrency(r.totalFeesPaid)}</td>
-                <td className="px-4 py-2 text-right font-mono text-slate-500 dark:text-slate-400">{formatCurrency(r.totalContributions)}</td>
-                <td className="px-4 py-2 text-right font-mono text-green-600 dark:text-green-400">
+                <td className="px-4 py-2 text-right text-[var(--muted-foreground)]">{TAX_LABELS[syncedScenarios[i].taxTreatment]}</td>
+                <td className="px-4 py-2 text-right font-mono font-semibold text-[var(--foreground)]">{formatCurrency(r.finalBalance)}</td>
+                <td className="px-4 py-2 text-right font-mono text-[var(--danger)]">{formatCurrency(r.totalFeesPaid)}</td>
+                <td className="px-4 py-2 text-right font-mono text-[var(--muted-foreground)]">{formatCurrency(r.totalContributions)}</td>
+                <td className="px-4 py-2 text-right font-mono text-[var(--success)]">
                   {formatPct(((r.finalBalance - r.totalContributions) / r.totalContributions) * 100)}
                 </td>
               </tr>
@@ -233,6 +241,7 @@ export function InvestmentCompare() {
           </tbody>
         </table>
       </div>
+      </motion.div>
 
       <Assumptions items={ASSUMPTIONS} />
       <Disclaimer calculatorName="Investment Comparison calculator" />

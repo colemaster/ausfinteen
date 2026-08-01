@@ -28,7 +28,7 @@ export function DebtRecyclingTax({ investLoanBal, onInvestLoanBalChange, rate, o
 
   return (
     <div className="space-y-5">
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 bg-[var(--background)] border border-[var(--border)] rounded-xl p-4">
         {portfolio.mortgageBalance > 0
           ? <PortfolioField label="Investment Loan Balance" value={investLoanBal} prefix="$" />
           : <NumberInput label="Investment Loan Balance" value={investLoanBal} onChange={onInvestLoanBalChange} min={10000} max={2000000} step={10000} prefix="$" />
@@ -49,12 +49,12 @@ export function DebtRecyclingTax({ investLoanBal, onInvestLoanBalChange, rate, o
         <StatCard label="10-Year Cumulative" value={formatCurrency(rows[2]?.cumulative ?? 0)} color="green" />
       </div>
 
-      <div className="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700">
+      <div className="overflow-x-auto rounded-xl border border-[var(--border)]">
         <table className="w-full text-xs border-collapse">
           <thead>
-            <tr className="bg-slate-50 dark:bg-slate-800">
+            <tr className="bg-[var(--background)]">
               {['Year', 'Annual Deduction', 'Cumulative Deductions', 'Effective Rate'].map(h => (
-                <th key={h} className="px-4 py-2.5 text-right text-[10px] uppercase tracking-wide text-slate-400 font-medium border-b border-slate-200 dark:border-slate-700 first:text-left">
+                <th key={h} className="px-4 py-2.5 text-right text-[10px] uppercase tracking-wide text-[var(--muted-foreground)] font-medium border-b border-[var(--border)] first:text-left">
                   {h}
                 </th>
               ))}
@@ -62,18 +62,18 @@ export function DebtRecyclingTax({ investLoanBal, onInvestLoanBalChange, rate, o
           </thead>
           <tbody>
             {rows.map(row => (
-              <tr key={row.year} className="border-b border-slate-100 dark:border-slate-800 last:border-0">
-                <td className="px-4 py-2 text-slate-500 dark:text-slate-400">Year {row.year}</td>
-                <td className="px-4 py-2 text-right font-mono text-violet-600 dark:text-violet-400">{formatCurrency(row.annualDeduction)}</td>
-                <td className="px-4 py-2 text-right font-mono font-semibold text-slate-700 dark:text-slate-200">{formatCurrency(row.cumulative)}</td>
-                <td className="px-4 py-2 text-right font-mono text-blue-600 dark:text-blue-400">{formatPct(row.effectiveAfterTaxRate)}</td>
+              <tr key={row.year} className="border-b border-slate-100 last:border-0">
+                <td className="px-4 py-2 text-[var(--muted-foreground)]">Year {row.year}</td>
+                <td className="px-4 py-2 text-right font-mono text-violet-600">{formatCurrency(row.annualDeduction)}</td>
+                <td className="px-4 py-2 text-right font-mono font-semibold text-[var(--foreground)]">{formatCurrency(row.cumulative)}</td>
+                <td className="px-4 py-2 text-right font-mono text-[var(--primary)]">{formatPct(row.effectiveAfterTaxRate)}</td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
 
-      <p className="text-[10px] text-slate-400 dark:text-slate-500">
+      <p className="text-[10px] text-[var(--muted-foreground)]">
         IO loan assumed constant. Annual deduction = loan × rate × margTax. Based on 2024-25 ATO rates.
       </p>
     </div>

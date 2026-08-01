@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { fadeInUp } from '@/lib/animations';
 import { Tabs } from '../../components/ui/Tabs';
 import { Assumptions } from '../../components/shared/Assumptions';
 import { Disclaimer } from '../../components/shared/Disclaimer';
@@ -64,11 +66,11 @@ export function TaxSavingsGuide() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="border-b border-slate-200 dark:border-slate-700 pb-4">
-        <h1 className="text-xl font-extrabold text-slate-900 dark:text-slate-50 tracking-tight">
+      <div className="border-b border-[var(--border)] pb-4">
+        <h1 className="text-xl font-extrabold text-[var(--foreground)] tracking-tight">
           Tax Savings Guide
         </h1>
-        <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
+        <p className="text-xs text-[var(--muted-foreground)] mt-1">
           Australian tax strategies: super salary sacrifice, debt recycling deductions, negative gearing, and tax bracket visualisation.
           Based on 2024-25 ATO rates.
         </p>
@@ -97,7 +99,14 @@ export function TaxSavingsGuide() {
 
       <Tabs tabs={TABS} activeTab={activeTab} onChange={setActiveTab} />
 
-      <div>
+      <AnimatePresence mode="wait">
+      <motion.div
+        key={activeTab}
+        variants={fadeInUp}
+        initial="hidden"
+        animate="visible"
+        exit="hidden"
+      >
         {activeTab === 'super' && (
           <SuperSalarySacrifice
             grossSalary={grossSalary}
@@ -116,7 +125,8 @@ export function TaxSavingsGuide() {
         )}
         {activeTab === 'negear' && <NegativeGearing />}
         {activeTab === 'brackets' && <TaxBracketVis />}
-      </div>
+      </motion.div>
+      </AnimatePresence>
 
       <Assumptions items={ASSUMPTIONS[activeTab] ?? []} />
       <Disclaimer calculatorName="Tax Savings Guide" />

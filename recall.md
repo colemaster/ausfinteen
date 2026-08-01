@@ -28,6 +28,7 @@
 | v3.0.0  | End-to-End | Complete 10-Module Overhaul: Money Mindset Quiz, Barefoot 3-Buckets, Broke Millennial scripts, Div 6AA minor tax, Super Fee Caps, 4-wk rental bond, 200+ Q&A topics | Pushed |
 | v3.1.0  | Car Module | Replace Module 10 "Wealth & Property" with a thorough "Cars & Driving" module: QLD licence path (costs/tests/timeframes), first-car true costs + PPSR, EV vs petrol calculator, Brisbane fuel & parking data; car content consolidated out of Module 6 | Local (push blocked) |
 | v3.2.0  | ETF Upgrade | Investing & Shares upgrade: "Best 3 starter ETF portfolios" (weighted MER/returns computed live), "Next Big Things in ASX ETFs 2026" trends, $10k growth (total return) chart with annual-returns toggle, refreshed trailing returns to mid-2026 | Local (push blocked) |
+| v3.3.0  | Site Search | Site-wide fuzzy search bar on the Landing hero (Fuse.js v7): searches all 11 modules, 160+ Q&A topics, calculators & 54 official web links with typo-tolerant autocomplete, match highlighting, grouped results, keyboard nav, popular searches, and deep-links straight to the exact topic via ?topic= | Local (push blocked) |
 
 ---
 
@@ -67,6 +68,30 @@ Upgraded Module 7 `/investing-shares`: replaced the noisy annual-returns-only ex
 3. **New `src/calculators/teen-investing/NextBigEtfs.tsx`** — 6 gradient trend cards with example tickers, "why" and amber "caution" callouts.
 4. **`ASXETFExplorer.tsx`** — headline chart now defaults to **Growth of $10,000** (total return, distributions reinvested) with a custom dollar tooltip and domain auto-scaling; added "Growth / Annual Returns" view toggle; trailing returns now show +/− formatting to 1dp.
 5. **New tests** `src/data/asx-etf-data.test.ts` — growth-series compounding, missing-year skipping, weighted MER/1Y/5Y math, all-portfolios-weighting. 8 test files / 81 tests green.
+
+---
+
+## v3.3.0 — SITE-WIDE SEARCH (Fuse.js v7)
+
+### Summary
+Added a search-as-you-type bar to the Landing hero powered by Fuse.js v7 (the 2026-27 standard for lightweight client-side fuzzy search). It indexes every module, topic Q&A, calculator and official web link — with typo tolerance, relevance-weighted ranking, match highlighting, grouped results, keyboard navigation and deep-linking straight to the exact topic.
+
+### Key Changes
+1. **`src/lib/site-search.ts`** — search engine:
+   - Builds a `Fuse` index (weighted keys: title 0.5 / keywords 0.3 / subtitle 0.2; `threshold 0.4`, `ignoreLocation`, `useTokenSearch`, `minMatchCharLength 2`) over `MANDY_MODULES` topics, the 11 modules, 15 calculators (`TEEN_TOOLS`) and all `OFFICIAL_WEB_LINKS`.
+   - `searchSite(query, maxPerGroup)` → grouped hits (`topic` Q&A / `tool` calculators / `module` / `weblink`) with `[start,end]` character indices for `<mark>` highlighting.
+   - `autocomplete()` suggestion titles + `POPULAR_SEARCHES` idle-state starters (HECS, penalty rates, PPSR, BNPL, QLD licence, ETF…).
+2. **`src/components/search/SiteSearchBar.tsx`** — UI:
+   - 120ms debounced search-as-you-type; 160+ guides indexed.
+   - Typo-tolerant (e.g. "frankin credt", "hecs", "payslup" all resolve).
+   - Match highlighting via `Highlighted` helper; grouped dropdown with type icons.
+   - Keyboard: ↑/↓ navigate, Enter open, Esc close; click-outside closes.
+   - Idle state shows popular-search chips; empty state offers retry hints.
+   - Deep-links topics: navigates to `module.route?topic=<id>`.
+3. **`TopicGuideAccordion.tsx`** — now reads `?topic=<id>` query param on mount to auto-open and smooth-scroll to the matching topic (used by search deep links).
+4. **`Landing.tsx`** — hero now renders `SiteSearchBar` with helper caption.
+5. **New dep**: `fuse.js@^7.5.0` (9.6 kB gzip).
+6. **New tests** `src/lib/site-search.test.ts` — 10 tests: typo tolerance, title-vs-keyword ranking, grouping, highlight indices, autocomplete uniqueness, popular searches all return results. Suite now 9 files / 91 tests green.
 
 ---
 

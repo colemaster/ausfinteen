@@ -7,6 +7,7 @@ import { Sparkles, ArrowRight, Zap } from 'lucide-react';
 import { motion } from 'motion/react';
 import { fadeInUp, staggerContainer } from '@/lib/animations';
 import { useTeenProfile } from '@/context/TeenProfileContext';
+import { SiteSearchBar } from '@/components/search/SiteSearchBar';
 
 export function Landing() {
   const { applyAgePreset, profile } = useTeenProfile();
@@ -30,6 +31,14 @@ export function Landing() {
           <p className="text-base sm:text-xl text-muted-foreground leading-relaxed max-w-2xl">
             Everything you need to know about your money before you tackle the real world—from your first job payslip, $18,200 tax-free threshold, 12% super guarantee, and car costs to budgeting your first paycheck and living in Brisbane.
           </p>
+
+          {/* Site-wide search */}
+          <div className="pt-5 flex flex-col items-center sm:items-start gap-2">
+            <SiteSearchBar />
+            <span className="text-[11px] text-muted-foreground/80">
+              🔍 Search every module, Q&A guide, calculator and official resource — fuzzy & typo-tolerant.
+            </span>
+          </div>
 
           <div className="pt-4 flex flex-wrap items-center justify-center sm:justify-start gap-3">
             <Link

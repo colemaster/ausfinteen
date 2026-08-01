@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Card } from '@/components/ui/Card';
 import { TopicGuide } from '@/data/mandy-topics';
 import { WebReferenceLink } from '@/components/shared/WebReferenceLink';
@@ -11,7 +12,23 @@ interface TopicGuideAccordionProps {
 }
 
 export function TopicGuideAccordion({ topics, title = 'Topic Q&A Guide' }: TopicGuideAccordionProps) {
-  const [openTopicId, setOpenTopicId] = useState<string | null>(topics[0]?.id || null);
+  const [searchParams] = useSearchParams();
+  const deepLinkTopic = searchParams.get('topic');
+  const [openTopicId, setOpenTopicId] = useState<string | null>(() => {
+    if (deepLinkTopic && topics.some(t => t.id === deepLinkTopic)) return deepLinkTopic;
+    return topics[0]?.id || null;
+  });
+
+  // When a deep link (?topic=<id>) arrives after mount, open + scroll to it
+  useEffect(() => {
+    if (deepLinkTopic && topics.some(t => t.id === deepLinkTopic)) {
+      setOpenTopicId(deepLinkTopic);
+      const t = setTimeout(() => {
+        document.getElementById(`topic-${deepLinkTopic}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 100);
+      return () => clearTimeout(t);
+    }
+  }, [deepLinkTopic, topics]);
 
   return (
     <Card variant="glass" className="p-6 space-y-5">
@@ -26,6 +43,7 @@ export function TopicGuideAccordion({ topics, title = 'Topic Q&A Guide' }: Topic
           return (
             <div
               key={t.id}
+              id={`topic-${t.id}`}
               className="rounded-2xl border border-border bg-card overflow-hidden transition-all shadow-xs"
             >
               <button

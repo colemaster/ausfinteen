@@ -71,7 +71,9 @@ export function CareersEmployment() {
         {activeTab === 'scripts' && <WorkplaceScriptGenerator />}
         {activeTab === 'resume' && <TeenResumeBuilder />}
         {activeTab === 'topics' && (
-          <TopicGuideAccordion topics={moduleData.topics} title="Complete Careers & Employment Q&A Library" />
+          <div className="calculator-section">
+            <TopicGuideAccordion topics={moduleData.topics} title="Complete Careers & Employment Q&A Library" />
+          </div>
         )}
       </div>
     </div>

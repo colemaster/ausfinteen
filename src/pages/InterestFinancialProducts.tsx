@@ -31,7 +31,7 @@ export function InterestFinancialProducts() {
 
       {/* Highlights Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card variant="glass" className="p-5 space-y-2">
+        <Card variant="glass" className="p-5 space-y-2 hover:border-primary/40 hover:shadow-md">
           <div className="p-2.5 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 w-fit">
             <Zap className="w-5 h-5" />
           </div>
@@ -41,7 +41,7 @@ export function InterestFinancialProducts() {
           </p>
         </Card>
 
-        <Card variant="glass" className="p-5 space-y-2">
+        <Card variant="glass" className="p-5 space-y-2 hover:border-primary/40 hover:shadow-md">
           <div className="p-2.5 rounded-xl bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 w-fit">
             <Landmark className="w-5 h-5" />
           </div>
@@ -51,7 +51,7 @@ export function InterestFinancialProducts() {
           </p>
         </Card>
 
-        <Card variant="glass" className="p-5 space-y-2">
+        <Card variant="glass" className="p-5 space-y-2 hover:border-primary/40 hover:shadow-md">
           <div className="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 w-fit">
             <Dna className="w-5 h-5" />
           </div>
@@ -63,7 +63,9 @@ export function InterestFinancialProducts() {
       </div>
 
       {/* Accordion Topics */}
-      <TopicGuideAccordion topics={moduleData.topics} title="What Will I Learn in Interest & Financial Products?" />
+      <div className="calculator-section">
+        <TopicGuideAccordion topics={moduleData.topics} title="What Will I Learn in Interest & Financial Products?" />
+      </div>
     </div>
   );
 }

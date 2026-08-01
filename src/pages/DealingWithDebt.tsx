@@ -31,7 +31,7 @@ export function DealingWithDebt() {
 
       {/* Highlights Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card variant="glass" className="p-5 space-y-2">
+        <Card variant="glass" className="p-5 space-y-2 hover:border-primary/40 hover:shadow-md">
           <div className="p-2.5 rounded-xl bg-rose-500/10 text-rose-600 dark:text-rose-400 w-fit">
             <Flame className="w-5 h-5" />
           </div>
@@ -41,7 +41,7 @@ export function DealingWithDebt() {
           </p>
         </Card>
 
-        <Card variant="glass" className="p-5 space-y-2">
+        <Card variant="glass" className="p-5 space-y-2 hover:border-primary/40 hover:shadow-md">
           <div className="p-2.5 rounded-xl bg-red-500/10 text-red-600 dark:text-red-400 w-fit">
             <ShieldAlert className="w-5 h-5" />
           </div>
@@ -51,7 +51,7 @@ export function DealingWithDebt() {
           </p>
         </Card>
 
-        <Card variant="glass" className="p-5 space-y-2">
+        <Card variant="glass" className="p-5 space-y-2 hover:border-primary/40 hover:shadow-md">
           <div className="p-2.5 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 w-fit">
             <AlertOctagon className="w-5 h-5" />
           </div>
@@ -63,7 +63,9 @@ export function DealingWithDebt() {
       </div>
 
       {/* Accordion Topics */}
-      <TopicGuideAccordion topics={moduleData.topics} title="What Will I Learn in Dealing with Debt?" />
+      <div className="calculator-section">
+        <TopicGuideAccordion topics={moduleData.topics} title="What Will I Learn in Dealing with Debt?" />
+      </div>
     </div>
   );
 }

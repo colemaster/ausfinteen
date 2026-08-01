@@ -3,15 +3,55 @@
 
 @layer base {
   html {
-    font-family: system-ui, -apple-system, sans-serif;
+    font-family: 'Inter Variable', system-ui, -apple-system, sans-serif;
+    font-feature-settings: "cv11", "ss01";
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Monospace numbers everywhere numeric */
+  .font-mono,
+  code,
+  kbd,
+  samp {
+    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
   }
 
   html.dark {
     color-scheme: dark;
   }
+
+  /* 2027: accessible focus ring */
+  :where(a, button, input, select, textarea, [tabindex]):focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+    border-radius: 0.5rem;
+  }
+
+  /* 2027: subtle custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: color-mix(in oklab, var(--foreground) 20%, transparent);
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in oklab, var(--foreground) 35%, transparent);
+    background-clip: content-box;
+  }
 }
 
 @theme inline {
+  --font-sans: 'Inter Variable', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -50,7 +90,7 @@
     --warning: oklch(0.7 0.15 70);
     --danger: oklch(0.6 0.15 20);
     --info: oklch(0.6 0.1 250);
-    
+
     --chart-1: oklch(0.6 0.1 250);
     --chart-2: oklch(0.65 0.15 150);
     --chart-3: oklch(0.7 0.15 70);
@@ -74,7 +114,7 @@
     --warning: oklch(0.7 0.15 70);
     --danger: oklch(0.6 0.15 20);
     --info: oklch(0.6 0.1 250);
-    
+
     --chart-1: oklch(0.6 0.1 250);
     --chart-2: oklch(0.65 0.15 150);
     --chart-3: oklch(0.7 0.15 70);
@@ -85,7 +125,86 @@
   }
 }
 
+/* 2027: page-enter animation using View Transitions API (progressive enhancement) */
+::view-transition-old(root) {
+  animation: none;
+}
+::view-transition-new(root) {
+  animation: fade-rise 0.35s ease both;
+}
+@keyframes fade-rise {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 2027: entry animation for first mount via @starting-style */
+@starting-style {
+  .calc-stagger > * {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+/* Scroll-driven reveal (progressive enhancement — inert where unsupported) */
+.calc-section-reveal {
+  animation: reveal-up linear both;
+  animation-timeline: view();
+  animation-range: entry 0% entry 60%;
+}
+@keyframes reveal-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* content-visibility for below-fold sections = huge render cost savings */
 .calculator-section {
   content-visibility: auto;
   contain-intrinsic-size: auto 500px;
+}
+.calculator-section-contained {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 700px;
+  contain: layout style paint;
+}
+
+/* Respect reduced-motion preferences (2027 accessibility standard) */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .calc-section-reveal {
+    animation: none;
+  }
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+}
+
+/* Skeleton shimmer */
+@keyframes shimmer {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+.skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--muted) 25%,
+    color-mix(in oklab, var(--muted) 40%, var(--card)) 50%,
+    var(--muted) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.6s linear infinite;
+}
+
+/* Glassmorphism for navbar + command palette */
+.glass-nav {
+  background: color-mix(in oklab, var(--background) 72%, transparent);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
 }

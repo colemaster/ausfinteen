@@ -299,7 +299,7 @@ export function CarDriving() {
 
       {/* Highlights Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card variant="glass" className="p-5 space-y-2">
+        <Card variant="glass" className="p-5 space-y-2 hover:border-primary/40 hover:shadow-md">
           <div className="p-2.5 rounded-xl bg-sky-500/10 text-sky-600 dark:text-sky-400 w-fit">
             <CarFront className="w-5 h-5" />
           </div>
@@ -309,7 +309,7 @@ export function CarDriving() {
           </p>
         </Card>
 
-        <Card variant="glass" className="p-5 space-y-2">
+        <Card variant="glass" className="p-5 space-y-2 hover:border-primary/40 hover:shadow-md">
           <div className="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 w-fit">
             <Car className="w-5 h-5" />
           </div>
@@ -319,7 +319,7 @@ export function CarDriving() {
           </p>
         </Card>
 
-        <Card variant="glass" className="p-5 space-y-2">
+        <Card variant="glass" className="p-5 space-y-2 hover:border-primary/40 hover:shadow-md">
           <div className="p-2.5 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 w-fit">
             <PiggyBank className="w-5 h-5" />
           </div>
@@ -331,27 +331,31 @@ export function CarDriving() {
       </div>
 
       {/* Accordion Topics */}
-      <TopicGuideAccordion topics={moduleData.topics} title="What Will I Learn in Cars & Driving?" />
+      <div className="calculator-section">
+        <TopicGuideAccordion topics={moduleData.topics} title="What Will I Learn in Cars & Driving?" />
+      </div>
 
       {/* Web Sources */}
-      <Card variant="glass" className="p-6 space-y-4">
-        <div className="flex items-center gap-2 border-b border-border pb-3">
-          <ExternalLink className="w-5 h-5 text-emerald-500" />
-          <h2 className="text-lg font-bold text-foreground">Official QLD & Car Sources</h2>
-        </div>
-        <p className="text-xs text-muted-foreground">
-          Curated government and research resources for QLD licensing, car costs, fuel and Brisbane parking.
-        </p>
-        <div className="flex flex-wrap gap-2.5">
-          {CAR_WEB_SOURCES.map((link, i) => (
-            <WebReferenceLink key={i} link={link} />
-          ))}
-        </div>
-        <p className="text-[11px] text-muted-foreground leading-relaxed">
-          Based on 2026 data. For education only — not financial advice. Verify licence fees, test requirements, fuel
-          prices and parking rates against official QLD Government and Brisbane City Council sources.
-        </p>
-      </Card>
+      <div className="calculator-section">
+        <Card variant="glass" className="p-6 space-y-4">
+          <div className="flex items-center gap-2 border-b border-border pb-3">
+            <ExternalLink className="w-5 h-5 text-emerald-500" />
+            <h2 className="text-lg font-bold text-foreground">Official QLD & Car Sources</h2>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Curated government and research resources for QLD licensing, car costs, fuel and Brisbane parking.
+          </p>
+          <div className="flex flex-wrap gap-2.5">
+            {CAR_WEB_SOURCES.map((link, i) => (
+              <WebReferenceLink key={i} link={link} />
+            ))}
+          </div>
+          <p className="text-[11px] text-muted-foreground leading-relaxed">
+            Based on 2026 data. For education only — not financial advice. Verify licence fees, test requirements, fuel
+            prices and parking rates against official QLD Government and Brisbane City Council sources.
+          </p>
+        </Card>
+      </div>
     </div>
   );
 }

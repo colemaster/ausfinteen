@@ -1,10 +1,10 @@
-import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider, Navigate, type To, type RouterNavigateOptions } from 'react-router-dom';
 import { Layout } from './components/layout/Layout';
 import { TeenProfileProvider } from './context/TeenProfileContext';
 import { ErrorBoundary } from './components/ErrorBoundary';
 
 // Lazy-loaded Teen Modules & Pages
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, type ReactNode } from 'react';
 
 const Landing                   = lazy(() => import('./pages/Landing').then(m => ({ default: m.Landing })));
 const TeenProfile               = lazy(() => import('./pages/TeenProfile').then(m => ({ default: m.TeenProfile })));
@@ -31,7 +31,7 @@ function PageLoader() {
   );
 }
 
-function Wrap({ children }: { children: React.ReactNode }) {
+function Wrap({ children }: { children: ReactNode }) {
   return (
     <ErrorBoundary>
       <Suspense fallback={<PageLoader />}>{children}</Suspense>
@@ -76,21 +76,46 @@ const router = createBrowserRouter([
   },
 ]);
 
-// Patch router.navigate for View Transitions
+// Patch router.navigate for View Transitions.
+// Runs once at module scope (outside render), so it is React Compiler safe.
+// Falls back to plain navigation when the View Transitions API is unavailable
+// or fails, so navigation never hangs or throws.
 const originalNavigate = router.navigate;
-router.navigate = async (...args: any[]) => {
+const viewTransitionNavigate = async (
+  to: To | number | null,
+  opts?: RouterNavigateOptions,
+): Promise<void> => {
+  const navigate = () => {
+    if (typeof to === 'number') return originalNavigate(to);
+    return originalNavigate(to, opts);
+  };
+
+  let transition: ViewTransition | undefined;
   if (document.startViewTransition) {
-    let result;
-    const transition = document.startViewTransition(() => {
-      // @ts-ignore
-      result = originalNavigate.apply(router, args);
-    });
-    await transition.finished;
-    return result;
+    try {
+      transition = document.startViewTransition(navigate);
+    } catch {
+      transition = undefined;
+    }
   }
-  // @ts-ignore
-  return originalNavigate.apply(router, args);
+
+  if (transition) {
+    try {
+      await transition.finished;
+    } catch {
+      // The transition callback rejected (navigation already ran or was
+      // interrupted). Swallow so callers never hang on an unhandled rejection.
+    }
+  } else {
+    navigate();
+  }
 };
+
+try {
+  router.navigate = viewTransitionNavigate;
+} catch {
+  // Leave router.navigate untouched if the patch fails.
+}
 
 export default function App() {
   return (

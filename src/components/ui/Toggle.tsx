@@ -1,3 +1,5 @@
+import { cn } from '@/lib/utils';
+
 interface ToggleProps {
   label: string;
   checked: boolean;
@@ -9,19 +11,31 @@ export function Toggle({ label, checked, onChange, description }: ToggleProps) {
   return (
     <div className="flex items-start gap-3">
       <button
+        type="button"
         role="switch"
         aria-checked={checked}
+        aria-label={label}
         onClick={() => onChange(!checked)}
-        className={`relative inline-flex h-5 w-9 flex-shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--ring)] focus:ring-offset-1 mt-0.5 ${checked ? 'bg-[var(--primary)]' : 'bg-slate-300 '}`}
+        className={cn(
+          'relative mt-0.5 inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border border-transparent p-0.5 outline-none transition-all duration-300 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-95',
+          checked
+            ? 'bg-primary shadow-[inset_0_1px_2px_rgba(0,0,0,0.2)]'
+            : 'bg-muted ring-1 ring-inset ring-border/50'
+        )}
       >
         <span
-          className={`pointer-events-none inline-block h-4 w-4 rounded-full bg-[var(--background)] shadow transition-transform duration-200 ${checked ? 'translate-x-4' : 'translate-x-0'}`}
+          className={cn(
+            'pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow-md ring-1 ring-black/10 transition-transform duration-300 ease-out',
+            checked ? 'translate-x-5' : 'translate-x-0'
+          )}
         />
       </button>
       <div>
-        <div className="text-sm font-medium text-[var(--foreground)]">{label}</div>
+        <div className="text-sm font-medium text-foreground">{label}</div>
         {description && (
-          <div className="text-xs text-[var(--muted-foreground)] mt-0.5">{description}</div>
+          <div className="mt-0.5 text-xs text-muted-foreground">
+            {description}
+          </div>
         )}
       </div>
     </div>

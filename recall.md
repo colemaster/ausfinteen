@@ -27,6 +27,7 @@
 | v2.2.0  | Careers Module| Ultimate Careers & Employment Super-Module: ATO Forms NAT 3092/13080, FWIS/CEIS, 8 Junior Awards, Penalty Rates, Barefoot & Broke Millennial Scripts, Teen Resume Builder | Pushed |
 | v3.0.0  | End-to-End | Complete 10-Module Overhaul: Money Mindset Quiz, Barefoot 3-Buckets, Broke Millennial scripts, Div 6AA minor tax, Super Fee Caps, 4-wk rental bond, 200+ Q&A topics | Pushed |
 | v3.1.0  | Car Module | Replace Module 10 "Wealth & Property" with a thorough "Cars & Driving" module: QLD licence path (costs/tests/timeframes), first-car true costs + PPSR, EV vs petrol calculator, Brisbane fuel & parking data; car content consolidated out of Module 6 | Pushed |
+| v3.2.0  | ETF Upgrade | Investing & Shares upgrade: "Best 3 starter ETF portfolios" (weighted MER/returns computed live), "Next Big Things in ASX ETFs 2026" trends, $10k growth (total return) chart with annual-returns toggle, refreshed trailing returns to mid-2026 | Pushed |
 
 ---
 
@@ -47,6 +48,25 @@ Module 10 "Wealth & Property 🌱" was replaced with a thorough "Cars & Driving 
 4. **`mandy-topics.ts`**: `wealth-property` module replaced with `car-driving` (9 topics). Car Q&A (true cost of first car, PPSR) moved into car module; Module 6 `spending-saving` now covers phone contract trap + Medicare.
 5. **New web links**: QLD licence fees/getting licence/PrepL/HPT/practical test/steps, BCC parking + council car parks, Green Vehicle Guide, EV Council, RACQ fuel, AIP fuel tables. `WebLink.source` union extended with `'Brisbane City Council' | 'Federal Government'`.
 6. **Routes**: `/wealth-property` → `/car-driving`; legacy `house-affordability`, `property-research`, `wealth-property` redirect to `/car-driving`.
+
+---
+
+## v3.2.0 — INVESTING & SHARES ETF UPGRADE
+
+### Summary
+Upgraded Module 7 `/investing-shares`: replaced the noisy annual-returns-only explorer with a clearer "Growth of $10,000" total-return chart (view toggle vs annual returns), added a "Best 3 Starter ETF Portfolios" section with live-weighted MER/returns, and a "Next Big Things in ASX ETFs (2026)" trends section. Refreshed trailing returns to mid-2026 figures.
+
+### Key Changes
+1. **`src/data/asx-etf-data.ts`**:
+   - New `buildGrowthSeries()` — compounds $10k through calendar-year total returns into a growth-of-$10k chart series.
+   - New `computePortfolioStats()` — weighted-average MER, 1Y/3Y/5Y trailing, yield, FUM for any allocation set.
+   - New `BEST_3_ETF_PORTFOLIOS` — Balanced Starter (VAS 40/VGS 30/A200 30), Global Growth (VAS 30/VGS 40/IVV 30), Yield + Quality (A200 40/DACE 25/QUAL 20/MGOC 15).
+   - New `NEXT_BIG_ASX_ETF_TRENDS` — 6 forward-looking 2026 themes: global/offshore, AI & robotics (RBTZ/HMND/VTEK), commodities & energy transition (CPPR/VOLT/URNM/ACDC), bitcoin (IBTC), private equity (PEET), cheaper S&P 500 (V500).
+   - Trailing returns refreshed to mid-2026 (e.g. IVV 1Y 8.57%, NDQ 1Y 9.91%, VGS 1Y 15.31%) per ReviewETF/PortfoliosLab/issuer data.
+2. **New `src/calculators/teen-investing/ETFPortfolioPicker.tsx`** — 3 model portfolio cards with risk badges, allocation chips, weighted 1Y/3Y/5Y/MER/yield stats computed live from the data, education-only footer.
+3. **New `src/calculators/teen-investing/NextBigEtfs.tsx`** — 6 gradient trend cards with example tickers, "why" and amber "caution" callouts.
+4. **`ASXETFExplorer.tsx`** — headline chart now defaults to **Growth of $10,000** (total return, distributions reinvested) with a custom dollar tooltip and domain auto-scaling; added "Growth / Annual Returns" view toggle; trailing returns now show +/− formatting to 1dp.
+5. **New tests** `src/data/asx-etf-data.test.ts` — growth-series compounding, missing-year skipping, weighted MER/1Y/5Y math, all-portfolios-weighting. 8 test files / 81 tests green.
 
 ---
 

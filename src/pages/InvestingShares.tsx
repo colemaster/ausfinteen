@@ -2,6 +2,8 @@ import { MANDY_MODULES } from '@/data/mandy-topics';
 import { TopicGuideAccordion } from '@/components/shared/TopicGuideAccordion';
 import { TeenCompoundGrowthCalc } from '@/calculators/teen-investing/TeenCompoundGrowthCalc';
 import { ASXETFExplorer } from '@/calculators/teen-investing/ASXETFExplorer';
+import { ETFPortfolioPicker } from '@/calculators/teen-investing/ETFPortfolioPicker';
+import { NextBigEtfs } from '@/calculators/teen-investing/NextBigEtfs';
 import { WebReferenceLink } from '@/components/shared/WebReferenceLink';
 import { TrendingUp, Layers, AlertTriangle, ExternalLink, GraduationCap } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
@@ -50,6 +52,12 @@ export function InvestingShares() {
 
       {/* Top 10 ASX ETF Historical Performance */}
       <ASXETFExplorer />
+
+      {/* Best 3 starter ETF portfolios */}
+      <ETFPortfolioPicker />
+
+      {/* Next big things in ASX ETFs */}
+      <NextBigEtfs />
 
       {/* Highlights Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

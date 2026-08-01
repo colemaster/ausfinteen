@@ -1,9 +1,14 @@
 import { useMemo, useState } from 'react';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
-import { TOP_10_ASX_ETFS, ASX_ETF_DATA_AS_AT, type ASXETF } from '@/data/asx-etf-data';
+import {
+  TOP_10_ASX_ETFS,
+  ASX_ETF_DATA_AS_AT,
+  buildGrowthSeries,
+  type ASXETF,
+} from '@/data/asx-etf-data';
 import { asxEtfYieldConfig } from '@/lib/chart-configs';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, BarChart, Bar } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, BarChart, Bar, Tooltip } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { TrendingUp, ExternalLink, CalendarDays, PiggyBank } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -11,9 +16,26 @@ import { cn } from '@/lib/utils';
 const YEAR_START = 2016;
 const YEAR_END = 2025;
 
+const PERIODS: { key: '1Y' | '3Y' | '5Y'; label: string }[] = [
+  { key: '1Y', label: '1Y' },
+  { key: '3Y', label: '3Y' },
+  { key: '5Y', label: '5Y' },
+];
+
+function formatDollar(v: number): string {
+  if (v >= 1000) return `$${(v / 1000).toFixed(1)}k`;
+  return `$${Math.round(v)}`;
+}
+
 export function ASXETFExplorer() {
   const [selectedCodes, setSelectedCodes] = useState<string[]>(['VAS', 'NDQ', 'IVV']);
   const [selectedEtf, setSelectedEtf] = useState<ASXETF>(TOP_10_ASX_ETFS[0]);
+  const [view, setView] = useState<'growth' | 'annual'>('growth');
+
+  const selected = useMemo(
+    () => TOP_10_ASX_ETFS.filter(etf => selectedCodes.includes(etf.code)),
+    [selectedCodes]
+  );
 
   const toggleCode = (code: string) => {
     setSelectedCodes(prev =>
@@ -21,19 +43,24 @@ export function ASXETFExplorer() {
     );
   };
 
+  const growthData = useMemo(
+    () => buildGrowthSeries(selected, YEAR_START, YEAR_END),
+    [selected]
+  );
+
   const historyData = useMemo(() => {
     const rows: Record<string, number | string>[] = [];
     for (let year = YEAR_START; year <= YEAR_END; year++) {
       const row: Record<string, number | string> = { year: String(year) };
-      TOP_10_ASX_ETFS.forEach(etf => {
-        if (selectedCodes.includes(etf.code) && etf.annualReturns[String(year)] !== undefined) {
+      selected.forEach(etf => {
+        if (etf.annualReturns[String(year)] !== undefined) {
           row[etf.code] = etf.annualReturns[String(year)];
         }
       });
       rows.push(row);
     }
     return rows;
-  }, [selectedCodes]);
+  }, [selected]);
 
   const yieldData = useMemo(
     () =>
@@ -58,10 +85,10 @@ export function ASXETFExplorer() {
         <div>
           <div className="flex items-center gap-2 mb-1">
             <TrendingUp className="w-5 h-5 text-emerald-500" />
-            <h2 className="text-xl font-bold text-foreground">Top 10 Most Popular ASX ETFs — Historical Performance</h2>
+            <h2 className="text-xl font-bold text-foreground">Top 10 ASX ETFs — Performance Explorer</h2>
           </div>
           <p className="text-xs text-muted-foreground">
-            Ranked by funds under management (ASX data). Tap the ticker chips to compare calendar-year total returns.
+            Tap ticker chips to compare. See how $10,000 grows (total return, distributions reinvested) or compare annual returns.
           </p>
         </div>
         <Badge variant="outline" className="shrink-0">As at {ASX_ETF_DATA_AS_AT}</Badge>
@@ -86,28 +113,93 @@ export function ASXETFExplorer() {
         ))}
       </div>
 
-      {/* Annual returns chart */}
+      {/* View toggle */}
+      <div className="flex items-center gap-1 p-1 bg-muted/60 border border-border rounded-xl w-fit">
+        <button
+          type="button"
+          onClick={() => setView('growth')}
+          className={cn(
+            'px-3 py-1.5 rounded-lg text-xs font-bold transition-all',
+            view === 'growth' ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground'
+          )}
+        >
+          $10k Growth
+        </button>
+        <button
+          type="button"
+          onClick={() => setView('annual')}
+          className={cn(
+            'px-3 py-1.5 rounded-lg text-xs font-bold transition-all',
+            view === 'annual' ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground'
+          )}
+        >
+          Annual Returns
+        </button>
+      </div>
+
+      {/* Main chart */}
       <div className="bg-background/60 border border-border rounded-xl p-4 sm:p-5">
-        <h3 className="text-sm font-bold text-foreground mb-1">Calendar-Year Total Return (%)</h3>
-        <p className="text-[11px] text-muted-foreground mb-3">With distributions reinvested. IVV & VTS shown in USD (fund native currency).</p>
+        <h3 className="text-sm font-bold text-foreground mb-1">
+          {view === 'growth' ? 'Growth of $10,000 Invested' : 'Calendar-Year Total Return (%)'}
+        </h3>
+        <p className="text-[11px] text-muted-foreground mb-3">
+          {view === 'growth'
+            ? 'Compounded from calendar-year total returns with distributions reinvested. IVV & VTS shown in USD (fund native currency).'
+            : 'With distributions reinvested. IVV & VTS shown in USD (fund native currency).'}
+        </p>
         <ChartContainer config={config} className="h-[300px] w-full">
-          <LineChart data={historyData} margin={{ top: 4, right: 8, left: 8, bottom: 4 }}>
-            <CartesianGrid vertical={false} strokeDasharray="3 3" />
-            <XAxis dataKey="year" tickLine={false} axisLine={false} tick={{ fontSize: 10 }} />
-            <YAxis tickLine={false} axisLine={false} tickFormatter={v => `${v}%`} tick={{ fontSize: 10 }} />
-            <ChartTooltip content={<ChartTooltipContent />} />
-            {selectedCodes.map(code => (
-              <Line
-                key={code}
-                type="monotone"
-                dataKey={code}
-                stroke={`var(--color-${code})`}
-                strokeWidth={2.5}
-                dot={false}
-                animationDuration={800}
-              />
-            ))}
-          </LineChart>
+          {view === 'growth' ? (
+            <LineChart data={growthData} margin={{ top: 4, right: 8, left: 8, bottom: 4 }}>
+              <CartesianGrid vertical={false} strokeDasharray="3 3" />
+              <XAxis dataKey="year" tickLine={false} axisLine={false} tick={{ fontSize: 10 }} />
+              <YAxis tickLine={false} axisLine={false} tickFormatter={formatDollar} tick={{ fontSize: 10 }} domain={['auto', 'auto']} />
+              <Tooltip content={({ active, payload, label }) => {
+                if (!active || !payload || payload.length === 0) return null;
+                return (
+                  <div className="rounded-lg border bg-background p-3 text-xs shadow-lg space-y-1">
+                    <div className="font-bold text-foreground">End of {label}</div>
+                    {payload.map((p) => (
+                      <div key={String(p.dataKey)} className="flex items-center gap-2">
+                        <span className="w-2.5 h-2.5 rounded-full" style={{ background: p.color }} />
+                        <span className="font-semibold text-foreground">{p.name}:</span>
+                        <span className="font-mono">{formatDollar(Number(p.value))}</span>
+                      </div>
+                    ))}
+                    <div className="text-[10px] text-muted-foreground pt-1 border-t mt-1">Growth of $10,000 invested at start of 2016</div>
+                  </div>
+                );
+              }} />
+              {selectedCodes.map(code => (
+                <Line
+                  key={code}
+                  type="monotone"
+                  dataKey={code}
+                  stroke={`var(--color-${code})`}
+                  strokeWidth={2.5}
+                  dot={false}
+                  animationDuration={800}
+                />
+              ))}
+            </LineChart>
+          ) : (
+            <LineChart data={historyData} margin={{ top: 4, right: 8, left: 8, bottom: 4 }}>
+              <CartesianGrid vertical={false} strokeDasharray="3 3" />
+              <XAxis dataKey="year" tickLine={false} axisLine={false} tick={{ fontSize: 10 }} />
+              <YAxis tickLine={false} axisLine={false} tickFormatter={v => `${v}%`} tick={{ fontSize: 10 }} />
+              <ChartTooltip content={<ChartTooltipContent />} />
+              {selectedCodes.map(code => (
+                <Line
+                  key={code}
+                  type="monotone"
+                  dataKey={code}
+                  stroke={`var(--color-${code})`}
+                  strokeWidth={2.5}
+                  dot={false}
+                  animationDuration={800}
+                />
+              ))}
+            </LineChart>
+          )}
         </ChartContainer>
       </div>
 
@@ -178,14 +270,23 @@ export function ASXETFExplorer() {
                 <span className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">Trailing Returns</span>
               </div>
               <div className="grid grid-cols-4 gap-2">
-                {(Object.entries(selectedEtf.trailing) as [string, number | null][]).map(([period, value]) => (
-                  <div key={period} className="text-center">
-                    <div className="text-[10px] text-muted-foreground font-semibold">{period}</div>
-                    <div className={cn('text-sm font-bold font-mono', (value ?? 0) >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500')}>
-                      {value === null ? '—' : `${value > 0 ? '+' : ''}${value}%`}
+                {PERIODS.map(({ key, label }) => {
+                  const value = selectedEtf.trailing[key];
+                  return (
+                    <div key={key} className="text-center">
+                      <div className="text-[10px] text-muted-foreground font-semibold">{label}</div>
+                      <div className={cn('text-sm font-bold font-mono', (value ?? 0) >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500')}>
+                        {value === null ? '—' : `${value > 0 ? '+' : ''}${value.toFixed(1)}%`}
+                      </div>
                     </div>
+                  );
+                })}
+                <div className="text-center">
+                  <div className="text-[10px] text-muted-foreground font-semibold">10Y</div>
+                  <div className={cn('text-sm font-bold font-mono', (selectedEtf.trailing['10Y'] ?? 0) >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500')}>
+                    {selectedEtf.trailing['10Y'] === null ? '—' : `+${selectedEtf.trailing['10Y'].toFixed(1)}%`}
                   </div>
-                ))}
+                </div>
               </div>
             </div>
           </div>

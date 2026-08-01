@@ -1,8 +1,8 @@
-import { memo } from 'react';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
 } from 'recharts';
 import { formatCompact } from '../../utils/formatters';
+import { useReducedMotion } from './chart';
 
 interface BarCompareProps {
   data: Record<string, string | number>[];
@@ -13,7 +13,8 @@ interface BarCompareProps {
   height?: number;
 }
 
-export const BarCompare = memo(function BarCompare({ data, keys, xKey, height = 280 }: BarCompareProps) {
+export function BarCompare({ data, keys, xKey, height = 280 }: BarCompareProps) {
+  const reduced = useReducedMotion();
   return (
     <ResponsiveContainer width="100%" height={height}>
       <BarChart data={data} margin={{ top: 4, right: 16, left: 8, bottom: 4 }}>
@@ -34,9 +35,9 @@ export const BarCompare = memo(function BarCompare({ data, keys, xKey, height = 
         />
         <Legend wrapperStyle={{ fontSize: 12 }} />
         {keys.map(k => (
-          <Bar key={k.key} dataKey={k.key} name={k.label} fill={k.color} radius={[2, 2, 0, 0]} />
+          <Bar key={k.key} dataKey={k.key} name={k.label} fill={k.color} radius={[2, 2, 0, 0]} isAnimationActive={!reduced} />
         ))}
       </BarChart>
     </ResponsiveContainer>
   );
-});
+}

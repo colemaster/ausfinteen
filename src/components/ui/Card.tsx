@@ -3,13 +3,15 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
 const cardVariants = cva(
-  'rounded-xl border bg-card text-card-foreground shadow-sm transition-all duration-200',
+  'relative rounded-2xl border border-border/60 bg-card text-card-foreground shadow-sm transition-all duration-300',
   {
     variants: {
       variant: {
         default: 'bg-card',
-        glass: 'bg-background/60 backdrop-blur-md border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.1)]',
-        elevated: 'hover:shadow-md hover:-translate-y-1 hover:glow-sm',
+        glass:
+          'border-white/10 bg-card/70 backdrop-blur-xl shadow-[0_8px_32px_-12px_rgba(0,0,0,0.18)]',
+        elevated:
+          'border-border/80 bg-card shadow-[0_10px_30px_-12px_rgba(0,0,0,0.15)] hover:shadow-[0_16px_40px_-12px_rgba(0,0,0,0.2)]',
       },
     },
     defaultVariants: {
@@ -20,11 +22,33 @@ const cardVariants = cva(
 
 export interface CardProps
   extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof cardVariants> {}
+    VariantProps<typeof cardVariants> {
+  /** Add hover lift + shadow micro-interaction (no cursor change). */
+  hover?: boolean;
+  /** Add clickable micro-interactions: lift, shadow, active scale. */
+  interactive?: boolean;
+}
 
-export function Card({ className, variant, ...props }: CardProps) {
+export function Card({
+  className,
+  variant,
+  hover,
+  interactive,
+  ...props
+}: CardProps) {
   return (
-    <div className={cn(cardVariants({ variant, className }))} {...props} />
+    <div
+      className={cn(
+        cardVariants({ variant }),
+        'before:pointer-events-none before:absolute before:inset-x-8 before:top-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-border before:to-transparent',
+        hover &&
+          'hover:-translate-y-0.5 hover:border-primary/25 hover:shadow-lg',
+        interactive &&
+          'cursor-pointer hover:-translate-y-0.5 hover:border-primary/25 hover:shadow-lg active:scale-[0.98] active:shadow-md',
+        className
+      )}
+      {...props}
+    />
   );
 }
 

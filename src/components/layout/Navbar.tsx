@@ -17,6 +17,25 @@ import { useTheme } from '@/hooks/useTheme';
 import { AnimatePresence, motion } from 'motion/react';
 import { slideInLeft } from '@/lib/animations';
 
+const ACTIVE_INDICATOR =
+  'text-primary font-bold bg-primary/10 after:absolute after:inset-x-3 after:bottom-1 after:h-[2px] after:rounded-full after:bg-gradient-to-r after:from-primary after:to-success after:content-[""]';
+
+function navLinkClasses(active: boolean): string {
+  return `relative flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold transition-all duration-200 ${
+    active
+      ? ACTIVE_INDICATOR
+      : 'text-muted-foreground hover:text-foreground hover:bg-muted/60'
+  }`;
+}
+
+function dropdownItemClasses(active: boolean): string {
+  return `relative flex items-center gap-2 px-3 py-2 rounded-xl text-xs transition-all ${
+    active
+      ? ACTIVE_INDICATOR
+      : 'text-foreground hover:bg-muted'
+  }`;
+}
+
 export function Navbar() {
   const location = useLocation();
   const [theme, toggleTheme] = useTheme();
@@ -24,8 +43,14 @@ export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [modulesDropdownOpen, setModulesDropdownOpen] = useState(false);
 
+  const modulesActive = location.pathname !== '/' && location.pathname !== '/profile';
+  const themeLabel = `Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`;
+
   return (
     <header className="sticky top-0 z-40 w-full glass-nav">
+      {/* Top gradient accent bar */}
+      <div className="h-[3px] w-full bg-gradient-to-r from-primary via-violet-500 to-warning" aria-hidden="true" />
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo & Teen Branding */}
@@ -39,18 +64,15 @@ export function Navbar() {
               </span>
               <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider block">
                 Cole Family Edition 🤠
-              </span>            </div>
+              </span>
+            </div>
           </Link>
 
           {/* Desktop Nav Links */}
-          <nav className="hidden md:flex items-center gap-1.5 text-xs font-semibold">
+          <nav className="hidden md:flex items-center gap-1.5 text-xs font-semibold" aria-label="Primary">
             <Link
               to="/profile"
-              className={`px-3 py-2 rounded-lg transition-all flex items-center gap-1.5 ${
-                location.pathname === '/profile'
-                  ? 'bg-primary/10 text-primary font-bold'
-                  : 'text-muted-foreground hover:text-foreground hover:bg-muted/60'
-              }`}
+              className={navLinkClasses(location.pathname === '/profile')}
             >
               <User className="w-3.5 h-3.5" />
               <span>My Profile ({profile.age}yo)</span>
@@ -58,11 +80,7 @@ export function Navbar() {
 
             <Link
               to="/brisbane-qld"
-              className={`px-3 py-2 rounded-lg transition-all flex items-center gap-1.5 ${
-                location.pathname === '/brisbane-qld'
-                  ? 'bg-primary/10 text-primary font-bold'
-                  : 'text-muted-foreground hover:text-foreground hover:bg-muted/60'
-              }`}
+              className={navLinkClasses(location.pathname === '/brisbane-qld')}
               title="Change your location in My Profile"
             >
               <MapPin className="w-3.5 h-3.5" />
@@ -73,13 +91,15 @@ export function Navbar() {
             <div className="relative">
               <button
                 type="button"
-                onClick={() => setModulesDropdownOpen(!modulesDropdownOpen)}
+                onClick={() => setModulesDropdownOpen(o => !o)}
                 onBlur={() => setTimeout(() => setModulesDropdownOpen(false), 200)}
-                className={`px-3 py-2 rounded-lg transition-all flex items-center gap-1.5 ${
-                  location.pathname !== '/' && location.pathname !== '/profile'
-                    ? 'bg-primary/10 text-primary font-bold'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/60'
-                }`}
+                onKeyDown={e => {
+                  if (e.key === 'Escape') setModulesDropdownOpen(false);
+                }}
+                aria-haspopup="menu"
+                aria-expanded={modulesDropdownOpen}
+                aria-label="11 Real-World Modules"
+                className={navLinkClasses(modulesActive)}
               >
                 <BookOpen className="w-3.5 h-3.5" />
                 <span>11 Real-World Modules</span>
@@ -87,17 +107,18 @@ export function Navbar() {
               </button>
 
               {modulesDropdownOpen && (
-                <div className="absolute top-full left-0 mt-2 w-72 p-2 rounded-2xl bg-card border border-border shadow-xl grid grid-cols-1 gap-1 z-50 animate-scale-in">
+                <div
+                  role="menu"
+                  aria-label="11 Real-World Modules"
+                  className="absolute top-full left-0 mt-2 w-72 max-h-[70vh] overflow-y-auto p-2 rounded-2xl bg-card border border-border shadow-xl grid grid-cols-1 gap-1 z-50 animate-scale-in"
+                >
                   {MANDY_MODULES.map(m => (
                     <Link
                       key={m.id}
+                      role="menuitem"
                       to={m.route}
                       onClick={() => setModulesDropdownOpen(false)}
-                      className={`px-3 py-2 rounded-xl flex items-center gap-2 text-xs transition-all ${
-                        location.pathname === m.route
-                          ? 'bg-primary/10 text-primary font-bold'
-                          : 'text-foreground hover:bg-muted'
-                      }`}
+                      className={dropdownItemClasses(location.pathname === m.route)}
                     >
                       <span className="text-base">{m.emoji}</span>
                       <span className="truncate">{m.title}</span>
@@ -110,33 +131,21 @@ export function Navbar() {
             {/* Direct Links to top modules */}
             <Link
               to="/careers-employment"
-              className={`px-3 py-2 rounded-lg transition-all ${
-                location.pathname === '/careers-employment'
-                  ? 'bg-primary/10 text-primary font-bold'
-                  : 'text-muted-foreground hover:text-foreground hover:bg-muted/60'
-              }`}
+              className={navLinkClasses(location.pathname === '/careers-employment')}
             >
               🎓 First Job Pay
             </Link>
 
             <Link
               to="/tax-guide"
-              className={`px-3 py-2 rounded-lg transition-all ${
-                location.pathname === '/tax-guide'
-                  ? 'bg-primary/10 text-primary font-bold'
-                  : 'text-muted-foreground hover:text-foreground hover:bg-muted/60'
-              }`}
+              className={navLinkClasses(location.pathname === '/tax-guide')}
             >
               💰 $18.2k Tax
             </Link>
 
             <Link
               to="/teen-budgeting"
-              className={`px-3 py-2 rounded-lg transition-all ${
-                location.pathname === '/teen-budgeting'
-                  ? 'bg-primary/10 text-primary font-bold'
-                  : 'text-muted-foreground hover:text-foreground hover:bg-muted/60'
-              }`}
+              className={navLinkClasses(location.pathname === '/teen-budgeting')}
             >
               🌈 Budget
             </Link>
@@ -147,8 +156,9 @@ export function Navbar() {
             <button
               type="button"
               onClick={toggleTheme}
+              aria-label={themeLabel}
+              title={themeLabel}
               className="p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted transition-all"
-              title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`}
             >
               {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-700" />}
             </button>
@@ -156,7 +166,10 @@ export function Navbar() {
             {/* Mobile Hamburger Toggle */}
             <button
               type="button"
-              onClick={() => setMobileOpen(!mobileOpen)}
+              onClick={() => setMobileOpen(o => !o)}
+              aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={mobileOpen}
+              aria-controls="mobile-nav-drawer"
               className="md:hidden p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted transition-all"
             >
               {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -168,7 +181,9 @@ export function Navbar() {
       {/* Mobile Drawer */}
       <AnimatePresence>
         {mobileOpen && (
-          <motion.div
+          <motion.nav
+            id="mobile-nav-drawer"
+            aria-label="Mobile navigation"
             variants={slideInLeft}
             initial="hidden"
             animate="visible"
@@ -212,7 +227,7 @@ export function Navbar() {
                 <span>{m.title}</span>
               </Link>
             ))}
-          </motion.div>
+          </motion.nav>
         )}
       </AnimatePresence>
     </header>

@@ -29,6 +29,36 @@
 | v3.1.0  | Car Module | Replace Module 10 "Wealth & Property" with a thorough "Cars & Driving" module: QLD licence path (costs/tests/timeframes), first-car true costs + PPSR, EV vs petrol calculator, Brisbane fuel & parking data; car content consolidated out of Module 6 | Local (push blocked) |
 | v3.2.0  | ETF Upgrade | Investing & Shares upgrade: "Best 3 starter ETF portfolios" (weighted MER/returns computed live), "Next Big Things in ASX ETFs 2026" trends, $10k growth (total return) chart with annual-returns toggle, refreshed trailing returns to mid-2026 | Local (push blocked) |
 | v3.3.0  | Site Search | Site-wide fuzzy search bar on the Landing hero (Fuse.js v7): searches all 11 modules, 160+ Q&A topics, calculators & 54 official web links with typo-tolerant autocomplete, match highlighting, grouped results, keyboard nav, popular searches, and deep-links straight to the exact topic via ?topic= | Local (push blocked) |
+| v3.4.0  | Layout Shell | 2027 premium layout shell upgrade: gradient accent bar on Navbar, pill+underline active-link indicators, aria-expanded/aria-label a11y, scroll-progress bar (reduced-motion aware) in Layout, premium Footer polish + GitHub link | Local (push blocked) |
+
+---
+
+## v3.4.0 — 2027 FRONTEND PERFORMANCE & FEATURE OVERHAUL
+
+### Summary
+End-to-end frontend optimization executed via 6 parallel subagents + core infra. Initial JS chunk cut from **573 kB → 78 kB** (~86% smaller); recharts isolated into a lazy `charts` chunk; PWA offline support; React Compiler (auto-memoization); self-hosted variable fonts replacing render-blocking Google Fonts; 2027 CSS (view transitions, scroll-driven reveals, @starting-style, content-visibility, custom scrollbar, focus-visible rings, reduced-motion support).
+
+### Performance Infrastructure
+1. **`vite.config.ts`** — React Compiler via `babel-plugin-react-compiler` (target 19); `VitePWA` (autoUpdate, manifest, Workbox precache + Google Fonts runtime caching); `rollup-plugin-visualizer` (dist/report.html); manual chunks: `react-dom`, `react-vendor`, `charts` (recharts+d3), `motion`, `cmdk`, `fuse`, `icons` (lucide), `vendor`; es2022 target; lightningcss CSS minify.
+2. **Resulting bundle split**: index 78 kB (27 gzip), react-dom 184 kB, react-vendor 150 kB, vendor 136 kB, motion 130 kB, charts 318 kB (lazy), cmdk 12 kB (lazy), fuse 27 kB (lazy). ~55 precache entries, sw.js generated.
+3. **`index.html`** — self-hosted Inter Variable + JetBrains Mono (@fontsource) replacing render-blocking Google Fonts `<link>`; theme-color for light/dark; manifest link; WebApp JSON-LD; speculation-rules prefetch retained.
+4. **`index.css`** — 2027 features: `::view-transition` page-enter animation, scroll-driven `view()` reveal, `@starting-style`, `content-visibility` utilities, custom scrollbar, `color-mix`, accessible focus-visible rings, skeleton shimmer, glass-nav, global `prefers-reduced-motion` kill-switch.
+5. **`App.tsx`** — hardened View-Transitions router patch (typed params, try/catch, no @ts-ignore, never hangs). **`main.tsx`** imports @fontsource fonts.
+6. **`Toaster.tsx`** — theme-aware via useSyncExternalStore + MutationObserver (sonner was stuck in light mode).
+7. **`Layout.tsx`** — CommandPalette now lazy-loaded (cmdk out of initial bundle) + scroll-progress bar (rAF-throttled, reduced-motion aware).
+
+### 2027 Component Overhaul (parallel subagents)
+8. **UI kit** (`Card/Badge/StatCard/NumberInput/SliderControl/Tabs/Toggle/Progress/Skeleton`) — soft glass cards, gradient accents, layered borders, hover lift + active:scale micro-interactions, tabular-nums, animated Tabs pill (motion layoutId scoped by useId), gradient Progress with sheen, shimmer Skeleton.
+9. **Charts** (`chart.tsx/BarCompare/ASXETFExplorer`) — removed forced `aspect-video` (charts now use explicit heights), new exported `useReducedMotion()` hook wired into all charts (animation disabled when user prefers reduced motion).
+10. **Landing + SiteSearchBar** — layered hero gradient with radial glows, gradient icon chips, hover-lift module cards, custom ModuleSelector dropdown (keyboard nav) replacing `<select>`, `.calculator-section` on below-fold sections, gradient-framed glassy search input, ⌘K badge, sticky results header/footer shortcuts, aria-activedescendant.
+11. **Layout shell** — gradient accent line on header, pill+underline active-link indicators, full a11y (aria-expanded/haspopup/labels, Escape-to-close), premium footer with GitHub link.
+12. **10 teen module pages** — `.calculator-section` (content-visibility) around TopicGuideAccordion + heavy link lists; consistent hover states on highlight cards; no content changed.
+
+### New Dependencies
+Runtime: `react-compiler-runtime`, `@fontsource-variable/inter`, `@fontsource/jetbrains-mono`. Dev: `babel-plugin-react-compiler`, `vite-plugin-pwa`, `rollup-plugin-visualizer`.
+
+### Verification
+`npm run build` passes (tsc strict + React Compiler + vite + PWA); `npx vitest run` → 9 files / 91 tests green.
 
 ---
 

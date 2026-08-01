@@ -9,7 +9,7 @@ import {
 } from '@/data/asx-etf-data';
 import { asxEtfYieldConfig } from '@/lib/chart-configs';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, BarChart, Bar, Tooltip } from 'recharts';
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+import { ChartContainer, ChartTooltip, ChartTooltipContent, useReducedMotion } from '@/components/ui/chart';
 import { TrendingUp, ExternalLink, CalendarDays, PiggyBank } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -31,6 +31,7 @@ export function ASXETFExplorer() {
   const [selectedCodes, setSelectedCodes] = useState<string[]>(['VAS', 'NDQ', 'IVV']);
   const [selectedEtf, setSelectedEtf] = useState<ASXETF>(TOP_10_ASX_ETFS[0]);
   const [view, setView] = useState<'growth' | 'annual'>('growth');
+  const reduced = useReducedMotion();
 
   const selected = useMemo(
     () => TOP_10_ASX_ETFS.filter(etf => selectedCodes.includes(etf.code)),
@@ -177,6 +178,7 @@ export function ASXETFExplorer() {
                   stroke={`var(--color-${code})`}
                   strokeWidth={2.5}
                   dot={false}
+                  isAnimationActive={!reduced}
                   animationDuration={800}
                 />
               ))}
@@ -195,6 +197,7 @@ export function ASXETFExplorer() {
                   stroke={`var(--color-${code})`}
                   strokeWidth={2.5}
                   dot={false}
+                  isAnimationActive={!reduced}
                   animationDuration={800}
                 />
               ))}
@@ -305,7 +308,7 @@ export function ASXETFExplorer() {
               <XAxis dataKey="code" tickLine={false} axisLine={false} tick={{ fontSize: 10 }} />
               <YAxis tickLine={false} axisLine={false} tickFormatter={v => `${v}%`} tick={{ fontSize: 10 }} />
               <ChartTooltip content={<ChartTooltipContent />} />
-              <Bar dataKey="dividendYield" fill="var(--chart-6)" radius={[4, 4, 0, 0]} animationDuration={800} />
+              <Bar dataKey="dividendYield" fill="var(--chart-6)" radius={[4, 4, 0, 0]} isAnimationActive={!reduced} animationDuration={800} />
             </BarChart>
           </ChartContainer>
         </div>

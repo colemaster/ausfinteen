@@ -1,6 +1,3 @@
-import { memo } from 'react';
-import { cn } from '@/lib/utils';
-
 interface NumberInputProps {
   label: string;
   value: number;
@@ -13,17 +10,25 @@ interface NumberInputProps {
   placeholder?: string;
 }
 
-export const NumberInput = memo(function NumberInput({
-  label, value, onChange, min, max, step = 1, prefix, suffix, placeholder,
+export function NumberInput({
+  label,
+  value,
+  onChange,
+  min,
+  max,
+  step = 1,
+  prefix,
+  suffix,
+  placeholder,
 }: NumberInputProps) {
   return (
-    <div className="flex flex-col gap-1.5 group">
-      <label className="text-xs uppercase tracking-wide text-muted-foreground font-medium group-focus-within:text-foreground transition-colors">
+    <div className="group flex flex-col gap-1.5">
+      <label className="text-xs font-medium uppercase tracking-wide text-muted-foreground transition-colors group-focus-within:text-foreground">
         {label}
       </label>
-      <div className="flex items-center bg-background border border-input rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-0 focus-within:border-primary transition-all duration-200 shadow-sm">
+      <div className="flex items-center rounded-xl border border-border bg-background shadow-sm transition-all duration-200 focus-within:border-primary/50 focus-within:ring-4 focus-within:ring-primary/10">
         {prefix && (
-          <span className="px-3 py-2 text-sm text-muted-foreground font-medium bg-muted/50 border-r border-input select-none h-full flex items-center">
+          <span className="flex h-full shrink-0 select-none items-center self-stretch rounded-l-xl border-r border-border/60 bg-muted/40 px-3 text-sm font-medium text-muted-foreground">
             {prefix}
           </span>
         )}
@@ -34,20 +39,16 @@ export const NumberInput = memo(function NumberInput({
           step={step}
           value={value === 0 && !placeholder ? '' : value}
           placeholder={placeholder ?? '0'}
-          onChange={e => onChange(parseFloat(e.target.value) || 0)}
-          className={cn(
-            "flex-1 bg-transparent border-none outline-none text-sm font-semibold text-foreground min-w-0 py-2.5",
-            prefix ? "pl-3" : "pl-3",
-            suffix ? "pr-3" : "pr-3",
-            "font-mono"
-          )}
+          aria-label={label}
+          onChange={(e) => onChange(parseFloat(e.target.value) || 0)}
+          className="min-w-0 flex-1 bg-transparent px-3 py-2.5 font-mono text-sm font-semibold tabular-nums text-foreground outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
         />
         {suffix && (
-          <span className="px-3 py-2 text-sm text-muted-foreground font-medium bg-muted/50 border-l border-input select-none h-full flex items-center">
+          <span className="flex h-full shrink-0 select-none items-center self-stretch rounded-r-xl border-l border-border/60 bg-muted/40 px-3 text-sm font-medium text-muted-foreground">
             {suffix}
           </span>
         )}
       </div>
     </div>
   );
-});
+}

@@ -247,50 +247,56 @@ export function BrisbaneQLD() {
       </div>
 
       {/* QLD State Rules for Teens */}
-      <Card variant="glass" className="p-6 space-y-5">
-        <div className="flex items-center gap-2 border-b border-border pb-3">
-          <MapPin className="w-5 h-5 text-primary" />
-          <h2 className="text-lg font-bold text-foreground">QLD State Rules That Matter for Teens</h2>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-          {QLD_TEEN_RULES.map(rule => (
-            <div key={rule.title} className="rounded-xl border border-border bg-card p-4 space-y-1.5">
-              <div className="flex items-center gap-2">
-                <span className="text-xl">{rule.emoji}</span>
-                <h3 className="font-bold text-foreground text-sm">{rule.title}</h3>
+      <div className="calculator-section">
+        <Card variant="glass" className="p-6 space-y-5">
+          <div className="flex items-center gap-2 border-b border-border pb-3">
+            <MapPin className="w-5 h-5 text-primary" />
+            <h2 className="text-lg font-bold text-foreground">QLD State Rules That Matter for Teens</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            {QLD_TEEN_RULES.map(rule => (
+              <div key={rule.title} className="rounded-xl border border-border bg-card p-4 space-y-1.5">
+                <div className="flex items-center gap-2">
+                  <span className="text-xl">{rule.emoji}</span>
+                  <h3 className="font-bold text-foreground text-sm">{rule.title}</h3>
+                </div>
+                <p className="text-[11px] text-muted-foreground leading-relaxed">{rule.detail}</p>
               </div>
-              <p className="text-[11px] text-muted-foreground leading-relaxed">{rule.detail}</p>
-            </div>
-          ))}
-        </div>
-        <div className="flex flex-wrap gap-2.5">
-          <WebReferenceLink link={OFFICIAL_WEB_LINKS.qld_rego} />
-          <WebReferenceLink link={OFFICIAL_WEB_LINKS.translink_gocard} />
-        </div>
-      </Card>
+            ))}
+          </div>
+          <div className="flex flex-wrap gap-2.5">
+            <WebReferenceLink link={OFFICIAL_WEB_LINKS.qld_rego} />
+            <WebReferenceLink link={OFFICIAL_WEB_LINKS.translink_gocard} />
+          </div>
+        </Card>
+      </div>
 
       {/* Accordion Topics */}
-      <TopicGuideAccordion topics={moduleData.topics} title="What Will I Learn in Brisbane, QLD?" />
+      <div className="calculator-section">
+        <TopicGuideAccordion topics={moduleData.topics} title="What Will I Learn in Brisbane, QLD?" />
+      </div>
 
       {/* Web Sources */}
-      <Card variant="glass" className="p-6 space-y-4">
-        <div className="flex items-center gap-2 border-b border-border pb-3">
-          <ExternalLink className="w-5 h-5 text-emerald-500" />
-          <h2 className="text-lg font-bold text-foreground">Official QLD & Brisbane Sources</h2>
-        </div>
-        <p className="text-xs text-muted-foreground">
-          Curated government and university resources for Brisbane living, uni applications and QLD state rules.
-        </p>
-        <div className="flex flex-wrap gap-2.5">
-          {BRISBANE_WEB_SOURCES.map((link, i) => (
-            <WebReferenceLink key={i} link={link} />
-          ))}
-        </div>
-        <p className="text-[11px] text-muted-foreground leading-relaxed">
-          Based on 2026 data. For education only — not financial advice. Verify rates and rules against official QLD
-          Government and university sources.
-        </p>
-      </Card>
+      <div className="calculator-section">
+        <Card variant="glass" className="p-6 space-y-4">
+          <div className="flex items-center gap-2 border-b border-border pb-3">
+            <ExternalLink className="w-5 h-5 text-emerald-500" />
+            <h2 className="text-lg font-bold text-foreground">Official QLD & Brisbane Sources</h2>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Curated government and university resources for Brisbane living, uni applications and QLD state rules.
+          </p>
+          <div className="flex flex-wrap gap-2.5">
+            {BRISBANE_WEB_SOURCES.map((link, i) => (
+              <WebReferenceLink key={i} link={link} />
+            ))}
+          </div>
+          <p className="text-[11px] text-muted-foreground leading-relaxed">
+            Based on 2026 data. For education only — not financial advice. Verify rates and rules against official QLD
+            Government and university sources.
+          </p>
+        </Card>
+      </div>
     </div>
   );
 }

@@ -31,7 +31,7 @@ export function TaxGuide() {
 
       {/* Highlights Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card variant="glass" className="p-5 space-y-2">
+        <Card variant="glass" className="p-5 space-y-2 hover:border-primary/40 hover:shadow-md">
           <div className="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 w-fit">
             <ShieldCheck className="w-5 h-5" />
           </div>
@@ -41,7 +41,7 @@ export function TaxGuide() {
           </p>
         </Card>
 
-        <Card variant="glass" className="p-5 space-y-2">
+        <Card variant="glass" className="p-5 space-y-2 hover:border-primary/40 hover:shadow-md">
           <div className="p-2.5 rounded-xl bg-teal-500/10 text-teal-600 dark:text-teal-400 w-fit">
             <DollarSign className="w-5 h-5" />
           </div>
@@ -51,7 +51,7 @@ export function TaxGuide() {
           </p>
         </Card>
 
-        <Card variant="glass" className="p-5 space-y-2">
+        <Card variant="glass" className="p-5 space-y-2 hover:border-primary/40 hover:shadow-md">
           <div className="p-2.5 rounded-xl bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 w-fit">
             <FileCheck className="w-5 h-5" />
           </div>
@@ -63,7 +63,9 @@ export function TaxGuide() {
       </div>
 
       {/* Accordion Topics */}
-      <TopicGuideAccordion topics={moduleData.topics} title="What Will I Learn in Tax & Tax Returns?" />
+      <div className="calculator-section">
+        <TopicGuideAccordion topics={moduleData.topics} title="What Will I Learn in Tax & Tax Returns?" />
+      </div>
     </div>
   );
 }

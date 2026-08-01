@@ -28,7 +28,9 @@ export function MoneyAndYou() {
       <MoneyMindsetQuiz />
 
       {/* Topic Accordion */}
-      <TopicGuideAccordion topics={moduleData.topics} title="Money & You Q&A Library" />
+      <div className="calculator-section">
+        <TopicGuideAccordion topics={moduleData.topics} title="Money & You Q&A Library" />
+      </div>
     </div>
   );
 }

@@ -29,6 +29,27 @@ function useChart() {
   return context;
 }
 
+export function useReducedMotion(): boolean {
+  const [reduced, setReduced] = React.useState(
+    () =>
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  );
+
+  React.useEffect(() => {
+    if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
+      return;
+    }
+    const mql = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const onChange = () => setReduced(mql.matches);
+    onChange();
+    mql.addEventListener("change", onChange);
+    return () => mql.removeEventListener("change", onChange);
+  }, []);
+
+  return reduced;
+}
+
 const ChartContainer = React.forwardRef<
   HTMLDivElement,
   React.ComponentProps<"div"> & {
@@ -47,7 +68,7 @@ const ChartContainer = React.forwardRef<
         data-chart={chartId}
         ref={ref}
         className={cn(
-          "flex aspect-video justify-center text-xs",
+          "flex w-full justify-center text-xs",
           "[&_.recharts-cartesian-axis-tick_text]:fill-[var(--muted-foreground)]",
           "[&_.recharts-cartesian-grid_line[stroke='#ccc']]:stroke-[var(--border)]",
           "[&_.recharts-curve.recharts-tooltip-cursor]:stroke-[var(--border)]",

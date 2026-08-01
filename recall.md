@@ -26,8 +26,8 @@
 | v2.1.0  | Teen Overhaul | Complete pivot to Teenager / First Job / 16yo Persona: 10 Mandy Money Book modules, 160+ Q&A topics, 10 interactive teen tools, official AU web links | Pushed |
 | v2.2.0  | Careers Module| Ultimate Careers & Employment Super-Module: ATO Forms NAT 3092/13080, FWIS/CEIS, 8 Junior Awards, Penalty Rates, Barefoot & Broke Millennial Scripts, Teen Resume Builder | Pushed |
 | v3.0.0  | End-to-End | Complete 10-Module Overhaul: Money Mindset Quiz, Barefoot 3-Buckets, Broke Millennial scripts, Div 6AA minor tax, Super Fee Caps, 4-wk rental bond, 200+ Q&A topics | Pushed |
-| v3.1.0  | Car Module | Replace Module 10 "Wealth & Property" with a thorough "Cars & Driving" module: QLD licence path (costs/tests/timeframes), first-car true costs + PPSR, EV vs petrol calculator, Brisbane fuel & parking data; car content consolidated out of Module 6 | Pushed |
-| v3.2.0  | ETF Upgrade | Investing & Shares upgrade: "Best 3 starter ETF portfolios" (weighted MER/returns computed live), "Next Big Things in ASX ETFs 2026" trends, $10k growth (total return) chart with annual-returns toggle, refreshed trailing returns to mid-2026 | Pushed |
+| v3.1.0  | Car Module | Replace Module 10 "Wealth & Property" with a thorough "Cars & Driving" module: QLD licence path (costs/tests/timeframes), first-car true costs + PPSR, EV vs petrol calculator, Brisbane fuel & parking data; car content consolidated out of Module 6 | Local (push blocked) |
+| v3.2.0  | ETF Upgrade | Investing & Shares upgrade: "Best 3 starter ETF portfolios" (weighted MER/returns computed live), "Next Big Things in ASX ETFs 2026" trends, $10k growth (total return) chart with annual-returns toggle, refreshed trailing returns to mid-2026 | Local (push blocked) |
 
 ---
 

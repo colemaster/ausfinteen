@@ -1,4 +1,6 @@
 import { useMemo } from 'react';
+import { motion } from 'motion/react';
+import { fadeInUp } from '@/lib/animations';
 import { useUrlParams } from '../../hooks/useUrlParams';
 import { SliderControl } from '../../components/ui/SliderControl';
 import { NumberInput } from '../../components/ui/NumberInput';
@@ -112,11 +114,11 @@ export function DirectVsDR() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="border-b border-slate-200 dark:border-slate-700 pb-4">
-        <h1 className="text-xl font-extrabold text-slate-900 dark:text-slate-50 tracking-tight">
+      <div className="border-b border-[var(--border)] pb-4">
+        <h1 className="text-xl font-extrabold text-[var(--foreground)] tracking-tight">
           Direct Investing vs Debt Recycling
         </h1>
-        <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
+        <p className="text-xs text-[var(--muted-foreground)] mt-1">
           Compare investing a lump sum directly (unlevered) vs using a tax-deductible investment loan.
         </p>
       </div>
@@ -143,8 +145,8 @@ export function DirectVsDR() {
       ]} />
 
       {/* Inputs */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-5 space-y-4">
-        <p className="text-[10px] font-bold uppercase tracking-widest text-blue-600 dark:text-blue-400">Parameters</p>
+      <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-5 space-y-4">
+        <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--primary)]">Parameters</p>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {portfolio.etfValue > 0
             ? <PortfolioField label="Lump Sum" value={effectiveAmount} prefix="$" />
@@ -195,12 +197,9 @@ export function DirectVsDR() {
       </div>
 
       {/* Breakeven Callout */}
+      <motion.div variants={fadeInUp} initial="hidden" animate="visible" className="space-y-6">
       <div
-        className={`rounded-xl px-5 py-4 border text-sm font-medium
-        ${etfAboveBreakeven
-          ? 'bg-green-50 dark:bg-green-950/30 border-green-200 dark:border-green-800 text-green-700 dark:text-green-400'
-          : 'bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-400'
-        }`}
+        className={`rounded-xl px-5 py-4 border text-sm font-medium ${etfAboveBreakeven ? 'bg-green-50 border-green-200 text-green-700 ' : 'bg-amber-50 border-amber-200 text-amber-700 ' }`}
       >
         <span className="font-bold">Breakeven ETF return:</span>{' '}
         <span className="font-mono">{formatPct(breakeven)}</span>
@@ -216,9 +215,9 @@ export function DirectVsDR() {
       </div>
 
       {/* Summary Stat Cards */}
-      <div className="text-xs text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-lg px-4 py-3 leading-relaxed">
-        <strong className="text-slate-700 dark:text-slate-300">Direct Final Value</strong> = portfolio value (no debt). <strong className="text-slate-700 dark:text-slate-300">Debt Recycling Final Value</strong> = portfolio value (same growth). <strong className="text-slate-700 dark:text-slate-300">Debt Recycling Net Wealth</strong> = portfolio minus the outstanding IO loan balance minus CGT — this is why Debt Recycling looks worse short-term. <strong className="text-slate-700 dark:text-slate-300">Debt Recycling Advantage</strong> is only positive once tax deductions have compounded enough to overcome the debt.{' '}
-        <a href="https://moneysmart.gov.au/managing-debt/investment-debt" target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:text-blue-600 dark:text-blue-400">MoneySmart: Investment debt ↗</a>
+      <div className="text-xs text-[var(--muted-foreground)] bg-[var(--background)] border border-slate-100 rounded-lg px-4 py-3 leading-relaxed">
+        <strong className="text-[var(--foreground)]">Direct Final Value</strong> = portfolio value (no debt). <strong className="text-[var(--foreground)]">Debt Recycling Final Value</strong> = portfolio value (same growth). <strong className="text-[var(--foreground)]">Debt Recycling Net Wealth</strong> = portfolio minus the outstanding IO loan balance minus CGT — this is why Debt Recycling looks worse short-term. <strong className="text-[var(--foreground)]">Debt Recycling Advantage</strong> is only positive once tax deductions have compounded enough to overcome the debt.{' '}
+        <a href="https://moneysmart.gov.au/managing-debt/investment-debt" target="_blank" rel="noopener noreferrer" className="text-[var(--primary)] hover:text-[var(--primary)]">MoneySmart: Investment debt ↗</a>
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
         <StatCard
@@ -259,12 +258,12 @@ export function DirectVsDR() {
       </div>
 
       {/* Wealth Trajectory Chart */}
-      <div className="text-xs text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-lg px-4 py-3 leading-relaxed">
-        This chart tracks <strong className="text-slate-700 dark:text-slate-300">net wealth (after CGT, after repaying the investment loan)</strong> over time. The dashed reference line shows your starting investment amount. The point where the blue DR line crosses the green Direct line is when DR starts winning — the longer your horizon and the higher your ETF return above the breakeven, the sooner this happens.{' '}
-        <a href="https://www.investsmart.com.au/investment-calculators/compound-interest-calculator" target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:text-blue-600 dark:text-blue-400">More: Compound growth calculator ↗</a>
+      <div className="text-xs text-[var(--muted-foreground)] bg-[var(--background)] border border-slate-100 rounded-lg px-4 py-3 leading-relaxed">
+        This chart tracks <strong className="text-[var(--foreground)]">net wealth (after CGT, after repaying the investment loan)</strong> over time. The dashed reference line shows your starting investment amount. The point where the blue DR line crosses the green Direct line is when DR starts winning — the longer your horizon and the higher your ETF return above the breakeven, the sooner this happens.{' '}
+        <a href="https://www.investsmart.com.au/investment-calculators/compound-interest-calculator" target="_blank" rel="noopener noreferrer" className="text-[var(--primary)] hover:text-[var(--primary)]">More: Compound growth calculator ↗</a>
       </div>
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-5">
-        <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100 mb-4">
+      <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-5">
+        <h3 className="text-sm font-bold text-[var(--foreground)] mb-4">
           Wealth Trajectory (net of CGT)
         </h3>
         <ResponsiveContainer width="100%" height={280}>
@@ -288,15 +287,16 @@ export function DirectVsDR() {
       </div>
 
       {/* After-tax cost of leverage */}
-      <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl px-5 py-3 text-xs text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+      <div className="bg-[var(--background)] rounded-xl px-5 py-3 text-xs text-[var(--muted-foreground)] border border-[var(--border)]">
         <strong>After-tax cost of Debt Recycling leverage:</strong>{' '}
-        <span className="font-mono text-blue-600 dark:text-blue-400">{formatPct(breakeven)}</span>
+        <span className="font-mono text-[var(--primary)]">{formatPct(breakeven)}</span>
         {' '}per year ({formatPct(effectiveMortgageRate)} x (1 - {effectiveMargTax}%)).
         {' '}Total interest paid over {params.years} years:{' '}
         <span className="font-mono">{formatCurrency(dr.totalInterestPaid)}</span>,
         {' '}offset by deductions of{' '}
-        <span className="font-mono text-violet-600 dark:text-violet-400">{formatCurrency(dr.totalTaxDeductions)}</span>.
+        <span className="font-mono text-violet-600">{formatCurrency(dr.totalTaxDeductions)}</span>.
       </div>
+      </motion.div>
 
       <Assumptions items={ASSUMPTIONS} />
       <Disclaimer calculatorName="Direct Investing vs Debt Recycling calculator" />

@@ -10,10 +10,11 @@ import {
   Bar,
   XAxis,
   YAxis,
-  Tooltip,
-  ResponsiveContainer,
   Cell,
+  CartesianGrid,
 } from 'recharts';
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+import { taxBracketConfig } from '@/lib/chart-configs';
 
 const BRACKET_COLORS = ['#94a3b8', '#38bdf8', '#3b82f6', '#6366f1', '#a855f7'];
 
@@ -48,7 +49,7 @@ export function TaxBracketVis() {
 
   return (
     <div className="space-y-5">
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-4 space-y-3">
+      <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-4 space-y-3">
         <SliderControl
           label="Taxable Income"
           value={income}
@@ -71,23 +72,24 @@ export function TaxBracketVis() {
         <StatCard label="Effective Rate" value={formatPct(breakdown.effectiveRate * 100)} color="purple" subtext={`Marginal: ${formatPct(breakdown.marginalRate * 100)}`} />
       </div>
 
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-4">
-        <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-200 mb-3">Tax by Bracket</h3>
-        <ResponsiveContainer width="100%" height={220}>
+      <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-4">
+        <h3 className="text-sm font-semibold text-[var(--foreground)] mb-3">Tax by Bracket</h3>
+        <ChartContainer config={taxBracketConfig} className="h-[350px] w-full">
           <BarChart data={bracketData} margin={{ top: 4, right: 16, left: 8, bottom: 4 }}>
-            <XAxis dataKey="bracket" tick={{ fontSize: 10 }} />
-            <YAxis tickFormatter={v => `$${(v / 1000).toFixed(0)}k`} tick={{ fontSize: 10 }} />
-            <Tooltip formatter={(v, _name, props) => [formatCurrency(typeof v === 'number' ? v : 0), `${props.payload.rate} bracket`]} contentStyle={{ fontSize: 12 }} />
-            <Bar dataKey="tax" name="Tax Payable" radius={[3, 3, 0, 0]}>
+            <CartesianGrid vertical={false} strokeDasharray="3 3" />
+            <XAxis dataKey="bracket" tickLine={false} axisLine={false} tick={{ fontSize: 10 }} />
+            <YAxis tickLine={false} axisLine={false} tickFormatter={v => `$${(v / 1000).toFixed(0)}k`} tick={{ fontSize: 10 }} />
+            <ChartTooltip content={<ChartTooltipContent />} />
+            <Bar dataKey="tax" name="Tax Payable" radius={[4, 4, 0, 0]} animationDuration={1200} animationEasing="ease-in-out">
               {bracketData.map((_entry, i) => (
                 <Cell key={i} fill={BRACKET_COLORS[i % BRACKET_COLORS.length]} />
               ))}
             </Bar>
           </BarChart>
-        </ResponsiveContainer>
+        </ChartContainer>
       </div>
 
-      <p className="text-[10px] text-slate-400 dark:text-slate-500">Based on 2024-25 ATO Stage 3 tax rates. LMITO ended 30 June 2022.</p>
+      <p className="text-[10px] text-[var(--muted-foreground)]">Based on 2024-25 ATO Stage 3 tax rates. LMITO ended 30 June 2022.</p>
     </div>
   );
 }

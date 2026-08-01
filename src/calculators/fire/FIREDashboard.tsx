@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { fadeInUp } from '@/lib/animations';
 import { Tabs } from '../../components/ui/Tabs';
 import { Assumptions } from '../../components/shared/Assumptions';
 import { Disclaimer } from '../../components/shared/Disclaimer';
@@ -54,11 +56,11 @@ export function FIREDashboard() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="border-b border-slate-200 dark:border-slate-700 pb-4">
-        <h1 className="text-xl font-extrabold text-slate-900 dark:text-slate-50 tracking-tight">
+      <div className="border-b border-[var(--border)] pb-4">
+        <h1 className="text-xl font-extrabold text-[var(--foreground)] tracking-tight">
           FIRE Calculator Suite
         </h1>
-        <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
+        <p className="text-xs text-[var(--muted-foreground)] mt-1">
           Australian FIRE planning: Classic, Coast, Barista, Lean vs Fat, and the Super Bridge strategy.
         </p>
       </div>
@@ -102,7 +104,14 @@ export function FIREDashboard() {
 
       <Tabs tabs={TABS} activeTab={activeTab} onChange={setActiveTab} />
 
-      <div>
+      <AnimatePresence mode="wait">
+  <motion.div
+    key={activeTab}
+    variants={fadeInUp}
+    initial="hidden"
+    animate="visible"
+    exit="hidden"
+  >
         {activeTab === 'classic' && (
           <ClassicFIRE
             currentAge={currentAge}
@@ -147,7 +156,8 @@ export function FIREDashboard() {
             returnRate={returnRate}
           />
         )}
-      </div>
+      </motion.div>
+  </AnimatePresence>
 
       <Assumptions items={ASSUMPTIONS} />
       <Disclaimer calculatorName="FIRE Calculator Suite" />

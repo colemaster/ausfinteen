@@ -46,7 +46,7 @@ export function SuperSalarySacrifice({ grossSalary, onGrossSalaryChange }: Props
 
   return (
     <div className="space-y-5">
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 bg-[var(--background)] border border-[var(--border)] rounded-xl p-4">
         {portfolio.grossSalary > 0
           ? <PortfolioField label="Gross Salary" value={grossSalary} prefix="$" />
           : <NumberInput label="Gross Salary" value={grossSalary} onChange={onGrossSalaryChange} min={30000} max={1000000} step={5000} prefix="$" />
@@ -58,7 +58,7 @@ export function SuperSalarySacrifice({ grossSalary, onGrossSalaryChange }: Props
         <SliderControl label="Employer SG Rate" value={sgRate} onChange={setSgRate} min={9.5} max={15} step={0.5} suffix="%" />
         <NumberInput label="Extra Sacrifice (pa)" value={additionalSacrifice} onChange={setAdditionalSacrifice} min={0} max={30000} step={500} prefix="$" />
       </div>
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 bg-[var(--background)] border border-[var(--border)] rounded-xl p-4">
         <NumberInput label="Current Age" value={age} onChange={v => setAge(Math.round(v))} min={18} max={70} step={1} />
         <NumberInput label="Retirement Age" value={retirementAge} onChange={v => setRetirementAge(Math.round(v))} min={50} max={75} step={1} />
         <SliderControl label="Super Return (pa)" value={superReturn} onChange={setSuperReturn} min={2} max={12} step={0.5} suffix="%" />
@@ -71,7 +71,7 @@ export function SuperSalarySacrifice({ grossSalary, onGrossSalaryChange }: Props
       </div>
 
       {result.isDiv293 && (
-        <div className="rounded-xl px-4 py-3 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-400 text-xs">
+        <div className="rounded-xl px-4 py-3 bg-amber-50 border border-amber-200 text-amber-700 text-xs">
           <strong>Division 293 applies.</strong> An extra 15% tax is payable on your concessional contributions because your income + contributions exceed ${(SUPER_RULES.division293Threshold / 1000).toFixed(0)}k.
           Extra tax: <span className="font-mono">{formatCurrency(result.div293Tax)}</span>
         </div>
@@ -84,12 +84,12 @@ export function SuperSalarySacrifice({ grossSalary, onGrossSalaryChange }: Props
         <StatCard label={`Projected Super at ${retirementAge}`} value={formatCompact(result.projectedSuperAtRetirement)} color="purple" subtext={`${result.yearsToRetirement} years of growth`} />
       </div>
 
-      <div className="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700">
+      <div className="overflow-x-auto rounded-xl border border-[var(--border)]">
         <table className="w-full text-xs border-collapse">
           <thead>
-            <tr className="bg-slate-50 dark:bg-slate-800">
+            <tr className="bg-[var(--background)]">
               {['', 'With Sacrifice', 'Without Sacrifice', 'Difference'].map(h => (
-                <th key={h} className="px-4 py-2.5 text-right text-[10px] uppercase tracking-wide text-slate-400 font-medium border-b border-slate-200 dark:border-slate-700 first:text-left">
+                <th key={h} className="px-4 py-2.5 text-right text-[10px] uppercase tracking-wide text-[var(--muted-foreground)] font-medium border-b border-[var(--border)] first:text-left">
                   {h}
                 </th>
               ))}
@@ -102,17 +102,17 @@ export function SuperSalarySacrifice({ grossSalary, onGrossSalaryChange }: Props
               ['Tax in Super (15%)', formatCurrency(result.taxInSuper), '$0', ''],
               ['Net Tax Saving', '', '', formatCurrency(result.taxSaving)],
             ].map(([label, a, b, diff]) => (
-              <tr key={label} className="border-b border-slate-100 dark:border-slate-800 last:border-0">
-                <td className="px-4 py-2 text-slate-500 dark:text-slate-400">{label}</td>
-                <td className="px-4 py-2 text-right font-mono text-slate-700 dark:text-slate-200">{a}</td>
-                <td className="px-4 py-2 text-right font-mono text-slate-700 dark:text-slate-200">{b}</td>
-                <td className={`px-4 py-2 text-right font-mono font-semibold ${diff && !diff.startsWith('$0') ? (diff.startsWith('-') ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400') : 'text-slate-400'}`}>{diff}</td>
+              <tr key={label} className="border-b border-slate-100 last:border-0">
+                <td className="px-4 py-2 text-[var(--muted-foreground)]">{label}</td>
+                <td className="px-4 py-2 text-right font-mono text-[var(--foreground)]">{a}</td>
+                <td className="px-4 py-2 text-right font-mono text-[var(--foreground)]">{b}</td>
+                <td className={`px-4 py-2 text-right font-mono font-semibold ${diff && !diff.startsWith('$0') ? (diff.startsWith('-') ? 'text-[var(--danger)] ' : 'text-[var(--success)] ') : 'text-[var(--muted-foreground)]'}`}>{diff}</td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-      <p className="text-[10px] text-slate-400 dark:text-slate-500">Based on 2024-25 ATO rates. Concessional cap: {formatCurrency(SUPER_RULES.concessionalCap)}.</p>
+      <p className="text-[10px] text-[var(--muted-foreground)]">Based on 2024-25 ATO rates. Concessional cap: {formatCurrency(SUPER_RULES.concessionalCap)}.</p>
     </div>
   );
 }

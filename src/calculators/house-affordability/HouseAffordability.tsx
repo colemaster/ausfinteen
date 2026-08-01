@@ -1,4 +1,6 @@
 import { useMemo } from 'react';
+import { motion } from 'motion/react';
+import { fadeInUp } from '@/lib/animations';
 import { useUrlParams } from '../../hooks/useUrlParams';
 import { SliderControl } from '../../components/ui/SliderControl';
 import { NumberInput } from '../../components/ui/NumberInput';
@@ -92,11 +94,11 @@ export function HouseAffordability() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="border-b border-slate-200 dark:border-slate-700 pb-4">
-        <h1 className="text-xl font-extrabold text-slate-900 dark:text-slate-50 tracking-tight">
+      <div className="border-b border-[var(--border)] pb-4">
+        <h1 className="text-xl font-extrabold text-[var(--foreground)] tracking-tight">
           House Purchasing Affordability
         </h1>
-        <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
+        <p className="text-xs text-[var(--muted-foreground)] mt-1">
           APRA serviceability assessment, stamp duty, LMI, monthly costs and rate stress tests. Based on 2024-25 rates.
         </p>
       </div>
@@ -123,8 +125,8 @@ export function HouseAffordability() {
       ]} />
 
       {/* Inputs */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-5 space-y-4">
-        <p className="text-[10px] font-bold uppercase tracking-widest text-blue-600 dark:text-blue-400">Buyer Details</p>
+      <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-5 space-y-4">
+        <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--primary)]">Buyer Details</p>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {portfolio.grossSalary > 0
             ? <PortfolioField label="Gross Income" value={effectiveGrossIncome} prefix="$" />
@@ -137,18 +139,18 @@ export function HouseAffordability() {
             : <NumberInput label="Deposit / Savings" value={params.deposit} onChange={v => setParams({ deposit: v })} min={0} max={5000000} step={5000} prefix="$" />
           }
         </div>
-        <p className="text-[10px] font-bold uppercase tracking-widest text-blue-600 dark:text-blue-400 pt-2">Property Details</p>
+        <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--primary)] pt-2">Property Details</p>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {portfolio.propertyValue > 0
             ? <PortfolioField label="Property Price" value={effectivePropertyPrice} prefix="$" />
             : <NumberInput label="Property Price" value={params.propertyPrice} onChange={v => setParams({ propertyPrice: v })} min={100000} max={5000000} step={10000} prefix="$" />
           }
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs uppercase tracking-wide text-slate-400 dark:text-slate-500 font-medium">State</label>
+            <label className="text-xs uppercase tracking-wide text-[var(--muted-foreground)] font-medium">State</label>
             <select
               value={params.state}
               onChange={e => setParams({ state: e.target.value })}
-              className="bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md px-3 py-2 text-sm font-semibold text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="bg-[var(--background)] border border-[var(--border)] rounded-md px-3 py-2 text-sm font-semibold text-[var(--foreground)] focus:outline-none focus:ring-1 focus:ring-[var(--ring)]"
             >
               {STATES.map(s => <option key={s} value={s}>{s}</option>)}
             </select>
@@ -169,23 +171,20 @@ export function HouseAffordability() {
       </div>
 
       {/* Affordability Banner */}
-      <div className="text-xs text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-lg px-4 py-3 leading-relaxed">
-        <strong className="text-slate-700 dark:text-slate-300">Borrowing capacity</strong> is estimated using the APRA method: your income finances repayments assessed at rate + 3%, capped at 30% of gross income for housing. <strong className="text-slate-700 dark:text-slate-300">LMI</strong> is added when your deposit is under 20% (LVR above 80%). <strong className="text-slate-700 dark:text-slate-300">Stamp duty</strong> varies by state and first-home-buyer status.{' '}
-        <a href="https://moneysmart.gov.au/home-loans/how-much-can-i-borrow" target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:text-blue-600 dark:text-blue-400">MoneySmart: How much can I borrow ↗</a>
+      <motion.div variants={fadeInUp} initial="hidden" animate="visible" className="space-y-6">
+      <div className="text-xs text-[var(--muted-foreground)] bg-[var(--background)]/50 border border-slate-100 rounded-lg px-4 py-3 leading-relaxed">
+        <strong className="text-[var(--foreground)]">Borrowing capacity</strong> is estimated using the APRA method: your income finances repayments assessed at rate + 3%, capped at 30% of gross income for housing. <strong className="text-[var(--foreground)]">LMI</strong> is added when your deposit is under 20% (LVR above 80%). <strong className="text-[var(--foreground)]">Stamp duty</strong> varies by state and first-home-buyer status.{' '}
+        <a href="https://moneysmart.gov.au/home-loans/how-much-can-i-borrow" target="_blank" rel="noopener noreferrer" className="text-[var(--primary)] hover:text-[var(--primary)]">MoneySmart: How much can I borrow ↗</a>
       </div>
-      <div className={`rounded-xl px-5 py-4 border
-        ${result.affordableWithDeposit
-          ? 'bg-green-50 dark:bg-green-950/30 border-green-200 dark:border-green-800'
-          : 'bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-800'
-        }`}
+      <div className={`rounded-xl px-5 py-4 border ${result.affordableWithDeposit ? 'bg-green-50 border-green-200 ' : 'bg-[var(--danger)]/10 border-red-200 ' }`}
       >
-        <p className={`text-sm font-semibold ${result.affordableWithDeposit ? 'text-green-700 dark:text-green-400' : 'text-red-700 dark:text-red-400'}`}>
+        <p className={`text-sm font-semibold ${result.affordableWithDeposit ? 'text-green-700 ' : 'text-[var(--danger)] '}`}>
           {result.affordableWithDeposit
             ? `Loan of ${formatCurrency(result.loanAmount)} is within estimated borrowing capacity (${formatCurrency(result.borrowingCapacity)}).`
             : `Loan of ${formatCurrency(result.loanAmount)} exceeds estimated borrowing capacity of ${formatCurrency(result.borrowingCapacity)}.`
           }
         </p>
-        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+        <p className="text-xs text-[var(--muted-foreground)] mt-1">
           LVR: <span className="font-mono">{formatPct(result.lvr)}</span>
           {' · '}Assessed at: <span className="font-mono">{formatPct(effectiveRate + 3)}%</span> (rate + 3% APRA buffer)
         </p>
@@ -210,28 +209,28 @@ export function HouseAffordability() {
       </div>
 
       {/* Rate Stress Test */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-5">
-        <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100 mb-3">Rate Stress Test</h3>
+      <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-5">
+        <h3 className="text-sm font-bold text-[var(--foreground)] mb-3">Rate Stress Test</h3>
         <div className="overflow-x-auto">
           <table className="w-full text-xs border-collapse">
             <thead>
-              <tr className="bg-slate-50 dark:bg-slate-800">
+              <tr className="bg-[var(--background)]">
                 {['Rate', 'Monthly Repayment', 'Change vs Today', 'Annual Cost'].map(h => (
-                  <th key={h} className="px-4 py-2.5 text-right text-[10px] uppercase tracking-wide text-slate-400 font-medium border-b border-slate-200 dark:border-slate-700 first:text-left">{h}</th>
+                  <th key={h} className="px-4 py-2.5 text-right text-[10px] uppercase tracking-wide text-[var(--muted-foreground)] font-medium border-b border-[var(--border)] first:text-left">{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {result.stressTest.map(row => (
-                <tr key={row.rateIncrease} className={`border-b border-slate-100 dark:border-slate-800 last:border-0 ${row.rateIncrease === 0 ? 'bg-blue-50 dark:bg-blue-950/20' : ''}`}>
-                  <td className="px-4 py-2 text-slate-600 dark:text-slate-300 font-mono">
-                    {formatPct(row.totalRate)} {row.rateIncrease > 0 ? <span className="text-amber-500">(+{row.rateIncrease}%)</span> : <span className="text-blue-500">(today)</span>}
+                <tr key={row.rateIncrease} className={`border-b border-slate-100 last:border-0 ${row.rateIncrease === 0 ? 'bg-[var(--primary)]/10 ' : ''}`}>
+                  <td className="px-4 py-2 text-[var(--muted-foreground)] font-mono">
+                    {formatPct(row.totalRate)} {row.rateIncrease > 0 ? <span className="text-amber-500">(+{row.rateIncrease}%)</span> : <span className="text-[var(--primary)]">(today)</span>}
                   </td>
-                  <td className="px-4 py-2 text-right font-mono font-semibold text-slate-700 dark:text-slate-200">{formatCurrency(row.monthlyRepayment)}</td>
-                  <td className={`px-4 py-2 text-right font-mono ${row.monthlyChange > 0 ? 'text-red-600 dark:text-red-400' : 'text-slate-400'}`}>
+                  <td className="px-4 py-2 text-right font-mono font-semibold text-[var(--foreground)]">{formatCurrency(row.monthlyRepayment)}</td>
+                  <td className={`px-4 py-2 text-right font-mono ${row.monthlyChange > 0 ? 'text-[var(--danger)] ' : 'text-[var(--muted-foreground)]'}`}>
                     {row.monthlyChange > 0 ? `+${formatCurrency(row.monthlyChange)}` : '—'}
                   </td>
-                  <td className="px-4 py-2 text-right font-mono text-slate-600 dark:text-slate-300">{formatCurrency(row.annualCost)}</td>
+                  <td className="px-4 py-2 text-right font-mono text-[var(--muted-foreground)]">{formatCurrency(row.annualCost)}</td>
                 </tr>
               ))}
             </tbody>
@@ -240,8 +239,8 @@ export function HouseAffordability() {
       </div>
 
       {/* Monthly Cost Breakdown Chart */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-5">
-        <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100 mb-3">Monthly Cost Breakdown</h3>
+      <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-5">
+        <h3 className="text-sm font-bold text-[var(--foreground)] mb-3">Monthly Cost Breakdown</h3>
         <BarCompare
           data={breakdownChartData}
           keys={[
@@ -254,6 +253,7 @@ export function HouseAffordability() {
           height={200}
         />
       </div>
+      </motion.div>
 
       <Assumptions items={ASSUMPTIONS} />
       <Disclaimer calculatorName="House Affordability calculator" />

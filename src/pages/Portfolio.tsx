@@ -6,18 +6,22 @@ import { Disclaimer } from '../components/shared/Disclaimer';
 import { usePortfolio, totalAnnualExpenses, type PortfolioData } from '../context/PortfolioContext';
 import { getMarginalRate } from '../data/tax-brackets';
 import { formatCurrency } from '../utils/formatters';
+import { Card } from '../components/ui/Card';
+import { Progress } from '../components/ui/Progress';
+import { Badge } from '../components/ui/Badge';
+import { Separator } from '../components/ui/Separator';
 
-function SectionHeader({ num, title, subtitle, color }: {
-  num: number; title: string; subtitle: string; color: string;
+function SectionHeader({ num, title, subtitle, colorClass }: {
+  num: number; title: string; subtitle: string; colorClass: string;
 }) {
   return (
-    <div className="flex items-start gap-3 mb-4">
-      <div className={`w-7 h-7 rounded-full ${color} text-white flex items-center justify-center text-xs font-bold shrink-0 mt-0.5`}>
+    <div className="flex items-start gap-4 mb-6">
+      <div className={`w-8 h-8 rounded-full ${colorClass} text-[var(--background)] flex items-center justify-center text-sm font-bold shrink-0 shadow-sm mt-0.5`}>
         {num}
       </div>
       <div>
-        <h2 className="text-sm font-bold text-slate-800 dark:text-slate-100">{title}</h2>
-        <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{subtitle}</p>
+        <h2 className="text-lg font-bold text-foreground tracking-tight">{title}</h2>
+        <p className="text-sm text-muted-foreground mt-1 leading-relaxed">{subtitle}</p>
       </div>
     </div>
   );
@@ -27,18 +31,18 @@ const EXPENSE_FIELDS: { key: keyof PortfolioData; label: string }[] = [
   { key: 'expRent',          label: 'Rent / Board' },
   { key: 'expGroceries',     label: 'Groceries & Food' },
   { key: 'expDining',        label: 'Dining Out & Takeaway' },
-  { key: 'expUtilities',     label: 'Utilities (electricity, gas, water)' },
+  { key: 'expUtilities',     label: 'Utilities (electricity/gas/water)' },
   { key: 'expInternet',      label: 'Internet & Phone' },
-  { key: 'expTransport',     label: 'Transport (fuel, rego, public transport)' },
-  { key: 'expHealth',        label: 'Health & Medical (incl. health insurance)' },
-  { key: 'expInsurance',     label: 'Insurance (home, contents, life, income protection)' },
-  { key: 'expEntertainment', label: 'Entertainment & Subscriptions' },
-  { key: 'expClothing',      label: 'Clothing & Personal Care' },
-  { key: 'expEducation',     label: 'Education (school fees, courses)' },
+  { key: 'expTransport',     label: 'Transport (fuel/rego/public)' },
+  { key: 'expHealth',        label: 'Health & Medical (incl. insurance)' },
+  { key: 'expInsurance',     label: 'Insurance (home/contents/life)' },
+  { key: 'expEntertainment', label: 'Entertainment & Subs' },
+  { key: 'expClothing',      label: 'Clothing & Care' },
+  { key: 'expEducation',     label: 'Education (fees/courses)' },
   { key: 'expChildcare',     label: 'Childcare' },
   { key: 'expTravel',        label: 'Travel & Holidays' },
   { key: 'expGym',           label: 'Gym & Sports' },
-  { key: 'expHomeMaint',     label: 'Home Maintenance & Repairs' },
+  { key: 'expHomeMaint',     label: 'Home Maintenance' },
   { key: 'expPets',          label: 'Pets' },
   { key: 'expMisc',          label: 'Miscellaneous' },
 ];
@@ -56,7 +60,7 @@ export function Portfolio() {
   const set = (key: keyof PortfolioData) => (v: number) =>
     setPortfolio({ [key]: v });
 
-  const filledSections = [
+  const filledSectionsCount = [
     portfolio.grossSalary > 0,
     portfolio.savingsBalance > 0 || portfolio.monthlySavingsContrib > 0,
     portfolio.mortgageBalance > 0,
@@ -65,31 +69,36 @@ export function Portfolio() {
     expTotal > 0,
   ].filter(Boolean).length;
 
+  const progressPercentage = (filledSectionsCount / 6) * 100;
+
   return (
-    <div className="space-y-6 max-w-3xl mx-auto">
+    <div className="space-y-8 max-w-3xl mx-auto pb-12">
       {/* Page header */}
-      <div className="border-b border-slate-200 dark:border-slate-700 pb-4">
-        <h1 className="text-xl font-extrabold text-slate-900 dark:text-slate-50 tracking-tight">
+      <div className="pb-6">
+        <h1 className="text-3xl font-extrabold text-foreground tracking-tight mb-3">
           My Portfolio
         </h1>
-        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
+        <p className="text-base text-muted-foreground leading-relaxed max-w-2xl">
           Enter your current financial holdings. All information stays in your browser — nothing is sent anywhere.
           Once filled in, every calculator below will start with your actual numbers.
         </p>
-        {filledSections > 0 && (
-          <div className="mt-2 text-xs text-blue-600 dark:text-blue-400 font-medium">
-            {filledSections}/6 sections filled — {6 - filledSections > 0 ? `${6 - filledSections} remaining` : 'all done'}
+        
+        <div className="mt-6 bg-card border border-border rounded-xl p-4 shadow-sm">
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-sm font-semibold text-foreground">Completion Progress</span>
+            <span className="text-sm font-medium text-primary">{filledSectionsCount} of 6 sections</span>
           </div>
-        )}
+          <Progress value={progressPercentage} className="h-2" />
+        </div>
       </div>
 
       {/* Section 1 — Income & Tax */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl p-5">
+      <Card variant="default" className="p-6 md:p-8">
         <SectionHeader
-          num={1} title="Income & Tax" color="bg-blue-600"
+          num={1} title="Income & Tax" colorClass="bg-primary"
           subtitle="Your gross annual salary and the marginal rate you pay on the last dollar earned."
         />
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <NumberInput
             label="Gross Annual Salary"
             value={portfolio.grossSalary}
@@ -97,7 +106,7 @@ export function Portfolio() {
             min={0} max={2000000} step={1000}
             prefix="$"
           />
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-2">
             <SliderControl
               label="Marginal Tax Rate"
               value={portfolio.margTax}
@@ -108,22 +117,22 @@ export function Portfolio() {
             {suggestedMargTax !== null && suggestedMargTax !== portfolio.margTax && (
               <button
                 onClick={() => setPortfolio({ margTax: suggestedMargTax })}
-                className="text-[10px] text-blue-500 hover:text-blue-700 dark:text-blue-400 text-left"
+                className="text-xs text-primary font-medium hover:underline text-left mt-1"
               >
-                Based on your salary, suggested rate is {suggestedMargTax}% — click to apply
+                Suggested rate: {suggestedMargTax}% — click to apply
               </button>
             )}
           </div>
         </div>
-      </div>
+      </Card>
 
       {/* Section 2 — Cash & Savings */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl p-5">
+      <Card variant="default" className="p-6 md:p-8">
         <SectionHeader
-          num={2} title="Cash & Savings" color="bg-green-600"
+          num={2} title="Cash & Savings" colorClass="bg-[var(--success)]"
           subtitle="Savings accounts, high-yield accounts, term deposits, and how much you save each month."
         />
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <NumberInput
             label="Total Savings Balance"
             value={portfolio.savingsBalance}
@@ -139,15 +148,15 @@ export function Portfolio() {
             prefix="$"
           />
         </div>
-      </div>
+      </Card>
 
       {/* Section 3 — Property & Mortgage */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl p-5">
+      <Card variant="default" className="p-6 md:p-8">
         <SectionHeader
-          num={3} title="Property & Mortgage" color="bg-amber-500"
+          num={3} title="Property & Mortgage" colorClass="bg-amber-500"
           subtitle="Your primary residence. Leave at zero if renting."
         />
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <NumberInput
             label="Property Value"
             value={portfolio.propertyValue}
@@ -177,17 +186,17 @@ export function Portfolio() {
             suffix=" yrs"
           />
         </div>
-      </div>
+      </Card>
 
       {/* Section 4 — Investments */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl p-5">
+      <Card variant="default" className="p-6 md:p-8">
         <SectionHeader
-          num={4} title="Investments (ETFs & Shares)" color="bg-violet-600"
+          num={4} title="Investments (ETFs & Shares)" colorClass="bg-violet-500"
           subtitle="Your taxable investment portfolio outside of super. Includes ETFs, individual shares, and managed funds."
         />
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <NumberInput
-            label="Current Portfolio Value"
+            label="Portfolio Value"
             value={portfolio.etfValue}
             onChange={set('etfValue')}
             min={0} max={10000000} step={1000}
@@ -208,15 +217,15 @@ export function Portfolio() {
             suffix="%"
           />
         </div>
-      </div>
+      </Card>
 
       {/* Section 5 — Superannuation */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl p-5">
+      <Card variant="default" className="p-6 md:p-8">
         <SectionHeader
-          num={5} title="Superannuation" color="bg-cyan-600"
+          num={5} title="Superannuation" colorClass="bg-cyan-500"
           subtitle="Your current super balance and monthly contributions (employer SG + any salary sacrifice)."
         />
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <NumberInput
             label="Current Super Balance"
             value={portfolio.superBalance}
@@ -225,22 +234,22 @@ export function Portfolio() {
             prefix="$"
           />
           <NumberInput
-            label="Monthly Contributions (SG + salary sacrifice)"
+            label="Monthly Contributions (SG + Sac)"
             value={portfolio.monthlySuperContrib}
             onChange={set('monthlySuperContrib')}
             min={0} max={20000} step={100}
             prefix="$"
           />
         </div>
-      </div>
+      </Card>
 
       {/* Section 6 — Living Expenses */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl p-5">
+      <Card variant="default" className="p-6 md:p-8">
         <SectionHeader
-          num={6} title="Living Expenses" color="bg-rose-500"
+          num={6} title="Living Expenses" colorClass="bg-rose-500"
           subtitle="Monthly amounts for each category. Enter what applies to you — leave others at zero. Total annual expenses are used in FIRE and Savings Rate calculations."
         />
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4 mb-6">
           {EXPENSE_FIELDS.map(({ key, label }) => (
             <NumberInput
               key={key}
@@ -253,36 +262,40 @@ export function Portfolio() {
             />
           ))}
         </div>
+        
+        <Separator className="my-6" />
+        
         {/* Total expenses summary */}
-        <div className={`rounded-lg px-4 py-3 border flex items-center justify-between ${
-          expTotal > 0
-            ? 'bg-rose-50 dark:bg-rose-950/20 border-rose-200 dark:border-rose-800'
-            : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700'
-        }`}>
+        <div className={`rounded-xl px-5 py-4 border flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-colors ${ expTotal > 0 ? 'bg-rose-500/10 border-rose-500/20' : 'bg-muted/30 border-border' }`}>
           <div>
-            <span className="text-xs text-slate-600 dark:text-slate-300 font-medium">Monthly Total</span>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-sm text-foreground font-semibold">Monthly Expenses</span>
+              {expTotal > 0 && <Badge variant="outline" className="border-rose-500/30 text-rose-600">Total</Badge>}
+            </div>
             {expTotal > 0 && (
-              <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">Annual: {formatCurrency(expTotal)}</p>
+              <p className="text-xs text-muted-foreground">Annual run rate: {formatCurrency(expTotal)}</p>
             )}
           </div>
-          <span className={`font-mono font-bold text-sm ${expTotal > 0 ? 'text-rose-600 dark:text-rose-400' : 'text-slate-400'}`}>
+          <span className={`font-mono font-bold text-2xl ${expTotal > 0 ? 'text-rose-600 ' : 'text-muted-foreground'}`}>
             {expTotal > 0 ? formatCurrency(expTotal / 12) : '—'}
           </span>
         </div>
+        
         {portfolio.grossSalary > 0 && expTotal > 0 && (
-          <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-2">
-            Implied annual savings: {formatCurrency(Math.max(0, portfolio.grossSalary - expTotal))}
-            {' '}({Math.round(Math.max(0, (portfolio.grossSalary - expTotal) / portfolio.grossSalary) * 100)}% savings rate before tax — expenses are {formatCurrency(expTotal)} pa)
-          </p>
+          <div className="mt-4 p-3 bg-muted/50 rounded-lg border border-border text-xs text-muted-foreground">
+            <span className="font-semibold text-foreground">Implied Savings:</span> {formatCurrency(Math.max(0, portfolio.grossSalary - expTotal))} per year 
+            <span className="opacity-75"> ({Math.round(Math.max(0, (portfolio.grossSalary - expTotal) / portfolio.grossSalary) * 100)}% pre-tax savings rate)</span>
+          </div>
         )}
-      </div>
+      </Card>
 
       {/* Summary — what gets pre-filled */}
-      <div className="bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-5">
-        <h3 className="text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400 mb-3">
+      <div className="bg-card/50 backdrop-blur-sm border border-border rounded-xl p-6">
+        <h3 className="text-sm font-bold uppercase tracking-wide text-foreground mb-4 flex items-center gap-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-primary inline-block"></span>
           What gets pre-filled from your portfolio
         </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-600 dark:text-slate-300">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-6 text-sm text-muted-foreground">
           {[
             ['Tax Savings', 'Gross salary, marginal tax rate'],
             ['Savings Rate', 'Salary, expenses, monthly savings'],
@@ -293,25 +306,25 @@ export function Portfolio() {
             ['Offset vs Debt Recycling', 'Mortgage balance, rate, years, marginal tax'],
             ['Direct vs Debt Recycling', 'ETF value, mortgage rate, marginal tax'],
           ].map(([tool, fields]) => (
-            <div key={tool} className="flex gap-2">
-              <span className="text-blue-500 dark:text-blue-400 font-medium shrink-0">{tool}:</span>
-              <span className="text-slate-500 dark:text-slate-400">{fields}</span>
+            <div key={tool} className="flex flex-col gap-0.5">
+              <span className="text-foreground font-medium">{tool}</span>
+              <span className="text-xs">{fields}</span>
             </div>
           ))}
         </div>
       </div>
 
       {/* CTA */}
-      <div className="flex flex-col items-center gap-2 py-4">
+      <div className="flex flex-col items-center gap-3 pt-6 pb-8">
         <NavLink
           to="/tax-savings"
-          className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-6 py-3 rounded-xl transition-colors shadow-sm"
+          className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground text-base font-semibold px-8 py-4 rounded-xl transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5"
         >
           Continue to Tax Savings
-          <span aria-hidden>→</span>
+          <span aria-hidden className="text-lg">→</span>
         </NavLink>
-        <p className="text-xs text-slate-400 dark:text-slate-500">
-          You can return to update these values at any time — your other calculators will reflect the changes.
+        <p className="text-sm text-muted-foreground text-center max-w-md">
+          You can return to update these values at any time — your calculators will automatically sync.
         </p>
       </div>
 

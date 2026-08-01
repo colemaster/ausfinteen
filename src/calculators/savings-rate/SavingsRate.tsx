@@ -1,4 +1,6 @@
 import { useState, useMemo } from 'react';
+import { motion } from 'motion/react';
+import { fadeInUp } from '@/lib/animations';
 import { SliderControl } from '../../components/ui/SliderControl';
 import { NumberInput } from '../../components/ui/NumberInput';
 import { PortfolioField } from '../../components/ui/PortfolioField';
@@ -9,9 +11,11 @@ import { AboutCalc } from '../../components/shared/AboutCalc';
 import { yearsToFIREBySavingsRate, projectBySavingsRate } from './engine';
 import { formatCurrency, formatCompact } from '../../utils/formatters';
 import {
-  LineChart, Line, XAxis, YAxis, Tooltip, Legend,
-  ResponsiveContainer, ReferenceLine, BarChart, Bar, Cell,
+  LineChart, Line, XAxis, YAxis,
+  ReferenceLine, BarChart, Bar, Cell, CartesianGrid,
 } from 'recharts';
+import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent } from '@/components/ui/chart';
+import { savingsRateConfig } from '@/lib/chart-configs';
 import { usePortfolio } from '../../context/PortfolioContext';
 
 const ASSUMPTIONS = [
@@ -77,11 +81,11 @@ export function SavingsRate() {
 
   return (
     <div className="space-y-6">
-      <div className="border-b border-slate-200 dark:border-slate-700 pb-4">
-        <h1 className="text-xl font-extrabold text-slate-900 dark:text-slate-50 tracking-tight">
+      <div className="border-b border-[var(--border)] pb-4">
+        <h1 className="text-xl font-extrabold text-[var(--foreground)] tracking-tight">
           Savings Rate Impact
         </h1>
-        <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
+        <p className="text-xs text-[var(--muted-foreground)] mt-1">
           Discover how dramatically your savings rate determines when you reach financial independence.
         </p>
       </div>
@@ -102,7 +106,7 @@ export function SavingsRate() {
       ]} />
 
       {/* Inputs */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 bg-[var(--background)] border border-[var(--border)] rounded-xl p-4">
         {portfolio.grossSalary > 0
           ? <PortfolioField label="Annual After-Tax Income" value={income} prefix="$" />
           : <NumberInput label="Annual After-Tax Income" value={incomeOverride} onChange={setIncomeOverride} min={20000} max={1000000} step={5000} prefix="$" />
@@ -132,9 +136,10 @@ export function SavingsRate() {
       </div>
 
       {/* Stat cards */}
-      <div className="text-xs text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-lg px-4 py-3 leading-relaxed">
-        <strong className="text-slate-700 dark:text-slate-300">FIRE Number</strong> = annual expenses ÷ 4% safe withdrawal rate — the portfolio size needed to retire. <strong className="text-slate-700 dark:text-slate-300">Years to FIRE</strong> assumes you invest your annual savings each year, compounding at the return rate, until your portfolio covers the FIRE number. A higher savings rate shrinks both your FIRE number (lower expenses) and the time to reach it (more savings invested).{' '}
-        <a href="https://en.wikipedia.org/wiki/FIRE_movement" target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:text-blue-600 dark:text-blue-400">Wikipedia: FIRE movement ↗</a>
+      <motion.div variants={fadeInUp} initial="hidden" animate="visible" className="space-y-6">
+      <div className="text-xs text-[var(--muted-foreground)] bg-[var(--background)] border border-slate-100 rounded-lg px-4 py-3 leading-relaxed">
+        <strong className="text-[var(--foreground)]">FIRE Number</strong> = annual expenses ÷ 4% safe withdrawal rate — the portfolio size needed to retire. <strong className="text-[var(--foreground)]">Years to FIRE</strong> assumes you invest your annual savings each year, compounding at the return rate, until your portfolio covers the FIRE number. A higher savings rate shrinks both your FIRE number (lower expenses) and the time to reach it (more savings invested).{' '}
+        <a href="https://en.wikipedia.org/wiki/FIRE_movement" target="_blank" rel="noopener noreferrer" className="text-[var(--primary)] hover:text-[var(--primary)]">Wikipedia: FIRE movement ↗</a>
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <StatCard label="FIRE Number" value={formatCompact(currentFireNumber)} color="blue" />
@@ -145,7 +150,7 @@ export function SavingsRate() {
 
       {/* Insight callout */}
       {yearsSaved > 0 && (
-        <div className="bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-xl p-4 text-sm text-green-800 dark:text-green-300">
+        <div className="bg-green-50 border border-green-200 rounded-xl p-4 text-sm text-green-800">
           Increasing your savings rate from{' '}
           <span className="font-bold">{savingsRate}%</span> to{' '}
           <span className="font-bold">{higherRate}%</span>{' '}
@@ -154,55 +159,54 @@ export function SavingsRate() {
       )}
 
       {/* Bar chart — savings rate vs years */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-5">
-        <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100 mb-1">
+      <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-5">
+        <h3 className="text-sm font-bold text-[var(--foreground)] mb-1">
           Savings Rate vs Years to FIRE
         </h3>
-        <p className="text-[10px] text-slate-400 dark:text-slate-500 mb-4">
+        <p className="text-[10px] text-[var(--muted-foreground)] mb-4">
           Your current rate ({savingsRate}%) is highlighted in blue.
         </p>
-        <ResponsiveContainer width="100%" height={220}>
+        <ChartContainer config={savingsRateConfig} className="h-[250px] w-full">
           <BarChart data={barData} margin={{ top: 4, right: 8, left: 8, bottom: 4 }}>
-            <XAxis dataKey="rate" tick={{ fontSize: 10 }} />
-            <YAxis tick={{ fontSize: 10 }} label={{ value: 'Years', angle: -90, position: 'insideLeft', style: { fontSize: 10 }, offset: 8 }} />
-            <Tooltip
-              formatter={(v: unknown) => [`${typeof v === 'number' ? v : 0} yrs`, 'Years to FIRE']}
-              contentStyle={{ fontSize: 11 }}
-            />
-            <Bar dataKey="years" radius={[3, 3, 0, 0]}>
+            <CartesianGrid vertical={false} strokeDasharray="3 3" />
+            <XAxis dataKey="rate" tickLine={false} axisLine={false} tick={{ fontSize: 10 }} />
+            <YAxis tickLine={false} axisLine={false} tick={{ fontSize: 10 }} label={{ value: 'Years', angle: -90, position: 'insideLeft', style: { fontSize: 10 }, offset: 8 }} />
+            <ChartTooltip content={<ChartTooltipContent />} />
+            <Bar dataKey="years" radius={[4, 4, 0, 0]} animationDuration={1200} animationEasing="ease-in-out">
               {barData.map((entry, i) => (
-                <Cell key={i} fill={entry.isCurrent ? '#3b82f6' : '#94a3b8'} />
+                <Cell key={i} fill={entry.isCurrent ? 'var(--color-currentSavings)' : 'var(--color-otherSavings)'} />
               ))}
             </Bar>
           </BarChart>
-        </ResponsiveContainer>
+        </ChartContainer>
       </div>
 
       {/* Line chart — trajectory */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-5">
-        <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100 mb-4">
+      <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-5">
+        <h3 className="text-sm font-bold text-[var(--foreground)] mb-4">
           Portfolio Trajectory: {savingsRate}% vs {higherRate}% Savings Rate
         </h3>
-        <ResponsiveContainer width="100%" height={240}>
+        <ChartContainer config={savingsRateConfig} className="h-[350px] w-full">
           <LineChart data={lineData} margin={{ top: 4, right: 16, left: 8, bottom: 4 }}>
-            <XAxis dataKey="year" tick={{ fontSize: 10 }} interval={Math.max(0, Math.floor(projYears / 6) - 1)} />
-            <YAxis tickFormatter={v => formatCompact(typeof v === 'number' ? v : 0)} tick={{ fontSize: 10 }} />
-            <Tooltip formatter={(v, n) => [formatCurrency(typeof v === 'number' ? v : 0), n]} contentStyle={{ fontSize: 11 }} />
-            <Legend wrapperStyle={{ fontSize: 11 }} />
-            <ReferenceLine y={currentFireNumber} stroke="#22c55e" strokeDasharray="4 4" label={{ value: 'FIRE', fontSize: 10, fill: '#22c55e' }} />
-            <Line type="monotone" dataKey={`${savingsRate}% savings`} stroke="#3b82f6" strokeWidth={2} dot={false} />
-            <Line type="monotone" dataKey={`${higherRate}% savings`} stroke="#22c55e" strokeWidth={2} dot={false} strokeDasharray="6 3" />
+            <CartesianGrid vertical={false} strokeDasharray="3 3" />
+            <XAxis dataKey="year" tickLine={false} axisLine={false} tick={{ fontSize: 10 }} interval={Math.max(0, Math.floor(projYears / 6) - 1)} />
+            <YAxis tickLine={false} axisLine={false} tickFormatter={v => formatCompact(typeof v === 'number' ? v : 0)} tick={{ fontSize: 10 }} />
+            <ChartTooltip content={<ChartTooltipContent />} />
+            <ChartLegend content={<ChartLegendContent />} />
+            <ReferenceLine y={currentFireNumber} stroke="var(--color-fireTarget)" strokeDasharray="4 4" label={{ value: 'FIRE', fontSize: 10, fill: 'var(--color-fireTarget)' }} />
+            <Line type="monotone" dataKey={`${savingsRate}% savings`} stroke="var(--color-currentSavings)" strokeWidth={2.5} dot={false} animationDuration={1200} animationEasing="ease-in-out" />
+            <Line type="monotone" dataKey={`${higherRate}% savings`} stroke="var(--color-higherSavings)" strokeWidth={2.5} dot={false} strokeDasharray="6 3" animationDuration={1200} animationEasing="ease-in-out" />
           </LineChart>
-        </ResponsiveContainer>
+        </ChartContainer>
       </div>
 
       {/* Full table */}
-      <div className="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700">
+      <div className="overflow-x-auto rounded-xl border border-[var(--border)]">
         <table className="w-full text-xs border-collapse">
           <thead>
-            <tr className="bg-slate-50 dark:bg-slate-800">
+            <tr className="bg-[var(--background)]">
               {['Savings Rate', 'Annual Savings', 'Annual Expenses', 'FIRE Number', 'Years to FIRE'].map(h => (
-                <th key={h} className="px-4 py-2.5 text-right text-[10px] uppercase tracking-wide text-slate-400 font-medium border-b border-slate-200 dark:border-slate-700 first:text-left">{h}</th>
+                <th key={h} className="px-4 py-2.5 text-right text-[10px] uppercase tracking-wide text-[var(--muted-foreground)] font-medium border-b border-[var(--border)] first:text-left">{h}</th>
               ))}
             </tr>
           </thead>
@@ -211,20 +215,21 @@ export function SavingsRate() {
               const pct = Math.round(row.rate * 100);
               const isActive = pct === Math.round(savingsRate / 5) * 5;
               return (
-                <tr key={pct} className={`border-b border-slate-100 dark:border-slate-800 last:border-0 ${isActive ? 'bg-blue-50 dark:bg-blue-950/20' : ''}`}>
-                  <td className="px-4 py-2 font-semibold text-slate-700 dark:text-slate-200">
-                    {pct}%{isActive && <span className="ml-1.5 text-blue-500 text-[10px]">(current)</span>}
+                <tr key={pct} className={`border-b border-slate-100 last:border-0 ${isActive ? 'bg-[var(--primary)]/10 ' : ''}`}>
+                  <td className="px-4 py-2 font-semibold text-[var(--foreground)]">
+                    {pct}%{isActive && <span className="ml-1.5 text-[var(--primary)] text-[10px]">(current)</span>}
                   </td>
-                  <td className="px-4 py-2 text-right font-mono text-green-600 dark:text-green-400">{formatCurrency(income * row.rate)}</td>
-                  <td className="px-4 py-2 text-right font-mono text-slate-500 dark:text-slate-400">{formatCurrency(row.annualExpenses)}</td>
-                  <td className="px-4 py-2 text-right font-mono text-slate-700 dark:text-slate-200">{formatCompact(row.fireNumber)}</td>
-                  <td className="px-4 py-2 text-right font-mono font-bold text-blue-600 dark:text-blue-400">{row.years} yrs</td>
+                  <td className="px-4 py-2 text-right font-mono text-[var(--success)]">{formatCurrency(income * row.rate)}</td>
+                  <td className="px-4 py-2 text-right font-mono text-[var(--muted-foreground)]">{formatCurrency(row.annualExpenses)}</td>
+                  <td className="px-4 py-2 text-right font-mono text-[var(--foreground)]">{formatCompact(row.fireNumber)}</td>
+                  <td className="px-4 py-2 text-right font-mono font-bold text-[var(--primary)]">{row.years} yrs</td>
                 </tr>
               );
             })}
           </tbody>
         </table>
       </div>
+      </motion.div>
 
       <Assumptions items={ASSUMPTIONS} />
       <Disclaimer calculatorName="Savings Rate Impact calculator" />

@@ -1,26 +1,15 @@
-import { CURRENT_TAX_YEAR } from '../../data/constants';
-
 export function Footer() {
   return (
-    <footer className="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 mt-auto">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
-        <div className="flex flex-col md:flex-row justify-between gap-4 text-xs text-slate-400 dark:text-slate-500">
+    <footer className="bg-background border-t border-border mt-auto transition-colors duration-300">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+        <div className="flex flex-col md:flex-row justify-between gap-6 text-sm text-muted-foreground">
           <div className="max-w-xl leading-relaxed">
-            <strong className="text-slate-600 dark:text-slate-300">Not financial advice.</strong>{' '}
+            <strong className="text-foreground font-semibold">Not financial advice.</strong>{' '}
             Australian Personal Finance Tools is a free educational tool. All calculations are illustrative only and
             should not be relied upon for financial decisions. Always consult a licensed
             Australian financial adviser (AFS licence holder) before acting.
           </div>
-          <div className="flex flex-col items-start md:items-end gap-1">
-            <span>Based on {CURRENT_TAX_YEAR} ATO rates</span>
-            <a
-              href="https://github.com/ravisha22/PersonalFinanceToolkit"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-blue-500 transition-colors"
-            >
-              GitHub ↗
-            </a>
+          <div className="flex flex-col items-start md:items-end gap-2 text-xs">
             <span>MIT Licence · Privacy-first · No tracking</span>
           </div>
         </div>

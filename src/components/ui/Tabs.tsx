@@ -1,3 +1,7 @@
+
+import { motion } from 'motion/react';
+import { cn } from '@/lib/utils';
+
 interface Tab {
   id: string;
   label: string;
@@ -11,22 +15,29 @@ interface TabsProps {
 
 export function Tabs({ tabs, activeTab, onChange }: TabsProps) {
   return (
-    <div className="flex gap-1 p-1 bg-slate-100 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 flex-wrap">
-      {tabs.map(tab => (
-        <button
-          key={tab.id}
-          onClick={() => onChange(tab.id)}
-          className={`
-            px-4 py-2 text-sm font-medium rounded-md transition-all duration-150 whitespace-nowrap
-            ${activeTab === tab.id
-              ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-sm'
-              : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
-            }
-          `}
-        >
-          {tab.label}
-        </button>
-      ))}
+    <div className="flex gap-1 p-1 bg-muted/50 rounded-xl border border-border flex-wrap w-fit mx-auto sm:mx-0">
+      {tabs.map(tab => {
+        const isActive = activeTab === tab.id;
+        return (
+          <button
+            key={tab.id}
+            onClick={() => onChange(tab.id)}
+            className={cn(
+              "relative px-4 py-2 text-sm font-semibold rounded-lg transition-colors whitespace-nowrap outline-none focus-visible:ring-2 focus-visible:ring-ring z-10",
+              isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+            )}
+          >
+            {isActive && (
+              <motion.div
+                layoutId="active-tab"
+                className="absolute inset-0 bg-background rounded-lg shadow-sm border border-border/50 -z-10"
+                transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+              />
+            )}
+            <span className="relative z-10">{tab.label}</span>
+          </button>
+        );
+      })}
     </div>
   );
 }

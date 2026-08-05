@@ -4,7 +4,7 @@ import { SliderControl } from '../../components/ui/SliderControl';
 import { Toggle } from '../../components/ui/Toggle';
 import { calculateTaxBreakdown } from './engine';
 import { formatCurrency, formatPct } from '../../utils/formatters';
-import { TAX_BRACKETS_2024_25 } from '../../data/tax-brackets';
+import { TAX_BRACKETS_2026_27 } from '../../data/tax-brackets';
 import {
   BarChart,
   Bar,
@@ -31,7 +31,7 @@ export function TaxBracketVis() {
   const bracketData = useMemo(() => {
     const data: { bracket: string; tax: number; rate: string }[] = [];
     let remaining = income;
-    TAX_BRACKETS_2024_25.forEach((b, i) => {
+    TAX_BRACKETS_2026_27.forEach((b, i) => {
       if (remaining <= 0 || income <= b.min) return;
       const inBracket = Math.min(remaining, b.max - b.min + 1);
       const tax = Math.round(inBracket * b.rate);
@@ -89,7 +89,7 @@ export function TaxBracketVis() {
         </ChartContainer>
       </div>
 
-      <p className="text-[10px] text-[var(--muted-foreground)]">Based on 2024-25 ATO Stage 3 tax rates. LMITO ended 30 June 2022.</p>
+      <p className="text-[10px] text-[var(--muted-foreground)]">Based on 2026-27 ATO Stage 3 tax rates. LMITO ended 30 June 2022.</p>
     </div>
   );
 }

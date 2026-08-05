@@ -12,18 +12,29 @@ export function DealingWithDebt() {
     <div className="space-y-8 animate-fade-in">
       {/* Hero Banner */}
       <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-rose-500/20 via-red-500/10 to-primary/20 p-6 sm:p-10 border border-rose-500/30">
-        <div className="flex items-center gap-3 mb-3">
-          <span className="text-4xl">{moduleData.emoji}</span>
-          <Badge variant="danger" className="text-xs font-bold uppercase tracking-wider">
-            Module 9 • Dealing with Debt
-          </Badge>
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+          <div className="md:col-span-8 space-y-3">
+            <div className="flex items-center gap-3 mb-1">
+              <span className="text-4xl">{moduleData.emoji}</span>
+              <Badge variant="danger" className="text-xs font-bold uppercase tracking-wider">
+                Module 9 • Dealing with Debt
+              </Badge>
+            </div>
+            <h1 className="text-3xl sm:text-4xl font-extrabold text-foreground tracking-tight">
+              {moduleData.title}
+            </h1>
+            <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
+              {moduleData.description}
+            </p>
+          </div>
+          <div className="md:col-span-4 hidden md:flex justify-center">
+            <img
+              src="/assets/graphics/popmart_debt.jpg"
+              alt="Debt Smasher Superhero 3D Popmart Toy"
+              className="w-36 h-36 rounded-2xl object-cover border-2 border-rose-500/30 shadow-xl hover:scale-105 transition-transform duration-300"
+            />
+          </div>
         </div>
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-foreground tracking-tight mb-3">
-          {moduleData.title}
-        </h1>
-        <p className="text-base sm:text-lg text-muted-foreground max-w-2xl">
-          {moduleData.description}
-        </p>
       </div>
 
       {/* Interactive Tool */}

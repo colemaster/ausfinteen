@@ -30,6 +30,8 @@ export function CommandPalette() {
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center pt-24 bg-background/80 backdrop-blur-sm p-4 sm:p-0">
       <Command
+        label="Command Palette"
+        loop
         className="w-full max-w-lg rounded-2xl border border-border bg-card text-card-foreground shadow-2xl overflow-hidden"
         onKeyDown={(e) => {
           if (e.key === 'Escape') setOpen(false);

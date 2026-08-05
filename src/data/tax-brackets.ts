@@ -1,7 +1,7 @@
 /**
- * Australian tax brackets and Medicare levy thresholds for 2024-25.
+ * Australian tax brackets and Medicare levy thresholds for 2026-27.
  * Source: ATO — ato.gov.au/rates/individual-income-tax-rates/
- * Stage 3 tax cuts apply from 1 July 2024.
+ * Stage 3 tax cuts apply from 1 July 2024 and remain unchanged for 2026-27.
  */
 
 export interface TaxBracket {
@@ -11,13 +11,16 @@ export interface TaxBracket {
   baseTax?: number; // Pre-calculated tax on the lower bound for efficiency
 }
 
-export const TAX_BRACKETS_2024_25: TaxBracket[] = [
+export const TAX_BRACKETS_2026_27: TaxBracket[] = [
   { min: 0,      max: 18200,   rate: 0,    baseTax: 0 },
   { min: 18201,  max: 45000,   rate: 0.16, baseTax: 0 },
   { min: 45001,  max: 135000,  rate: 0.30, baseTax: 4288 },
   { min: 135001, max: 190000,  rate: 0.37, baseTax: 31288 },
   { min: 190001, max: Infinity, rate: 0.45, baseTax: 51638 },
 ];
+
+/** @deprecated Use TAX_BRACKETS_2026_27 instead */
+export const TAX_BRACKETS_2024_25 = TAX_BRACKETS_2026_27;
 
 export const MEDICARE_LEVY_RATE = 0.02;
 
@@ -48,7 +51,7 @@ export const LOW_AND_MIDDLE_INCOME_TAX_OFFSET_ENDED = true; // LMITO ended 30 Ju
  */
 export function calcIncomeTax(taxableIncome: number): number {
   if (taxableIncome <= 0) return 0;
-  for (const bracket of TAX_BRACKETS_2024_25) {
+  for (const bracket of TAX_BRACKETS_2026_27) {
     if (taxableIncome <= bracket.max) {
       const taxableInBracket = taxableIncome - bracket.min + 1;
       const baseTax = bracket.baseTax ?? 0;
@@ -70,7 +73,7 @@ export function calcMedicareLevy(taxableIncome: number): number {
  * Calculate marginal tax rate for a given income level.
  */
 export function getMarginalRate(taxableIncome: number): number {
-  for (const bracket of [...TAX_BRACKETS_2024_25].reverse()) {
+  for (const bracket of [...TAX_BRACKETS_2026_27].reverse()) {
     if (taxableIncome > bracket.min) return bracket.rate;
   }
   return 0;

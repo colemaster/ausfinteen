@@ -1,7 +1,6 @@
 import { useEffect, useRef } from 'react';
-import { useInView, useMotionValue, useSpring, useTransform } from 'motion/react';
+import { useInView, useMotionValue, useSpring, useTransform, motion } from 'motion/react';
 import { cn } from '@/lib/utils';
-
 export interface AnimatedNumberProps {
   value: number;
   format?: 'currency' | 'percent' | 'number';
@@ -51,5 +50,3 @@ export function AnimatedNumber({
   return <motion.span ref={ref} className={cn("", className)}>{display}</motion.span>;
 }
 
-// Ensure motion is imported for JSX element
-import { motion } from 'motion/react';

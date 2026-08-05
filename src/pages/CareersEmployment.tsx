@@ -26,18 +26,30 @@ export function CareersEmployment() {
     <div className="space-y-8 animate-fade-in pb-12">
       {/* Hero Banner */}
       <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-blue-500/20 via-indigo-500/10 to-primary/20 p-6 sm:p-10 border border-blue-500/30">
-        <div className="flex items-center gap-3 mb-3">
-          <span className="text-4xl">{moduleData.emoji}</span>
-          <Badge variant="default" className="text-xs font-bold uppercase tracking-wider">
-            Module 2 • First Job & Career Super-Module
-          </Badge>
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+          <div className="md:col-span-8 space-y-3">
+            <div className="flex items-center gap-3 mb-1">
+              <span className="text-4xl">{moduleData.emoji}</span>
+              <Badge variant="default" className="text-xs font-bold uppercase tracking-wider">
+                Module 2 • First Job & Career Super-Module
+              </Badge>
+            </div>
+            <h1 className="text-3xl sm:text-4xl font-extrabold text-foreground tracking-tight">
+              {moduleData.title}
+            </h1>
+            <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
+              Everything you need for your first Australian job: Junior Award pay rates, Saturday/Sunday penalty rates, ATO TFN & Super forms, unpaid trial shift rules, Barefoot Investor paycheck automation, and workplace conversation scripts!
+            </p>
+          </div>
+
+          <div className="md:col-span-4 hidden md:flex justify-center">
+            <img
+              src="/assets/graphics/popmart_job.jpg"
+              alt="First Job 3D Popmart Vinyl Figure"
+              className="w-36 h-36 rounded-2xl object-cover border-2 border-primary/30 shadow-xl hover:scale-105 transition-transform duration-300"
+            />
+          </div>
         </div>
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-foreground tracking-tight mb-3">
-          {moduleData.title}
-        </h1>
-        <p className="text-base sm:text-lg text-muted-foreground max-w-2xl">
-          Everything you need for your first Australian job: Junior Award pay rates, Saturday/Sunday penalty rates, ATO TFN & Super forms, unpaid trial shift rules, Barefoot Investor paycheck automation, and workplace conversation scripts!
-        </p>
 
         {/* 6 Sub-Tabs Navigation Bar */}
         <div className="mt-6 pt-4 border-t border-blue-500/20 flex flex-wrap gap-2">

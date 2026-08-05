@@ -14,6 +14,7 @@ export interface MandyModule {
   id: string;
   title: string;
   emoji: string;
+  graphicUrl?: string;
   description: string;
   route: string;
   topics: TopicGuide[];
@@ -24,6 +25,7 @@ export const MANDY_MODULES: MandyModule[] = [
     id: 'money-and-you',
     title: 'Money & You',
     emoji: '🤠',
+    graphicUrl: '/assets/graphics/popmart_mascot.jpg',
     description: 'Master your money mindset, financial mental health, myGov digital identity, consumer rights, and scam protection.',
     route: '/money-and-you',
     topics: [
@@ -103,6 +105,7 @@ export const MANDY_MODULES: MandyModule[] = [
     id: 'careers-employment',
     title: 'Careers & Employment',
     emoji: '🎓',
+    graphicUrl: '/assets/graphics/popmart_job.jpg',
     description: 'Get your first job, master junior award pay rates, understand your payslip, nail job interviews, and know your workplace rights.',
     route: '/careers-employment',
     topics: [
@@ -287,7 +290,8 @@ export const MANDY_MODULES: MandyModule[] = [
     id: 'super-retirement',
     title: 'Super & Retirement',
     emoji: '⭐️',
-    description: 'Understand the 12% Super Guarantee, ATO under 18 rules, super stapling, fee caps, and compound super growth.',
+    graphicUrl: '/assets/graphics/popmart_super.jpg',
+    description: 'Master Australia\'s 12.5% Super Guarantee, find lost super, compare high-growth funds, and harness 40-year compound interest.',
     route: '/super-retirement',
     topics: [
       {
@@ -341,7 +345,8 @@ export const MANDY_MODULES: MandyModule[] = [
     id: 'tax-guide',
     title: 'Tax & Tax Returns',
     emoji: '💰',
-    description: 'Master the $18,200 Tax-Free Threshold, Stage 3 tax rates, work deductions, Division 6AA unearned income, and myTax.',
+    graphicUrl: '/assets/graphics/popmart_tax.jpg',
+    description: 'Understand the $18,200 Tax-Free Threshold, 16% Stage 3 rates, work deductions (uniforms, courses), and lodging tax returns.',
     route: '/tax-guide',
     topics: [
       {
@@ -386,7 +391,8 @@ export const MANDY_MODULES: MandyModule[] = [
     id: 'teen-budgeting',
     title: 'Budgeting & Paychecks',
     emoji: '🌈',
-    description: 'Split your first paycheck using 50/30/20, Barefoot 3-Bucket System, and build a $2,000 Mojo buffer.',
+    graphicUrl: '/assets/graphics/popmart_budget.jpg',
+    description: 'Master Scott Pape\'s Barefoot 3-Bucket system, 50/30/20 rule, pay-yourself-first automation, and teen savings accounts.',
     route: '/teen-budgeting',
     topics: [
       {
@@ -440,7 +446,8 @@ export const MANDY_MODULES: MandyModule[] = [
     id: 'investing-shares',
     title: 'Investing & Shares',
     emoji: '⚡️',
-    description: 'Learn ASX 200, ETFs, micro-investing apps, minor trust accounts, Section 100A tax, and compound growth.',
+    graphicUrl: '/assets/graphics/popmart_invest.jpg',
+    description: 'Learn how the ASX works, micro-investing apps (Raiz/CMC), low-cost index ETFs (VAS/VGS/IVV), and long-term compounding.',
     route: '/investing-shares',
     topics: [
       {
@@ -530,7 +537,8 @@ export const MANDY_MODULES: MandyModule[] = [
     id: 'dealing-with-debt',
     title: 'Dealing with Debt',
     emoji: '💥',
-    description: 'Avoid BNPL late fee traps (Afterpay/Zip), understand credit scores (0-1200), and payday loan warnings.',
+    graphicUrl: '/assets/graphics/popmart_debt.jpg',
+    description: 'Avoid Buy Now Pay Later (BNPL) debt traps, credit card interest, debt snowball strategies, and protect your credit score.',
     route: '/dealing-with-debt',
     topics: [
       {
@@ -548,7 +556,8 @@ export const MANDY_MODULES: MandyModule[] = [
     id: 'car-driving',
     title: 'Cars & Driving',
     emoji: '🚗',
-    description: 'QLD driver licensing step-by-step (costs, tests, timeframes), first-car true costs, EVs vs petrol, and Brisbane parking.',
+    graphicUrl: '/assets/graphics/popmart_car.jpg',
+    description: 'Calculate the total cost of buying a first car, QLD L/P plate rules, petrol vs EV running costs, rego, and insurance.',
     route: '/car-driving',
     topics: [
       {
@@ -638,7 +647,8 @@ export const MANDY_MODULES: MandyModule[] = [
     id: 'brisbane-qld',
     title: 'Brisbane, QLD',
     emoji: '🏙️',
-    description: 'Brisbane-specific budgeting, UQ/QUT/Griffith uni & HECS, rental real estate, and QLD state rules for teens.',
+    graphicUrl: '/assets/graphics/popmart_bne.jpg',
+    description: 'Budgeting for young Aussies in Brisbane: Translink student fares, suburb rent, public vs private hospital, and local costs.',
     route: '/brisbane-qld',
     topics: [
       {

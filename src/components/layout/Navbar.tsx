@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { MANDY_MODULES } from '@/data/mandy-topics';
 import { useTeenProfile } from '@/context/TeenProfileContext';
+import { prefetchRoute } from '@/utils/prefetch';
 import {
   Sparkles,
   User,
@@ -72,6 +73,8 @@ export function Navbar() {
           <nav className="hidden md:flex items-center gap-1.5 text-xs font-semibold" aria-label="Primary">
             <Link
               to="/profile"
+              onMouseEnter={() => prefetchRoute('/profile')}
+              onFocus={() => prefetchRoute('/profile')}
               className={navLinkClasses(location.pathname === '/profile')}
             >
               <User className="w-3.5 h-3.5" />
@@ -80,6 +83,8 @@ export function Navbar() {
 
             <Link
               to="/brisbane-qld"
+              onMouseEnter={() => prefetchRoute('/brisbane-qld')}
+              onFocus={() => prefetchRoute('/brisbane-qld')}
               className={navLinkClasses(location.pathname === '/brisbane-qld')}
               title="Change your location in My Profile"
             >
@@ -117,6 +122,8 @@ export function Navbar() {
                       key={m.id}
                       role="menuitem"
                       to={m.route}
+                      onMouseEnter={() => prefetchRoute(m.route)}
+                      onFocus={() => prefetchRoute(m.route)}
                       onClick={() => setModulesDropdownOpen(false)}
                       className={dropdownItemClasses(location.pathname === m.route)}
                     >
@@ -131,6 +138,8 @@ export function Navbar() {
             {/* Direct Links to top modules */}
             <Link
               to="/careers-employment"
+              onMouseEnter={() => prefetchRoute('/careers-employment')}
+              onFocus={() => prefetchRoute('/careers-employment')}
               className={navLinkClasses(location.pathname === '/careers-employment')}
             >
               🎓 First Job Pay
@@ -138,6 +147,8 @@ export function Navbar() {
 
             <Link
               to="/tax-guide"
+              onMouseEnter={() => prefetchRoute('/tax-guide')}
+              onFocus={() => prefetchRoute('/tax-guide')}
               className={navLinkClasses(location.pathname === '/tax-guide')}
             >
               💰 $18.2k Tax
@@ -145,6 +156,8 @@ export function Navbar() {
 
             <Link
               to="/teen-budgeting"
+              onMouseEnter={() => prefetchRoute('/teen-budgeting')}
+              onFocus={() => prefetchRoute('/teen-budgeting')}
               className={navLinkClasses(location.pathname === '/teen-budgeting')}
             >
               🌈 Budget

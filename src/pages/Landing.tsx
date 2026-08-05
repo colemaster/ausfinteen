@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { MANDY_MODULES } from '@/data/mandy-topics';
-import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
+import { SpotlightCard } from '@/components/ui/SpotlightCard';
+import { BorderBeam } from '@/components/ui/BorderBeam';
 import { Sparkles, ArrowRight, Zap, ChevronDown, Check } from 'lucide-react';
 import { motion } from 'motion/react';
 import { fadeInUp, staggerContainer } from '@/lib/animations';
@@ -120,6 +121,8 @@ export function Landing() {
     <div className="space-y-12 animate-fade-in pb-12">
       {/* Hero Section */}
       <section className="relative overflow-hidden rounded-3xl border border-primary/30 bg-gradient-to-br from-primary/25 via-purple-500/15 to-amber-500/25 p-8 sm:p-14 text-center sm:text-left">
+        <BorderBeam size={280} duration={14} colorFrom="#3b82f6" colorTo="#a855f7" />
+
         {/* Radial glows + sheen */}
         <div aria-hidden className="pointer-events-none absolute inset-0">
           <div className="absolute -top-28 -right-28 w-80 h-80 rounded-full bg-primary/30 blur-3xl" />
@@ -128,65 +131,85 @@ export function Landing() {
           <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent" />
         </div>
 
-        <div className="relative max-w-3xl space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>The Real-World Money Guide for Young Aussies 🤠</span>
-          </div>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
+          <div className="lg:col-span-7 space-y-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>The Real-World Money Guide for Young Aussies 🤠</span>
+            </div>
 
-          <h1 className="text-4xl sm:text-6xl font-black text-foreground tracking-tight leading-none">
-            In the know about your <span className="text-primary bg-gradient-to-r from-primary to-amber-500 bg-clip-text text-transparent">dough</span>.
-          </h1>
+            <h1 className="text-4xl sm:text-6xl font-black text-foreground tracking-tight leading-none">
+              In the know about your <span className="text-primary bg-gradient-to-r from-primary via-violet-500 to-amber-500 bg-clip-text text-transparent">dough</span>.
+            </h1>
 
-          <p className="text-base sm:text-xl text-muted-foreground leading-relaxed max-w-2xl">
-            Everything you need to know about your money before you tackle the real world—from your first job payslip, $18,200 tax-free threshold, 12% super guarantee, and car costs to budgeting your first paycheck and living in Brisbane.
-          </p>
+            <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
+              Everything you need to know about your money before you tackle the real world—from your first job payslip, $18,200 tax-free threshold, 12.5% super guarantee, and car costs to budgeting your first paycheck and living in Brisbane.
+            </p>
 
-          {/* Site-wide search */}
-          <div className="pt-5 flex flex-col items-center sm:items-start gap-2">
-            <SiteSearchBar />
-            <span className="text-[11px] text-muted-foreground/80">
-              🔍 Search every module, Q&A guide, calculator and official resource — fuzzy & typo-tolerant.
-            </span>
-          </div>
+            {/* Site-wide search */}
+            <div className="pt-3 flex flex-col items-center sm:items-start gap-2">
+              <SiteSearchBar />
+              <span className="text-[11px] text-muted-foreground/80">
+                🔍 Search every module, Q&A guide, calculator and official resource — fuzzy & typo-tolerant.
+              </span>
+            </div>
 
-          <div className="pt-4 flex flex-wrap items-center justify-center sm:justify-start gap-3">
-            <Link
-              to="/careers-employment"
-              className="px-6 py-3.5 rounded-2xl bg-gradient-to-r from-primary via-violet-500 to-purple-500 text-primary-foreground font-bold text-sm hover:opacity-90 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-primary/25 transition-all shadow-md flex items-center gap-2"
-            >
-              <span>Explore First Job Pay</span>
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-
-            <Link
-              to="/profile"
-              className="px-6 py-3.5 rounded-2xl bg-card/80 border border-border text-foreground font-bold text-sm hover:bg-card hover:border-primary/40 hover:-translate-y-0.5 transition-all backdrop-blur"
-            >
-              Set Up My Profile ({profile.age}yo)
-            </Link>
-          </div>
-
-          {/* Quick Age Toggle Pills in Hero */}
-          <div className="pt-4 flex flex-wrap items-center justify-center sm:justify-start gap-2">
-            <span className="text-xs font-semibold text-muted-foreground flex items-center gap-1">
-              <Zap className="w-3.5 h-3.5 text-amber-500" />
-              Instant Persona Presets:
-            </span>
-            {[15, 16, 17, 18].map(a => (
-              <button
-                key={a}
-                type="button"
-                onClick={() => applyAgePreset(a)}
-                className={`px-3 py-1 rounded-full text-xs font-bold transition-all border ${
-                  profile.age === a
-                    ? 'bg-primary text-primary-foreground border-primary shadow-xs'
-                    : 'bg-card/80 hover:bg-card hover:border-primary/40 border-border text-foreground'
-                }`}
+            <div className="pt-3 flex flex-wrap items-center justify-center sm:justify-start gap-3">
+              <Link
+                to="/careers-employment"
+                className="px-6 py-3.5 rounded-2xl bg-gradient-to-r from-primary via-violet-500 to-purple-500 text-primary-foreground font-bold text-sm hover:opacity-90 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-primary/25 transition-all shadow-md flex items-center gap-2"
               >
-                {a}yo Preset
-              </button>
-            ))}
+                <span>Explore First Job Pay</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+
+              <Link
+                to="/profile"
+                className="px-6 py-3.5 rounded-2xl bg-card/80 border border-border text-foreground font-bold text-sm hover:bg-card hover:border-primary/40 hover:-translate-y-0.5 transition-all backdrop-blur"
+              >
+                Set Up My Profile ({profile.age}yo)
+              </Link>
+            </div>
+
+            {/* Quick Age Toggle Pills in Hero */}
+            <div className="pt-3 flex flex-wrap items-center justify-center sm:justify-start gap-2">
+              <span className="text-xs font-semibold text-muted-foreground flex items-center gap-1">
+                <Zap className="w-3.5 h-3.5 text-amber-500" />
+                Instant Persona Presets:
+              </span>
+              {[15, 16, 17, 18].map(a => (
+                <button
+                  key={a}
+                  type="button"
+                  onClick={() => applyAgePreset(a)}
+                  className={`px-3 py-1 rounded-full text-xs font-bold transition-all border ${
+                    profile.age === a
+                      ? 'bg-primary text-primary-foreground border-primary shadow-xs'
+                      : 'bg-card/80 hover:bg-card hover:border-primary/40 border-border text-foreground'
+                  }`}
+                >
+                  {a}yo Preset
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Hero 3D Graphic Asset Card */}
+          <div className="lg:col-span-5 hidden lg:block relative">
+            <div className="relative rounded-3xl overflow-hidden border border-border/80 shadow-2xl shadow-primary/20 group hover:scale-[1.02] transition-transform duration-500">
+              <img
+                src="/assets/aus_teen_hero.jpg"
+                alt="AusTeen Money 2030 Graphic Illustration"
+                className="w-full h-auto object-cover rounded-3xl"
+                loading="eager"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-5">
+                <span className="text-xs font-bold text-white flex items-center gap-1.5">
+                  <Sparkles className="w-4 h-4 text-amber-400" />
+                  AusTeen Money 2030 Edition
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -217,14 +240,22 @@ export function Landing() {
                 to={module.route}
                 className="block group rounded-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2"
               >
-                <Card
-                  variant="glass"
-                  className="p-6 h-full space-y-3 rounded-3xl group-hover:border-primary/50 group-hover:bg-card/80 group-hover:shadow-xl group-hover:shadow-primary/10 hover:-translate-y-1 transition-all duration-300"
-                >
+                <SpotlightCard className="h-full space-y-3 rounded-3xl">
                   <div className="flex items-center justify-between">
-                    <span className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/15 via-purple-500/10 to-amber-500/20 border border-primary/10 flex items-center justify-center text-2xl group-hover:scale-105 group-hover:border-primary/30 transition-all shadow-inner">
-                      {module.emoji}
-                    </span>
+                    <div className="flex items-center gap-3">
+                      {module.graphicUrl ? (
+                        <img
+                          src={module.graphicUrl}
+                          alt={module.title}
+                          className="w-12 h-12 rounded-2xl object-cover border border-primary/20 shadow-md group-hover:scale-110 transition-transform duration-300"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <span className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/15 via-purple-500/10 to-amber-500/20 border border-primary/10 flex items-center justify-center text-2xl group-hover:scale-105 group-hover:border-primary/30 transition-all shadow-inner">
+                          {module.emoji}
+                        </span>
+                      )}
+                    </div>
                     <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-muted text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary transition-colors">
                       {module.topics.length} topics
                     </span>
@@ -239,7 +270,7 @@ export function Landing() {
                     <span>Explore Module</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </div>
-                </Card>
+                </SpotlightCard>
               </Link>
             </motion.div>
           ))}

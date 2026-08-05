@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Card } from '@/components/ui/Card';
 import { NumberInput } from '@/components/ui/NumberInput';
 import { StatCard } from '@/components/ui/StatCard';
@@ -7,6 +7,8 @@ import { OFFICIAL_WEB_LINKS, MINOR_UNEARNED_TAX_RATES } from '@/data/teen-financ
 import { WebReferenceLink } from '@/components/shared/WebReferenceLink';
 import { Calculator, ShieldAlert } from 'lucide-react';
 import { useTeenProfile } from '@/context/TeenProfileContext';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
+import { ChartContainer, ChartTooltipContent } from '@/components/ui/chart';
 
 export function TeenTaxCalculator() {
   const { profile } = useTeenProfile();
@@ -35,6 +37,22 @@ export function TeenTaxCalculator() {
     }
   }
 
+  const netKeepIncome = annualEarnedIncome - earnedIncomeTax;
+
+  const chartData = useMemo(() => {
+    return [
+      { name: 'After-Tax Pay Keep', value: Math.round(netKeepIncome), color: '#10b981' },
+      { name: 'Income Tax', value: Math.round(earnedIncomeTax), color: '#f59e0b' },
+      { name: 'Work Deductions', value: Math.round(totalDeductions), color: '#3b82f6' },
+    ];
+  }, [netKeepIncome, earnedIncomeTax, totalDeductions]);
+
+  const chartConfig = useMemo(() => {
+    return {
+      value: { label: 'Amount ($)', color: '#10b981' },
+    };
+  }, []);
+
   return (
     <Card variant="glass" className="p-6 space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border pb-4">
@@ -48,7 +66,7 @@ export function TeenTaxCalculator() {
           </p>
         </div>
         <Badge variant="success">
-          2025-26 Stage 3 ATO Rates
+          2026-27 Stage 3 ATO Rates
         </Badge>
       </div>
 
@@ -98,22 +116,54 @@ export function TeenTaxCalculator() {
         </div>
       </div>
 
+      {/* Donut Chart Visualizer */}
+      <div className="bg-card/50 border border-border/60 rounded-xl p-4 flex flex-col items-center justify-center min-h-[200px]">
+        <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2 font-mono">Gross Income Breakdown</h3>
+        <ChartContainer config={chartConfig} className="h-[180px] w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie
+                data={chartData}
+                cx="50%"
+                cy="50%"
+                innerRadius={45}
+                outerRadius={75}
+                paddingAngle={4}
+                dataKey="value"
+                animationDuration={1000}
+              >
+                {chartData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.color} />
+                ))}
+              </Pie>
+              <Tooltip content={<ChartTooltipContent formatter={v => [`$${v}/yr`, 'Value']} />} />
+            </PieChart>
+          </ResponsiveContainer>
+        </ChartContainer>
+      </div>
+
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
         <StatCard
           label="Total Work Tax Deductions"
           value={`$${totalDeductions.toFixed(2)}`}
+          numericValue={totalDeductions}
+          format="currency"
           color="green"
           subtext="Uniforms + RSA/RCG courses"
         />
         <StatCard
           label="Job Income Tax Payable"
           value={`$${earnedIncomeTax.toFixed(2)}`}
+          numericValue={earnedIncomeTax}
+          format="currency"
           color={earnedIncomeTax === 0 ? 'green' : 'amber'}
           subtext={taxableEarnedIncome <= 18200 ? '$18,200 Tax-Free Threshold claimed!' : '16% Stage 3 marginal rate'}
         />
         <StatCard
           label="Div 6AA Unearned Minor Tax"
           value={`$${unearnedTax.toFixed(2)}`}
+          numericValue={unearnedTax}
+          format="currency"
           color={unearnedTax === 0 ? 'green' : 'red'}
           subtext={unearnedInterestIncome <= 416 ? 'Under $416 tax-free minor limit' : '66% ATO minor unearned rate'}
         />

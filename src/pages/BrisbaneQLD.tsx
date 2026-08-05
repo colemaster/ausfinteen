@@ -1,14 +1,14 @@
 import { MANDY_MODULES } from '@/data/mandy-topics';
 import { TopicGuideAccordion } from '@/components/shared/TopicGuideAccordion';
 import { BrisbaneBudgetCalculator } from '@/calculators/teen-brisbane/BrisbaneBudgetCalculator';
+import { BrisbaneUniExplorer } from '@/calculators/teen-brisbane/BrisbaneUniExplorer';
 import { WebReferenceLink } from '@/components/shared/WebReferenceLink';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Tabs } from '@/components/ui/Tabs';
-import { MapPin, GraduationCap, Home, Landmark, ExternalLink } from 'lucide-react';
+import { MapPin, Home, Landmark, ExternalLink } from 'lucide-react';
 import { useState } from 'react';
 import {
-  BRISBANE_UNIS,
   HECS_BANDS_2026,
   BRISBANE_SUBURBS,
   QLD_FIRST_HOME_HELP,
@@ -41,33 +41,44 @@ export function BrisbaneQLD() {
     <div className="space-y-8 animate-fade-in">
       {/* Hero Banner */}
       <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-sky-500/20 via-emerald-500/10 to-primary/20 p-6 sm:p-10 border border-sky-500/30">
-        <div className="flex items-center gap-3 mb-3 flex-wrap">
-          <span className="text-4xl">{moduleData.emoji}</span>
-          <Badge variant="default" className="text-xs font-bold uppercase tracking-wider">
-            Location Module • {moduleData.title}
-          </Badge>
-          {isBrisbane && (
-            <Badge variant="success" className="text-xs font-bold uppercase tracking-wider">
-              ✓ Set as My Location
-            </Badge>
-          )}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+          <div className="md:col-span-8 space-y-3">
+            <div className="flex items-center gap-3 mb-1 flex-wrap">
+              <span className="text-4xl">{moduleData.emoji}</span>
+              <Badge variant="default" className="text-xs font-bold uppercase tracking-wider">
+                Location Module • {moduleData.title}
+              </Badge>
+              {isBrisbane && (
+                <Badge variant="success" className="text-xs font-bold uppercase tracking-wider">
+                  ✓ Set as My Location
+                </Badge>
+              )}
+            </div>
+            <h1 className="text-3xl sm:text-4xl font-extrabold text-foreground tracking-tight">
+              {moduleData.title}
+            </h1>
+            <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
+              {moduleData.description}
+            </p>
+            {!isBrisbane && (
+              <button
+                type="button"
+                onClick={() => updateProfile({ location: 'Brisbane, QLD' })}
+                className="mt-2 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-primary-foreground font-bold text-xs"
+              >
+                <MapPin className="w-3.5 h-3.5" />
+                Set My Location to Brisbane, QLD
+              </button>
+            )}
+          </div>
+          <div className="md:col-span-4 hidden md:flex justify-center">
+            <img
+              src="/assets/graphics/popmart_bne.jpg"
+              alt="Brisbane Nights 3D Popmart Toy"
+              className="w-36 h-36 rounded-2xl object-cover border-2 border-sky-500/30 shadow-xl hover:scale-105 transition-transform duration-300"
+            />
+          </div>
         </div>
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-foreground tracking-tight mb-3">
-          {moduleData.title}
-        </h1>
-        <p className="text-base sm:text-lg text-muted-foreground max-w-2xl">
-          {moduleData.description}
-        </p>
-        {!isBrisbane && (
-          <button
-            type="button"
-            onClick={() => updateProfile({ location: 'Brisbane, QLD' })}
-            className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-primary-foreground font-bold text-xs"
-          >
-            <MapPin className="w-3.5 h-3.5" />
-            Set My Location to Brisbane, QLD
-          </button>
-        )}
       </div>
 
       {/* Interactive Budget Tool */}
@@ -86,71 +97,35 @@ export function BrisbaneQLD() {
         />
 
         {tab === 'unis' && (
-          <Card variant="glass" className="p-6 space-y-5">
-            <div className="flex items-center gap-2 border-b border-border pb-3">
-              <GraduationCap className="w-5 h-5 text-emerald-500" />
-              <h2 className="text-lg font-bold text-foreground">Brisbane Universities & HECS-HELP</h2>
-              <ExternalLink className="w-4 h-4 text-muted-foreground" />
-            </div>
+          <div className="space-y-6">
+            <BrisbaneUniExplorer />
 
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs border-collapse">
-                <thead>
-                  <tr className="border-b border-border">
-                    <th className="py-2 pr-3 font-bold text-foreground">Uni</th>
-                    <th className="py-2 pr-3 font-bold text-foreground">Campuses</th>
-                    <th className="py-2 pr-3 font-bold text-foreground">Strength</th>
-                    <th className="py-2 pr-3 font-bold text-foreground">CSP Fee / yr</th>
-                    <th className="py-2 pr-3 font-bold text-foreground">ATAR</th>
-                    <th className="py-2 font-bold text-foreground">Link</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {BRISBANE_UNIS.map(u => (
-                    <tr key={u.code} className="border-b border-border/60 last:border-0">
-                      <td className="py-3 pr-3 align-top">
-                        <div className="font-bold text-foreground">{u.code}</div>
-                        <div className="text-muted-foreground">{u.name}</div>
-                      </td>
-                      <td className="py-3 pr-3 align-top text-muted-foreground">{u.campuses}</td>
-                      <td className="py-3 pr-3 align-top text-muted-foreground">{u.strength}</td>
-                      <td className="py-3 pr-3 align-top font-mono font-semibold text-foreground whitespace-nowrap">{u.cspBand}</td>
-                      <td className="py-3 pr-3 align-top font-mono text-muted-foreground whitespace-nowrap">{u.atar}</td>
-                      <td className="py-3 align-top">
-                        <a href={u.url} target="_blank" rel="noopener noreferrer" className="text-primary font-semibold hover:underline whitespace-nowrap">
-                          Visit ↗
-                        </a>
-                      </td>
-                    </tr>
+            <Card variant="glass" className="p-6 space-y-5">
+              <div className="rounded-2xl border border-border bg-background/60 p-4">
+                <h3 className="text-sm font-bold text-foreground mb-2">HECS-HELP Student Contribution Bands (2026/2027)</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                  {HECS_BANDS_2026.map(b => (
+                    <div key={b.band} className="rounded-xl border border-border bg-card p-3">
+                      <div className="text-[11px] text-muted-foreground font-semibold leading-snug">{b.band}</div>
+                      <div className="text-lg font-bold font-mono text-emerald-600 dark:text-emerald-400">{b.label}</div>
+                    </div>
                   ))}
-                </tbody>
-              </table>
-            </div>
-
-            <div className="rounded-2xl border border-border bg-background/60 p-4">
-              <h3 className="text-sm font-bold text-foreground mb-2">HECS-HELP Student Contribution Bands (2026)</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                {HECS_BANDS_2026.map(b => (
-                  <div key={b.band} className="rounded-xl border border-border bg-card p-3">
-                    <div className="text-[11px] text-muted-foreground font-semibold leading-snug">{b.band}</div>
-                    <div className="text-lg font-bold font-mono text-emerald-600 dark:text-emerald-400">{b.label}</div>
-                  </div>
-                ))}
+                </div>
+                <p className="text-[11px] text-muted-foreground mt-2.5">
+                  You never pay upfront — HECS-HELP loans the amount, and you only start repaying once your income passes
+                  the HELP repayment threshold (~$60k+ in 2026). Apply via QTAC in Queensland.
+                </p>
               </div>
-              <p className="text-[11px] text-muted-foreground mt-2.5">
-                You never pay upfront — HECS-HELP loans the amount, and you only start repaying once your income passes
-                the HELP repayment threshold (~$60k+ in 2026). Apply via QTAC in Queensland.
-              </p>
-            </div>
 
-            <div className="flex flex-wrap gap-2.5">
-              <WebReferenceLink link={OFFICIAL_WEB_LINKS.uq_study} />
-              <WebReferenceLink link={OFFICIAL_WEB_LINKS.qut_study} />
-              <WebReferenceLink link={OFFICIAL_WEB_LINKS.griffith_study} />
-              <WebReferenceLink link={OFFICIAL_WEB_LINKS.qtac} />
-              <WebReferenceLink link={OFFICIAL_WEB_LINKS.tafe_qld} />
-            </div>
-          </Card>
+              <div className="flex flex-wrap gap-2.5">
+                <WebReferenceLink link={OFFICIAL_WEB_LINKS.uq_study} />
+                <WebReferenceLink link={OFFICIAL_WEB_LINKS.qut_study} />
+                <WebReferenceLink link={OFFICIAL_WEB_LINKS.griffith_study} />
+                <WebReferenceLink link={OFFICIAL_WEB_LINKS.qtac} />
+                <WebReferenceLink link={OFFICIAL_WEB_LINKS.tafe_qld} />
+              </div>
+            </Card>
+          </div>
         )}
 
         {tab === 'realestate' && (

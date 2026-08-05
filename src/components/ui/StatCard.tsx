@@ -1,3 +1,4 @@
+import React from 'react';
 import { ArrowDownRight, ArrowUpRight, Minus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { AnimatedNumber } from './AnimatedNumber';
@@ -51,7 +52,7 @@ const TREND_ICON: Record<Trend, typeof ArrowUpRight> = {
   flat: Minus,
 };
 
-export function StatCard({
+export const StatCard = React.memo(function StatCard({
   label,
   value,
   numericValue,
@@ -71,7 +72,7 @@ export function StatCard({
         : 'text-muted-foreground';
 
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-border/60 bg-card px-5 py-4 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
+    <div className="card-container relative overflow-hidden rounded-2xl border border-border/60 bg-card px-5 py-4 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
       <div
         aria-hidden="true"
         className={cn('absolute inset-x-0 top-0 h-1 bg-gradient-to-r', accent.gradient)}
@@ -94,7 +95,7 @@ export function StatCard({
       </div>
       <div
         className={cn(
-          'mt-1.5 text-2xl font-bold font-mono tabular-nums tracking-tight',
+          'mt-1.5 text-2xl @sm:text-3xl font-bold font-mono tabular-nums tracking-tight',
           accent.value
         )}
       >
@@ -111,4 +112,5 @@ export function StatCard({
       )}
     </div>
   );
-}
+});
+

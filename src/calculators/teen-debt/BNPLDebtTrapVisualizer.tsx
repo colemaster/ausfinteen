@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Card } from '@/components/ui/Card';
 import { NumberInput } from '@/components/ui/NumberInput';
 import { SliderControl } from '@/components/ui/SliderControl';
@@ -7,6 +7,8 @@ import { Badge } from '@/components/ui/Badge';
 import { OFFICIAL_WEB_LINKS } from '@/data/teen-finance-data';
 import { WebReferenceLink } from '@/components/shared/WebReferenceLink';
 import { Flame, ShieldAlert } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip } from 'recharts';
+import { ChartContainer, ChartTooltipContent } from '@/components/ui/chart';
 
 export function BNPLDebtTrapVisualizer() {
   const [purchasePrice, setPurchasePrice] = useState<number>(120);
@@ -17,6 +19,22 @@ export function BNPLDebtTrapVisualizer() {
   const totalLateFees = missedPayments * 15;
   const totalCost = purchasePrice + totalLateFees;
   const percentageMarkup = (totalLateFees / purchasePrice) * 100;
+
+  // Comparison data for 1-year impact if saved/invested vs BNPL wasted
+  const chartData = useMemo(() => {
+    return [
+      { name: 'Item Price', value: purchasePrice, color: '#3b82f6' },
+      { name: 'BNPL Late Fees', value: totalLateFees, color: '#ef4444' },
+      { name: 'Total Wasted', value: totalCost, color: '#f59e0b' },
+      { name: 'If Invested (1y @ 7%)', value: Math.round(totalCost * 1.07), color: '#10b981' },
+    ];
+  }, [purchasePrice, totalLateFees, totalCost]);
+
+  const chartConfig = useMemo(() => {
+    return {
+      value: { label: 'Amount ($)', color: '#3b82f6' },
+    };
+  }, []);
 
   return (
     <Card variant="glass" className="p-6 space-y-6">
@@ -89,22 +107,44 @@ export function BNPLDebtTrapVisualizer() {
         </div>
       </div>
 
+      {/* Visual Bar Comparison Chart */}
+      <div className="bg-card/50 border border-border/60 rounded-xl p-4 space-y-2">
+        <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">True Cost vs Opportunity Cost</h3>
+        <ChartContainer config={chartConfig} className="h-[200px] w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} />
+              <XAxis dataKey="name" tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
+              <YAxis tickFormatter={v => `$${v}`} tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
+              <Tooltip content={<ChartTooltipContent formatter={v => [`$${v}`, 'Amount']} />} />
+              <Bar dataKey="value" radius={[6, 6, 0, 0]} animationDuration={1000} fill="#ef4444" />
+            </BarChart>
+          </ResponsiveContainer>
+        </ChartContainer>
+      </div>
+
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
         <StatCard
           label="4 Fortnightly Installments"
           value={`4x $${fortnightInstallment.toFixed(2)}`}
+          numericValue={fortnightInstallment}
+          format="currency"
           color="blue"
           subtext="Advertised 'Interest Free'"
         />
         <StatCard
           label="Late Fees Accumulated"
           value={`+$${totalLateFees.toFixed(2)}`}
+          numericValue={totalLateFees}
+          format="currency"
           color={totalLateFees > 0 ? 'red' : 'green'}
           subtext={`+$15 per missed fee (${percentageMarkup.toFixed(0)}% markup)`}
         />
         <StatCard
           label="True Final Price Paid"
           value={`$${totalCost.toFixed(2)}`}
+          numericValue={totalCost}
+          format="currency"
           color={totalLateFees > 0 ? 'red' : 'cyan'}
           subtext={`Original item was $${purchasePrice}`}
         />

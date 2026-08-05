@@ -1,3 +1,4 @@
+import { motion } from 'motion/react';
 import { MANDY_MODULES } from '@/data/mandy-topics';
 import { TopicGuideAccordion } from '@/components/shared/TopicGuideAccordion';
 import { TeenTaxCalculator } from '@/calculators/teen-tax/TeenTaxCalculator';
@@ -28,11 +29,18 @@ export function TaxGuide() {
             </p>
           </div>
           <div className="md:col-span-4 hidden md:flex justify-center">
-            <img
-              src="/assets/graphics/popmart_tax.jpg"
-              alt="$18,200 Tax Free Threshold 3D Popmart Vinyl Figure"
-              className="w-36 h-36 rounded-2xl object-cover border-2 border-emerald-500/30 shadow-xl hover:scale-105 transition-transform duration-300"
-            />
+            <motion.div
+              animate={{ y: [0, -8, 0] }}
+              transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+              className="relative group"
+            >
+              <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 blur-md opacity-40 group-hover:opacity-70 transition duration-500" />
+              <img
+                src="/assets/graphics/popmart_tax.jpg"
+                alt="$18,200 Tax Free Threshold 3D Popmart Vinyl Figure"
+                className="relative w-36 h-36 rounded-2xl object-cover border-2 border-emerald-500/40 shadow-xl"
+              />
+            </motion.div>
           </div>
         </div>
       </div>

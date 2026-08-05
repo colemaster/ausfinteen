@@ -4,6 +4,7 @@ import { SliderControl } from '@/components/ui/SliderControl';
 import { StatCard } from '@/components/ui/StatCard';
 import { Badge } from '@/components/ui/Badge';
 import { FinancialHealthScore } from '@/components/ui/FinancialHealthScore';
+import { PaycheckSplitterWidget } from '@/components/teen-profile/PaycheckSplitterWidget';
 import { SpotlightCard } from '@/components/ui/SpotlightCard';
 import { AGE_PRESETS } from '@/data/teen-finance-data';
 import { User, Briefcase, Target, RefreshCw, Zap, MapPin } from 'lucide-react';
@@ -91,6 +92,17 @@ export function TeenProfile() {
         savingsTarget={profile.savingsGoalTarget}
         hoursWk={profile.hoursPerWeek}
         claimsTaxFree={profile.claimsTaxFreeThreshold}
+      />
+
+      {/* Interactive Paycheck Stream Allocator Widget */}
+      <PaycheckSplitterWidget
+        grossWeekly={weeklyGrossIncome}
+        taxWeekly={estimatedTaxWithheldWeekly}
+        superWeekly={weeklySuperContribution}
+        netWeekly={weeklyNetPay}
+        savingsTarget={profile.savingsGoalTarget}
+        currentSavings={profile.currentSavings}
+        goalName={profile.savingsGoalName}
       />
 
       {/* Main Income & Profile Settings */}

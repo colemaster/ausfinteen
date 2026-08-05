@@ -2,8 +2,10 @@ import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { MANDY_MODULES } from '@/data/mandy-topics';
 import { Badge } from '@/components/ui/Badge';
-import { SpotlightCard } from '@/components/ui/SpotlightCard';
 import { BorderBeam } from '@/components/ui/BorderBeam';
+import { InteractiveGridPattern } from '@/components/ui/InteractiveGridPattern';
+import { HolographicTiltCard } from '@/components/ui/HolographicTiltCard';
+import { ScenarioSplitterWidget } from '@/components/ui/ScenarioSplitterWidget';
 import { Sparkles, ArrowRight, Zap, ChevronDown, Check } from 'lucide-react';
 import { motion } from 'motion/react';
 import { fadeInUp, staggerContainer } from '@/lib/animations';
@@ -120,7 +122,8 @@ export function Landing() {
   return (
     <div className="space-y-12 animate-fade-in pb-12">
       {/* Hero Section */}
-      <section className="relative overflow-hidden rounded-3xl border border-primary/30 bg-gradient-to-br from-primary/25 via-purple-500/15 to-amber-500/25 p-8 sm:p-14 text-center sm:text-left">
+      <section className="relative overflow-hidden rounded-3xl border border-primary/30 bg-gradient-to-br from-primary/25 via-purple-500/15 to-amber-500/25 p-8 sm:p-14 text-center sm:text-left shadow-2xl">
+        <InteractiveGridPattern glowSize={500} glowColor="oklch(0.65 0.18 250 / 0.25)" />
         <BorderBeam size={280} duration={14} colorFrom="#3b82f6" colorTo="#a855f7" />
 
         {/* Radial glows + sheen */}
@@ -196,22 +199,28 @@ export function Landing() {
 
           {/* Hero 3D Graphic Asset Card */}
           <div className="lg:col-span-5 hidden lg:block relative">
-            <div className="relative rounded-3xl overflow-hidden border border-border/80 shadow-2xl shadow-primary/20 group hover:scale-[1.02] transition-transform duration-500">
+            <HolographicTiltCard showBeam={false} className="border-primary/30">
               <img
                 src="/assets/aus_teen_hero.jpg"
                 alt="AusTeen Money 2030 Graphic Illustration"
-                className="w-full h-auto object-cover rounded-3xl"
+                className="w-full h-auto object-cover rounded-2xl"
                 loading="eager"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-5">
-                <span className="text-xs font-bold text-white flex items-center gap-1.5">
+              <div className="mt-3 flex items-center justify-between text-xs font-bold text-foreground">
+                <span className="flex items-center gap-1.5">
                   <Sparkles className="w-4 h-4 text-amber-400" />
-                  AusTeen Money 2030 Edition
+                  2030 Interactive Edition
                 </span>
+                <span className="text-primary">Australia-First 🇦🇺</span>
               </div>
-            </div>
+            </HolographicTiltCard>
           </div>
         </div>
+      </section>
+
+      {/* 2030 Interactive Scenario Splitter Widget */}
+      <section className="calculator-section">
+        <ScenarioSplitterWidget />
       </section>
 
       {/* 11 Mandy Money Modules Grid */}
@@ -231,7 +240,8 @@ export function Landing() {
         <motion.div
           variants={staggerContainer}
           initial="hidden"
-          animate="visible"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-50px' }}
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
         >
           {MANDY_MODULES.map(module => (
@@ -240,7 +250,7 @@ export function Landing() {
                 to={module.route}
                 className="block group rounded-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2"
               >
-                <SpotlightCard className="h-full space-y-3 rounded-3xl">
+                <HolographicTiltCard showBeam={false} className="h-full space-y-3 rounded-3xl">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       {module.graphicUrl ? (
@@ -270,7 +280,7 @@ export function Landing() {
                     <span>Explore Module</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </div>
-                </SpotlightCard>
+                </HolographicTiltCard>
               </Link>
             </motion.div>
           ))}

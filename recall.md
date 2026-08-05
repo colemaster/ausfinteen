@@ -31,6 +31,26 @@
 | v3.3.0  | Site Search | Site-wide fuzzy search bar on the Landing hero (Fuse.js v7): searches all 11 modules, 160+ Q&A topics, calculators & 54 official web links with typo-tolerant autocomplete, match highlighting, grouped results, keyboard nav, popular searches, and deep-links straight to the exact topic via ?topic= | Local (push blocked) |
 | v3.4.0  | Layout Shell | 2027 premium layout shell upgrade: gradient accent bar on Navbar, pill+underline active-link indicators, aria-expanded/aria-label a11y, scroll-progress bar (reduced-motion aware) in Layout, premium Footer polish + GitHub link | Local (push blocked) |
 | v4.0.0  | SDK & Perf | Frontend SDK upgrades to latest (Motion 13.0.0, Vite 8.2, React 19, Vitest 4, Tailwind 4.3), Latin font subsetting, LRU engine memoization, route prefetching on hover/focus, Core Web Vitals Performance Center modal | Local |
+| v4.1.0  | 2030 Motion & Visuals | 2030 Cyber-Finance UI widgets (InteractiveGridPattern mouse light beam, HolographicTiltCard with 3D perspective glare & OKLCH border beam, ScenarioSplitterWidget curtain-peel comparison, RadialScoreGauge 360° arc meter) | Local |
+
+---
+
+## v4.1.0 — 2030 MOTION & VISUAL UPGRADES
+
+### Summary
+Designed and integrated next-generation 2030 visual widgets, Motion 13 (`motion/react`) spring animations, pointer-tracking 3D tilt effects, OKLCH mesh gradients, and interactive curtain-peel financial scenario splitters across the platform.
+
+### Key Enhancements & 2030 UI Widgets
+1. **Interactive Grid & Light Beam Backdrop (`src/components/ui/InteractiveGridPattern.tsx`)**:
+   - Cyber vector grid SVG pattern with mouse-following glowing light beam spotlight, dual-axis scanning laser pulse lines, and OKLCH multi-layer ambient aura mesh.
+2. **3D Holographic Tilt Card (`src/components/ui/HolographicTiltCard.tsx`)**:
+   - Pointer-tracking 3D perspective rotation (`rotateX` / `rotateY`) using Motion 13 spring dynamics (`stiffness: 350, damping: 25`), dynamic radial specular glare sheen, and animated `BorderBeam` sweeps around card borders.
+3. **Interactive Radial Score Dial (`src/components/ui/RadialScoreGauge.tsx`)**:
+   - 360-degree SVG vector gauge dial with spring-animated indicator needle gliding along the arc path, dynamic OKLCH color tier transitions, numeric spring text counter, and ambient background glow backlight.
+4. **Live Scenario Splitter Widget (`src/components/ui/ScenarioSplitterWidget.tsx`)**:
+   - Curtain-peel visual reveal comparison slider with dual parallel layered viewports clipped using CSS `polygon()`. Allows users to interactively drag the central handle between baseline savings and accelerated 2030 financial strategies.
+5. **Landing Page 2030 Integration (`src/pages/Landing.tsx`)**:
+   - Integrated `InteractiveGridPattern` spotlight into the Hero background, embedded `ScenarioSplitterWidget` below the hero, and upgraded module showcase items with `HolographicTiltCard`.
 
 ---
 

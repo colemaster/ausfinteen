@@ -1,20 +1,23 @@
 import { useState } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { MANDY_MODULES } from '@/data/mandy-topics';
 import { TopicGuideAccordion } from '@/components/shared/TopicGuideAccordion';
 import { PayslipAnalyzer } from '@/calculators/teen-job/PayslipAnalyzer';
+import { PenaltyShiftCalculatorWidget } from '@/components/career/PenaltyShiftCalculatorWidget';
 import { GovernmentFormsVault } from '@/components/career/GovernmentFormsVault';
 import { WorkplaceRightsGuide } from '@/components/career/WorkplaceRightsGuide';
 import { WorkplaceScriptGenerator } from '@/components/career/WorkplaceScriptGenerator';
 import { TeenResumeBuilder } from '@/components/career/TeenResumeBuilder';
-import { Briefcase, FileText, ShieldAlert, MessageSquare, Award, BookOpen } from 'lucide-react';
+import { Briefcase, FileText, ShieldAlert, MessageSquare, Award, BookOpen, Clock } from 'lucide-react';
 import { Badge } from '@/components/ui/Badge';
 
 export function CareersEmployment() {
   const moduleData = MANDY_MODULES.find(m => m.id === 'careers-employment')!;
-  const [activeTab, setActiveTab] = useState<'calc' | 'forms' | 'rights' | 'scripts' | 'resume' | 'topics'>('calc');
+  const [activeTab, setActiveTab] = useState<'calc' | 'penalty' | 'forms' | 'rights' | 'scripts' | 'resume' | 'topics'>('calc');
 
   const tabs = [
-    { id: 'calc', label: 'Payslip & Penalty Calc', icon: Briefcase },
+    { id: 'calc', label: 'Payslip & Junior Pay', icon: Briefcase },
+    { id: 'penalty', label: 'Penalty Rate Simulator', icon: Clock },
     { id: 'forms', label: 'Official Forms Vault', icon: FileText },
     { id: 'rights', label: 'Workplace Rights & WHS', icon: ShieldAlert },
     { id: 'scripts', label: 'Barefoot & Workplace Scripts', icon: MessageSquare },
@@ -24,7 +27,7 @@ export function CareersEmployment() {
 
   return (
     <div className="space-y-8 animate-fade-in pb-12">
-      {/* Hero Banner */}
+      {/* Hero Banner with Floating Popmart Graphic */}
       <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-blue-500/20 via-indigo-500/10 to-primary/20 p-6 sm:p-10 border border-blue-500/30">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
           <div className="md:col-span-8 space-y-3">
@@ -43,15 +46,22 @@ export function CareersEmployment() {
           </div>
 
           <div className="md:col-span-4 hidden md:flex justify-center">
-            <img
-              src="/assets/graphics/popmart_job.jpg"
-              alt="First Job 3D Popmart Vinyl Figure"
-              className="w-36 h-36 rounded-2xl object-cover border-2 border-primary/30 shadow-xl hover:scale-105 transition-transform duration-300"
-            />
+            <motion.div
+              animate={{ y: [0, -8, 0] }}
+              transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+              className="relative group"
+            >
+              <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-blue-500 to-indigo-500 blur-md opacity-40 group-hover:opacity-70 transition duration-500" />
+              <img
+                src="/assets/graphics/popmart_job.jpg"
+                alt="First Job 3D Popmart Vinyl Figure"
+                className="relative w-36 h-36 rounded-2xl object-cover border-2 border-primary/40 shadow-xl"
+              />
+            </motion.div>
           </div>
         </div>
 
-        {/* 6 Sub-Tabs Navigation Bar */}
+        {/* 7 Sub-Tabs Navigation Bar with Motion layoutId */}
         <div className="mt-6 pt-4 border-t border-blue-500/20 flex flex-wrap gap-2">
           {tabs.map(tab => {
             const Icon = tab.icon;
@@ -61,33 +71,53 @@ export function CareersEmployment() {
                 key={tab.id}
                 type="button"
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all shadow-xs ${
+                className={`relative flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
                   isActive
-                    ? 'bg-primary text-primary-foreground shadow-md ring-2 ring-primary/30'
+                    ? 'text-primary-foreground font-extrabold shadow-md'
                     : 'bg-card/80 hover:bg-card border border-border text-foreground'
                 }`}
               >
-                <Icon className="w-3.5 h-3.5" />
-                <span>{tab.label}</span>
+                {isActive && (
+                  <motion.div
+                    layoutId="activeCareerTabPill"
+                    className="absolute inset-0 bg-primary rounded-xl z-0"
+                    transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                  />
+                )}
+                <span className="relative z-10 flex items-center gap-1.5">
+                  <Icon className="w-3.5 h-3.5" />
+                  <span>{tab.label}</span>
+                </span>
               </button>
             );
           })}
         </div>
       </div>
 
-      {/* Tab Content Display */}
-      <div className="space-y-6">
-        {activeTab === 'calc' && <PayslipAnalyzer />}
-        {activeTab === 'forms' && <GovernmentFormsVault />}
-        {activeTab === 'rights' && <WorkplaceRightsGuide />}
-        {activeTab === 'scripts' && <WorkplaceScriptGenerator />}
-        {activeTab === 'resume' && <TeenResumeBuilder />}
-        {activeTab === 'topics' && (
-          <div className="calculator-section">
-            <TopicGuideAccordion topics={moduleData.topics} title="Complete Careers & Employment Q&A Library" />
-          </div>
-        )}
-      </div>
+      {/* Animated Tab Content Display */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={activeTab}
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -12 }}
+          transition={{ duration: 0.2 }}
+          className="space-y-6"
+        >
+          {activeTab === 'calc' && <PayslipAnalyzer />}
+          {activeTab === 'penalty' && <PenaltyShiftCalculatorWidget />}
+          {activeTab === 'forms' && <GovernmentFormsVault />}
+          {activeTab === 'rights' && <WorkplaceRightsGuide />}
+          {activeTab === 'scripts' && <WorkplaceScriptGenerator />}
+          {activeTab === 'resume' && <TeenResumeBuilder />}
+          {activeTab === 'topics' && (
+            <TopicGuideAccordion
+              title="First Job & Work Rights Knowledge Base"
+              topics={moduleData.topics}
+            />
+          )}
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
 }

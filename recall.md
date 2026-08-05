@@ -32,6 +32,29 @@
 | v3.4.0  | Layout Shell | 2027 premium layout shell upgrade: gradient accent bar on Navbar, pill+underline active-link indicators, aria-expanded/aria-label a11y, scroll-progress bar (reduced-motion aware) in Layout, premium Footer polish + GitHub link | Local (push blocked) |
 | v4.0.0  | SDK & Perf | Frontend SDK upgrades to latest (Motion 13.0.0, Vite 8.2, React 19, Vitest 4, Tailwind 4.3), Latin font subsetting, LRU engine memoization, route prefetching on hover/focus, Core Web Vitals Performance Center modal | Local |
 | v4.1.0  | 2030 Motion & Visuals | 2030 Cyber-Finance UI widgets (InteractiveGridPattern mouse light beam, HolographicTiltCard with 3D perspective glare & OKLCH border beam, ScenarioSplitterWidget curtain-peel comparison, RadialScoreGauge 360° arc meter) | Local |
+| v4.2.0  | 2030 Sub-Pages Visual Upgrade | 2030 Visual & Motion upgrades across all 11 sub-pages: PaycheckSplitterWidget, PenaltyShiftCalculatorWidget, floating 3D Popmart graphics with radial glow auras, and Motion 13 sliding sub-tab layoutId pills | Local |
+
+---
+
+## v4.2.0 — 2030 SUB-PAGES VISUAL & MOTION OVERHAUL
+
+### Summary
+Extended 2030 visual design language, Motion 13 spring animations, dynamic interactive widgets, and ambient 3D Popmart vinyl figure float oscillations across all 11 sub-pages and module calculators in Mandy's Personal Finance Toolkit.
+
+### Key Enhancements & Components Built
+1. **Interactive Paycheck Stream Allocator Widget (`src/components/teen-profile/PaycheckSplitterWidget.tsx`)**:
+   - Multi-segment spring-animated allocation bar using perceptually uniform OKLCH colors (Emerald Take-Home, Sunset Tax, Cyber Cyan Super, Neon Magenta Goal Flow).
+   - Embedded SVG Radial Milestone Ring with concentric milestone glow markers (25%, 50%, 75%, 100%) and automatic weekly savings velocity projections.
+   - Interactive framework selector (Scott Pape's Barefoot 3-Bucket 60/20/20 vs 50/30/20 vs Custom Sliders) with live auto-balancing math model.
+   - Integrated directly into **Teen Profile** (`src/pages/TeenProfile.tsx`).
+2. **Junior Award Penalty Shift Calculator Widget (`src/components/career/PenaltyShiftCalculatorWidget.tsx`)**:
+   - Award rate calculator & 2030 shift penalty simulator across 5 Australian Modern Awards (General Retail, Fast Food, Restaurant & Hospitality, Community Pharmacy, Fitness Industry).
+   - Motion 13 sliding tab layout indicator (`layoutId="activePenaltyTabPill"`), OKLCH alert badges for WHS & Fair Work rules, and custom shift parameter sliders.
+   - Integrated directly into **Careers & Employment** (`src/pages/CareersEmployment.tsx`).
+3. **Sub-Tab Sliding `layoutId` Navigation Pills**:
+   - Replaced flat tab state buttons with Motion 13 spring-animated background sliding pills (`layoutId="activeCareerTabPill"`, `layoutId="activeShiftPill"`) for smooth micro-interactions across sub-navigation tabs.
+4. **Ambient Floating 3D Popmart Visual Figures**:
+   - Wrapped all module hero Popmart 3D vinyl figures (`popmart_job`, `popmart_invest`, `popmart_tax`, `popmart_super`, `popmart_debt`, `popmart_budget`, `popmart_car`) in continuous vertical floating motion loops (`animate={{ y: [0, -8, 0] }}`) with multi-layer radial glow halo auras.
 
 ---
 

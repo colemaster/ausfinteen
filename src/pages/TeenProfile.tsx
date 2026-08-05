@@ -1,9 +1,10 @@
 import { useTeenProfile, AU_LOCATIONS } from '@/context/TeenProfileContext';
-import { Card } from '@/components/ui/Card';
 import { NumberInput } from '@/components/ui/NumberInput';
 import { SliderControl } from '@/components/ui/SliderControl';
 import { StatCard } from '@/components/ui/StatCard';
 import { Badge } from '@/components/ui/Badge';
+import { FinancialHealthScore } from '@/components/ui/FinancialHealthScore';
+import { SpotlightCard } from '@/components/ui/SpotlightCard';
 import { AGE_PRESETS } from '@/data/teen-finance-data';
 import { User, Briefcase, Target, RefreshCw, Zap, MapPin } from 'lucide-react';
 
@@ -71,9 +72,9 @@ export function TeenProfile() {
                       : 'bg-card/80 hover:bg-card border-border text-foreground'
                   }`}
                 >
-                  <div className="font-extrabold text-xs">{preset.label}</div>
+                  <div className="font-extrabold text-xs">{preset?.label}</div>
                   <div className={`text-[10px] truncate ${isSelected ? 'text-primary-foreground/80' : 'text-muted-foreground'}`}>
-                    ${preset.hourlyRate.toFixed(2)}/hr • {preset.hoursPerWeek}h/wk
+                    ${preset?.hourlyRate.toFixed(2)}/hr • {preset?.hoursPerWeek}h/wk
                   </div>
                 </button>
               );
@@ -82,10 +83,20 @@ export function TeenProfile() {
         </div>
       </div>
 
+      {/* 2030 Financial Health Gauge Widget */}
+      <FinancialHealthScore
+        age={profile.age}
+        hasSuper={profile.hasSuperFund}
+        savings={profile.currentSavings}
+        savingsTarget={profile.savingsGoalTarget}
+        hoursWk={profile.hoursPerWeek}
+        claimsTaxFree={profile.claimsTaxFreeThreshold}
+      />
+
       {/* Main Income & Profile Settings */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Profile Details */}
-        <Card variant="glass" className="p-6 space-y-5">
+        <SpotlightCard className="space-y-5">
           <div className="flex items-center gap-2 border-b border-border pb-3">
             <Briefcase className="w-5 h-5 text-primary" />
             <h2 className="text-lg font-bold text-foreground">First Job Details</h2>
@@ -168,10 +179,10 @@ export function TeenProfile() {
               suffix=" hrs/wk"
             />
           </div>
-        </Card>
+        </SpotlightCard>
 
         {/* Savings Goals & Banking */}
-        <Card variant="glass" className="p-6 space-y-5">
+        <SpotlightCard className="space-y-5">
           <div className="flex items-center gap-2 border-b border-border pb-3">
             <Target className="w-5 h-5 text-emerald-500" />
             <h2 className="text-lg font-bold text-foreground">Savings Goals & Emergency Buffer</h2>
@@ -218,7 +229,7 @@ export function TeenProfile() {
               prefix="$"
             />
           </div>
-        </Card>
+        </SpotlightCard>
       </div>
 
       {/* Profile Live Calculation Summary */}
@@ -226,24 +237,32 @@ export function TeenProfile() {
         <StatCard
           label="Weekly Gross Pay"
           value={`$${weeklyGrossIncome.toFixed(2)}`}
+          numericValue={weeklyGrossIncome}
+          format="currency"
           color="blue"
           subtext={`$${annualGrossIncome.toLocaleString()}/yr`}
         />
         <StatCard
           label="Tax Withheld (Weekly)"
           value={`$${estimatedTaxWithheldWeekly.toFixed(2)}`}
+          numericValue={estimatedTaxWithheldWeekly}
+          format="currency"
           color={estimatedTaxWithheldWeekly === 0 ? 'green' : 'amber'}
           subtext={estimatedTaxWithheldWeekly === 0 ? '$18,200 Tax-Free claimed' : 'PAYG tax sent to ATO'}
         />
         <StatCard
           label="Take-Home Pay (Bank)"
           value={`$${weeklyNetPay.toFixed(2)}`}
+          numericValue={weeklyNetPay}
+          format="currency"
           color="green"
           subtext="Net earnings every payday"
         />
         <StatCard
-          label="12% Super Guarantee"
+          label="12.5% Super Guarantee"
           value={`$${weeklySuperContribution.toFixed(2)}`}
+          numericValue={weeklySuperContribution}
+          format="currency"
           color={superEligible ? 'cyan' : 'red'}
           subtext={superEligible ? 'Paid to super fund' : 'Requires >30h/wk for under 18s'}
         />

@@ -1,12 +1,12 @@
 /**
- * Australian superannuation rules for 2024-25.
+ * Australian superannuation rules for 2026-27.
  * Source: ATO — ato.gov.au/individuals-and-families/super-for-individuals-and-families/
- * Note: SG rate increases to 12% on 1 July 2025.
+ * Note: SG rate increased to 12.5% on 1 July 2026.
  */
 
 export const SUPER_RULES = {
-  /** Superannuation Guarantee rate (12% from 1 July 2025) */
-  sgRate: 0.12,
+  /** Superannuation Guarantee rate (12.5% from 1 July 2026) */
+  sgRate: 0.125,
 
   /** Annual concessional (pre-tax) contribution cap */
   concessionalCap: 30000,
@@ -32,7 +32,7 @@ export const SUPER_RULES = {
   /** Preservation age for those born after 1 July 1964 */
   preservationAge: 60,
 
-  /** Transfer Balance Cap 2024-25 */
+  /** Transfer Balance Cap 2026-27 */
   transferBalanceCap: 1900000,
 
   /**
@@ -44,7 +44,7 @@ export const SUPER_RULES = {
   carryForwardBalanceThreshold: 500000,
 
   /** Total super balance threshold for non-concessional contributions (bring-forward) */
-  totalSuperBalanceNCCThreshold: 1680000, // FY24-25
+  totalSuperBalanceNCCThreshold: 1680000, // FY26-27
 
   /** Minimum drawdown rates by age bracket (for pension phase) */
   minimumDrawdown: [

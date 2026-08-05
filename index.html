@@ -28,7 +28,10 @@
     }
     </script>
     <script type="speculationrules">
-    { "prefetch": [{ "where": { "href_matches": "/*" }, "eagerness": "moderate" }] }
+    {
+      "prefetch": [{ "where": { "href_matches": "/*" }, "eagerness": "moderate" }],
+      "prerender": [{ "where": { "href_matches": "/*" }, "eagerness": "conservative" }]
+    }
     </script>
   </head>
   <body>

@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
-    "target": "ES2024",
+    "target": "ES2025",
     "useDefineForClassFields": true,
-    "lib": ["ES2024", "DOM", "DOM.Iterable", "DOM.AsyncIterable"],
+    "lib": ["ES2025", "DOM", "DOM.Iterable", "DOM.AsyncIterable"],
     "module": "ESNext",
     "skipLibCheck": true,
     "moduleResolution": "bundler",
@@ -15,7 +15,8 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "baseUrl": ".",
+    "noUncheckedIndexedAccess": false,
+    "exactOptionalPropertyTypes": false,
     "paths": {
       "@/*": ["./src/*"]
     }

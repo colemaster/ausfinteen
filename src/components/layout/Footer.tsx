@@ -1,3 +1,7 @@
+import { useState } from 'react';
+import { Zap } from 'lucide-react';
+import { PerformanceModal } from '@/components/shared/PerformanceModal';
+
 const GITHUB_URL = 'https://github.com/ravisha22/PersonalFinanceToolkit';
 
 function GithubIcon({ className }: { className?: string }) {
@@ -9,6 +13,8 @@ function GithubIcon({ className }: { className?: string }) {
 }
 
 export function Footer() {
+  const [perfOpen, setPerfOpen] = useState(false);
+
   return (
     <footer className="relative bg-background border-t border-border/70 mt-auto transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
@@ -20,7 +26,17 @@ export function Footer() {
             Australian financial adviser (AFS licence holder) before acting.
           </div>
           <div className="flex flex-col items-start md:items-end gap-2 text-xs">
-            <span>MIT Licence · Privacy-first · No tracking</span>
+            <div className="flex items-center gap-3">
+              <span>© {new Date().getFullYear()} · MIT Licence</span>
+              <button
+                type="button"
+                onClick={() => setPerfOpen(true)}
+                className="inline-flex items-center gap-1 font-semibold text-emerald-600 dark:text-emerald-400 hover:underline"
+              >
+                <Zap className="w-3 h-3" />
+                <span>⚡ 100% Instant Mode</span>
+              </button>
+            </div>
             <a
               href={GITHUB_URL}
               target="_blank"
@@ -39,6 +55,8 @@ export function Footer() {
           <span className="h-px w-10 bg-border" aria-hidden="true" />
         </div>
       </div>
+
+      <PerformanceModal open={perfOpen} onClose={() => setPerfOpen(false)} />
     </footer>
   );
 }

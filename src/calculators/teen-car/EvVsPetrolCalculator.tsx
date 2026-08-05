@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Card } from '@/components/ui/Card';
 import { SliderControl } from '@/components/ui/SliderControl';
 import { StatCard } from '@/components/ui/StatCard';
@@ -7,6 +7,8 @@ import { WebReferenceLink } from '@/components/shared/WebReferenceLink';
 import { OFFICIAL_WEB_LINKS } from '@/data/teen-finance-data';
 import { EV_VS_PETROL_DEFAULTS } from '@/data/car-data';
 import { Zap, Fuel } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip, Cell } from 'recharts';
+import { ChartContainer, ChartTooltipContent } from '@/components/ui/chart';
 
 export function EvVsPetrolCalculator() {
   const [kmPerYear, setKmPerYear] = useState<number>(EV_VS_PETROL_DEFAULTS.kmPerYear);
@@ -29,6 +31,19 @@ export function EvVsPetrolCalculator() {
 
   const savingsAnnual = petrolAnnual - evAnnual;
   const savingsPct = petrolAnnual > 0 ? (savingsAnnual / petrolAnnual) * 100 : 0;
+
+  const chartData = useMemo(() => {
+    return [
+      { name: 'Petrol Car', annualCost: Math.round(petrolAnnual), color: '#f59e0b' },
+      { name: 'Electric Car (EV)', annualCost: Math.round(evAnnual), color: '#10b981' },
+    ];
+  }, [petrolAnnual, evAnnual]);
+
+  const chartConfig = useMemo(() => {
+    return {
+      annualCost: { label: 'Annual Fuel Cost ($)', color: '#10b981' },
+    };
+  }, []);
 
   return (
     <Card variant="glass" className="p-6 space-y-6">
@@ -138,23 +153,49 @@ export function EvVsPetrolCalculator() {
         </div>
       </div>
 
+      {/* Visual Fuel Cost Bar Chart */}
+      <div className="bg-card/50 border border-border/60 rounded-xl p-4 space-y-2">
+        <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Annual Running Cost Visual Breakdown</h3>
+        <ChartContainer config={chartConfig} className="h-[200px] w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} />
+              <XAxis dataKey="name" tick={{ fontSize: 11 }} axisLine={false} tickLine={false} />
+              <YAxis tickFormatter={v => `$${v}`} tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
+              <Tooltip content={<ChartTooltipContent formatter={v => [`$${v}/yr`, 'Annual Cost']} />} />
+              <Bar dataKey="annualCost" radius={[6, 6, 0, 0]} animationDuration={1000}>
+                {chartData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.color} />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </ChartContainer>
+      </div>
+
       {/* Results */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <StatCard
           label="Petrol cost / year"
           value={`$${Math.round(petrolAnnual).toLocaleString()}`}
+          numericValue={Math.round(petrolAnnual)}
+          format="currency"
           color="amber"
           subtext={`≈ $${petrolPer100km.toFixed(2)} per 100km`}
         />
         <StatCard
           label="EV charging cost / year"
           value={`$${Math.round(evAnnual).toLocaleString()}`}
+          numericValue={Math.round(evAnnual)}
+          format="currency"
           color="green"
           subtext={`≈ $${evPer100km.toFixed(2)} per 100km blended`}
         />
         <StatCard
           label="Yearly savings with EV"
           value={`$${Math.round(savingsAnnual).toLocaleString()}`}
+          numericValue={Math.round(savingsAnnual)}
+          format="currency"
           color={savingsAnnual >= 0 ? 'purple' : 'red'}
           subtext={savingsAnnual >= 0 ? `~${savingsPct.toFixed(0)}% cheaper to run` : 'Public charging costs more than petrol'}
         />

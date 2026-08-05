@@ -7,6 +7,7 @@
     font-feature-settings: "cv11", "ss01";
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
+    interpolate-size: allow-keywords;
   }
 
   /* Monospace numbers everywhere numeric */
@@ -28,7 +29,13 @@
     border-radius: 0.5rem;
   }
 
-  /* 2027: subtle custom scrollbar */
+  /* 2027: subtle custom scrollbar — native CSS scrollbar styling */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in oklab, var(--foreground) 20%, transparent) transparent;
+  }
+
+  /* Webkit scrollbar fallback */
   ::-webkit-scrollbar {
     width: 10px;
     height: 10px;
@@ -72,6 +79,9 @@
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
   --color-chart-6: var(--chart-6);
+  --color-chart-7: var(--chart-7);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
 }
 
 @layer base {
@@ -86,6 +96,8 @@
     --ring: oklch(0.6 0.1 250);
     --primary: oklch(0.6 0.1 250);
     --primary-foreground: oklch(0.98 0 0);
+    --accent: oklch(0.92 0.02 250);
+    --accent-foreground: oklch(0.3 0.05 250);
     --success: oklch(0.65 0.15 150);
     --warning: oklch(0.7 0.15 70);
     --danger: oklch(0.6 0.15 20);
@@ -100,28 +112,30 @@
     --chart-7: oklch(0.55 0.15 330);
   }
   .dark {
-    --background: oklch(0.15 0 0);
+    --background: oklch(0.13 0.005 270);
     --foreground: oklch(0.95 0 0);
-    --card: oklch(0.2 0 0);
+    --card: oklch(0.18 0.005 270);
     --card-foreground: oklch(0.95 0 0);
-    --muted: oklch(0.25 0 0);
+    --muted: oklch(0.23 0.005 270);
     --muted-foreground: oklch(0.6 0 0);
-    --border: oklch(0.3 0 0);
-    --ring: oklch(0.6 0.1 250);
-    --primary: oklch(0.6 0.1 250);
+    --border: oklch(0.28 0.01 270);
+    --ring: oklch(0.65 0.12 250);
+    --primary: oklch(0.65 0.12 250);
     --primary-foreground: oklch(0.98 0 0);
+    --accent: oklch(0.22 0.02 250);
+    --accent-foreground: oklch(0.85 0.05 250);
     --success: oklch(0.65 0.15 150);
     --warning: oklch(0.7 0.15 70);
     --danger: oklch(0.6 0.15 20);
-    --info: oklch(0.6 0.1 250);
+    --info: oklch(0.65 0.12 250);
 
-    --chart-1: oklch(0.6 0.1 250);
+    --chart-1: oklch(0.65 0.12 250);
     --chart-2: oklch(0.65 0.15 150);
     --chart-3: oklch(0.7 0.15 70);
     --chart-4: oklch(0.6 0.15 20);
-    --chart-5: oklch(0.5 0.1 300);
+    --chart-5: oklch(0.55 0.12 300);
     --chart-6: oklch(0.7 0.1 200);
-    --chart-7: oklch(0.55 0.15 330);
+    --chart-7: oklch(0.6 0.15 330);
   }
 }
 
@@ -135,6 +149,21 @@
 @keyframes fade-rise {
   from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* 2027: cross-document View Transitions for MPA-like feel */
+@view-transition {
+  navigation: auto;
+}
+
+/* 2027: named view transitions for hero elements */
+.vt-hero {
+  view-transition-name: hero;
+}
+::view-transition-old(hero),
+::view-transition-new(hero) {
+  animation-duration: 0.4s;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* 2027: entry animation for first mount via @starting-style */
@@ -156,6 +185,16 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* 2027: scroll-driven progress indicator using CSS (no JS needed) */
+.scroll-progress-native {
+  animation: scroll-progress linear;
+  animation-timeline: scroll(root);
+}
+@keyframes scroll-progress {
+  from { width: 0%; }
+  to { width: 100%; }
+}
+
 /* content-visibility for below-fold sections = huge render cost savings */
 .calculator-section {
   content-visibility: auto;
@@ -165,6 +204,37 @@
   content-visibility: auto;
   contain-intrinsic-size: auto 700px;
   contain: layout style paint;
+}
+
+/* 2027: container queries for truly responsive components */
+.card-container {
+  container-type: inline-size;
+  container-name: card;
+}
+@container card (min-width: 400px) {
+  .card-responsive {
+    flex-direction: row;
+    gap: 1.5rem;
+  }
+}
+@container card (max-width: 399px) {
+  .card-responsive {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+}
+
+/* 2027: anchor positioning for tooltips (progressive enhancement) */
+@supports (anchor-name: --tooltip) {
+  .anchor-trigger {
+    anchor-name: --tooltip;
+  }
+  .anchor-tooltip {
+    position: fixed;
+    position-anchor: --tooltip;
+    inset-area: top;
+    margin-bottom: 8px;
+  }
 }
 
 /* Respect reduced-motion preferences (2027 accessibility standard) */
@@ -183,6 +253,18 @@
   ::view-transition-old(root),
   ::view-transition-new(root) {
     animation: none;
+  }
+}
+
+/* 2027: prefers-contrast support */
+@media (prefers-contrast: more) {
+  :root {
+    --border: oklch(0.6 0 0);
+    --muted-foreground: oklch(0.25 0 0);
+  }
+  .dark {
+    --border: oklch(0.5 0 0);
+    --muted-foreground: oklch(0.75 0 0);
   }
 }
 
@@ -208,3 +290,66 @@
   backdrop-filter: blur(16px) saturate(160%);
   -webkit-backdrop-filter: blur(16px) saturate(160%);
 }
+
+/* 2027: glassmorphism card variant */
+.glass-card {
+  background: color-mix(in oklab, var(--card) 65%, transparent);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid color-mix(in oklab, var(--border) 50%, transparent);
+}
+
+/* 2027: smooth popover / dialog backdrop (pairs with Popover API) */
+::backdrop {
+  background: oklch(0 0 0 / 0.5);
+  backdrop-filter: blur(4px);
+}
+
+/* 2027: text-wrap balance for headings */
+h1, h2, h3 {
+  text-wrap: balance;
+}
+p {
+  text-wrap: pretty;
+}
+
+/* 2030: Border beam animation */
+@keyframes border-beam {
+  100% {
+    offset-distance: 100%;
+  }
+}
+.animate-border-beam {
+  animation: border-beam var(--duration, 12s) infinite linear;
+}
+
+/* 2030: Ambient floating aura mesh gradient */
+@keyframes aura-float {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.4; }
+  50% { transform: translate(20px, -20px) scale(1.1); opacity: 0.7; }
+}
+.aura-orb-1 {
+  position: absolute;
+  top: -10%;
+  right: -5%;
+  width: 450px;
+  height: 450px;
+  border-radius: 50%;
+  background: radial-gradient(circle, oklch(0.65 0.15 250 / 0.18) 0%, transparent 70%);
+  filter: blur(60px);
+  pointer-events: none;
+  animation: aura-float 14s ease-in-out infinite;
+}
+.aura-orb-2 {
+  position: absolute;
+  bottom: 10%;
+  left: -5%;
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;
+  background: radial-gradient(circle, oklch(0.65 0.18 150 / 0.15) 0%, transparent 70%);
+  filter: blur(60px);
+  pointer-events: none;
+  animation: aura-float 18s ease-in-out infinite reverse;
+}
+

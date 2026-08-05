@@ -28,7 +28,7 @@ export function useTheme(): [Theme, () => void] {
     const p = new URLSearchParams(searchParams);
     p.set('theme', theme);
     setSearchParams(p, { replace: true });
-  }, [theme]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [theme]);
 
   const toggle = () => setTheme(t => (t === 'dark' ? 'light' : 'dark'));
 

@@ -1,20 +1,19 @@
-import path from 'path'
 import { fileURLToPath } from 'node:url'
 import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import react, { reactCompilerPreset } from '@vitejs/plugin-react'
+import babel from '@rolldown/plugin-babel'
 import tailwindcss from '@tailwindcss/vite'
 import { VitePWA } from 'vite-plugin-pwa'
 import { visualizer } from 'rollup-plugin-visualizer'
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const __dirname = fileURLToPath(new URL('.', import.meta.url))
 
 export default defineConfig({
   base: process.env.VITE_BASE ?? '/',
   plugins: [
-    react({
-      babel: {
-        plugins: [['babel-plugin-react-compiler', { target: '19' }]],
-      },
+    react(),
+    babel({
+      presets: [reactCompilerPreset()],
     }),
     tailwindcss(),
     VitePWA({
@@ -65,44 +64,69 @@ export default defineConfig({
     }),
   ],
   build: {
-    target: 'es2022',
-    cssTarget: 'es2022',
+    target: 'es2025',
+    cssTarget: 'es2025',
     cssMinify: 'lightningcss',
-    minify: 'esbuild',
     reportCompressedSize: true,
     chunkSizeWarningLimit: 600,
-    rollupOptions: {
+    rolldownOptions: {
       output: {
-        manualChunks(id) {
-          if (!id.includes('node_modules')) return undefined
-          if (id.includes('recharts') || id.includes('d3-') || id.includes('victory-vendor')) {
-            return 'charts'
-          }
-          if (id.includes('react-dom') || id.includes('scheduler')) return 'react-dom'
-          if (id.includes('react') || id.includes('react-router') || id.includes('react-router-dom')) {
-            return 'react-vendor'
-          }
-          if (id.includes('motion') || id.includes('framer-motion')) return 'motion'
-          if (id.includes('cmdk')) return 'cmdk'
-          if (id.includes('fuse.js')) return 'fuse'
-          if (id.includes('lucide-react')) return 'icons'
-          if (id.includes('recharts')) return 'charts'
-          return 'vendor'
+        codeSplitting: {
+          groups: [
+            {
+              name: 'charts',
+              test: /recharts|d3-|victory-vendor/,
+              priority: 20,
+            },
+            {
+              name: 'react-dom',
+              test: /react-dom|scheduler/,
+              priority: 15,
+            },
+            {
+              name: 'react-vendor',
+              test: /react(?!-dom)|react-router/,
+              priority: 14,
+            },
+            {
+              name: 'motion',
+              test: /motion|framer-motion/,
+              priority: 12,
+            },
+            {
+              name: 'cmdk',
+              test: /cmdk/,
+              priority: 10,
+            },
+            {
+              name: 'fuse',
+              test: /fuse\.js/,
+              priority: 10,
+            },
+            {
+              name: 'icons',
+              test: /lucide-react/,
+              priority: 10,
+            },
+            {
+              name: 'vendor',
+              test: /node_modules/,
+              priority: 1,
+            },
+          ],
         },
       },
     },
   },
   server: {
     host: '0.0.0.0',
-    port: 31000,
+    port: 45985,
   },
   preview: {
     host: '0.0.0.0',
-    port: 31001,
+    port: 45986,
   },
   resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src'),
-    },
+    tsconfigPaths: true,
   },
 })

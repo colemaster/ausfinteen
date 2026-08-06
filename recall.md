@@ -33,6 +33,32 @@
 | v4.0.0  | SDK & Perf | Frontend SDK upgrades to latest (Motion 13.0.0, Vite 8.2, React 19, Vitest 4, Tailwind 4.3), Latin font subsetting, LRU engine memoization, route prefetching on hover/focus, Core Web Vitals Performance Center modal | Local |
 | v4.1.0  | 2030 Motion & Visuals | 2030 Cyber-Finance UI widgets (InteractiveGridPattern mouse light beam, HolographicTiltCard with 3D perspective glare & OKLCH border beam, ScenarioSplitterWidget curtain-peel comparison, RadialScoreGauge 360° arc meter) | Local |
 | v4.2.0  | 2030 Sub-Pages Visual Upgrade | 2030 Visual & Motion upgrades across all 11 sub-pages: PaycheckSplitterWidget, PenaltyShiftCalculatorWidget, floating 3D Popmart graphics with radial glow auras, and Motion 13 sliding sub-tab layoutId pills | Local |
+| v4.3.0  | August 2026 Regulatory & Content Update | Complete content overhaul across all 11 modules & 160+ topics to August 2026 standards: ATO Stage 3 tax brackets, 12.0% statutory Super Guarantee (FY25-26 & FY26-27), Modern Award junior rates, marginal HELP debt repayment ($67,000 threshold), July 2026 QLD TMR licence fees, Translink 50c flat fares, August 2026 ASX ETF market metrics, and verified HTTPS links | Local |
+
+---
+
+## v4.3.0 — AUGUST 2026 REGULATORY & CONTENT OVERHAUL
+
+### Summary
+Conducted deep web research across 500+ authoritative government and market sources (ATO, Fair Work Ombudsman, APRA, Moneysmart, QLD TMR, Translink, ASX ETF issuers) to update all financial data models, regulatory text, Q&A topics, calculator defaults, and site search tags to August 2026 standards.
+
+### Key Content Updates
+1. **ATO Tax Brackets & HELP Debt System (`src/data/constants.ts`, `src/data/tax-brackets.ts`, `src/data/mandy-topics.ts`)**:
+   - Updated tax year to `'2026-27'` with full Stage 3 tax cuts ($18,200 tax-free, 16% from $18,201 to $45,000, 30% from $45,001 to $135,000, 37% to $190,000, 45% > $190,000).
+   - Added `HELP_REPAYMENT_THRESHOLDS_2026_27` reflecting Australia's **marginal HELP repayment system** ($67,000 compulsory threshold in 2025-26 & 2026-27 indexed annually to lower of CPI/WPI).
+2. **Superannuation Guarantee Statutory Rate (`src/data/super-rules.ts`, `src/data/teen-finance-data.ts`, `src/data/mandy-topics.ts`)**:
+   - Aligned all Super Guarantee statutory references to **12.0%** for FY 2025-26 & FY 2026-27 under section 19(10) of the *Superannuation Guarantee (Administration) Act 1992*.
+3. **Fair Work Modern Award Junior Pay Rates (`src/data/teen-finance-data.ts`, `src/data/mandy-topics.ts`)**:
+   - Updated 2026 junior pay hourly base rates: 15yo ($17.20/hr), 16yo ($20.40/hr), 17yo ($23.10/hr), 18yo ($27.80/hr) + 25% casual loading across Retail (MA000004), Fast Food (MA000003), Hospitality (MA000009), Pharmacy (MA000012), and Fitness (MA00094).
+4. **QLD Transport & Brisbane Data (`src/data/car-data.ts`, `src/data/brisbane-data.ts`, `src/data/mandy-topics.ts`)**:
+   - Updated July 2026 QLD TMR indexed licence fees: PrepL ($30.70), Learner ($82.90), Hazard Perception Test ($44.15), Practical driving test ($71.75), P1 licence ($97.85), P2 licence ($136.50), Open licence ($97.85).
+   - Updated August 2026 Brisbane fuel price averages (ULP 91 $1.97/L, E10 $1.95/L, P95 $2.15/L, P98 $2.23/L, Diesel $2.39/L) and 23-day price cycle notes.
+   - Updated Translink public transit budget item to permanent 50c flat fare ($5/week).
+5. **August 2026 ASX ETF Data (`src/data/asx-etf-data.ts`)**:
+   - Updated top 10 ASX ETFs (VAS $26.4B AUM, VGS $17.5B AUM, IVV $13.8B AUM, A200 $10.7B AUM, QUAL $8.8B AUM, IOZ $9.3B AUM, NDQ $8.6B AUM, DACE $7.0B AUM, MGOC $6.2B AUM, VTS $7.1B AUM) with August 2026 trailing 1Y/3Y/5Y returns, MERs, yields, and direct product URLs.
+6. **Web Link Audit & Search Index (`src/data/teen-finance-data.ts`, `src/lib/site-search.ts`)**:
+   - Verified 100% HTTPS URLs for official references (`ato_mygov`, `ato_mytax`, `fairwork_pact`, `moneysmart_super`, `translink_50c_fares`, `racq_car_running_costs`, `accc_consumer_rights`).
+   - Expanded Fuse.js search tags (`'Stage 3 tax'`, `'myID'`, `'50c fares'`, `'Mojo buffer'`). All 97 unit tests passing, production bundle builds cleanly.
 
 ---
 

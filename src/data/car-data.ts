@@ -30,7 +30,7 @@ export const QLD_LICENCE_PATH: QldLicenceStep[] = [
     plates: 'L plates',
     minAge: 16,
     holdTime: '12 months minimum',
-    fees: 'PrepL $29.70 + learner licence $80.15 (3 yrs)',
+    fees: 'PrepL $30.70 + learner licence $82.90 (3 yrs)',
     requirements: 'Pass PrepL online road rules test at 16. Under 25s complete 100 logbook hours (10 at night).',
     restrictions: 'Must be supervised by an open-licence driver, display L plates, 0.00 blood alcohol.',
   },
@@ -39,7 +39,7 @@ export const QLD_LICENCE_PATH: QldLicenceStep[] = [
     plates: 'Red P plates',
     minAge: 17,
     holdTime: '12 months',
-    fees: 'HPT $42.70 + practical test $69.40 + P1 licence $94.65 (1 yr)',
+    fees: 'HPT $44.15 + practical test $71.75 + P1 licence $97.85 (1 yr)',
     requirements: 'Hold Ls 12 months, finish 100 logbook hours, pass hazard perception test + practical driving test.',
     restrictions: 'Under 25: total phone ban, max 1 peer passenger 11pm–5am, no high-powered vehicles, 0.00 BAC.',
   },
@@ -48,7 +48,7 @@ export const QLD_LICENCE_PATH: QldLicenceStep[] = [
     plates: 'Green P plates',
     minAge: 18,
     holdTime: '12–24 months (age dependent)',
-    fees: 'P2 licence $132.00 (2 yrs)',
+    fees: 'P2 licence $136.50 (2 yrs)',
     requirements: 'Hold P1 for 12 months with a clean record. No extra test needed.',
     restrictions: 'Hands-free phone OK, no passenger limits, no high-powered vehicles (under 25), 0.00 BAC.',
   },
@@ -57,7 +57,7 @@ export const QLD_LICENCE_PATH: QldLicenceStep[] = [
     plates: 'No plates',
     minAge: 20,
     holdTime: 'Unrestricted',
-    fees: 'Open licence $94.65 (1 yr) onwards',
+    fees: 'Open licence $97.85 (1 yr) onwards',
     requirements: 'Hold P2 for the required period (min. age 20 for under-25 starters).',
     restrictions: 'Normal road rules apply. No special conditions.',
   },
@@ -71,43 +71,43 @@ export interface QldLicenceFee {
 
 /** QLD licence test & licence fees as at 1 July 2026 (qld.gov.au) */
 export const QLD_LICENCE_FEES: QldLicenceFee[] = [
-  { item: 'PrepL online road rules test', cost: 29.70, note: 'Sit at home / online via TMR' },
-  { item: 'Written road rules (knowledge) test', cost: 29.70, note: 'If not doing PrepL' },
-  { item: 'Learner licence (3 years)', cost: 80.15, note: 'Issued from age 16' },
-  { item: 'Replacement learner licence', cost: 37.40, note: 'Lost / damaged card' },
-  { item: 'Hazard Perception Test (HPT)', cost: 42.70, note: 'Online, valid 12 months' },
-  { item: 'Practical driving test (all classes)', cost: 69.40, note: 'Booked through TMR' },
-  { item: 'P1 provisional licence (1 year)', cost: 94.65, note: 'Red P stage' },
-  { item: 'P2 provisional licence (2 years)', cost: 132.00, note: 'Green P stage' },
-  { item: 'Open licence (1 year)', cost: 94.65, note: 'Full licence' },
+  { item: 'PrepL online road rules test', cost: 30.70, note: 'Sit at home / online via TMR' },
+  { item: 'Written road rules (knowledge) test', cost: 30.70, note: 'If not doing PrepL' },
+  { item: 'Learner licence (3 years)', cost: 82.90, note: 'Issued from age 16' },
+  { item: 'Replacement learner licence', cost: 38.70, note: 'Lost / damaged card' },
+  { item: 'Hazard Perception Test (HPT)', cost: 44.15, note: 'Online, valid 12 months' },
+  { item: 'Practical driving test (all classes)', cost: 71.75, note: 'Booked through TMR' },
+  { item: 'P1 provisional licence (1 year)', cost: 97.85, note: 'Red P stage' },
+  { item: 'P2 provisional licence (2 years)', cost: 136.50, note: 'Green P stage' },
+  { item: 'Open licence (1 year)', cost: 97.85, note: 'Full licence' },
 ];
 
 /** Typical driving lesson cost in South East Queensland (per hour) */
-export const QLD_DRIVING_LESSON_RANGE = { min: 60, max: 90 };
+export const QLD_DRIVING_LESSON_RANGE = { min: 65, max: 95 };
 
 /** Typical lessons a new learner books before the practical test */
 export const TYPICAL_LESSON_COUNT = 10;
 
 export interface BrisbaneFuelPrice {
   fuel: string;
-  pricePerLitre: number; // avg $/L late July 2026
+  pricePerLitre: number; // avg $/L 2026
   note: string;
 }
 
-/** Brisbane average retail fuel prices, late July 2026 (FuelPrice Australia / RACQ) */
+/** Brisbane average retail fuel prices, 2026 (FuelPrice Australia / RACQ / AIP) */
 export const BRISBANE_FUEL_PRICES: BrisbaneFuelPrice[] = [
-  { fuel: 'E10', pricePerLitre: 1.94, note: 'Cheapest petrol — most cars can run it' },
-  { fuel: 'Unleaded 91', pricePerLitre: 1.96, note: 'Standard petrol' },
-  { fuel: 'Premium 95', pricePerLitre: 2.14, note: 'For engines that need 95+' },
-  { fuel: 'Premium 98', pricePerLitre: 2.21, note: 'High-performance engines' },
-  { fuel: 'Diesel', pricePerLitre: 2.37, note: 'Mostly 4WDs & vans' },
-  { fuel: 'LPG', pricePerLitre: 1.15, note: 'Rare — needs an LPG conversion' },
+  { fuel: 'E10', pricePerLitre: 1.95, note: 'Cheapest ethanol-blend petrol — suitable for most modern cars' },
+  { fuel: 'Unleaded 91', pricePerLitre: 1.97, note: 'Standard regular unleaded petrol (ULP 91)' },
+  { fuel: 'Premium 95', pricePerLitre: 2.15, note: 'For performance engines requiring 95 RON min' },
+  { fuel: 'Premium 98', pricePerLitre: 2.23, note: 'High-octane premium petrol' },
+  { fuel: 'Diesel', pricePerLitre: 2.39, note: 'Mostly 4WDs, commercial vehicles & diesel hatchbacks' },
+  { fuel: 'LPG', pricePerLitre: 1.16, note: 'Rare — requires dedicated LPG dual-fuel conversion' },
 ];
 
-/** Brisbane fuel price cycle: prices swing over ~23 days (RACQ / FuelPrice Australia) */
+/** Brisbane fuel price cycle: prices swing over ~23 to 28 days (RACQ / AIP) */
 export const BRISBANE_PRICE_CYCLE = {
   days: 23,
-  note: 'Fill up just after the price peak drops — stations undercut each other for a few days.',
+  note: 'Brisbane operates on an extended 23-to-28 day "sawtooth" price cycle. Fill up at the trough or use live fuel apps (FuelRadar, PetrolSpy, RACQ Fair Fuel) to avoid peak pricing.',
 };
 
 export interface EvVsPetrolDefaults {
@@ -123,12 +123,12 @@ export interface EvVsPetrolDefaults {
 /** Default 2026 assumptions for the EV vs Petrol comparator */
 export const EV_VS_PETROL_DEFAULTS: EvVsPetrolDefaults = {
   kmPerYear: 15000,
-  petrolLPer100km: 6.5, // typical small hatch
-  petrolPricePerLitre: 1.96, // Brisbane ULP 91 avg
-  evKwhPer100km: 16, // typical EV (Green Vehicle Guide)
-  homeOffPeakPricePerKwh: 0.30, // QLD residential off-peak
-  publicFastPricePerKwh: 0.65, // DC fast charger rate
-  publicFastSharePct: 10, // most charging done at home
+  petrolLPer100km: 6.5, // typical small hatchback
+  petrolPricePerLitre: 1.97, // Brisbane ULP 91 retail avg
+  evKwhPer100km: 15.5, // typical compact EV (Green Vehicle Guide 2026)
+  homeOffPeakPricePerKwh: 0.32, // QLD residential off-peak electricity tariff ($/kWh)
+  publicFastPricePerKwh: 0.68, // DC public fast charger rate ($/kWh)
+  publicFastSharePct: 10, // 90% home charging / 10% public fast charging
 };
 
 export interface BrisbaneParkingZone {

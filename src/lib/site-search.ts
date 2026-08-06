@@ -176,13 +176,17 @@ export function autocomplete(query: string, limit = 5): string[] {
 /** Popular search starters shown before the user types. */
 export const POPULAR_SEARCHES = [
   'HECS',
+  'Stage 3 tax',
   'penalty rates',
   'super 12%',
   'tax-free threshold',
+  'myID',
+  '50c fares',
   'PPSR',
   'BNPL',
   'QLD licence',
   'ETF',
+  'Mojo buffer',
   'Hazard Perception Test',
   'franking credits',
 ];

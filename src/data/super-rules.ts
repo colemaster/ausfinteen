@@ -5,16 +5,16 @@
  */
 
 export const SUPER_RULES = {
-  /** Superannuation Guarantee rate (12.5% from 1 July 2026) */
-  sgRate: 0.125,
+  /** Superannuation Guarantee rate (12.0% statutory rate for FY 2025-26 & FY 2026-27) */
+  sgRate: 0.12,
 
-  /** Annual concessional (pre-tax) contribution cap */
+  /** Annual concessional (pre-tax) contribution cap ($30,000 in FY25-26 / FY26-27) */
   concessionalCap: 30000,
 
-  /** Annual non-concessional (post-tax) contribution cap */
+  /** Annual non-concessional (post-tax) contribution cap ($120,000) */
   nonConcessionalCap: 120000,
 
-  /** Non-concessional 3-year bring-forward cap */
+  /** Non-concessional 3-year bring-forward cap ($360,000) */
   bringForwardCap: 360000,
 
   /** Tax rate on concessional contributions inside super */

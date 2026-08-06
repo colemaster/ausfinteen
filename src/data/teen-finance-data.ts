@@ -28,7 +28,7 @@ export const AGE_PRESETS: Record<number, AgePreset> = {
     age: 15,
     label: '15yo First Job',
     jobTitle: 'Casual Fast Food / Retail Crew',
-    hourlyRate: 16.50,
+    hourlyRate: 17.20,
     hoursPerWeek: 8,
     claimsTaxFreeThreshold: true,
     savingsGoalName: 'First Phone & Savings',
@@ -39,7 +39,7 @@ export const AGE_PRESETS: Record<number, AgePreset> = {
     age: 16,
     label: '16yo High School',
     jobTitle: 'Casual Supermarket / Cafe Worker',
-    hourlyRate: 19.50,
+    hourlyRate: 20.40,
     hoursPerWeek: 12,
     claimsTaxFreeThreshold: true,
     savingsGoalName: 'First Car & Emergency Buffer',
@@ -50,7 +50,7 @@ export const AGE_PRESETS: Record<number, AgePreset> = {
     age: 17,
     label: '17yo Senior Teen',
     jobTitle: 'Casual Senior Retail Crew',
-    hourlyRate: 22.00,
+    hourlyRate: 23.10,
     hoursPerWeek: 16,
     claimsTaxFreeThreshold: true,
     savingsGoalName: 'Car Deposit & Travel Fund',
@@ -61,7 +61,7 @@ export const AGE_PRESETS: Record<number, AgePreset> = {
     age: 18,
     label: '18yo Young Adult',
     jobTitle: 'Casual / Part-Time Team Member',
-    hourlyRate: 26.50,
+    hourlyRate: 27.80,
     hoursPerWeek: 22,
     claimsTaxFreeThreshold: true,
     savingsGoalName: 'Moving Out & Emergency Fund',
@@ -81,7 +81,7 @@ export const MINOR_UNEARNED_TAX_RATES = {
 export const SUPER_YOUTH_RULES = {
   lowBalanceFeeCapPct: 0.03, // 3% fee cap on accounts under $6,000
   pmifAgeLimit: 25, // PMIF Act: default insurance opted out for under 25s to protect savings
-  superGuaranteeRate: 0.12, // 12% in 2025-26
+  superGuaranteeRate: 0.125, // 12.5% in FY 2026-27 (effective 1 July 2026)
 };
 
 /** ABN & Side Hustle Rules */
@@ -151,13 +151,13 @@ export const OFFICIAL_WEB_LINKS: Record<string, WebLink> = {
   },
   ato_super_guarantee: {
     title: 'ATO: Super Guarantee Eligibility Rules',
-    url: 'https://www.ato.gov.au/business/super-for-employers/work-out-if-you-need-to-pay-super',
+    url: 'https://www.ato.gov.au/businesses-and-organisations/super-for-employers/work-out-if-you-need-to-pay-super',
     source: 'ATO',
-    description: 'Under 18 super guarantee rule: must work >30 hours in a calendar week to receive 12% Super.',
+    description: 'Under 18 super guarantee rule: must work >30 hours in a calendar week to receive 12.5% Super.',
   },
   fairwork_awards: {
     title: 'Fair Work Ombudsman: Pay & Junior Award Rates Calculator',
-    url: 'https://www.fairwork.gov.au/pay-and-wages/pay-calculator',
+    url: 'https://calculate.fairwork.gov.au/',
     source: 'Fair Work',
     description: 'Official PACT calculator for Retail, Fast Food, and Hospitality junior pay percentage rates.',
   },
@@ -181,9 +181,57 @@ export const OFFICIAL_WEB_LINKS: Record<string, WebLink> = {
   },
   ppsr_check: {
     title: 'PPSR: Official Australian Vehicle Financial Search ($2)',
-    url: 'https://www.ppsr.gov.au',
+    url: 'https://www.ppsr.gov.au/searching/do-used-car-check',
     source: 'PPSR',
     description: 'Official government register to check if a second-hand car has money owing or was written off.',
+  },
+  ato_mygov: {
+    title: 'ATO: myGov & Digital Identity Portal',
+    url: 'https://www.ato.gov.au/online-services/online-services-for-individuals-and-sole-traders/mygov',
+    source: 'ATO',
+    description: 'Official Australian Government portal connecting ATO tax, Medicare, and Centrelink.',
+  },
+  ato_mytax: {
+    title: 'ATO: myTax Online Tax Return Lodgement',
+    url: 'https://www.ato.gov.au/individuals-and-families/your-tax-return/how-to-lodge-your-tax-return/lodge-your-tax-return-online-with-mytax',
+    source: 'ATO',
+    description: 'Official ATO portal for lodging your annual individual tax return online.',
+  },
+  fairwork_pact: {
+    title: 'Fair Work Ombudsman: Pay and Conditions Tool (PACT)',
+    url: 'https://calculate.fairwork.gov.au/',
+    source: 'Fair Work',
+    description: 'Official PACT calculator for base pay rates, junior percentages, penalty rates, and allowances.',
+  },
+  moneysmart_super: {
+    title: 'Moneysmart: Superannuation & How It Works',
+    url: 'https://moneysmart.gov.au/how-super-works',
+    source: 'Moneysmart',
+    description: 'Government guide to choosing super funds, low-fee options, and long-term compounding.',
+  },
+  moneysmart_debt: {
+    title: 'Moneysmart: Managing Debt & Credit Traps',
+    url: 'https://moneysmart.gov.au/managing-debt',
+    source: 'Moneysmart',
+    description: 'Government guide on BNPL risks, credit cards, and National Debt Helpline support.',
+  },
+  translink_50c_fares: {
+    title: 'Translink: Queensland 50-Cent Public Transport Fares',
+    url: 'https://translink.com.au/tickets-and-fares/50-cent-fares',
+    source: 'QLD Government',
+    description: 'Official details on Queensland\'s flat 50-cent fare initiative across trains, buses, and ferries.',
+  },
+  racq_car_running_costs: {
+    title: 'RACQ: Car Running Costs & Ownership Guide',
+    url: 'https://www.racq.com.au/car/buying-a-car/car-running-costs',
+    source: 'Research',
+    description: 'RACQ annual breakdown of car servicing, fuel, insurance, and depreciation in QLD.',
+  },
+  accc_consumer_rights: {
+    title: 'ACCC: Australian Consumer Law & Guarantees',
+    url: 'https://www.accc.gov.au/consumers',
+    source: 'ACCC',
+    description: 'Official consumer rights guide on repairs, replacements, refunds, and faulty products.',
   },
   services_australia_youth: {
     title: 'Services Australia: Youth Allowance & Student Start-up Loan',

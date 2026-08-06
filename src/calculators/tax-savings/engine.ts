@@ -2,7 +2,7 @@
  * Tax Savings Guide — Financial Engine
  * Covers: Super Salary Sacrifice, DR Tax Benefit, Negative Gearing, Tax Breakdown.
  * Pure functions, no React, no side effects.
- * Based on 2024-25 ATO rates.
+ * Based on 2026-27 ATO rates.
  */
 
 import { SUPER_RULES, isDivision293 } from '../../data/super-rules';

@@ -34,6 +34,30 @@
 | v4.1.0  | 2030 Motion & Visuals | 2030 Cyber-Finance UI widgets (InteractiveGridPattern mouse light beam, HolographicTiltCard with 3D perspective glare & OKLCH border beam, ScenarioSplitterWidget curtain-peel comparison, RadialScoreGauge 360° arc meter) | Local |
 | v4.2.0  | 2030 Sub-Pages Visual Upgrade | 2030 Visual & Motion upgrades across all 11 sub-pages: PaycheckSplitterWidget, PenaltyShiftCalculatorWidget, floating 3D Popmart graphics with radial glow auras, and Motion 13 sliding sub-tab layoutId pills | Local |
 | v4.3.0  | August 2026 Regulatory & Content Update | Complete content overhaul across all 11 modules & 160+ topics to August 2026 standards: ATO Stage 3 tax brackets, 12.0% statutory Super Guarantee (FY25-26 & FY26-27), Modern Award junior rates, marginal HELP debt repayment ($67,000 threshold), July 2026 QLD TMR licence fees, Translink 50c flat fares, August 2026 ASX ETF market metrics, and verified HTTPS links | Local |
+| v4.5.0  | Banking & Finance Deep Audit | Comprehensive audit and expansion of banking, high-interest savings accounts (HISA 5.0%+), APRA $250k deposit guarantee, PayID/Osko fast payments, PayTo direct debits, Open Banking (CDR) ACCC security, TFN withholding tax (47%), Comprehensive Credit Reporting (Equifax/Experian/Illion), and National Debt Helpline (1800 007 007) | Local |
+
+---
+
+## v4.5.0 — BANKING & FINANCE DEEP AUDIT & TOPICS EXPANSION
+
+### Summary
+Triple-checked all banking, interest, savings, credit reporting, and debt topics across the platform against August 2026 Australian banking and APRA regulations. Expanded Module 6 (`spending-saving`), Module 8 (`interest-products`), Module 9 (`dealing-with-debt`), and Module 1 (`money-and-you`) with comprehensive youth banking Q&A guides, official APRA & ACCC web resources, and site search indexing tags.
+
+### Key Banking & Finance Upgrades
+1. **High-Interest Youth Savings Accounts (HISA) (`src/data/mandy-topics.ts`)**:
+   - `ss-3`: Detailed youth HISA bonus rate structures (Westpac Life, Great Southern Bank Youth, ING Savings Maximiser, CommBank Youthsaver) paying 5.0%–5.5% p.a. interest when meeting monthly deposit and transaction criteria.
+2. **APRA Financial Claims Scheme ($250,000 Guarantee) (`src/data/mandy-topics.ts`, `src/data/teen-finance-data.ts`)**:
+   - `ss-4` & `ip-1`: Added comprehensive explanations of the Australian Federal Government guarantee protecting up to $250,000 AUD per depositor per bank (ADI) under APRA oversight. Added official `apra_fcs` web reference link.
+3. **PayID, Osko & PayTo Fast Payments (`src/data/mandy-topics.ts`)**:
+   - `ss-5`: Detailed PayID mobile/email identifier linking, 24/7 instant Osko transfers, and PayTo direct debit management controls directly inside mobile banking apps.
+4. **Open Banking & Consumer Data Right (CDR) Security (`src/data/mandy-topics.ts`, `src/data/teen-finance-data.ts`)**:
+   - `ss-6` & `my-4`: Explained ACCC-regulated Open Banking (CDR) API tokens allowing secure budgeting app connectivity without revealing banking passwords or 2FA SMS codes. Added official `accc_cdr` web link.
+5. **Tax File Number (TFN) Withholding Tax on Savings (`src/data/mandy-topics.ts`, `src/data/teen-finance-data.ts`)**:
+   - `ss-7`: Detailed Section 202D of the Income Tax Act, warning teens that failing to provide a TFN triggers mandatory 47% top marginal tax withholding on savings interest. Added official `ato_tfn_bank` web link.
+6. **Comprehensive Credit Reporting & Debt Assistance (`src/data/mandy-topics.ts`)**:
+   - `dd-2`, `dd-3`, `dd-4`: Detailed credit scores (0–1000/1200), Australia's 3 credit bureaus (Equifax, Experian, Illion), 5-year default listings, BNPL hard inquiry impacts under the NCCP Act, Debt Snowball vs Avalanche methods, and free support via the National Debt Helpline (1800 007 007).
+7. **Search Indexing & Tools (`src/lib/site-search.ts`)**:
+   - Added `HISA & Banking Finder` tool doc, and expanded popular search tags (`'HISA 5.0%'`, `'APRA $250k'`, `'PayID'`, `'Open Banking CDR'`). Verified 100% test pass rate (97 tests) and 0-error build.
 
 ---
 

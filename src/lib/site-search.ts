@@ -49,6 +49,7 @@ const TEEN_TOOLS: ToolEntry[] = [
   { name: 'First Car Cost Calculator', description: 'Add up the true cost of owning a first car — rego, CTP, insurance, fuel, servicing.', route: '/car-driving' },
   { name: 'EV vs Petrol Calculator', description: 'Compare annual running costs of an electric car vs a petrol car in Brisbane.', route: '/car-driving' },
   { name: 'Brisbane Budget Calculator', description: 'Build a realistic weekly Brisbane student budget from rent to groceries to transport.', route: '/brisbane-qld' },
+  { name: 'HISA & Banking Finder', description: 'Compare Australian youth high-interest savings accounts (5.0%+), APRA $250k guarantee and bonus interest rules.', route: '/spending-saving' },
 ];
 
 function topicToDoc(topic: TopicGuide): SearchDoc {
@@ -86,7 +87,7 @@ const docs: SearchDoc[] = [
     id: `tool-${t.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`,
     title: t.name,
     subtitle: t.description,
-    keywords: 'calculator tool interactive'.toLowerCase(),
+    keywords: 'calculator tool interactive banking HISA'.toLowerCase(),
     route: t.route,
   })),
   ...Object.entries(OFFICIAL_WEB_LINKS).map<SearchDoc>(([key, link]) => ({
@@ -176,17 +177,19 @@ export function autocomplete(query: string, limit = 5): string[] {
 /** Popular search starters shown before the user types. */
 export const POPULAR_SEARCHES = [
   'HECS',
+  'HISA 5.0%',
+  'APRA $250k',
+  'PayID',
   'Stage 3 tax',
   'penalty rates',
   'super 12%',
   'tax-free threshold',
   'myID',
   '50c fares',
+  'Open Banking CDR',
   'PPSR',
   'BNPL',
   'QLD licence',
   'ETF',
   'Mojo buffer',
-  'Hazard Perception Test',
-  'franking credits',
 ];

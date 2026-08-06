@@ -6,7 +6,7 @@
 export interface WebLink {
   title: string;
   url: string;
-  source: 'ATO' | 'Fair Work' | 'Moneysmart' | 'Services Australia' | 'PPSR' | 'Reserve Bank' | 'Scamwatch' | 'ACCC' | 'SafeWork' | 'ASX' | 'Moomoo' | 'ETF Provider' | 'Media' | 'Research' | 'QLD Government' | 'Brisbane City Council' | 'Federal Government' | 'University';
+  source: 'ATO' | 'Fair Work' | 'Moneysmart' | 'Services Australia' | 'PPSR' | 'Reserve Bank' | 'Scamwatch' | 'ACCC' | 'APRA' | 'SafeWork' | 'ASX' | 'Moomoo' | 'ETF Provider' | 'Media' | 'Research' | 'QLD Government' | 'Brisbane City Council' | 'Federal Government' | 'University';
   description: string;
   formCode?: string;
 }
@@ -81,7 +81,7 @@ export const MINOR_UNEARNED_TAX_RATES = {
 export const SUPER_YOUTH_RULES = {
   lowBalanceFeeCapPct: 0.03, // 3% fee cap on accounts under $6,000
   pmifAgeLimit: 25, // PMIF Act: default insurance opted out for under 25s to protect savings
-  superGuaranteeRate: 0.125, // 12.5% in FY 2026-27 (effective 1 July 2026)
+  superGuaranteeRate: 0.12, // 12.0% statutory rate for FY 2025-26 & FY 2026-27 (effective 1 July 2025 under SGAA 1992 s 19(10))
 };
 
 /** ABN & Side Hustle Rules */
@@ -91,6 +91,30 @@ export const SIDE_HUSTLE_RULES = {
 };
 
 export const OFFICIAL_WEB_LINKS: Record<string, WebLink> = {
+  moneysmart_banking: {
+    title: 'Moneysmart: Bank Accounts & High-Interest Savings',
+    url: 'https://moneysmart.gov.au/banking',
+    source: 'Moneysmart',
+    description: 'Australian Government guide to choosing bank accounts, high-interest savings bonus conditions, and zero-fee accounts.',
+  },
+  apra_fcs: {
+    title: 'APRA: Financial Claims Scheme ($250,000 Deposit Guarantee)',
+    url: 'https://www.fcs.gov.au/',
+    source: 'APRA',
+    description: 'Official Australian Government guarantee protecting up to $250,000 per depositor per bank (ADI).',
+  },
+  accc_cdr: {
+    title: 'ACCC: Consumer Data Right (Open Banking Security)',
+    url: 'https://www.cdr.gov.au/',
+    source: 'ACCC',
+    description: 'Official portal on Open Banking security allowing teens to connect budgeting apps safely via OAuth without password sharing.',
+  },
+  ato_tfn_bank: {
+    title: 'ATO: Providing Your TFN to Banks (Section 202D)',
+    url: 'https://www.ato.gov.au/individuals-and-families/tax-file-number/in-what-situations-do-you-need-a-tfn',
+    source: 'ATO',
+    description: 'ATO rule: providing your TFN to your bank prevents 47% top marginal withholding tax on savings interest.',
+  },
   ato_tfn_form: {
     title: 'ATO: Tax File Number Declaration Form (NAT 3092)',
     url: 'https://www.ato.gov.au/forms-and-instructions/tax-file-number-declaration',
@@ -153,7 +177,7 @@ export const OFFICIAL_WEB_LINKS: Record<string, WebLink> = {
     title: 'ATO: Super Guarantee Eligibility Rules',
     url: 'https://www.ato.gov.au/businesses-and-organisations/super-for-employers/work-out-if-you-need-to-pay-super',
     source: 'ATO',
-    description: 'Under 18 super guarantee rule: must work >30 hours in a calendar week to receive 12.5% Super.',
+    description: 'Under 18 super guarantee rule: must work >30 hours in a calendar week to receive 12.0% Super.',
   },
   fairwork_awards: {
     title: 'Fair Work Ombudsman: Pay & Junior Award Rates Calculator',

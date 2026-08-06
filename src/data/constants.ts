@@ -1,9 +1,9 @@
 /**
- * Australian financial constants for 2024-25.
- * Sources: ATO, ASIC MoneySmart.
+ * Australian financial constants for 2026-27.
+ * Sources: ATO, ASIC MoneySmart, StudyAssist.
  */
 
-// ─── HELP / HECS Repayment Thresholds 2024-25 ────────────────────────────────
+// ─── HELP / HECS Repayment Thresholds 2026-27 ────────────────────────────────
 
 export interface HELPThreshold {
   min: number;
@@ -11,33 +11,36 @@ export interface HELPThreshold {
   rate: number;
 }
 
-export const HELP_REPAYMENT_THRESHOLDS_2024_25: HELPThreshold[] = [
-  { min: 0,       max: 54434,   rate: 0 },
-  { min: 54435,   max: 62850,   rate: 0.01 },
-  { min: 62851,   max: 66620,   rate: 0.02 },
-  { min: 66621,   max: 70618,   rate: 0.025 },
-  { min: 70619,   max: 74855,   rate: 0.03 },
-  { min: 74856,   max: 79346,   rate: 0.035 },
-  { min: 79347,   max: 84107,   rate: 0.04 },
-  { min: 84108,   max: 89154,   rate: 0.045 },
-  { min: 89155,   max: 94503,   rate: 0.05 },
-  { min: 94504,   max: 100174,  rate: 0.055 },
-  { min: 100175,  max: 106185,  rate: 0.06 },
-  { min: 106186,  max: 112556,  rate: 0.065 },
-  { min: 112557,  max: 119309,  rate: 0.07 },
-  { min: 119310,  max: 126467,  rate: 0.075 },
-  { min: 126468,  max: 134056,  rate: 0.08 },
-  { min: 134057,  max: 142100,  rate: 0.085 },
-  { min: 142101,  max: 150626,  rate: 0.09 },
-  { min: 150627,  max: 159663,  rate: 0.095 },
-  { min: 159664,  max: Infinity, rate: 0.10 },
+export const HELP_REPAYMENT_THRESHOLDS_2026_27: HELPThreshold[] = [
+  { min: 0,       max: 67000,   rate: 0 },
+  { min: 67001,   max: 75000,   rate: 0.01 },
+  { min: 75001,   max: 80000,   rate: 0.02 },
+  { min: 80001,   max: 85000,   rate: 0.025 },
+  { min: 85001,   max: 90000,   rate: 0.03 },
+  { min: 90001,   max: 95000,   rate: 0.035 },
+  { min: 95001,   max: 100000,  rate: 0.04 },
+  { min: 100001,  max: 105000,  rate: 0.045 },
+  { min: 105001,  max: 110000,  rate: 0.05 },
+  { min: 110001,  max: 115000,  rate: 0.055 },
+  { min: 115001,  max: 120000,  rate: 0.06 },
+  { min: 120001,  max: 125000,  rate: 0.065 },
+  { min: 125001,  max: 130000,  rate: 0.07 },
+  { min: 130001,  max: 135000,  rate: 0.075 },
+  { min: 135001,  max: 140000,  rate: 0.08 },
+  { min: 140001,  max: 145000,  rate: 0.085 },
+  { min: 145001,  max: 150000,  rate: 0.09 },
+  { min: 150001,  max: 160000,  rate: 0.095 },
+  { min: 160001,  max: Infinity, rate: 0.10 },
 ];
+
+/** @deprecated Use HELP_REPAYMENT_THRESHOLDS_2026_27 instead */
+export const HELP_REPAYMENT_THRESHOLDS_2024_25 = HELP_REPAYMENT_THRESHOLDS_2026_27;
 
 /**
  * Calculate HELP/HECS repayment for a given repayment income.
  */
 export function calcHELPRepayment(repaymentIncome: number): number {
-  for (const t of HELP_REPAYMENT_THRESHOLDS_2024_25) {
+  for (const t of HELP_REPAYMENT_THRESHOLDS_2026_27) {
     if (repaymentIncome <= t.max) {
       return repaymentIncome * t.rate;
     }
@@ -80,4 +83,4 @@ export const PROPERTY_HOLDING_COST_DEFAULTS = {
 };
 
 // ─── Tax Year Label ───────────────────────────────────────────────────────────
-export const CURRENT_TAX_YEAR = '2024-25';
+export const CURRENT_TAX_YEAR = '2026-27';

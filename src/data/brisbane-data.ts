@@ -26,7 +26,7 @@ export interface BudgetItem {
 export const BRISBANE_WEEKLY_BUDGET: BudgetItem[] = [
   { category: 'Rent (sharehouse room)', emoji: '🏠', weekly: 280, note: 'Median shared room within 5km of CBD ≈ $286/wk (2026)' },
   { category: 'Groceries & food', emoji: '🛒', weekly: 100, note: 'Aldi/Woolies deals; West End & Rocklea markets' },
-  { category: 'Public transport (concession Go Card)', emoji: '🚌', weekly: 25, note: 'Weekly student cap ≈ $25' },
+  { category: 'Public transport (50c Translink fares)', emoji: '🚌', weekly: 5, note: 'Queensland permanent 50-cent flat fare across all SE QLD trains, buses & ferries ≈ $5/wk' },
   { category: 'Phone + internet', emoji: '📱', weekly: 15, note: 'Budget SIM plans from $15/mo' },
   { category: 'Utilities (electricity, water, gas share)', emoji: '💡', weekly: 25, note: 'Split between sharehouse housemates' },
   { category: 'Eating out & coffee', emoji: '☕', weekly: 50, note: 'Lunch $15-25, coffee $4-6' },

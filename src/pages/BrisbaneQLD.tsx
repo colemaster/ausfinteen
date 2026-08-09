@@ -7,7 +7,7 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Tabs } from '@/components/ui/Tabs';
 import { MapPin, Home, Landmark, ExternalLink } from 'lucide-react';
-import { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import {
   HECS_BANDS_2026,
   BRISBANE_SUBURBS,
@@ -17,6 +17,16 @@ import {
 import { OFFICIAL_WEB_LINKS } from '@/data/teen-finance-data';
 import { useTeenProfile } from '@/context/TeenProfileContext';
 import { SmartImage } from '@/components/ui/SmartImage';
+import { ModulePrevNext } from '@/components/shared/ModulePrevNext';
+import { usePageTitle } from '@/hooks/usePageTitle';
+
+const BNE_TABS = ['unis', 'realestate', 'help'] as const;
+type BneTab = (typeof BNE_TABS)[number];
+
+function readBneTab(searchParams: URLSearchParams): BneTab {
+  const raw = searchParams.get('tab');
+  return BNE_TABS.includes(raw as BneTab) ? (raw as BneTab) : 'unis';
+}
 
 const BRISBANE_WEB_SOURCES = [
   OFFICIAL_WEB_LINKS.qld_rta,
@@ -32,9 +42,24 @@ const BRISBANE_WEB_SOURCES = [
 ];
 
 export function BrisbaneQLD() {
+  usePageTitle('Brisbane, QLD · Living & Uni Guide');
   const moduleData = MANDY_MODULES.find(m => m.id === 'brisbane-qld')!;
   const { profile, updateProfile } = useTeenProfile();
-  const [tab, setTab] = useState('unis');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tab = readBneTab(searchParams);
+
+  const setTab = (id: string) => {
+    if (!BNE_TABS.includes(id as BneTab)) return;
+    setSearchParams(
+      prev => {
+        const cp = new URLSearchParams(prev);
+        if (id === 'unis') cp.delete('tab');
+        else cp.set('tab', id);
+        return cp;
+      },
+      { replace: true },
+    );
+  };
 
   const isBrisbane = profile.location === 'Brisbane, QLD';
 
@@ -253,6 +278,11 @@ export function BrisbaneQLD() {
       {/* Accordion Topics */}
       <div className="calculator-section">
         <TopicGuideAccordion topics={moduleData.topics} title="What Will I Learn in Brisbane, QLD?" />
+      </div>
+
+      {/* Continue the money journey */}
+      <div className="calculator-section">
+        <ModulePrevNext currentId="brisbane-qld" />
       </div>
 
       {/* Web Sources */}

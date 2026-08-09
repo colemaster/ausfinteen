@@ -124,7 +124,7 @@ export function TeenProfileProvider({ children }: { children: React.ReactNode })
   // ATO Super Guarantee Rule for Under 18:
   // Must work MORE than 30 hours in a week to get Super Guarantee.
   const superEligible = profile.age >= 18 || profile.hoursPerWeek > 30;
-  const superRate = 0.125; // 12.5% in 2026-27
+  const superRate = 0.12; // 12.0% statutory SG FY26-27
   const weeklySuperContribution = superEligible ? weeklyGrossIncome * superRate : 0;
 
   return (

@@ -15,7 +15,7 @@ import {
   GraduationCap,
   PiggyBank,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import {
   QLD_LICENCE_PATH,
   QLD_LICENCE_FEES,
@@ -28,6 +28,16 @@ import {
 } from '@/data/car-data';
 import { OFFICIAL_WEB_LINKS } from '@/data/teen-finance-data';
 import { SmartImage } from '@/components/ui/SmartImage';
+import { ModulePrevNext } from '@/components/shared/ModulePrevNext';
+import { usePageTitle } from '@/hooks/usePageTitle';
+
+const CAR_TABS = ['licence', 'fuel', 'parking'] as const;
+type CarTab = (typeof CAR_TABS)[number];
+
+function readCarTab(searchParams: URLSearchParams): CarTab {
+  const raw = searchParams.get('tab');
+  return CAR_TABS.includes(raw as CarTab) ? (raw as CarTab) : 'licence';
+}
 
 const CAR_WEB_SOURCES = [
   OFFICIAL_WEB_LINKS.qld_licence_fees,
@@ -49,8 +59,23 @@ function sumLicenceFees() {
 }
 
 export function CarDriving() {
+  usePageTitle('Cars & Driving · QLD Licence');
   const moduleData = MANDY_MODULES.find(m => m.id === 'car-driving')!;
-  const [tab, setTab] = useState('licence');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tab = readCarTab(searchParams);
+
+  const setTab = (id: string) => {
+    if (!CAR_TABS.includes(id as CarTab)) return;
+    setSearchParams(
+      prev => {
+        const cp = new URLSearchParams(prev);
+        if (id === 'licence') cp.delete('tab');
+        else cp.set('tab', id);
+        return cp;
+      },
+      { replace: true },
+    );
+  };
 
   return (
     <div className="space-y-8 animate-fade-in">
@@ -349,6 +374,9 @@ export function CarDriving() {
       <div className="calculator-section">
         <TopicGuideAccordion topics={moduleData.topics} title="What Will I Learn in Cars & Driving?" />
       </div>
+
+      {/* Continue the money journey */}
+      <ModulePrevNext currentId="car-driving" />
 
       {/* Web Sources */}
       <div className="calculator-section">

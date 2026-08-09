@@ -15,9 +15,14 @@ export function CommandPalette() {
         setOpen((open) => !open);
       }
     };
+    const openFromNav = () => setOpen(true);
 
     document.addEventListener('keydown', down);
-    return () => document.removeEventListener('keydown', down);
+    document.addEventListener('open-command-palette', openFromNav);
+    return () => {
+      document.removeEventListener('keydown', down);
+      document.removeEventListener('open-command-palette', openFromNav);
+    };
   }, []);
 
   const runCommand = (command: () => void) => {
@@ -50,7 +55,7 @@ export function CommandPalette() {
 
           <Command.Group heading="Official Government Forms & First Job Tools" className="px-2 py-1.5 text-xs font-bold text-muted-foreground">
             <Command.Item
-              onSelect={() => runCommand(() => navigate('/careers-employment'))}
+              onSelect={() => runCommand(() => navigate('/careers-employment?tab=forms'))}
               className="relative flex cursor-pointer select-none items-center rounded-xl px-3 py-2 text-xs font-medium text-foreground outline-none hover:bg-muted hover:text-primary transition-colors my-0.5"
             >
               <FileText className="mr-2.5 h-4 w-4 text-emerald-500 shrink-0" />
@@ -61,7 +66,7 @@ export function CommandPalette() {
             </Command.Item>
 
             <Command.Item
-              onSelect={() => runCommand(() => navigate('/careers-employment'))}
+              onSelect={() => runCommand(() => navigate('/careers-employment?tab=rights'))}
               className="relative flex cursor-pointer select-none items-center rounded-xl px-3 py-2 text-xs font-medium text-foreground outline-none hover:bg-muted hover:text-primary transition-colors my-0.5"
             >
               <ShieldAlert className="mr-2.5 h-4 w-4 text-rose-500 shrink-0" />
@@ -72,7 +77,7 @@ export function CommandPalette() {
             </Command.Item>
 
             <Command.Item
-              onSelect={() => runCommand(() => navigate('/careers-employment'))}
+              onSelect={() => runCommand(() => navigate('/careers-employment?tab=scripts'))}
               className="relative flex cursor-pointer select-none items-center rounded-xl px-3 py-2 text-xs font-medium text-foreground outline-none hover:bg-muted hover:text-primary transition-colors my-0.5"
             >
               <MessageSquare className="mr-2.5 h-4 w-4 text-purple-500 shrink-0" />
@@ -83,7 +88,7 @@ export function CommandPalette() {
             </Command.Item>
 
             <Command.Item
-              onSelect={() => runCommand(() => navigate('/careers-employment'))}
+              onSelect={() => runCommand(() => navigate('/careers-employment?tab=resume'))}
               className="relative flex cursor-pointer select-none items-center rounded-xl px-3 py-2 text-xs font-medium text-foreground outline-none hover:bg-muted hover:text-primary transition-colors my-0.5"
             >
               <Award className="mr-2.5 h-4 w-4 text-indigo-500 shrink-0" />

@@ -1,10 +1,13 @@
 import { MANDY_MODULES } from '@/data/mandy-topics';
 import { TopicGuideAccordion } from '@/components/shared/TopicGuideAccordion';
+import { ModulePrevNext } from '@/components/shared/ModulePrevNext';
 import { Smartphone, ShieldCheck, ShoppingBag } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 export function SpendingSavingRealWorld() {
+  usePageTitle('Spending, Saving & Real World Money');
   const moduleData = MANDY_MODULES.find(m => m.id === 'spending-saving')!;
 
   return (
@@ -62,6 +65,8 @@ export function SpendingSavingRealWorld() {
       <div className="calculator-section">
         <TopicGuideAccordion topics={moduleData.topics} title="What Will I Learn in Spending, Saving & Real World?" />
       </div>
+
+      <ModulePrevNext currentId="spending-saving" />
     </div>
   );
 }

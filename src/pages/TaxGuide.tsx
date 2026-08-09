@@ -2,12 +2,15 @@ import { motion } from 'motion/react';
 import { MANDY_MODULES } from '@/data/mandy-topics';
 import { TopicGuideAccordion } from '@/components/shared/TopicGuideAccordion';
 import { TeenTaxCalculator } from '@/calculators/teen-tax/TeenTaxCalculator';
+import { ModulePrevNext } from '@/components/shared/ModulePrevNext';
 import { DollarSign, ShieldCheck, FileCheck } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { SmartImage } from '@/components/ui/SmartImage';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 export function TaxGuide() {
+  usePageTitle('Tax & Tax Returns · $18.2k Tax-Free');
   const moduleData = MANDY_MODULES.find(m => m.id === 'tax-guide')!;
 
   return (
@@ -89,6 +92,8 @@ export function TaxGuide() {
       <div className="calculator-section">
         <TopicGuideAccordion topics={moduleData.topics} title="What Will I Learn in Tax & Tax Returns?" />
       </div>
+
+      <ModulePrevNext currentId="tax-guide" />
     </div>
   );
 }

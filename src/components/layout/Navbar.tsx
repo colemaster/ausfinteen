@@ -13,6 +13,7 @@ import {
   ChevronDown,
   BookOpen,
   MapPin,
+  Search,
 } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
 import { AnimatePresence, motion } from 'motion/react';
@@ -75,6 +76,7 @@ export function Navbar() {
               to="/profile"
               onMouseEnter={() => prefetchRoute('/profile')}
               onFocus={() => prefetchRoute('/profile')}
+              aria-current={location.pathname === '/profile' ? 'page' : undefined}
               className={navLinkClasses(location.pathname === '/profile')}
             >
               <User className="w-3.5 h-3.5" />
@@ -85,6 +87,7 @@ export function Navbar() {
               to="/brisbane-qld"
               onMouseEnter={() => prefetchRoute('/brisbane-qld')}
               onFocus={() => prefetchRoute('/brisbane-qld')}
+              aria-current={location.pathname === '/brisbane-qld' ? 'page' : undefined}
               className={navLinkClasses(location.pathname === '/brisbane-qld')}
               title="Change your location in My Profile"
             >
@@ -122,6 +125,7 @@ export function Navbar() {
                       key={m.id}
                       role="menuitem"
                       to={m.route}
+                      aria-current={location.pathname === m.route ? 'page' : undefined}
                       onMouseEnter={() => prefetchRoute(m.route)}
                       onFocus={() => prefetchRoute(m.route)}
                       onClick={() => setModulesDropdownOpen(false)}
@@ -138,6 +142,7 @@ export function Navbar() {
             {/* Direct Links to top modules */}
             <Link
               to="/careers-employment"
+              aria-current={location.pathname === '/careers-employment' ? 'page' : undefined}
               onMouseEnter={() => prefetchRoute('/careers-employment')}
               onFocus={() => prefetchRoute('/careers-employment')}
               className={navLinkClasses(location.pathname === '/careers-employment')}
@@ -147,6 +152,7 @@ export function Navbar() {
 
             <Link
               to="/tax-guide"
+              aria-current={location.pathname === '/tax-guide' ? 'page' : undefined}
               onMouseEnter={() => prefetchRoute('/tax-guide')}
               onFocus={() => prefetchRoute('/tax-guide')}
               className={navLinkClasses(location.pathname === '/tax-guide')}
@@ -156,6 +162,7 @@ export function Navbar() {
 
             <Link
               to="/teen-budgeting"
+              aria-current={location.pathname === '/teen-budgeting' ? 'page' : undefined}
               onMouseEnter={() => prefetchRoute('/teen-budgeting')}
               onFocus={() => prefetchRoute('/teen-budgeting')}
               className={navLinkClasses(location.pathname === '/teen-budgeting')}
@@ -166,6 +173,17 @@ export function Navbar() {
 
           {/* Right Controls */}
           <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => document.dispatchEvent(new CustomEvent('open-command-palette'))}
+              aria-label="Open quick search (Ctrl+K)"
+              title="Quick search (Ctrl+K)"
+              className="hidden md:flex items-center gap-1.5 px-2.5 py-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted transition-all"
+            >
+              <Search className="w-4 h-4" />
+              <kbd className="font-mono text-[10px] font-bold">⌘K</kbd>
+            </button>
+
             <button
               type="button"
               onClick={toggleTheme}
@@ -204,19 +222,21 @@ export function Navbar() {
             className="md:hidden border-t border-border bg-card/95 backdrop-blur-xl px-4 py-4 space-y-2 max-h-[80vh] overflow-y-auto"
           >
             <Link
-              to="/profile"
-              onClick={() => setMobileOpen(false)}
-              className="flex items-center gap-2 p-2.5 rounded-xl bg-primary/10 text-primary font-bold text-xs"
-            >
-              <User className="w-4 h-4" />
-              <span>My Profile ({profile.name}, {profile.age}yo)</span>
-            </Link>
+                to="/profile"
+                onClick={() => setMobileOpen(false)}
+                aria-current={location.pathname === '/profile' ? 'page' : undefined}
+                className="flex items-center gap-2 p-2.5 rounded-xl bg-primary/10 text-primary font-bold text-xs"
+              >
+                <User className="w-4 h-4" />
+                <span>My Profile ({profile.name}, {profile.age}yo)</span>
+              </Link>
 
-            <Link
-              to="/brisbane-qld"
-              onClick={() => setMobileOpen(false)}
-              className="flex items-center gap-2 p-2.5 rounded-xl bg-sky-500/10 text-sky-600 dark:text-sky-400 font-bold text-xs"
-            >
+              <Link
+                to="/brisbane-qld"
+                onClick={() => setMobileOpen(false)}
+                aria-current={location.pathname === '/brisbane-qld' ? 'page' : undefined}
+                className="flex items-center gap-2 p-2.5 rounded-xl bg-sky-500/10 text-sky-600 dark:text-sky-400 font-bold text-xs"
+              >
               <MapPin className="w-4 h-4" />
               <span>My Location: {profile.location}</span>
             </Link>
@@ -230,6 +250,7 @@ export function Navbar() {
                 key={m.id}
                 to={m.route}
                 onClick={() => setMobileOpen(false)}
+                aria-current={location.pathname === m.route ? 'page' : undefined}
                 className={`flex items-center gap-2.5 p-2.5 rounded-xl text-xs transition-all ${
                   location.pathname === m.route
                     ? 'bg-primary/10 text-primary font-bold'

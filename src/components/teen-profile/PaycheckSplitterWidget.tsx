@@ -98,7 +98,7 @@ export function PaycheckSplitterWidget({
 
           <div className="p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/20">
             <div className="flex items-center gap-1.5 text-xs text-cyan-600 dark:text-cyan-400 font-bold mb-1">
-              <Shield className="w-3.5 h-3.5" /> 12.5% Super
+              <Shield className="w-3.5 h-3.5" /> 12% Super
             </div>
             <span className="font-mono text-lg font-bold text-foreground">${superWeekly.toFixed(2)}</span>
           </div>

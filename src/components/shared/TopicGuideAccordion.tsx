@@ -49,6 +49,8 @@ export function TopicGuideAccordion({ topics, title = 'Topic Q&A Guide' }: Topic
               <button
                 type="button"
                 onClick={() => setOpenTopicId(isOpen ? null : t.id)}
+                aria-expanded={isOpen}
+                aria-controls={`topic-panel-${t.id}`}
                 className="w-full p-4 text-left flex items-center justify-between gap-3 focus:outline-none"
               >
                 <span className="font-bold text-sm text-foreground">{t.question}</span>
@@ -60,7 +62,10 @@ export function TopicGuideAccordion({ topics, title = 'Topic Q&A Guide' }: Topic
               </button>
 
               {isOpen && (
-                <div className="p-4 border-t border-border/50 bg-muted/30 text-xs text-muted-foreground space-y-3 leading-relaxed animate-fade-in">
+                <div
+                  id={`topic-panel-${t.id}`}
+                  className="p-4 border-t border-border/50 bg-muted/30 text-xs text-muted-foreground space-y-3 leading-relaxed animate-fade-in"
+                >
                   <p className="text-foreground font-medium text-sm sm:text-base leading-snug">
                     {t.answer}
                   </p>

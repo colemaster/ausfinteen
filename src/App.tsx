@@ -19,6 +19,7 @@ const InterestFinancialProducts = lazy(() => import('./pages/InterestFinancialPr
 const DealingWithDebt           = lazy(() => import('./pages/DealingWithDebt').then(m => ({ default: m.DealingWithDebt })));
 const CarDriving                 = lazy(() => import('./pages/CarDriving').then(m => ({ default: m.CarDriving })));
 const BrisbaneQLD               = lazy(() => import('./pages/BrisbaneQLD').then(m => ({ default: m.BrisbaneQLD })));
+const NotFound                  = lazy(() => import('./pages/NotFound').then(m => ({ default: m.NotFound })));
 
 import { Toaster } from '@/components/ui/Toaster';
 
@@ -72,6 +73,7 @@ const router = createBrowserRouter([
       { path: 'savings-rate',               element: <Navigate to="/teen-budgeting" replace /> },
       { path: 'property-research',          element: <Navigate to="/car-driving" replace /> },
       { path: 'wealth-property',            element: <Navigate to="/car-driving" replace /> },
+      { path: '*',                          element: <Wrap><NotFound /></Wrap> },
     ],
   },
 ]);

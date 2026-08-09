@@ -40,7 +40,7 @@ export function FinancialHealthScore({
     // Super fund
     if (hasSuper) {
       currentScore += 15;
-      items.push({ label: 'Super Fund Stapled (12.5% SG)', points: 15, max: 15 });
+      items.push({ label: 'Super Fund Stapled (12% SG)', points: 15, max: 15 });
     } else {
       items.push({ label: 'Super Fund Stapled', points: 0, max: 15 });
     }

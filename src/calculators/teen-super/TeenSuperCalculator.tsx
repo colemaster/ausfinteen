@@ -11,7 +11,7 @@ import { useTeenProfile } from '@/context/TeenProfileContext';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip } from 'recharts';
 import { ChartContainer, ChartTooltipContent } from '@/components/ui/chart';
 
-const SUPER_SG_RATE_2026_27 = 0.125; // 12.5% FY 2026-27 SG Rate
+const SUPER_SG_RATE_2026_27 = 0.12; // 12.0% statutory SG FY 2026-27
 
 export function TeenSuperCalculator() {
   const { profile } = useTeenProfile();
@@ -68,11 +68,11 @@ export function TeenSuperCalculator() {
             <h2 className="text-xl font-bold text-foreground">Teen Super Guarantee & Compound Growth Simulator</h2>
           </div>
           <p className="text-xs text-muted-foreground">
-            Calculate your 12.5% Super Guarantee, check ATO 30+ hours/week under 18 eligibility, and project compound super at age 60!
+            Calculate your 12% Super Guarantee, check ATO 30+ hours/week under 18 eligibility, and project compound super at age 60!
           </p>
         </div>
         <Badge variant="success">
-          12.5% ATO Super Rate (FY26-27)
+          12% ATO Super Rate (FY26-27)
         </Badge>
       </div>
 
@@ -159,7 +159,7 @@ export function TeenSuperCalculator() {
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
         <StatCard
-          label="Weekly Super (12.5%)"
+          label="Weekly Super (12%)"
           value={`$${(isEligible ? grossWk * 0.125 : 0).toFixed(2)}/wk`}
           numericValue={isEligible ? grossWk * 0.125 : 0}
           format="currency"
@@ -190,14 +190,14 @@ export function TeenSuperCalculator() {
           <Info className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
           <div>
             <span className="font-bold block mb-0.5">ATO Under 18 Rule:</span>
-            Because you work {hoursWk} hours/week (30 or fewer hours), super is not compulsory under ATO rules. If you work 31+ hours in any week, your employer MUST pay 12.5% super!
+            Because you work {hoursWk} hours/week (30 or fewer hours), super is not compulsory under ATO rules. If you work 31+ hours in any week, your employer MUST pay 12% super!
           </div>
         </div>
       ) : (
         <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-xs flex items-start gap-2 text-emerald-900 dark:text-emerald-200">
           <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
           <div>
-            <span className="font-bold block mb-0.5">12.5% Super Guarantee Active!</span>
+            <span className="font-bold block mb-0.5">12% Super Guarantee Active!</span>
             Your employer is paying ${Math.round(annualSuper).toLocaleString()}/yr into your super fund. Make sure to complete <strong>ATO Form NAT 13080</strong> to staple your existing fund!
           </div>
         </div>

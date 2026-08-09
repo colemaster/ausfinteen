@@ -1,7 +1,7 @@
 /**
  * Australian superannuation rules for 2026-27.
  * Source: ATO — ato.gov.au/individuals-and-families/super-for-individuals-and-families/
- * Note: SG rate increased to 12.5% on 1 July 2026.
+ * Note: SG rate stays at 12.0% for FY 2025-26 through FY 2027-28 (statutory).
  */
 
 export const SUPER_RULES = {

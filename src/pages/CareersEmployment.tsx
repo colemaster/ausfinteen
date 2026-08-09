@@ -1,5 +1,5 @@
-import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useSearchParams } from 'react-router-dom';
 import { MANDY_MODULES } from '@/data/mandy-topics';
 import { TopicGuideAccordion } from '@/components/shared/TopicGuideAccordion';
 import { PayslipAnalyzer } from '@/calculators/teen-job/PayslipAnalyzer';
@@ -8,23 +8,49 @@ import { GovernmentFormsVault } from '@/components/career/GovernmentFormsVault';
 import { WorkplaceRightsGuide } from '@/components/career/WorkplaceRightsGuide';
 import { WorkplaceScriptGenerator } from '@/components/career/WorkplaceScriptGenerator';
 import { TeenResumeBuilder } from '@/components/career/TeenResumeBuilder';
+import { ModulePrevNext } from '@/components/shared/ModulePrevNext';
 import { Briefcase, FileText, ShieldAlert, MessageSquare, Award, BookOpen, Clock } from 'lucide-react';
 import { Badge } from '@/components/ui/Badge';
 import { SmartImage } from '@/components/ui/SmartImage';
+import { usePageTitle } from '@/hooks/usePageTitle';
+
+const TABS = [
+  { id: 'calc', label: 'Payslip & Junior Pay', icon: Briefcase },
+  { id: 'penalty', label: 'Penalty Rate Simulator', icon: Clock },
+  { id: 'forms', label: 'Official Forms Vault', icon: FileText },
+  { id: 'rights', label: 'Workplace Rights & WHS', icon: ShieldAlert },
+  { id: 'scripts', label: 'Barefoot & Workplace Scripts', icon: MessageSquare },
+  { id: 'resume', label: 'Resume & Interview Prep', icon: Award },
+  { id: 'topics', label: '30+ Q&A Topic Library', icon: BookOpen },
+] as const;
+
+type TabId = (typeof TABS)[number]['id'];
+
+function readTab(searchParams: URLSearchParams): TabId {
+  const raw = searchParams.get('tab');
+  if (TABS.some(t => t.id === raw)) return raw as TabId;
+  // Deep links like ?topic=ce-7 must land on the Q&A accordion tab
+  if (searchParams.has('topic')) return 'topics';
+  return 'calc';
+}
 
 export function CareersEmployment() {
+  usePageTitle('Careers & Employment · First Job Pay');
   const moduleData = MANDY_MODULES.find(m => m.id === 'careers-employment')!;
-  const [activeTab, setActiveTab] = useState<'calc' | 'penalty' | 'forms' | 'rights' | 'scripts' | 'resume' | 'topics'>('calc');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTab = readTab(searchParams);
 
-  const tabs = [
-    { id: 'calc', label: 'Payslip & Junior Pay', icon: Briefcase },
-    { id: 'penalty', label: 'Penalty Rate Simulator', icon: Clock },
-    { id: 'forms', label: 'Official Forms Vault', icon: FileText },
-    { id: 'rights', label: 'Workplace Rights & WHS', icon: ShieldAlert },
-    { id: 'scripts', label: 'Barefoot & Workplace Scripts', icon: MessageSquare },
-    { id: 'resume', label: 'Resume & Interview Prep', icon: Award },
-    { id: 'topics', label: '30+ Q&A Topic Library', icon: BookOpen },
-  ] as const;
+  const setActiveTab = (id: TabId) => {
+    setSearchParams(
+      prev => {
+        const cp = new URLSearchParams(prev);
+        if (id === 'calc') cp.delete('tab');
+        else cp.set('tab', id);
+        return cp;
+      },
+      { replace: true },
+    );
+  };
 
   return (
     <div className="space-y-8 animate-fade-in pb-12">
@@ -66,15 +92,17 @@ export function CareersEmployment() {
         </div>
 
         {/* 7 Sub-Tabs Navigation Bar with Motion layoutId */}
-        <div className="mt-6 pt-4 border-t border-blue-500/20 flex flex-wrap gap-2">
-          {tabs.map(tab => {
+        <div className="mt-6 pt-4 border-t border-blue-500/20 flex flex-wrap gap-2" role="tablist" aria-label="Careers & Employment sections">
+          {TABS.map(tab => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
             return (
               <button
                 key={tab.id}
                 type="button"
-                onClick={() => setActiveTab(tab.id as any)}
+                role="tab"
+                aria-selected={isActive}
+                onClick={() => setActiveTab(tab.id)}
                 className={`relative flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
                   isActive
                     ? 'text-primary-foreground font-extrabold shadow-md'
@@ -122,6 +150,8 @@ export function CareersEmployment() {
           )}
         </motion.div>
       </AnimatePresence>
+
+      <ModulePrevNext currentId="careers-employment" />
     </div>
   );
 }

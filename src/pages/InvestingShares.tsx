@@ -6,11 +6,13 @@ import { ASXETFExplorer } from '@/calculators/teen-investing/ASXETFExplorer';
 import { ETFPortfolioPicker } from '@/calculators/teen-investing/ETFPortfolioPicker';
 import { NextBigEtfs } from '@/calculators/teen-investing/NextBigEtfs';
 import { WebReferenceLink } from '@/components/shared/WebReferenceLink';
+import { ModulePrevNext } from '@/components/shared/ModulePrevNext';
 import { TrendingUp, Layers, AlertTriangle, ExternalLink, GraduationCap } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { OFFICIAL_WEB_LINKS } from '@/data/teen-finance-data';
 import { SmartImage } from '@/components/ui/SmartImage';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 const INVESTING_WEB_SOURCES = [
   OFFICIAL_WEB_LINKS.moomoo_au,
@@ -29,6 +31,7 @@ const INVESTING_WEB_SOURCES = [
 ];
 
 export function InvestingShares() {
+  usePageTitle('Investing & Shares · ASX ETFs');
   const moduleData = MANDY_MODULES.find(m => m.id === 'investing-shares')!;
 
   return (
@@ -117,6 +120,8 @@ export function InvestingShares() {
 
       {/* Accordion Topics */}
       <TopicGuideAccordion topics={moduleData.topics} title="What Will I Learn in Investing & Shares?" />
+
+      <ModulePrevNext currentId="investing-shares" />
 
       {/* Web Sources & Learning Hub */}
       <Card variant="glass" className="p-6 space-y-5">

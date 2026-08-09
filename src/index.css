@@ -9,6 +9,8 @@
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     interpolate-size: allow-keywords;
+    /* Keep anchor scroll targets (deep-linked topics) clear of the sticky navbar */
+    scroll-padding-top: 6rem;
   }
 
   /* Monospace numbers everywhere numeric */

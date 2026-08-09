@@ -2,12 +2,15 @@ import { motion } from 'motion/react';
 import { MANDY_MODULES } from '@/data/mandy-topics';
 import { TopicGuideAccordion } from '@/components/shared/TopicGuideAccordion';
 import { BNPLDebtTrapVisualizer } from '@/calculators/teen-debt/BNPLDebtTrapVisualizer';
+import { ModulePrevNext } from '@/components/shared/ModulePrevNext';
 import { Flame, AlertOctagon, ShieldAlert } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { SmartImage } from '@/components/ui/SmartImage';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 export function DealingWithDebt() {
+  usePageTitle('Dealing With Debt · BNPL & Credit Scores');
   const moduleData = MANDY_MODULES.find(m => m.id === 'dealing-with-debt')!;
 
   return (
@@ -89,6 +92,8 @@ export function DealingWithDebt() {
       <div className="calculator-section">
         <TopicGuideAccordion topics={moduleData.topics} title="What Will I Learn in Dealing with Debt?" />
       </div>
+
+      <ModulePrevNext currentId="dealing-with-debt" />
     </div>
   );
 }

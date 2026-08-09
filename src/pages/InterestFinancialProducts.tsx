@@ -1,11 +1,14 @@
 import { MANDY_MODULES } from '@/data/mandy-topics';
 import { TopicGuideAccordion } from '@/components/shared/TopicGuideAccordion';
 import { TeenSavingsAccountFinder } from '@/calculators/teen-savings/TeenSavingsAccountFinder';
+import { ModulePrevNext } from '@/components/shared/ModulePrevNext';
 import { Dna, Landmark, Zap } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 export function InterestFinancialProducts() {
+  usePageTitle('Interest & Financial Products · 5%+ HISA');
   const moduleData = MANDY_MODULES.find(m => m.id === 'interest-products')!;
 
   return (
@@ -66,6 +69,8 @@ export function InterestFinancialProducts() {
       <div className="calculator-section">
         <TopicGuideAccordion topics={moduleData.topics} title="What Will I Learn in Interest & Financial Products?" />
       </div>
+
+      <ModulePrevNext currentId="interest-products" />
     </div>
   );
 }

@@ -34,8 +34,59 @@
 | v4.1.0  | 2030 Motion & Visuals | 2030 Cyber-Finance UI widgets (InteractiveGridPattern mouse light beam, HolographicTiltCard with 3D perspective glare & OKLCH border beam, ScenarioSplitterWidget curtain-peel comparison, RadialScoreGauge 360° arc meter) | Local |
 | v4.2.0  | 2030 Sub-Pages Visual Upgrade | 2030 Visual & Motion upgrades across all 11 sub-pages: PaycheckSplitterWidget, PenaltyShiftCalculatorWidget, floating 3D Popmart graphics with radial glow auras, and Motion 13 sliding sub-tab layoutId pills | Local |
 | v4.3.0  | August 2026 Regulatory & Content Update | Complete content overhaul across all 11 modules & 160+ topics to August 2026 standards: ATO Stage 3 tax brackets, 12.0% statutory Super Guarantee (FY25-26 & FY26-27), Modern Award junior rates, marginal HELP debt repayment ($67,000 threshold), July 2026 QLD TMR licence fees, Translink 50c flat fares, August 2026 ASX ETF market metrics, and verified HTTPS links | Local |
+| v5.1.0  | Frontend E2E UX Flow Review | Full workflow audit & per-page enhancements: scroll-to-top on push nav, unclipped site-search dropdown, URL-shareable tabs (careers/car/brisbane + `?topic=`), 404 page, per-page titles, 11-module prev/next pager, ⌘K nav search, skip-link/aria a11y pass, SG rate 12.5%→12.0% consistency | Local |
 | v5.0.0  | 2030 SDK & Perf| Latest SDKs (lucide-react 1.30, vite 8.2.1, tw-animate-css), MagneticButton + TickerMarquee widgets, latin-only fonts, AVIF/WebP imagery, PWA precache -43%, View Transition theme toggle, zero-render scroll progress | Local (push blocked) |
 | v4.5.0  | Banking & Finance Deep Audit | Comprehensive audit and expansion of banking, high-interest savings accounts (HISA 5.0%+), APRA $250k deposit guarantee, PayID/Osko fast payments, PayTo direct debits, Open Banking (CDR) ACCC security, TFN withholding tax (47%), Comprehensive Credit Reporting (Equifax/Experian/Illion), and National Debt Helpline (1800 007 007) | Local |
+| v5.1.0  | Frontend E2E UX Flow Review | Full end-to-end UX audit and enhancement. Fixed: scroll-to-top on route change, dead scroll-fade-in CSS, site-search dropdown clipping (overflow-hidden moved to decorative layers), `?topic=` deep-links landing on the wrong careers tab. Added: URL-shareable tabs (Careers/CarDriving/BrisbaneQLD), 404 page, per-page document titles, ModulePrevNext 11-module pager on every page, Command Palette ⌘K search button in Navbar, skip-link a11y + aria-expanded/aria-current, profile next-steps, Footer rebranded to AusTeen Money. Corrected stale 12.5% → 12.0% SG rate (matches v4.3.0 audit + data/super-rules.ts) across context, calculator, widgets and module copy | Local |
+
+---
+
+## v5.1.0 — FRONTEND E2E UX FLOW REVIEW & EVERY-PAGE ENHANCEMENT
+
+### Summary
+Walked the whole app front-to-back as a teen user (Landing → Profile → module deep-link → search → back → 404) and fixed every broken seam. Result: navigation always starts at the top, search results land on the exact tab, every tab view is URL-shareable, every page has a proper title + a "next module" CTA, and keyboard/screen-reader users get proper landmarks. 97 tests stay green; strict TS build clean.
+
+### E2E Flow Fixes (the "does it flow correctly" bugs)
+1. **Scroll-to-top on route change** — previously clicking a module card deep in the Landing kept the browser's mid-page scroll position on the new page (users landed on random content). `Layout` now scrolls to top on PUSH/REPLACE navigations but intentionally leaves POP (back/forward) scroll restoration native.
+2. **Site-search dropdown clipping** — the hero's `overflow-hidden` (and the Layout wrapper's) truncated the search results list to ~150px. `overflow-hidden` moved onto the inner decorative layers (orbs/glow sheen) so the dropdown now renders fully. Removed dead `.scroll-fade-in` class while there.
+3. **`?topic=` deep-links landing on wrong tab** — search hits for careers topics (e.g. `?topic=ce-7`) opened the Payslip tab and never revealed the Q&A. Careers, CarDriving and BrisbaneQLD tabs are now URL-driven via new `src/utils/url-tabs.ts` helper: `?tab=` selects the section (shareable, back/forward works) and a `?topic=` param forces the Topics tab on Careers.
+4. **Command Palette destination mapping** — the 4 first-job entries now navigate to their exact tab (`?tab=forms|rights|scripts|resume`) instead of always dropping on Payslip. The palette also opens from a new `⌘K` search button in the Navbar (custom event `open-command-palette`).
+5. **No 404 page** — unknown routes now render a friendly `NotFound` page (brand-gradient 404, home/profile CTAs, 4 module cards) instead of a blank screen.
+6. **SG rate consistency (data correctness)** — the app's authoritative data (`src/data/super-rules.ts`, v4.3.0 audit) sets 12.0% SG for FY25-26 → FY27-28, but several components still showed 12.5%. Corrected `TeenProfileContext` (rate 0.125→0.12), `TeenSuperCalculator` engine+copy, `SuperRetirement` card, Landing ticker/hero copy, `FinancialHealthScore`, `PaycheckSplitterWidget`, `TeenProfile` stat label. (Car loan 12.5% interest references left untouched — different figure.)
+
+### Per-Page Enhancements
+7. **Per-page document titles** — new `usePageTitle` hook (`src/hooks/usePageTitle.ts`); every module page, Landing, Profile and NotFound now names its tab nicely.
+8. **`ModulePrevNext` pager** — new shared component on every module page: "↑ Prev Module / Next Module" prev-next card (wraps around 1↔11). The 11-module journey never dead-ends.
+9. **Profile next-steps** — new personalised "Where Should I Go From Here?" section recommending the 4 most relevant modules for the teen's age (15/16 / 17 / 18+ paths), with "⭐ Start here".
+10. **A11y pass** — skip-to-content link in `Layout`, `aria-current="page"` on all nav links (desktop/dropdown/mobile), `aria-expanded`/`aria-controls` on accordion headers, `tabIndex`/focus handling on `main`, `scroll-padding-top` so deep-link anchors clear the sticky navbar, role=tab/tablist on Careers pill bar.
+11. **Branding consistency** — Footer disclaimer now says "AusTeen Money" (was "Australian Personal Finance Tools") + "Made for young Aussies".
+
+---
+
+## v5.1.0 — FRONTEND E2E UX FLOW REVIEW & EVERY-PAGE ENHANCEMENTS
+
+### Summary
+Walked the full frontend experience end-to-end: Landing → Profile → module pages → search → command palette → deep links → 404. Audited every cross-page seam (routing, scroll position, tab state, search navigation, accessibility) and enhanced every page with consistent journey, navigation and credibility elements. 97 tests green, strict TS build clean.
+
+### UX Flow Fixes
+1. **Scroll-to-top on route change** — previously navigation kept the browser's scroll position (landing mid-page after clicking a module card). `Layout.tsx` now scrolls to top on PUSH/REPLACE; back/forward (POP) keeps native restoration.
+2. **Site-search dropdown clipped** — search dropdown was truncated by the hero's `overflow-hidden` wrapper (`Landing.tsx`) — decorative orbs/glow now clipped by their own inner layer; removed dead `.scroll-fade-in` class.
+3. **Careers `?topic=` deep link landed on wrong tab** — search/palette → `/careers-employment?topic=ce-7` opened the Payslip tab, never the Q&A. Careers/CarDriving/BrisbaneQLD tabs now URL-driven (`?tab=`), validated, defaults + `?topic=` forces the Topics tab.
+4. **Command Palette navigated to generic careers page** — 4 entries now deep-link `?tab=forms|rights|scripts|resume` straight to the right tool.
+5. **No 404 page** — added `NotFound` (route `*`): branded 404 with Home/Profile links + 4 module cards.
+6. **SG rate inconsistency (12.5% vs 12.0%)** — super-rules.ts says 12.0% for FY26-27; TeenContext, TeenSuperCalculator, ticker, highlight cards, alt tags & profile stat said 12.5%/12%. Unified to 12.0% (debt-rate copy left alone).
+
+### Enhancements Across Every Page
+7. **`usePageTitle` hook** (`src/hooks/usePageTitle.ts`) — each page sets a descriptive `<title>` (tab + bookmarks/SEO).
+8. **`ModulePrevNext` pager** (`src/components/shared/ModulePrevNext.tsx`) — prev/next module journey card on all 11 modules (wraps 1↔11).
+9. **Personalised profile next-steps** — `TeenProfile` recommends the next module by age via `getRecommendedModules` (15 / 16-17 / 18+ paths).
+10. **Skip-to-content link** in `Layout`; `aria-current="page"` on all navbar links + mobile drawer; accordion buttons now `aria-expanded`/`aria-controls`; mock anchors kept keyboard-visible.
+11. **`html { scroll-padding-top: 6rem }`** — deep-link topic cards no longer hide under the sticky navbar.
+12. **Footer rebranded** to "AusTeen Money" (was "Australian Personal Finance Tools") for brand consistency with the Navbar.
+
+### Files
+- New: `NotFound.tsx`, `ModulePrevNext.tsx`, `usePageTitle.ts`
+- Edited: `Layout.tsx`, `Navbar.tsx`, `Footer.tsx`, `Landing.tsx`, `App.tsx`, `TopicGuideAccordion.tsx`, `CommandPalette.tsx`, all 11 module pages, `TeenProfile.tsx`, `index.css`, `TeenProfileContext.tsx`, `TeenSuperCalculator.tsx`, `PaycheckSplitterWidget.tsx`, `FinancialHealthScore.tsx`, `SuperRetirement.tsx`
 
 ---
 

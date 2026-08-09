@@ -14,6 +14,7 @@ import { SiteSearchBar } from '@/components/search/SiteSearchBar';
 import { SmartImage } from '@/components/ui/SmartImage';
 import { MagneticButton } from '@/components/ui/MagneticButton';
 import { TickerMarquee, type TickerItem } from '@/components/ui/TickerMarquee';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 function ModuleSelector({ value, onChange }: { value: string; onChange: (id: string) => void }) {
   const [open, setOpen] = useState(false);
@@ -118,6 +119,7 @@ function ModuleSelector({ value, onChange }: { value: string; onChange: (id: str
 }
 
 export function Landing() {
+  usePageTitle('Free Teen Finance Guide & 11 Real-World Modules');
   const { applyAgePreset, profile } = useTeenProfile();
   const [selectedModuleId, setSelectedModuleId] = useState<string>('careers-employment');
   const selectedModule = MANDY_MODULES.find(m => m.id === selectedModuleId) || MANDY_MODULES[1];
@@ -138,17 +140,20 @@ export function Landing() {
   return (
     <div className="space-y-12 animate-fade-in pb-12">
       {/* Hero Section */}
-      <section className="relative overflow-hidden rounded-3xl border border-primary/30 bg-gradient-to-br from-primary/25 via-purple-500/15 to-amber-500/25 p-8 sm:p-14 text-center sm:text-left shadow-2xl">
-        <InteractiveGridPattern glowSize={500} glowColor="oklch(0.65 0.18 250 / 0.25)" />
-        <BorderBeam size={280} duration={14} colorFrom="#3b82f6" colorTo="#a855f7" />
+      <section className="relative rounded-3xl border border-primary/30 bg-gradient-to-br from-primary/25 via-purple-500/15 to-amber-500/25 p-8 sm:p-14 text-center sm:text-left shadow-2xl">
+        {/* Decorative layer kept clipped so the search dropdown can overflow the section */}
+        <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-3xl" aria-hidden="true">
+          <InteractiveGridPattern glowSize={500} glowColor="oklch(0.65 0.18 250 / 0.25)" />
 
-        {/* Radial glows + sheen */}
-        <div aria-hidden className="pointer-events-none absolute inset-0">
-          <div className="absolute -top-28 -right-28 w-80 h-80 rounded-full bg-primary/30 blur-3xl" />
-          <div className="absolute -bottom-32 -left-20 w-72 h-72 rounded-full bg-amber-500/25 blur-3xl" />
-          <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[36rem] h-64 rounded-full bg-purple-500/20 blur-[110px]" />
-          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent" />
+          {/* Radial glows + sheen */}
+          <div className="absolute inset-0">
+            <div className="absolute -top-28 -right-28 w-80 h-80 rounded-full bg-primary/30 blur-3xl" />
+            <div className="absolute -bottom-32 -left-20 w-72 h-72 rounded-full bg-amber-500/25 blur-3xl" />
+            <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[36rem] h-64 rounded-full bg-purple-500/20 blur-[110px]" />
+            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent" />
+          </div>
         </div>
+        <BorderBeam size={280} duration={14} colorFrom="#3b82f6" colorTo="#a855f7" />
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
           <div className="lg:col-span-7 space-y-4">
@@ -162,7 +167,7 @@ export function Landing() {
             </h1>
 
             <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
-              Everything you need to know about your money before you tackle the real world—from your first job payslip, $18,200 tax-free threshold, 12.5% super guarantee, and car costs to budgeting your first paycheck and living in Brisbane.
+              Everything you need to know about your money before you tackle the real world—from your first job payslip, $18,200 tax-free threshold, 12% super guarantee, and car costs to budgeting your first paycheck and living in Brisbane.
             </p>
 
             {/* Site-wide search */}

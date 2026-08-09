@@ -2,12 +2,15 @@ import { motion } from 'motion/react';
 import { MANDY_MODULES } from '@/data/mandy-topics';
 import { TopicGuideAccordion } from '@/components/shared/TopicGuideAccordion';
 import { FirstPaycheckSplitter } from '@/calculators/teen-budget/FirstPaycheckSplitter';
+import { ModulePrevNext } from '@/components/shared/ModulePrevNext';
 import { Wallet, PieChart, Layers } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { SmartImage } from '@/components/ui/SmartImage';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 export function TeenBudgeting() {
+  usePageTitle('Teen Budgeting · 50/30/20 Paycheck Plan');
   const moduleData = MANDY_MODULES.find(m => m.id === 'teen-budgeting')!;
 
   return (
@@ -89,6 +92,8 @@ export function TeenBudgeting() {
       <div className="calculator-section">
         <TopicGuideAccordion topics={moduleData.topics} title="What Will I Learn in Budgeting & Paychecks?" />
       </div>
+
+      <ModulePrevNext currentId="teen-budgeting" />
     </div>
   );
 }

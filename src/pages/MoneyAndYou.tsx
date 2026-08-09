@@ -1,10 +1,13 @@
 import { MANDY_MODULES } from '@/data/mandy-topics';
 import { TopicGuideAccordion } from '@/components/shared/TopicGuideAccordion';
 import { MoneyMindsetQuiz } from '@/components/shared/MoneyMindsetQuiz';
+import { ModulePrevNext } from '@/components/shared/ModulePrevNext';
 import { Badge } from '@/components/ui/Badge';
 import { SmartImage } from '@/components/ui/SmartImage';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 export function MoneyAndYou() {
+  usePageTitle('Money & You · Mindset & Identity');
   const moduleData = MANDY_MODULES.find(m => m.id === 'money-and-you')!;
 
   return (
@@ -46,6 +49,8 @@ export function MoneyAndYou() {
       <div className="calculator-section">
         <TopicGuideAccordion topics={moduleData.topics} title="Money & You Q&A Library" />
       </div>
+
+      <ModulePrevNext currentId="money-and-you" />
     </div>
   );
 }

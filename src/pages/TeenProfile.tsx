@@ -7,9 +7,13 @@ import { FinancialHealthScore } from '@/components/ui/FinancialHealthScore';
 import { PaycheckSplitterWidget } from '@/components/teen-profile/PaycheckSplitterWidget';
 import { SpotlightCard } from '@/components/ui/SpotlightCard';
 import { AGE_PRESETS } from '@/data/teen-finance-data';
-import { User, Briefcase, Target, RefreshCw, Zap, MapPin } from 'lucide-react';
+import { usePageTitle } from '@/hooks/usePageTitle';
+import { User, Briefcase, Target, RefreshCw, Zap, MapPin, ArrowRight, Compass } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { MANDY_MODULES } from '@/data/mandy-topics';
 
 export function TeenProfile() {
+  usePageTitle('My Real-World Money Profile');
   const {
     profile,
     updateProfile,
@@ -22,6 +26,8 @@ export function TeenProfile() {
     superEligible,
     weeklySuperContribution,
   } = useTeenProfile();
+
+  const recommended = getRecommendedModules(profile.age);
 
   return (
     <div className="space-y-8 animate-fade-in">
@@ -271,7 +277,7 @@ export function TeenProfile() {
           subtext="Net earnings every payday"
         />
         <StatCard
-          label="12.5% Super Guarantee"
+          label="12% Super Guarantee"
           value={`$${weeklySuperContribution.toFixed(2)}`}
           numericValue={weeklySuperContribution}
           format="currency"
@@ -279,6 +285,59 @@ export function TeenProfile() {
           subtext={superEligible ? 'Paid to super fund' : 'Requires >30h/wk for under 18s'}
         />
       </div>
+
+      {/* Personalised Next Steps — guides the teen to their next module */}
+      <section className="p-6 sm:p-8 rounded-3xl bg-card border border-border space-y-5" aria-labelledby="next-steps-heading">
+        <div className="flex items-center gap-2">
+          <Compass className="w-5 h-5 text-amber-500" />
+          <h2 id="next-steps-heading" className="text-lg font-bold text-foreground">
+            Where Should I Go From Here?
+          </h2>
+          <span className="ml-auto text-[10px] font-bold uppercase tracking-wider text-muted-foreground bg-muted px-2 py-1 rounded-full">
+            Personalised for age {profile.age}
+          </span>
+        </div>
+        <p className="text-xs text-muted-foreground -mt-2">
+          Your numbers are now wired into every calculator on the site. Here's the recommended next step for a{' '}
+          {profile.age}-year-old:
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          {recommended.map(m => (
+            <Link
+              key={m.id}
+              to={m.route}
+              className="group flex flex-col gap-2 p-4 rounded-2xl border border-border bg-background/60 hover:border-primary/40 hover:bg-primary/5 transition-all"
+            >
+              <div className="flex items-center gap-2.5">
+                <span className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary/15 to-amber-500/15 border border-primary/10 flex items-center justify-center text-lg group-hover:scale-105 transition-transform">
+                  {m.emoji}
+                </span>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                  {m.id === recommended[0].id ? '⭐ Start here' : 'Recommended'}
+                </span>
+              </div>
+              <span className="text-xs font-bold text-foreground group-hover:text-primary transition-colors">
+                {m.title}
+              </span>
+              <span className="text-[11px] text-muted-foreground leading-relaxed line-clamp-2">{m.description}</span>
+              <span className="mt-auto pt-1 flex items-center gap-1.5 text-[11px] font-bold text-primary group-hover:translate-x-1 transition-transform">
+                Explore Module <ArrowRight className="w-3 h-3" />
+              </span>
+            </Link>
+          ))}
+        </div>
+      </section>
     </div>
   );
+}
+
+function getRecommendedModules(age: number) {
+  const byId = (id: string) => MANDY_MODULES.find(m => m.id === id)!;
+  if (age < 16) {
+    return [byId('money-and-you'), byId('careers-employment'), byId('teen-budgeting'), byId('brisbane-qld')];
+  }
+  if (age < 18) {
+    return [byId('careers-employment'), byId('teen-budgeting'), byId('tax-guide'), byId('car-driving')];
+  }
+  return [byId('tax-guide'), byId('investing-shares'), byId('super-retirement'), byId('spending-saving')];
 }

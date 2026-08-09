@@ -10,6 +10,7 @@ import { WorkplaceScriptGenerator } from '@/components/career/WorkplaceScriptGen
 import { TeenResumeBuilder } from '@/components/career/TeenResumeBuilder';
 import { Briefcase, FileText, ShieldAlert, MessageSquare, Award, BookOpen, Clock } from 'lucide-react';
 import { Badge } from '@/components/ui/Badge';
+import { SmartImage } from '@/components/ui/SmartImage';
 
 export function CareersEmployment() {
   const moduleData = MANDY_MODULES.find(m => m.id === 'careers-employment')!;
@@ -52,10 +53,13 @@ export function CareersEmployment() {
               className="relative group"
             >
               <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-blue-500 to-indigo-500 blur-md opacity-40 group-hover:opacity-70 transition duration-500" />
-              <img
+              <SmartImage
                 src="/assets/graphics/popmart_job.jpg"
                 alt="First Job 3D Popmart Vinyl Figure"
                 className="relative w-36 h-36 rounded-2xl object-cover border-2 border-primary/40 shadow-xl"
+                loading="lazy"
+                width={144}
+                height={144}
               />
             </motion.div>
           </div>

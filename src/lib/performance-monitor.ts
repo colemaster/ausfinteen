@@ -13,18 +13,25 @@ export interface PerformanceMetrics {
 }
 
 export function getPerformanceMetrics(): PerformanceMetrics {
-  const timing = performance.timing;
-  const loadTimeMs = timing.loadEventEnd > 0 
-    ? Math.max(0, timing.loadEventEnd - timing.navigationStart)
-    : Math.round(performance.now());
-  
-  const ttfbMs = timing.responseStart > 0 
-    ? Math.max(0, timing.responseStart - timing.navigationStart)
-    : 0;
+  // Modern API — performance.timing is deprecated in favour of
+  // PerformanceNavigationTiming entries.
+  const navEntry = performance
+    .getEntriesByType('navigation')
+    .at(-1) as PerformanceNavigationTiming | undefined;
+
+  const loadTimeMs =
+    navEntry !== undefined && navEntry.loadEventEnd > 0
+      ? Math.max(0, navEntry.loadEventEnd - navEntry.startTime)
+      : Math.round(performance.now());
+
+  const ttfbMs =
+    navEntry !== undefined && navEntry.responseStart > 0
+      ? Math.max(0, navEntry.responseStart - navEntry.startTime)
+      : 0;
 
   // @ts-expect-error performance.memory is non-standard Chrome API
   const memoryInfo = performance.memory;
-  const memoryMb = memoryInfo?.usedJSHeapSize 
+  const memoryMb = memoryInfo?.usedJSHeapSize
     ? Math.round(memoryInfo.usedJSHeapSize / (1024 * 1024))
     : undefined;
 

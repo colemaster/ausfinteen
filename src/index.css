@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 @custom-variant dark (&:where(.dark, .dark *));
 
 @layer base {
@@ -166,6 +167,15 @@
   animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* 2030: theme-toggle cross-fade via same-document View Transitions.
+ * Snappy 220ms ease so the dark/light flip feels like a smooth wipe,
+ * rather than the longer 350ms route enter. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.22s;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 /* 2027: entry animation for first mount via @starting-style */
 @starting-style {
   .calc-stagger > * {
@@ -183,16 +193,6 @@
 @keyframes reveal-up {
   from { opacity: 0; transform: translateY(16px); }
   to { opacity: 1; transform: translateY(0); }
-}
-
-/* 2027: scroll-driven progress indicator using CSS (no JS needed) */
-.scroll-progress-native {
-  animation: scroll-progress linear;
-  animation-timeline: scroll(root);
-}
-@keyframes scroll-progress {
-  from { width: 0%; }
-  to { width: 100%; }
 }
 
 /* content-visibility for below-fold sections = huge render cost savings */
@@ -321,6 +321,33 @@ p {
 }
 .animate-border-beam {
   animation: border-beam var(--duration, 12s) infinite linear;
+}
+
+/* 2030: CSS-only finance ticker marquee */
+@keyframes ticker-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.animate-ticker {
+  animation: ticker-scroll var(--ticker-speed, 40s) linear infinite;
+  animation-timeline: auto;
+}
+.animate-ticker:hover {
+  animation-play-state: paused;
+}
+.mask-fade-edges {
+  -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+  mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+}
+
+/* 2030: luminescent gradient text shimmer */
+@keyframes shimmer-text {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+.animate-text-shimmer {
+  background-size: 200% auto;
+  animation: shimmer-text 4s linear infinite;
 }
 
 /* 2030: Ambient floating aura mesh gradient */

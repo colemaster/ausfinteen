@@ -11,6 +11,9 @@ import { motion } from 'motion/react';
 import { fadeInUp, staggerContainer } from '@/lib/animations';
 import { useTeenProfile } from '@/context/TeenProfileContext';
 import { SiteSearchBar } from '@/components/search/SiteSearchBar';
+import { SmartImage } from '@/components/ui/SmartImage';
+import { MagneticButton } from '@/components/ui/MagneticButton';
+import { TickerMarquee, type TickerItem } from '@/components/ui/TickerMarquee';
 
 function ModuleSelector({ value, onChange }: { value: string; onChange: (id: string) => void }) {
   const [open, setOpen] = useState(false);
@@ -119,6 +122,19 @@ export function Landing() {
   const [selectedModuleId, setSelectedModuleId] = useState<string>('careers-employment');
   const selectedModule = MANDY_MODULES.find(m => m.id === selectedModuleId) || MANDY_MODULES[1];
 
+  const tickerItems: TickerItem[] = [
+    { label: 'Tax-Free Threshold', value: '$18,200' },
+    { label: 'Super Guarantee', value: '12.0%' },
+    { label: '16yo Casual Rate', value: '$25.50/hr' },
+    { label: 'HISA Bonus Rate', value: '5.0%+ p.a.' },
+    { label: 'Concessional Cap', value: '$30,750' },
+    { label: 'APRA Deposit Guarantee', value: '$250k' },
+    { label: 'Translink Flat Fare', value: '50c' },
+    { label: 'HELP Threshold', value: '$67,000' },
+    { label: 'First-Home Grant (VIC)', value: '$10,000' },
+    { label: 'ASX 200 Average Return', value: '~9% p.a.' },
+  ];
+
   return (
     <div className="space-y-12 animate-fade-in pb-12">
       {/* Hero Section */}
@@ -158,20 +174,26 @@ export function Landing() {
             </div>
 
             <div className="pt-3 flex flex-wrap items-center justify-center sm:justify-start gap-3">
-              <Link
-                to="/careers-employment"
-                className="px-6 py-3.5 rounded-2xl bg-gradient-to-r from-primary via-violet-500 to-purple-500 text-primary-foreground font-bold text-sm hover:opacity-90 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-primary/25 transition-all shadow-md flex items-center gap-2"
+              <MagneticButton
+                strength={0.25}
+                ariaLabel="Explore First Job Pay"
+                className="px-6 py-3.5 rounded-2xl bg-gradient-to-r from-primary via-violet-500 to-purple-500 text-primary-foreground font-bold text-sm hover:opacity-90 hover:shadow-xl hover:shadow-primary/25 transition-shadow shadow-md gap-2 cursor-pointer"
               >
-                <span>Explore First Job Pay</span>
-                <ArrowRight className="w-4 h-4" />
-              </Link>
+                <Link to="/careers-employment" className="inline-flex items-center gap-2">
+                  <span>Explore First Job Pay</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              </MagneticButton>
 
-              <Link
-                to="/profile"
-                className="px-6 py-3.5 rounded-2xl bg-card/80 border border-border text-foreground font-bold text-sm hover:bg-card hover:border-primary/40 hover:-translate-y-0.5 transition-all backdrop-blur"
+              <MagneticButton
+                strength={0.2}
+                ariaLabel="Set Up My Profile"
+                className="px-6 py-3.5 rounded-2xl bg-card/80 border border-border text-foreground font-bold text-sm hover:bg-card hover:border-primary/40 transition-all backdrop-blur cursor-pointer"
               >
-                Set Up My Profile ({profile.age}yo)
-              </Link>
+                <Link to="/profile" className="inline-flex items-center gap-2">
+                  Set Up My Profile ({profile.age}yo)
+                </Link>
+              </MagneticButton>
             </div>
 
             {/* Quick Age Toggle Pills in Hero */}
@@ -200,11 +222,14 @@ export function Landing() {
           {/* Hero 3D Graphic Asset Card */}
           <div className="lg:col-span-5 hidden lg:block relative">
             <HolographicTiltCard showBeam={false} className="border-primary/30">
-              <img
+              <SmartImage
                 src="/assets/aus_teen_hero.jpg"
                 alt="AusTeen Money 2030 Graphic Illustration"
                 className="w-full h-auto object-cover rounded-2xl"
                 loading="eager"
+                width={1376}
+                height={768}
+                fetchPriority="high"
               />
               <div className="mt-3 flex items-center justify-between text-xs font-bold text-foreground">
                 <span className="flex items-center gap-1.5">
@@ -221,6 +246,19 @@ export function Landing() {
       {/* 2030 Interactive Scenario Splitter Widget */}
       <section className="calculator-section">
         <ScenarioSplitterWidget />
+      </section>
+
+      {/* 2030 CSS Money-Facts Ticker */}
+      <section aria-label="Real-world money facts ticker">
+        <div className="rounded-2xl border border-border bg-card/40 backdrop-blur-sm px-2 py-2.5 shadow-sm">
+          <div className="flex items-center gap-3">
+            <span className="hidden sm:inline-flex items-center gap-1.5 pl-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground shrink-0">
+              <Zap className="w-3 h-3 text-amber-500" />
+              Money Pulse
+            </span>
+            <TickerMarquee items={tickerItems} speed="42s" className="flex-1" />
+          </div>
+        </div>
       </section>
 
       {/* 11 Mandy Money Modules Grid */}
@@ -254,11 +292,13 @@ export function Landing() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       {module.graphicUrl ? (
-                        <img
+                        <SmartImage
                           src={module.graphicUrl}
                           alt={module.title}
                           className="w-12 h-12 rounded-2xl object-cover border border-primary/20 shadow-md group-hover:scale-110 transition-transform duration-300"
                           loading="lazy"
+                          width={48}
+                          height={48}
                         />
                       ) : (
                         <span className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/15 via-purple-500/10 to-amber-500/20 border border-primary/10 flex items-center justify-center text-2xl group-hover:scale-105 group-hover:border-primary/30 transition-all shadow-inner">

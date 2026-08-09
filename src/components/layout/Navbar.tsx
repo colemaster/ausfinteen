@@ -115,7 +115,7 @@ export function Navbar() {
                 <div
                   role="menu"
                   aria-label="11 Real-World Modules"
-                  className="absolute top-full left-0 mt-2 w-72 max-h-[70vh] overflow-y-auto p-2 rounded-2xl bg-card border border-border shadow-xl grid grid-cols-1 gap-1 z-50 animate-scale-in"
+                  className="absolute top-full left-0 mt-2 w-72 max-h-[70vh] overflow-y-auto p-2 rounded-2xl bg-card border border-border shadow-xl grid grid-cols-1 gap-1 z-50 animate-in fade-in slide-in-from-top-4 zoom-in-98 duration-300"
                 >
                   {MANDY_MODULES.map(m => (
                     <Link

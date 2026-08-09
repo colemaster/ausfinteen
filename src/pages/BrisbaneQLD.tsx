@@ -16,6 +16,7 @@ import {
 } from '@/data/brisbane-data';
 import { OFFICIAL_WEB_LINKS } from '@/data/teen-finance-data';
 import { useTeenProfile } from '@/context/TeenProfileContext';
+import { SmartImage } from '@/components/ui/SmartImage';
 
 const BRISBANE_WEB_SOURCES = [
   OFFICIAL_WEB_LINKS.qld_rta,
@@ -72,10 +73,13 @@ export function BrisbaneQLD() {
             )}
           </div>
           <div className="md:col-span-4 hidden md:flex justify-center">
-            <img
+            <SmartImage
               src="/assets/graphics/popmart_bne.jpg"
               alt="Brisbane Nights 3D Popmart Toy"
               className="w-36 h-36 rounded-2xl object-cover border-2 border-sky-500/30 shadow-xl hover:scale-105 transition-transform duration-300"
+              loading="lazy"
+              width={144}
+              height={144}
             />
           </div>
         </div>

@@ -38,6 +38,34 @@
 
 ---
 
+## v5.0.0 — 2030 SDK UPGRADE, NEW MOTION WIDGETS & FASTEST PWA YET
+
+### Summary
+Pulled every SDK and dependency to its absolute latest, added new 2030 motion widgets, and cut delivered payload hard: fonts trimmed to latin-only, all imagery converted to AVIF/WebP, PWA precache slashed 43%, dead runtime-caching removed, theme switch upgraded to platform-native View Transitions, and scroll progress reworked to paint 0 React re-renders. 97 tests green, strict TS build clean.
+
+### SDK & Dependency Upgrades (all to absolute latest)
+1. `lucide-react` `^1.28.0 → ^1.30.0`, `vite` `^8.2.0 → ^8.2.1`, `tw-animate-css` `^1.4.0` (NEW — Tailwind v4-native enter/exit animation utilities, replacing legacy JS plugin approach).
+2. Audited whole tree vs npm registry: react 19.2.8, react-dom 19.2.8, react-router-dom 7.18.2, recharts 3.10.1, tailwindcss 4.3.3, typescript 7.0.2, motion 13.0.0, vitest 4.1.10, vite-plugin-pwa 1.3.0 all confirmed latest.
+3. `npm audit fix` → 0 vulnerabilities (nanoid patched to 3.3.18).
+
+### 2030 Widgets & Interaction Upgrades
+4. **New `MagneticButton` (`src/components/ui/MagneticButton.tsx`)** — spring-physics magnetic hover (bounded strength, GPU-composited transform), reduced-motion aware; wired into the Landing hero CTAs ("Explore First Job Pay", "Set Up My Profile").
+5. **New `TickerMarquee` (`src/components/ui/TickerMarquee.tsx`)** — CSS-only infinite money-facts ticker (compositor-friendly, pauses on hover, edge-masked); "Money Pulse" strip under the Landing hero with 10 AU finance facts ($18,200 threshold, 12.0% SG, HISA 5.0%+, APRA $250k, 50c fares etc.).
+6. **`tw-animate-css` utilities** — navbar module dropdown + Command Palette now use `animate-in fade-in slide-in-from-top-* zoom-in-*` enter animations; zero JS cost, tree-shaken CSS.
+7. **Theme toggle via View Transitions (`src/hooks/useTheme.ts`, `index.css`)** — dark/light flip now cross-fades through the platform-native same-document View Transitions API (220ms snap), falling back to a plain state flip under reduced-motion or unsupported browsers.
+
+### Performance Engineering (measured)
+8. **Latin-only Inter fonts (`src/fonts.css`)** — replaced full 7-subset `@fontsource-variable/inter` import with a custom latin-only `@font-face`. Build now emits **1 Inter file (48 KB)** instead of 7 (~224 KB); cyrillic/greek/vietnamese/latin-ext dropped from output and PWA precache.
+9. **Imagery AVIF/WebP (`SmartImage` + sharp pre-build)** — new `<picture>`-based `SmartImage` component (AVIF→WebP→JPG fallback) used across Landing hero, module cards and 8 module pages. Hero: **695 KB JPG → 58 KB AVIF (−92%)**. Module graphics: **6.6 MB → 193 KB WebP total (−97%)**. Hero gets `fetchpriority="high"`, all others lazy.
+10. **PWA Service Worker tidy (`vite.config.ts`)** — precache dropped from **2955 KiB / 49 entries → 1681 KiB / 43 entries (−43%)**: excluded 1.1 MB `report.html` visualizer output, removed dead Google Fonts runtime caching (fonts are fully self-hosted).
+11. **Scroll progress without React re-renders (`Layout.tsx`)** — progress bar now writes directly to the DOM node under rAF; previously every scroll event called `setState` and re-rendered the entire Layout shell each frame.
+12. **`performance-monitor.ts`** — migrated off deprecated `performance.timing` to `PerformanceNavigationTiming` (loadEventEnd / responseStart / startTime).
+
+### Verification
+`npm run build` passes (tsc strict + Vite 8.2 + Tailwind v4 + PWA); `npx vitest run` → 10 files / 97 tests green.
+
+---
+
 ## v4.5.0 — BANKING & FINANCE DEEP AUDIT & TOPICS EXPANSION
 
 ### Summary

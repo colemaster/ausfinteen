@@ -5,6 +5,7 @@ import { TeenSuperCalculator } from '@/calculators/teen-super/TeenSuperCalculato
 import { Star, ShieldAlert, Award } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
+import { SmartImage } from '@/components/ui/SmartImage';
 
 export function SuperRetirement() {
   const moduleData = MANDY_MODULES.find(m => m.id === 'super-retirement')!;
@@ -35,10 +36,13 @@ export function SuperRetirement() {
               className="relative group"
             >
               <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-amber-500 to-yellow-500 blur-md opacity-40 group-hover:opacity-70 transition duration-500" />
-              <img
+              <SmartImage
                 src="/assets/graphics/popmart_super.jpg"
                 alt="12.5% Super Guarantee Astronaut 3D Popmart Toy"
                 className="relative w-36 h-36 rounded-2xl object-cover border-2 border-amber-500/40 shadow-xl"
+                loading="lazy"
+                width={144}
+                height={144}
               />
             </motion.div>
           </div>

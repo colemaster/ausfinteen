@@ -5,6 +5,7 @@ import { TeenTaxCalculator } from '@/calculators/teen-tax/TeenTaxCalculator';
 import { DollarSign, ShieldCheck, FileCheck } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
+import { SmartImage } from '@/components/ui/SmartImage';
 
 export function TaxGuide() {
   const moduleData = MANDY_MODULES.find(m => m.id === 'tax-guide')!;
@@ -35,10 +36,13 @@ export function TaxGuide() {
               className="relative group"
             >
               <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 blur-md opacity-40 group-hover:opacity-70 transition duration-500" />
-              <img
+              <SmartImage
                 src="/assets/graphics/popmart_tax.jpg"
                 alt="$18,200 Tax Free Threshold 3D Popmart Vinyl Figure"
                 className="relative w-36 h-36 rounded-2xl object-cover border-2 border-emerald-500/40 shadow-xl"
+                loading="lazy"
+                width={144}
+                height={144}
               />
             </motion.div>
           </div>

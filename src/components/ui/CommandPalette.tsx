@@ -32,7 +32,7 @@ export function CommandPalette() {
       <Command
         label="Command Palette"
         loop
-        className="w-full max-w-lg rounded-2xl border border-border bg-card text-card-foreground shadow-2xl overflow-hidden"
+        className="w-full max-w-lg rounded-2xl border border-border bg-card text-card-foreground shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-250"
         onKeyDown={(e) => {
           if (e.key === 'Escape') setOpen(false);
         }}

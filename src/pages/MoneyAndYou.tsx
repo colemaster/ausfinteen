@@ -2,6 +2,7 @@ import { MANDY_MODULES } from '@/data/mandy-topics';
 import { TopicGuideAccordion } from '@/components/shared/TopicGuideAccordion';
 import { MoneyMindsetQuiz } from '@/components/shared/MoneyMindsetQuiz';
 import { Badge } from '@/components/ui/Badge';
+import { SmartImage } from '@/components/ui/SmartImage';
 
 export function MoneyAndYou() {
   const moduleData = MANDY_MODULES.find(m => m.id === 'money-and-you')!;
@@ -26,10 +27,13 @@ export function MoneyAndYou() {
             </p>
           </div>
           <div className="md:col-span-4 hidden md:flex justify-center">
-            <img
+            <SmartImage
               src="/assets/graphics/popmart_mascot.jpg"
               alt="Issy Koala Star Mascot 3D Popmart Toy"
               className="w-36 h-36 rounded-2xl object-cover border-2 border-amber-500/30 shadow-xl hover:scale-105 transition-transform duration-300"
+              loading="lazy"
+              width={144}
+              height={144}
             />
           </div>
         </div>

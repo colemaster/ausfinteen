@@ -27,6 +27,7 @@ import {
   BRISBANE_OFFSTREET_PARKING,
 } from '@/data/car-data';
 import { OFFICIAL_WEB_LINKS } from '@/data/teen-finance-data';
+import { SmartImage } from '@/components/ui/SmartImage';
 
 const CAR_WEB_SOURCES = [
   OFFICIAL_WEB_LINKS.qld_licence_fees,
@@ -71,10 +72,13 @@ export function CarDriving() {
             </p>
           </div>
           <div className="md:col-span-4 hidden md:flex justify-center">
-            <img
+            <SmartImage
               src="/assets/graphics/popmart_car.jpg"
               alt="Futuristic Electric Car 3D Popmart Toy"
               className="w-36 h-36 rounded-2xl object-cover border-2 border-sky-500/30 shadow-xl hover:scale-105 transition-transform duration-300"
+              loading="lazy"
+              width={144}
+              height={144}
             />
           </div>
         </div>

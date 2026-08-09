@@ -10,6 +10,7 @@ import { TrendingUp, Layers, AlertTriangle, ExternalLink, GraduationCap } from '
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { OFFICIAL_WEB_LINKS } from '@/data/teen-finance-data';
+import { SmartImage } from '@/components/ui/SmartImage';
 
 const INVESTING_WEB_SOURCES = [
   OFFICIAL_WEB_LINKS.moomoo_au,
@@ -55,11 +56,14 @@ export function InvestingShares() {
               transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
               className="relative group"
             >
-              <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 blur-md opacity-40 group-hover:opacity-70 transition duration-500" />
-              <img
+<div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 blur-md opacity-40 group-hover:opacity-70 transition duration-500" />
+              <SmartImage
                 src="/assets/graphics/popmart_invest.jpg"
                 alt="ASX ETF Growth 3D Popmart Toy"
                 className="relative w-36 h-36 rounded-2xl object-cover border-2 border-emerald-500/40 shadow-xl"
+                loading="lazy"
+                width={144}
+                height={144}
               />
             </motion.div>
           </div>

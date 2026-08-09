@@ -6,6 +6,10 @@ export type Theme = 'dark' | 'light';
 /**
  * Theme hook: reads/writes dark|light via URL param `?theme=`.
  * Falls back to system preference. Applies `dark` class to <html>.
+ *
+ * The toggle is wrapped in a same-document View Transition (falling back to a
+ * plain flip when unsupported or under prefers-reduced-motion) so the theme
+ * change cross-fades smoothly — a 2030 platform-native technique.
  */
 export function useTheme(): [Theme, () => void] {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -30,7 +34,19 @@ export function useTheme(): [Theme, () => void] {
     setSearchParams(p, { replace: true });
   }, [theme]);
 
-  const toggle = () => setTheme(t => (t === 'dark' ? 'light' : 'dark'));
+  const toggle = () => {
+    const next: Theme = theme === 'dark' ? 'light' : 'dark';
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (!document.startViewTransition || reduced) {
+      setTheme(next);
+      return;
+    }
+    // Snap the OLD theme to the root for the outgoing frame, then commit.
+    document.startViewTransition(() => {
+      setTheme(next);
+    });
+  };
 
   return [theme, toggle];
 }

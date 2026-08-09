@@ -5,6 +5,7 @@ import { BNPLDebtTrapVisualizer } from '@/calculators/teen-debt/BNPLDebtTrapVisu
 import { Flame, AlertOctagon, ShieldAlert } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
+import { SmartImage } from '@/components/ui/SmartImage';
 
 export function DealingWithDebt() {
   const moduleData = MANDY_MODULES.find(m => m.id === 'dealing-with-debt')!;
@@ -35,10 +36,13 @@ export function DealingWithDebt() {
               className="relative group"
             >
               <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-rose-500 to-red-500 blur-md opacity-40 group-hover:opacity-70 transition duration-500" />
-              <img
+              <SmartImage
                 src="/assets/graphics/popmart_debt.jpg"
                 alt="Debt Smasher Superhero 3D Popmart Toy"
                 className="relative w-36 h-36 rounded-2xl object-cover border-2 border-rose-500/40 shadow-xl"
+                loading="lazy"
+                width={144}
+                height={144}
               />
             </motion.div>
           </div>

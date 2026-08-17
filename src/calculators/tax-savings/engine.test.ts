@@ -1,9 +1,13 @@
 import { describe, it, expect } from 'vitest';
+import { calcIncomeTax } from '../../data/tax-brackets';
 import {
   calculateSuperSacrifice,
   calculateNegativeGearing,
   calculateTaxBreakdown,
   calculateDRTaxBenefit,
+  taxWithHELP,
+  div293Exposure,
+  marginalRateBrackets,
 } from './engine';
 
 describe('calculateTaxBreakdown', () => {
@@ -147,5 +151,136 @@ describe('calculateDRTaxBenefit', () => {
   it('effective after-tax rate = rate * (1 - margTax)', () => {
     const rows = calculateDRTaxBenefit(200000, 6, 0.47, [1]);
     expect(rows[0].effectiveAfterTaxRate).toBeCloseTo(6 * 0.53, 5);
+  });
+});
+
+describe('taxWithHELP', () => {
+  it('known answer: $80k income with HELP debt → HELP rate 2%', () => {
+    const result = taxWithHELP(80000, 20000);
+    // $75,001–$80,000 bracket → 2% of $80,000 = $1,600
+    expect(result.helpRate).toBe(0.02);
+    expect(result.helpRepayment).toBe(1600);
+  });
+
+  it('income tax + medicare + HELP = total', () => {
+    const result = taxWithHELP(120000, 15000);
+    expect(result.total).toBe(result.incomeTax + result.medicareLevy + result.helpRepayment);
+  });
+
+  it('no HELP debt → zero repayment even above threshold', () => {
+    const result = taxWithHELP(120000, 0);
+    expect(result.helpRepayment).toBe(0);
+    expect(result.helpRate).toBe(0);
+    expect(result.total).toBe(result.incomeTax + result.medicareLevy);
+  });
+
+  it('after-tax income = taxable income - total', () => {
+    const result = taxWithHELP(95000, 30000);
+    expect(result.afterTaxIncome).toBe(95000 - result.total);
+  });
+
+  it('marginal rate with HELP = combined marginal + HELP rate', () => {
+    const result = taxWithHELP(150000, 10000);
+    // $150k: marginal 37% + medicare 2% + HELP 9% ($145,001–$150,000 → 9%)
+    expect(result.marginalRateWithHELP).toBeCloseTo(0.37 + 0.02 + 0.09, 5);
+  });
+
+  it('edge: zero income → zero tax', () => {
+    const result = taxWithHELP(0, 5000);
+    expect(result.total).toBe(0);
+    expect(result.afterTaxIncome).toBe(0);
+  });
+
+  it('edge: maximum HELP rate is 10% at $160k+', () => {
+    const result = taxWithHELP(200000, 40000);
+    expect(result.helpRate).toBe(0.10);
+  });
+});
+
+describe('div293Exposure', () => {
+  it('known answer: $240k income + $30k contribs → $20k excess × 15% = $3,000', () => {
+    const result = div293Exposure(240000, 30000);
+    expect(result.applies).toBe(true);
+    expect(result.excess).toBe(20000);
+    expect(result.taxableContributions).toBe(20000);
+    expect(result.extraTax).toBe(3000);
+  });
+
+  it('excess capped at concessional contributions', () => {
+    const result = div293Exposure(260000, 10000);
+    expect(result.taxableContributions).toBe(10000);
+    expect(result.extraTax).toBe(1500);
+  });
+
+  it('no exposure below threshold', () => {
+    const result = div293Exposure(180000, 25000);
+    expect(result.applies).toBe(false);
+    expect(result.extraTax).toBe(0);
+    expect(result.totalIncome).toBe(205000);
+  });
+
+  it('boundary: exactly at threshold → no exposure', () => {
+    const result = div293Exposure(220000, 30000);
+    expect(result.applies).toBe(false);
+  });
+
+  it('custom threshold respected', () => {
+    const result = div293Exposure(260000, 10000, 300000);
+    expect(result.applies).toBe(false);
+  });
+
+  it('produces a message in both states', () => {
+    const yes = div293Exposure(260000, 15000);
+    const no = div293Exposure(100000, 10000);
+    expect(yes.message.length).toBeGreaterThan(0);
+    expect(yes.message).toContain('extra 15%');
+    expect(no.message).toContain('below');
+  });
+});
+
+describe('marginalRateBrackets', () => {
+  it('known answer: $100k → $42,288 + $16,500 in 30% bracket', () => {
+    const rows = marginalRateBrackets(100000, false);
+    const b30 = rows.find(r => r.key === 'bracket-45001');
+    expect(b30?.rate).toBe(0.30);
+    expect(b30?.tax).toBeCloseTo(16500, 2);
+    const total = rows.find(r => r.kind === 'total');
+    expect(total?.tax).toBeCloseTo(20787.84 + 2000, 0);
+  });
+
+  it('bracket taxes sum to calcIncomeTax(income)', () => {
+    const rows = marginalRateBrackets(135000, false);
+    const bracketTax = rows
+      .filter(r => r.kind === 'bracket')
+      .reduce((acc, r) => acc + r.tax, 0);
+    expect(bracketTax).toBeCloseTo(calcIncomeTax(135000), 0);
+  });
+
+  it('includes medicare row and a grand total', () => {
+    const rows = marginalRateBrackets(80000, false);
+    const medicare = rows.find(r => r.kind === 'medicare');
+    expect(medicare?.tax).toBe(1600);
+    expect(rows[rows.length - 1]?.kind).toBe('total');
+  });
+
+  it('appends HELP row only when requested', () => {
+    const without = marginalRateBrackets(100000, false);
+    const withHelp = marginalRateBrackets(100000, true);
+    expect(without.some(r => r.kind === 'help')).toBe(false);
+    expect(withHelp.some(r => r.kind === 'help')).toBe(true);
+  });
+
+  it('edge: income below tax-free threshold has zero bracket tax', () => {
+    const rows = marginalRateBrackets(10000, false);
+    const bracketTax = rows
+      .filter(r => r.kind === 'bracket')
+      .reduce((acc, r) => acc + r.tax, 0);
+    expect(bracketTax).toBe(0);
+  });
+
+  it('edge: zero income returns only medicare + total rows', () => {
+    const rows = marginalRateBrackets(0, true);
+    expect(rows.filter(r => r.kind === 'bracket').length).toBe(0);
+    expect(rows[rows.length - 1]?.tax).toBe(0);
   });
 });

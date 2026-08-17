@@ -6,19 +6,24 @@ import { StatCard } from '@/components/ui/StatCard';
 import { Badge } from '@/components/ui/Badge';
 import { OFFICIAL_WEB_LINKS } from '@/data/teen-finance-data';
 import { WebReferenceLink } from '@/components/shared/WebReferenceLink';
-import { Flame, ShieldAlert } from 'lucide-react';
+import { Flame, ShieldAlert, CalendarClock } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip } from 'recharts';
 import { ChartContainer, ChartTooltipContent } from '@/components/ui/chart';
+import { bnplLateFeeCascade, weeklyPayoffPlan } from './engine';
 
 export function BNPLDebtTrapVisualizer() {
   const [purchasePrice, setPurchasePrice] = useState<number>(120);
   const [missedPayments, setMissedPayments] = useState<number>(2);
+  const [feePerLatePayment, setFeePerLatePayment] = useState<number>(15);
+  const [payoffWeeks, setPayoffWeeks] = useState<number>(4);
   const [payoffStrategy, setPayoffStrategy] = useState<'snowball' | 'avalanche'>('snowball');
 
   const fortnightInstallment = purchasePrice / 4;
-  const totalLateFees = missedPayments * 15;
-  const totalCost = purchasePrice + totalLateFees;
-  const percentageMarkup = (totalLateFees / purchasePrice) * 100;
+  const cascade = bnplLateFeeCascade(purchasePrice, 4, missedPayments, feePerLatePayment, 1.5);
+  const totalLateFees = cascade.totalFees;
+  const totalCost = cascade.totalCost;
+  const percentageMarkup = cascade.markupPct;
+  const payoffPlan = weeklyPayoffPlan(purchasePrice, payoffWeeks);
 
   // Comparison data for 1-year impact if saved/invested vs BNPL wasted
   const chartData = useMemo(() => {
@@ -76,6 +81,15 @@ export function BNPLDebtTrapVisualizer() {
             step={1}
             suffix=" missed"
           />
+          <SliderControl
+            label="Late Fee per Missed Payment"
+            value={feePerLatePayment}
+            onChange={v => setFeePerLatePayment(v)}
+            min={5}
+            max={30}
+            step={1}
+            prefix="$"
+          />
         </div>
 
         <div className="space-y-2">
@@ -103,6 +117,26 @@ export function BNPLDebtTrapVisualizer() {
             >
               Debt Avalanche (Highest Interest)
             </button>
+          </div>
+
+          <div className="rounded-2xl border border-border bg-card/60 p-3.5 space-y-2">
+            <div className="flex items-center gap-1.5 text-xs font-bold text-foreground">
+              <CalendarClock className="w-3.5 h-3.5 text-primary" />
+              Pay It Off Fast Plan
+            </div>
+            <SliderControl
+              label="Clear the whole purchase in"
+              value={payoffWeeks}
+              onChange={v => setPayoffWeeks(v)}
+              min={1}
+              max={8}
+              step={1}
+              suffix=" wks"
+            />
+            <p className="text-[11px] text-muted-foreground">
+              That's <strong className="font-mono">${payoffPlan.weeklyPayment.toFixed(2)}/wk</strong> — set it as a
+              payday auto-transfer and you never touch a late fee.
+            </p>
           </div>
         </div>
       </div>
@@ -138,7 +172,7 @@ export function BNPLDebtTrapVisualizer() {
           numericValue={totalLateFees}
           format="currency"
           color={totalLateFees > 0 ? 'red' : 'green'}
-          subtext={`+$15 per missed fee (${percentageMarkup.toFixed(0)}% markup)`}
+          subtext={`$${feePerLatePayment} base fee, ×1.5 cascade (${percentageMarkup.toFixed(0)}% markup)`}
         />
         <StatCard
           label="True Final Price Paid"
@@ -149,6 +183,30 @@ export function BNPLDebtTrapVisualizer() {
           subtext={`Original item was $${purchasePrice}`}
         />
       </div>
+
+      {/* Missed-payment cascade breakdown */}
+      {cascade.steps.length > 0 && (
+        <div className="rounded-2xl border border-border bg-card/60 p-4 space-y-2 animate-fade-in">
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            Missed-Payment Fee Cascade
+          </h3>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            {cascade.steps.map(step => (
+              <div key={step.installment} className="rounded-xl border border-rose-500/20 bg-rose-500/5 p-2.5 text-center">
+                <div className="text-[10px] uppercase tracking-wide text-muted-foreground font-semibold">
+                  Miss #{step.installment}
+                </div>
+                <div className="text-sm font-extrabold font-mono text-rose-500">+${step.fee.toFixed(2)}</div>
+                <div className="text-[10px] font-mono text-muted-foreground">${step.cumulativeFees.toFixed(2)} total</div>
+              </div>
+            ))}
+          </div>
+          <p className="text-[11px] text-muted-foreground">
+            Each successive missed installment costs more than the last (1.5× cascade) — that's how a $120 "interest-free"
+            impulse buy quietly becomes <strong className="font-mono">${totalCost.toFixed(2)}</strong>.
+          </p>
+        </div>
+      )}
 
       <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-xs flex items-start gap-2.5">
         <ShieldAlert className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />

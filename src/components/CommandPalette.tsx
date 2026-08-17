@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useRef, useMemo, Fragment } from 'react';
 import { useNavigate } from '@/lib/router';
 import {
   Search,
@@ -6,15 +6,27 @@ import {
   Sparkles,
   ExternalLink,
   ArrowRight,
+  ArrowUp,
+  ArrowDown,
   X,
   FileText,
   LayoutGrid,
-  Zap,
-  GraduationCap,
-  Coins,
-  ShieldAlert,
+  Home,
+  User,
+  Keyboard,
+  Moon,
+  RotateCcw,
+  type LucideIcon,
 } from 'lucide-react';
-import { searchSite, type SearchHit, type SearchResultType } from '@/lib/site-search';
+import {
+  searchSite,
+  addRecentSearch,
+  getRecentSearches,
+  clearRecentSearches,
+  ALL_TOOLS,
+  type SearchHit,
+  type SearchResultType,
+} from '@/lib/site-search';
 import { sound } from '@/lib/sound-synthesizer';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
@@ -25,6 +37,18 @@ const TYPE_ICONS: Record<SearchResultType, typeof FileText> = {
   module: LayoutGrid,
   weblink: ExternalLink,
 };
+
+type CommandCategory = 'Quick Actions' | 'Go To' | 'Open Calculator';
+
+interface PaletteCommand {
+  id: string;
+  label: string;
+  subtitle: string;
+  keywords: string;
+  category: CommandCategory;
+  icon: LucideIcon;
+  run: () => void;
+}
 
 /**
  * Safely evaluates basic arithmetic expressions without eval()
@@ -48,16 +72,21 @@ function evaluateMathExpression(expr: string): number | null {
   return null;
 }
 
+type PaletteItem =
+  | { kind: 'command'; command: PaletteCommand }
+  | { kind: 'hit'; hit: SearchHit; groupType: SearchResultType; groupLabel: string };
+
 export function CommandPalette() {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [activeIndex, setActiveIndex] = useState(0);
+  const [recent, setRecent] = useState<string[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
 
   const isMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform);
 
-  // Global Keyboard Listener (Cmd+K / Ctrl+K)
+  // Global Keyboard Listener (Cmd+K / Ctrl+K) + open/close custom events
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
@@ -75,17 +104,24 @@ export function CommandPalette() {
       setOpen(true);
     };
 
+    const handleCustomClose = () => {
+      setOpen(false);
+    };
+
     window.addEventListener('keydown', handleKeyDown);
     document.addEventListener('open-command-palette', handleCustomOpen);
+    document.addEventListener('close-command-palette', handleCustomClose);
 
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
       document.removeEventListener('open-command-palette', handleCustomOpen);
+      document.removeEventListener('close-command-palette', handleCustomClose);
     };
   }, [open]);
 
   useEffect(() => {
     if (open) {
+      setRecent(getRecentSearches());
       setTimeout(() => inputRef.current?.focus(), 50);
       setActiveIndex(0);
     } else {
@@ -96,12 +132,127 @@ export function CommandPalette() {
   // Math Evaluation
   const mathResult = useMemo(() => evaluateMathExpression(query), [query]);
 
+  // Commands (categorised; shown when idle or fuzzy-filtered while typing)
+  const commands = useMemo<PaletteCommand[]>(() => {
+    const quick: PaletteCommand[] = [
+      {
+        id: 'toggle-theme',
+        label: 'Toggle dark / light theme',
+        subtitle: 'Switch between light and dark mode',
+        keywords: 'dark light theme mode appearance colour color',
+        category: 'Quick Actions',
+        icon: Moon,
+        run: () => document.dispatchEvent(new CustomEvent('toggle-theme-request')),
+      },
+      {
+        id: 'scroll-top',
+        label: 'Scroll to top',
+        subtitle: 'Jump back to the top of the page',
+        keywords: 'scroll top up beginning',
+        category: 'Quick Actions',
+        icon: ArrowUp,
+        run: () => window.scrollTo({ top: 0, behavior: 'smooth' }),
+      },
+      {
+        id: 'scroll-bottom',
+        label: 'Scroll to bottom',
+        subtitle: 'Jump to the end of the page',
+        keywords: 'scroll bottom down end',
+        category: 'Quick Actions',
+        icon: ArrowDown,
+        run: () => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' }),
+      },
+      {
+        id: 'go-home',
+        label: 'Go to Landing',
+        subtitle: 'Back to the AusFinance Suite home page',
+        keywords: 'home landing start index',
+        category: 'Go To',
+        icon: Home,
+        run: () => navigate('/'),
+      },
+      {
+        id: 'go-profile',
+        label: 'Go to My Profile',
+        subtitle: 'Hourly rate, goals & teen profile settings',
+        keywords: 'profile settings teen my profile',
+        category: 'Go To',
+        icon: User,
+        run: () => navigate('/profile'),
+      },
+      {
+        id: 'go-calculators',
+        label: 'Go to Calculators Hub',
+        subtitle: 'Browse every calculator in one place',
+        keywords: 'calculators hub all browse',
+        category: 'Go To',
+        icon: LayoutGrid,
+        run: () => navigate('/calculators'),
+      },
+      {
+        id: 'open-shortcuts',
+        label: 'Keyboard shortcuts help',
+        subtitle: 'Show the keyboard shortcuts cheat sheet',
+        keywords: 'shortcuts keys hotkeys help cheat sheet',
+        category: 'Go To',
+        icon: Keyboard,
+        run: () => document.dispatchEvent(new CustomEvent('toggle-shortcuts-modal')),
+      },
+    ];
+
+    const calcCommands: PaletteCommand[] = ALL_TOOLS.map(tool => ({
+      id: `calc-${tool.route}`,
+      label: `Open calculator: ${tool.name}`,
+      subtitle: tool.description,
+      keywords: `${tool.description} calculator tool`,
+      category: 'Open Calculator',
+      icon: Calculator,
+      run: () => navigate(tool.route),
+    }));
+
+    return [...quick, ...calcCommands];
+  }, [navigate]);
+
+  // Fuzzy-filter commands against the query (all commands when idle)
+  const visibleCommands = useMemo(() => {
+    const terms = query.trim().toLowerCase().split(/\s+/).filter(Boolean);
+    if (terms.length === 0) return commands;
+    return commands.filter(c => {
+      const hay = `${c.label} ${c.subtitle} ${c.keywords}`.toLowerCase();
+      return terms.every(t => hay.includes(t));
+    });
+  }, [commands, query]);
+
   // Fuzzy Search
   const { groups } = useMemo(() => searchSite(query), [query]);
-  const flatHits = useMemo(() => groups.flatMap(g => g.hits), [groups]);
+
+  // Flat, section-aware list: commands first, then grouped search hits
+  const items = useMemo<PaletteItem[]>(() => {
+    const arr: PaletteItem[] = visibleCommands.map(c => ({ kind: 'command', command: c }));
+    for (const group of groups) {
+      for (const hit of group.hits) {
+        arr.push({ kind: 'hit', hit, groupType: group.type, groupLabel: group.label });
+      }
+    }
+    return arr;
+  }, [visibleCommands, groups]);
+
+  const sectionOf = (item: PaletteItem): string =>
+    item.kind === 'command' ? `command:${item.command.category}` : `hit:${item.groupType}`;
+
+  const sectionLabel = (item: PaletteItem): string =>
+    item.kind === 'command' ? item.command.category : item.groupLabel;
+
+  const runCommand = (action: () => void) => {
+    sound.playClick();
+    setOpen(false);
+    action();
+  };
 
   const selectHit = (hit: SearchHit) => {
     sound.playClick();
+    addRecentSearch(query);
+    setRecent(getRecentSearches());
     setOpen(false);
     if (hit.type === 'weblink') {
       window.open(hit.route, '_blank', 'noopener,noreferrer');
@@ -111,26 +262,31 @@ export function CommandPalette() {
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (flatHits.length === 0 && mathResult === null) return;
+    if (items.length === 0 && mathResult === null) return;
 
     if (e.key === 'ArrowDown') {
       e.preventDefault();
       sound.playTick();
-      setActiveIndex(i => Math.min(i + 1, flatHits.length - 1));
+      setActiveIndex(i => Math.min(i + 1, items.length - 1));
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
       sound.playTick();
       setActiveIndex(i => Math.max(i - 1, 0));
     } else if (e.key === 'Enter') {
       e.preventDefault();
-      if (mathResult !== null && flatHits.length === 0) {
+      if (mathResult !== null && items.length === 0) {
         sound.playSuccess();
         navigator.clipboard.writeText(String(mathResult));
         setOpen(false);
         return;
       }
-      const hit = flatHits[activeIndex];
-      if (hit) selectHit(hit);
+      const item = items[activeIndex];
+      if (!item) return;
+      if (item.kind === 'command') {
+        runCommand(item.command.run);
+      } else {
+        selectHit(item.hit);
+      }
     }
   };
 
@@ -181,7 +337,47 @@ export function CommandPalette() {
             </div>
 
             {/* Results / Commands Body */}
-            <div className="flex-1 overflow-y-auto p-2 divide-y divide-border/40">
+            <div className="flex-1 overflow-y-auto p-2">
+              {/* Recent Searches (idle state only) */}
+              {query.trim().length === 0 && recent.length > 0 && (
+                <div className="mb-1">
+                  <div className="px-3 pt-2 pb-1.5 flex items-center justify-between">
+                    <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80 flex items-center gap-1.5">
+                      <RotateCcw className="w-3 h-3" />
+                      Recent Searches
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        sound.playClick();
+                        clearRecentSearches();
+                        setRecent([]);
+                      }}
+                      className="text-[10px] font-bold text-muted-foreground hover:text-danger hover:underline"
+                    >
+                      Clear
+                    </button>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5 px-3">
+                    {recent.map(r => (
+                      <button
+                        key={r}
+                        type="button"
+                        onClick={() => {
+                          sound.playClick();
+                          setQuery(r);
+                          setActiveIndex(0);
+                          inputRef.current?.focus();
+                        }}
+                        className="px-2.5 py-1 rounded-full text-[11px] font-semibold border border-border bg-muted/40 text-foreground hover:border-primary/50 hover:text-primary transition-all"
+                      >
+                        {r}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* Math Result Preview */}
               {mathResult !== null && (
                 <div className="p-3 mb-2 rounded-2xl bg-gradient-to-r from-primary/15 via-primary/5 to-transparent border border-primary/30 flex items-center justify-between">
@@ -211,96 +407,70 @@ export function CommandPalette() {
                 </div>
               )}
 
-              {/* Grouped Results */}
-              {groups.length > 0 ? (
-                groups.map(group => (
-                  <div key={group.type} className="py-2">
-                    <div className="px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80 flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-primary inline-block"></span>
-                      {group.label}
-                    </div>
-                    {group.hits.map(hit => {
-                      const idx = flatHits.indexOf(hit);
-                      const Icon = TYPE_ICONS[hit.type];
-                      return (
-                        <button
-                          key={hit.id}
-                          type="button"
-                          onClick={() => selectHit(hit)}
-                          onMouseEnter={() => {
-                            sound.playTick();
-                            setActiveIndex(idx);
-                          }}
-                          className={cn(
-                            'w-full flex items-start gap-3 px-3 py-2.5 rounded-2xl text-left transition-all',
-                            idx === activeIndex
-                              ? 'bg-primary/10 text-primary font-bold'
-                              : 'text-foreground hover:bg-muted/60'
-                          )}
-                        >
-                          <span className="p-1.5 rounded-xl bg-muted shrink-0 mt-0.5">
-                            <Icon className="w-4 h-4 text-foreground" />
-                          </span>
-                          <div className="flex-1 min-w-0">
-                            <div className="text-xs font-bold truncate flex items-center gap-1.5">
-                              {hit.emoji && <span>{hit.emoji}</span>}
-                              <span>{hit.title}</span>
-                            </div>
-                            <div className="text-[11px] font-normal text-muted-foreground truncate mt-0.5">
-                              {hit.subtitle}
-                            </div>
-                          </div>
-                          <ArrowRight className="w-3.5 h-3.5 text-muted-foreground shrink-0 mt-1 opacity-60" />
-                        </button>
-                      );
-                    })}
-                  </div>
-                ))
-              ) : query.trim().length === 0 ? (
-                /* Default Quick Links */
-                <div className="p-4 space-y-4">
-                  <div className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
-                    Featured High-Demand Calculators
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    {[
-                      { title: 'HECS-HELP Simulator', icon: GraduationCap, route: '/hecs-payoff', desc: '2025-27 marginal system & offset arbitrage' },
-                      { title: 'Super Drawdown & Pension', icon: Coins, route: '/super-drawdown', desc: 'Schedule 7 SISR & Age Pension means test' },
-                      { title: 'EV Novated Lease vs Loan', icon: Zap, route: '/ev-novated-lease', desc: '100% FBT exemption & GST $6,334 savings' },
-                      { title: 'CGT & 6-Year Rule Engine', icon: FileText, route: '/cgt-engine', desc: '50% discount, loss ordering & Div 43 clawback' },
-                      { title: 'Emergency Stress Tester', icon: ShieldAlert, route: '/financial-stress-test', desc: 'Runway, APRA +300bps shock & yield arbitrage' },
-                    ].map(calc => (
+              {/* Commands & Search Results (section headers + flat keyboard nav) */}
+              {items.length > 0 ? (
+                items.map((item, idx) => {
+                  const Icon = item.kind === 'command' ? item.command.icon : TYPE_ICONS[item.hit.type];
+                  const label = item.kind === 'command' ? item.command.label : item.hit.title;
+                  const subtitle = item.kind === 'command' ? item.command.subtitle : item.hit.subtitle;
+                  const isActive = idx === activeIndex;
+                  const newSection = idx === 0 || sectionOf(item) !== sectionOf(items[idx - 1]);
+                  const key = item.kind === 'command' ? item.command.id : item.hit.id;
+                  return (
+                    <Fragment key={key}>
+                      {newSection && (
+                        <div className="px-3 pt-2.5 pb-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80 flex items-center gap-1.5">
+                          <span className="w-1.5 h-1.5 rounded-full bg-primary inline-block" />
+                          {sectionLabel(item)}
+                        </div>
+                      )}
                       <button
-                        key={calc.route}
+                        type="button"
                         onClick={() => {
-                          sound.playClick();
-                          setOpen(false);
-                          navigate(calc.route);
+                          if (item.kind === 'command') {
+                            runCommand(item.command.run);
+                          } else {
+                            selectHit(item.hit);
+                          }
                         }}
-                        className="flex items-start gap-3 p-3 rounded-2xl bg-muted/40 hover:bg-primary/10 border border-border/60 hover:border-primary/40 text-left transition-all group"
+                        onMouseEnter={() => {
+                          sound.playTick();
+                          setActiveIndex(idx);
+                        }}
+                        className={cn(
+                          'w-full flex items-start gap-3 px-3 py-2.5 rounded-2xl text-left transition-all',
+                          isActive
+                            ? 'bg-primary/10 text-primary font-bold'
+                            : 'text-foreground hover:bg-muted/60'
+                        )}
                       >
-                        <div className="p-2 rounded-xl bg-card border border-border shrink-0 group-hover:scale-105 transition-transform">
-                          <calc.icon className="w-4 h-4 text-primary" />
-                        </div>
-                        <div>
-                          <div className="text-xs font-bold text-foreground group-hover:text-primary transition-colors">
-                            {calc.title}
+                        <span className="p-1.5 rounded-xl bg-muted shrink-0 mt-0.5">
+                          <Icon className="w-4 h-4 text-foreground" />
+                        </span>
+                        <div className="flex-1 min-w-0">
+                          <div className="text-xs font-bold truncate flex items-center gap-1.5">
+                            {item.kind === 'hit' && item.hit.emoji && <span>{item.hit.emoji}</span>}
+                            <span>{label}</span>
                           </div>
-                          <div className="text-[10px] text-muted-foreground mt-0.5">
-                            {calc.desc}
+                          <div className="text-[11px] font-normal text-muted-foreground truncate mt-0.5">
+                            {subtitle}
                           </div>
                         </div>
+                        <ArrowRight className="w-3.5 h-3.5 text-muted-foreground shrink-0 mt-1 opacity-60" />
                       </button>
-                    ))}
-                  </div>
-                </div>
-              ) : (
+                    </Fragment>
+                  );
+                })
+              ) : query.trim().length > 0 ? (
                 <div className="p-8 text-center space-y-2">
                   <div className="text-3xl">🔍</div>
                   <p className="text-sm font-bold text-foreground">No matches found for “{query}”</p>
-                  <p className="text-xs text-muted-foreground">Try typing an expression like <code className="font-mono bg-muted px-1.5 py-0.5 rounded-sm">= 95000 * 0.12</code></p>
+                  <p className="text-xs text-muted-foreground">
+                    Try typing an expression like{' '}
+                    <code className="font-mono bg-muted px-1.5 py-0.5 rounded-sm">= 95000 * 0.12</code>
+                  </p>
                 </div>
-              )}
+              ) : null}
             </div>
 
             {/* Footer Keybindings */}

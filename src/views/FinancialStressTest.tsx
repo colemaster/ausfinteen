@@ -1,6 +1,7 @@
 import { FinancialStressTestCalc } from '@/calculators/financial-stress-test/FinancialStressTestCalc';
 import { TopicGuideAccordion } from '@/components/shared/TopicGuideAccordion';
 import { Disclaimer } from '@/components/shared/Disclaimer';
+import { PrintResultButton } from '@/components/shared/PrintResultButton';
 import { ArrowLeft } from 'lucide-react';
 import { Link } from '@/lib/router';
 
@@ -43,7 +44,13 @@ export function FinancialStressTest() {
         <span className="text-foreground">Emergency Runway & Stress Tester</span>
       </div>
 
-      <FinancialStressTestCalc />
+      <section data-print-section>
+        <FinancialStressTestCalc />
+      </section>
+
+      <div className="flex justify-end">
+        <PrintResultButton />
+      </div>
 
       <div className="max-w-5xl mx-auto space-y-6">
         <TopicGuideAccordion

@@ -202,5 +202,44 @@ const siteTitle = title.includes('AusFinance') ? title : `${title} | AusFinance 
         initScrollProgress();
       })();
     </script>
+
+    <!-- Global keyboard shortcuts: g→h / g→p / ? / / / Esc (vanilla, no island cost) -->
+    <script is:inline>
+      (function() {
+        var gPressedAt = 0;
+        function isTypingTarget(t) {
+          return !!t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || t.isContentEditable);
+        }
+        document.addEventListener('keydown', function(e) {
+          if (e.key === 'Escape') {
+            document.dispatchEvent(new CustomEvent('close-command-palette'));
+            document.dispatchEvent(new CustomEvent('close-shortcuts-modal'));
+            return;
+          }
+          if (isTypingTarget(e.target)) return;
+          if (e.key === '?' || (e.shiftKey && e.key === '/')) {
+            e.preventDefault();
+            document.dispatchEvent(new CustomEvent('toggle-shortcuts-modal'));
+            return;
+          }
+          if (e.key === '/') {
+            e.preventDefault();
+            var input = document.getElementById('site-search-input');
+            if (input && input.focus) input.focus();
+            return;
+          }
+          var key = e.key.toLowerCase();
+          if (key === 'g') {
+            gPressedAt = Date.now();
+            return;
+          }
+          if (gPressedAt > 0 && Date.now() - gPressedAt <= 1200) {
+            gPressedAt = 0;
+            if (key === 'h') window.location.href = '/';
+            else if (key === 'p') window.location.href = '/profile';
+          }
+        });
+      })();
+    </script>
   </body>
 </html>

@@ -1,8 +1,16 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from '@/lib/router';
-import { Search, Sparkles, ExternalLink, ArrowRight, X, Calculator, FileText, LayoutGrid } from 'lucide-react';
+import { Search, Sparkles, ExternalLink, ArrowRight, X, Calculator, FileText, LayoutGrid, RotateCcw } from 'lucide-react';
 import { motion, useReducedMotion } from 'motion/react';
-import { searchSite, POPULAR_SEARCHES, type SearchHit, type SearchResultType } from '@/lib/site-search';
+import {
+  searchSite,
+  POPULAR_SEARCHES,
+  addRecentSearch,
+  getRecentSearches,
+  clearRecentSearches,
+  type SearchHit,
+  type SearchResultType,
+} from '@/lib/site-search';
 import { cn } from '@/lib/utils';
 
 const DEBOUNCE_MS = 120;
@@ -18,6 +26,13 @@ const TYPE_STYLES: Record<SearchResultType, string> = {
   tool: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400',
   module: 'bg-primary/10 text-primary',
   weblink: 'bg-sky-500/10 text-sky-600 dark:text-sky-400',
+};
+
+const TYPE_BADGE_LABELS: Record<SearchResultType, string> = {
+  tool: 'Calculator',
+  topic: 'Q&A Guide',
+  module: 'Module',
+  weblink: 'Official',
 };
 
 const KBD_CLASS = 'inline-flex items-center justify-center min-w-5 px-1 h-5 rounded-md border border-border bg-muted/60 font-mono text-[10px] font-bold text-muted-foreground shadow-sm';
@@ -52,10 +67,16 @@ export function SiteSearchBar() {
   const [debounced, setDebounced] = useState('');
   const [open, setOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [recent, setRecent] = useState<string[]>(() => getRecentSearches());
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const isMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform);
+
+  // Refresh the session search history every time the dropdown opens
+  useEffect(() => {
+    if (open) setRecent(getRecentSearches());
+  }, [open]);
 
   useEffect(() => {
     const t = setTimeout(() => setDebounced(query), DEBOUNCE_MS);
@@ -81,6 +102,8 @@ export function SiteSearchBar() {
   const flatHits = useMemo(() => groups.flatMap(g => g.hits), [groups]);
 
   const go = (hit: SearchHit) => {
+    addRecentSearch(query);
+    setRecent(getRecentSearches());
     setOpen(false);
     setQuery('');
     setDebounced('');
@@ -121,6 +144,7 @@ export function SiteSearchBar() {
         <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground pointer-events-none" />
         <input
           ref={inputRef}
+          id="site-search-input"
           type="search"
           role="combobox"
           aria-expanded={open}
@@ -174,9 +198,44 @@ export function SiteSearchBar() {
           transition={{ duration: 0.16, ease: 'easeOut' }}
           className="absolute top-full left-0 right-0 mt-2 max-h-[70vh] overflow-y-auto rounded-2xl border border-border bg-card/90 backdrop-blur-xl shadow-2xl shadow-black/5 dark:shadow-black/40 z-50"
         >
-          {/* Idle state: popular searches */}
+          {/* Idle state: recent searches + popular searches */}
           {query.trim().length === 0 && (
             <div className="p-4 space-y-3">
+              {recent.length > 0 && (
+                <>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                      <RotateCcw className="w-3.5 h-3.5" />
+                      Recent Searches
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        clearRecentSearches();
+                        setRecent([]);
+                      }}
+                      className="text-[10px] font-bold text-muted-foreground hover:text-danger hover:underline"
+                    >
+                      Clear
+                    </button>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {recent.map(s => (
+                      <button
+                        key={s}
+                        type="button"
+                        onClick={() => {
+                          setQuery(s);
+                          setOpen(true);
+                        }}
+                        className="px-3 py-1.5 rounded-full text-xs font-semibold border border-primary/40 bg-primary/5 text-primary hover:bg-primary/10 hover:-translate-y-0.5 transition-all"
+                      >
+                        {s}
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
               <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
                 <Sparkles className="w-3.5 h-3.5 text-amber-500" />
                 Popular Money Questions
@@ -187,6 +246,8 @@ export function SiteSearchBar() {
                     key={s}
                     type="button"
                     onClick={() => {
+                      addRecentSearch(s);
+                      setRecent(getRecentSearches());
                       setQuery(s);
                       setOpen(true);
                     }}
@@ -202,14 +263,33 @@ export function SiteSearchBar() {
             </div>
           )}
 
-          {/* Results state */}
+          {/* No-results state: suggest popular searches */}
           {query.trim().length >= 2 && groups.length === 0 && (
-            <div className="p-6 text-center space-y-2">
+            <div className="p-6 text-center space-y-3">
               <div className="text-3xl">🤔</div>
-              <p className="text-sm font-bold text-foreground">No matches for “{debounced}”</p>
-              <p className="text-xs text-muted-foreground">
-                Try a shorter word, a different spelling, or one of the popular searches above.
-              </p>
+              <div>
+                <p className="text-sm font-bold text-foreground">No matches for “{debounced}”</p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Try a shorter word, a different spelling, or one of these popular searches:
+                </p>
+              </div>
+              <div className="flex flex-wrap justify-center gap-2">
+                {POPULAR_SEARCHES.slice(0, 8).map(s => (
+                  <button
+                    key={s}
+                    type="button"
+                    onClick={() => {
+                      addRecentSearch(s);
+                      setRecent(getRecentSearches());
+                      setQuery(s);
+                      setOpen(true);
+                    }}
+                    className="px-3 py-1.5 rounded-full text-xs font-semibold border border-border bg-muted/40 text-foreground hover:border-primary/50 hover:bg-primary/5 hover:text-primary transition-all"
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
             </div>
           )}
 
@@ -255,9 +335,14 @@ export function SiteSearchBar() {
                           <Icon className="w-3.5 h-3.5" />
                         </span>
                         <span className="min-w-0 flex-1">
-                          <span className="block text-xs font-bold text-foreground leading-snug">
-                            {hit.emoji ? <span className="mr-1">{hit.emoji}</span> : null}
-                            <Highlighted text={hit.title} indices={titleMatch?.indices} />
+                          <span className="flex flex-wrap items-center gap-1.5">
+                            <span className="text-xs font-bold text-foreground leading-snug">
+                              {hit.emoji ? <span className="mr-1">{hit.emoji}</span> : null}
+                              <Highlighted text={hit.title} indices={titleMatch?.indices} />
+                            </span>
+                            <span className={cn('px-1.5 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wide', TYPE_STYLES[hit.type])}>
+                              {TYPE_BADGE_LABELS[hit.type]}
+                            </span>
                           </span>
                           <span className="block text-[11px] text-muted-foreground leading-relaxed mt-0.5 line-clamp-2">
                             <Highlighted text={hit.subtitle} indices={subMatch?.indices} />

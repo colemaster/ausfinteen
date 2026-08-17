@@ -148,3 +148,224 @@ export function calculateCGT(params: CGTPropertyParams): CGTResult {
     taxableApportionmentPercentage: Math.round(taxableApportionment * 1000) / 10,
   };
 }
+
+// ─── CGT on Disposal (workflow model) ─────────────────────────────────────────
+
+export interface CGTDisposalCosts {
+  buyCosts: number;                   // stamp duty, conveyancing, inspection
+  sellCosts: number;                  // agent commission, marketing, legal
+  capitalWorksClaimed: number;        // Div 43 depreciation claimed (clawback)
+  incomeProducedWhileRented: number;  // rent received over the period; > 0 ⇒ rented out
+  monthsRented: number;
+  totalMonthsOwned: number;
+}
+
+export interface CGTDisposalLosses {
+  currentYearLosses?: number;
+  carriedForwardLosses?: number;
+}
+
+export interface CGTDisposalResult {
+  grossProceeds: number;
+  adjustedCostBase: number;
+  capitalWorksClawbackApplied: number;
+  grossCapitalGain: number;
+  isMainResidenceFullyExempt: boolean;
+  taxableApportionmentPercentage: number;
+  taxableCapitalGain: number;
+  currentYearLossesApplied: number;
+  carriedForwardLossesApplied: number;
+  remainingCarriedForwardLosses: number;
+  gainAfterLosses: number;
+  discountEligible: boolean;
+  cgtDiscountAmount: number;
+  netTaxableCapitalGain: number;
+  atoReferences: string[];
+}
+
+/** Number of months in the 6-year main-residence absence rule (s 118-145). */
+export const SIX_YEAR_RULE_MONTHS = 72;
+
+/**
+ * CGT on disposal of a property (workflow model: buy → improve → rent → sell).
+ * Implements:
+ * - Section 118-145 6-year main-residence absence rule — 100% exempt while the
+ *   rented period stays within 6 years (72 months); partial exemption
+ *   (rentedMonths − 72) / totalMonthsOwned beyond that
+ * - Division 43 (s 110-45) capital-works clawback from the cost base
+ * - Section 102-5 capital-loss ordering — losses offset gains BEFORE the
+ *   Division 115 50% discount
+ * - Division 115 50% CGT discount for assets held ≥ 12 months
+ *
+ * @param acquired - Original purchase price (AUD)
+ * @param disposed - Disposal / sale price (AUD)
+ * @param costs - Cost-base and occupancy details
+ * @param losses - Optional capital losses (current year + carried forward)
+ * @returns CGTDisposalResult with ATO section references for the output notes
+ *
+ * Assumptions:
+ * - Property was the owner's main residence before first being rented out
+ * - No second main residence nominated during the absence
+ * - Partial exemption formula (rented − 72) / totalMonths, clamped to [0, 1]
+ */
+export function cgtOnDisposal(
+  acquired: number,
+  disposed: number,
+  costs: CGTDisposalCosts,
+  losses: CGTDisposalLosses = {},
+): CGTDisposalResult {
+  const {
+    buyCosts,
+    sellCosts,
+    capitalWorksClaimed,
+    incomeProducedWhileRented,
+    monthsRented,
+    totalMonthsOwned,
+  } = costs;
+
+  const atoReferences: string[] = [];
+
+  // Div 43 clawback (s 110-45): capital works claimed reduces the cost base
+  const clawback = Math.max(0, capitalWorksClaimed);
+  const adjustedCostBase = acquired + buyCosts + sellCosts - clawback;
+  if (clawback > 0) {
+    atoReferences.push('Division 43 (ITAA 1997 s 110-45): capital-works deductions claimed are subtracted from the cost base');
+  }
+
+  const grossCapitalGain = Math.max(0, disposed - adjustedCostBase);
+
+  // Section 118-145 6-year rule
+  const rentedOut = incomeProducedWhileRented > 0;
+  const sixYearExempt = rentedOut && monthsRented <= SIX_YEAR_RULE_MONTHS;
+  let isFullyExempt = !rentedOut || sixYearExempt;
+  let apportionment = 1;
+
+  if (rentedOut && monthsRented > SIX_YEAR_RULE_MONTHS) {
+    isFullyExempt = false;
+    apportionment = Math.min(
+      1,
+      Math.max(0, (monthsRented - SIX_YEAR_RULE_MONTHS) / Math.max(1, totalMonthsOwned)),
+    );
+    atoReferences.push(
+      'Section 118-145 (ITAA 1997): 6-year absence rule exceeded — partial exemption of ' +
+        `${(apportionment * 100).toFixed(1)}% of the gain is taxable ((${monthsRented} − 72) / ${totalMonthsOwned} months)`,
+    );
+  } else if (rentedOut) {
+    atoReferences.push(
+      'Section 118-145 (ITAA 1997): rented within the 6-year (72 month) absence period — 100% main-residence exemption applies',
+    );
+  }
+
+  if (grossCapitalGain <= 0 && atoReferences.length === 0) {
+    atoReferences.push('No capital gain — disposal at or below the adjusted cost base');
+  }
+  if (grossCapitalGain > 0 && !rentedOut && atoReferences.length === 0) {
+    atoReferences.push(
+      'Non-main-residence asset — full capital gain taxable, no residence exemption applies',
+    );
+  }
+
+  const taxableCapitalGain = isFullyExempt ? 0 : grossCapitalGain * apportionment;
+
+  // Section 102-5 loss ordering: losses BEFORE the 50% discount
+  const currentYearLossesApplied = Math.min(losses.currentYearLosses ?? 0, taxableCapitalGain);
+  const remainingAfterCurrent = taxableCapitalGain - currentYearLossesApplied;
+  const carriedForwardLossesApplied = Math.min(
+    losses.carriedForwardLosses ?? 0,
+    remainingAfterCurrent,
+  );
+  const gainAfterLosses = Math.max(0, remainingAfterCurrent - carriedForwardLossesApplied);
+  const remainingCarriedForwardLosses = Math.max(
+    0,
+    (losses.carriedForwardLosses ?? 0) - carriedForwardLossesApplied,
+  );
+  if (currentYearLossesApplied + carriedForwardLossesApplied > 0) {
+    atoReferences.push(
+      'Section 102-5 (ITAA 1997): capital losses offset the gain before the Division 115 discount',
+    );
+  }
+
+  // Division 115 50% discount (held ≥ 12 months)
+  const discountEligible = totalMonthsOwned >= 12 && gainAfterLosses > 0;
+  const cgtDiscountAmount = discountEligible ? gainAfterLosses * 0.5 : 0;
+  const netTaxableCapitalGain = gainAfterLosses - cgtDiscountAmount;
+  if (discountEligible) {
+    atoReferences.push('Division 115 (ITAA 1997): 50% CGT discount applied — held 12+ months as an individual');
+  }
+
+  return {
+    grossProceeds: Math.round(disposed),
+    adjustedCostBase: Math.round(adjustedCostBase),
+    capitalWorksClawbackApplied: Math.round(clawback),
+    grossCapitalGain: Math.round(grossCapitalGain),
+    isMainResidenceFullyExempt: isFullyExempt,
+    taxableApportionmentPercentage: Math.round(apportionment * 1000) / 10,
+    taxableCapitalGain: Math.round(taxableCapitalGain),
+    currentYearLossesApplied: Math.round(currentYearLossesApplied),
+    carriedForwardLossesApplied: Math.round(carriedForwardLossesApplied),
+    remainingCarriedForwardLosses: Math.round(remainingCarriedForwardLosses),
+    gainAfterLosses: Math.round(gainAfterLosses),
+    discountEligible,
+    cgtDiscountAmount: Math.round(cgtDiscountAmount),
+    netTaxableCapitalGain: Math.round(netTaxableCapitalGain),
+    atoReferences,
+  };
+}
+
+// ─── Carry-Forward Loss Netting ───────────────────────────────────────────────
+
+export interface CarryForwardResult {
+  currentYearGains: number;
+  currentYearLosses: number;
+  carriedForwardLosses: number;
+  netGainAfterLosses: number;
+  netCapitalLossCarriedForward: number;
+  remainingCarriedForwardLosses: number;
+  hasNetCapitalGain: boolean;
+}
+
+/**
+ * Net current-year gains and losses with carried-forward losses (s 102-5).
+ *
+ * @param currentYearGains - Sum of current-year capital gains before losses
+ * @param currentYearLosses - Sum of current-year capital losses
+ * @param carriedForward - Capital losses carried forward from prior years
+ * @returns CarryForwardResult — net gain after all losses, plus any loss balance
+ *   to carry into future years
+ *
+ * Assumptions:
+ * - Current-year losses offset current-year gains first, then carried-forward losses
+ * - Any remaining net loss (current year) is carried forward to future years
+ * - Unused carried-forward losses remain available indefinitely (ATO rule)
+ * - The 50% discount is applied AFTER netting (handled downstream)
+ */
+export function carryForwardLosses(
+  currentYearGains: number,
+  currentYearLosses: number,
+  carriedForward: number,
+): CarryForwardResult {
+  const netYear = currentYearGains - currentYearLosses;
+
+  if (netYear > 0) {
+    const lossesApplied = Math.min(carriedForward, netYear);
+    return {
+      currentYearGains,
+      currentYearLosses,
+      carriedForwardLosses: carriedForward,
+      netGainAfterLosses: netYear - lossesApplied,
+      netCapitalLossCarriedForward: 0,
+      remainingCarriedForwardLosses: carriedForward - lossesApplied,
+      hasNetCapitalGain: netYear - lossesApplied > 0,
+    };
+  }
+
+  return {
+    currentYearGains,
+    currentYearLosses,
+    carriedForwardLosses: carriedForward,
+    netGainAfterLosses: 0,
+    netCapitalLossCarriedForward: -netYear,
+    remainingCarriedForwardLosses: carriedForward,
+    hasNetCapitalGain: false,
+  };
+}

@@ -17,8 +17,10 @@ import {
   Calculator,
   Volume2,
   VolumeX,
+  Palette,
+  Check,
 } from 'lucide-react';
-import { useTheme } from '@/hooks/useTheme';
+import { useTheme, AccentSwitcher, FontScaleControl } from '@/hooks/useTheme';
 import { sound } from '@/lib/sound-synthesizer';
 import { AnimatePresence, motion } from 'motion/react';
 import { slideInLeft } from '@/lib/animations';
@@ -53,6 +55,8 @@ export function Navbar() {
   const [modulesDropdownOpen, setModulesDropdownOpen] = useState(false);
   const [calcsDropdownOpen, setCalcsDropdownOpen] = useState(false);
   const [isMuted, setIsMuted] = useState(sound.getIsMuted());
+  const [appearanceOpen, setAppearanceOpen] = useState(false);
+  const appearanceRef = useRef<HTMLDivElement>(null);
 
   const calcsRef = useRef<HTMLDivElement>(null);
   const modulesRef = useRef<HTMLDivElement>(null);
@@ -65,21 +69,28 @@ export function Navbar() {
       if (modulesRef.current && !modulesRef.current.contains(e.target as Node)) {
         setModulesDropdownOpen(false);
       }
+      if (appearanceRef.current && !appearanceRef.current.contains(e.target as Node)) {
+        setAppearanceOpen(false);
+      }
     };
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         setCalcsDropdownOpen(false);
         setModulesDropdownOpen(false);
+        setAppearanceOpen(false);
         setMobileOpen(false);
       }
     };
+    const onThemeRequest = () => toggleTheme();
     document.addEventListener('pointerdown', onPointerDown);
     document.addEventListener('keydown', onKeyDown);
+    document.addEventListener('toggle-theme-request', onThemeRequest);
     return () => {
       document.removeEventListener('pointerdown', onPointerDown);
       document.removeEventListener('keydown', onKeyDown);
+      document.removeEventListener('toggle-theme-request', onThemeRequest);
     };
-  }, []);
+  }, [toggleTheme]);
 
   const modulesActive = location.pathname !== '/' && location.pathname !== '/profile' && !location.pathname.startsWith('/calculators');
   const calcsActive = [
@@ -261,6 +272,21 @@ export function Navbar() {
 
           {/* Right Controls */}
           <div className="flex items-center gap-1.5">
+            {/* What's New — version badge linking to the changelog */}
+            <a
+              href="https://github.com/ravisha22/PersonalFinanceToolkit/releases"
+              target="_blank"
+              rel="noreferrer"
+              title="What's new in v5.2.0 — changelog"
+              aria-label="What's new in v5.2.0 — changelog"
+              className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border border-border bg-muted/40 text-muted-foreground hover:text-primary hover:border-primary/40 transition-all text-[10px] font-bold"
+            >
+              <span className="relative flex h-2 w-2" aria-hidden="true">
+                <span className="inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+              </span>
+              v5.2.0
+            </a>
+
             {/* Quick Search */}
             <button
               type="button"
@@ -300,6 +326,52 @@ export function Navbar() {
             >
               {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-700" />}
             </button>
+
+            {/* Appearance options: accent colour + font scale */}
+            <div ref={appearanceRef} className="relative">
+              <button
+                type="button"
+                onClick={() => {
+                  sound.playClick();
+                  setAppearanceOpen(o => !o);
+                }}
+                aria-label="Appearance settings (accent colour and font size)"
+                aria-expanded={appearanceOpen}
+                aria-controls="appearance-popover"
+                title="Appearance"
+                className="p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted transition-all"
+              >
+                <Palette className="w-4 h-4" />
+              </button>
+              <AnimatePresence>
+                {appearanceOpen && (
+                  <motion.div
+                    id="appearance-popover"
+                    initial={{ opacity: 0, y: -6, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -6, scale: 0.98 }}
+                    transition={{ duration: 0.15 }}
+                    className="absolute right-0 top-full mt-2 z-50 w-64 rounded-2xl border border-border bg-card shadow-xl shadow-black/10 p-4 space-y-4"
+                  >
+                    <div className="space-y-2">
+                      <p className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                        <Palette className="w-3 h-3" /> Accent colour
+                      </p>
+                      <AccentSwitcher />
+                    </div>
+                    <div className="space-y-2">
+                      <p className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                        <Check className="w-3 h-3" /> Text size
+                      </p>
+                      <FontScaleControl />
+                    </div>
+                    <p className="text-[10px] leading-relaxed text-muted-foreground/80">
+                      Choices are saved in the page URL — share the link to share your look.
+                    </p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
 
             {/* Mobile Hamburger Toggle */}
             <button

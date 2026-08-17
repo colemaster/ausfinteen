@@ -5,6 +5,7 @@
  */
 
 import { getMinimumDrawdownRate } from '../../data/super-rules';
+import { SUPER_RULES } from '../../data/super-rules';
 
 export interface SuperDrawdownYearRow {
   age: number;
@@ -51,6 +52,11 @@ export interface RetirementPlanParams {
   isHomeowner: boolean;
   otherAssessableAssets: number;
   projectionYears?: number;
+  /**
+   * Lump sum withdrawn from super at retirement (e.g. to pay down a
+   * mortgage). The remaining balance runs the account-based pension.
+   */
+  lumpSumWithdrawal?: number;
 }
 
 export interface RetirementPlanResult {
@@ -60,7 +66,29 @@ export interface RetirementPlanResult {
   totalDrawdownPaid: number;
   bequestValueAtAge95: number;
   isFullySustainableTo100: boolean;
+  /** Lump sum withdrawn at retirement (defaults to 0) */
+  lumpSumWithdrawn: number;
+  /** Highest projected super balance across the schedule */
+  maxProjectedBalance: number;
   schedule: SuperDrawdownYearRow[];
+}
+
+export interface TransferBalanceCapCheck {
+  /** Current general transfer balance cap ($) */
+  cap: number;
+  /** True when projectedBalance exceeds the cap */
+  overCap: boolean;
+  /** Amount over the cap ($, 0 when not exceeded) */
+  excess: number;
+}
+
+export interface PercentileFanPoint {
+  year: number;
+  p10: number;
+  p25: number;
+  p50: number;
+  p75: number;
+  p90: number;
 }
 
 // ─── Centrelink Age Pension Constants ─────────────────────────────────────────
@@ -211,13 +239,16 @@ export function simulateRetirementPlan(params: RetirementPlanParams): Retirement
     isHomeowner,
     otherAssessableAssets,
     projectionYears = 35,
+    lumpSumWithdrawal = 0,
   } = params;
 
-  let currentBalance = superBalanceAtRetirement;
+  const lumpSum = Math.max(0, lumpSumWithdrawal);
+  let currentBalance = Math.max(0, superBalanceAtRetirement - lumpSum);
   let lifetimePension = 0;
   let totalDrawdowns = 0;
   let exhaustionAge: number | null = null;
   let sustainableYears = 0;
+  let maxProjectedBalance = currentBalance;
 
   const schedule: SuperDrawdownYearRow[] = [];
   const startAge = retirementAge;
@@ -280,6 +311,7 @@ export function simulateRetirementPlan(params: RetirementPlanParams): Retirement
     });
 
     currentBalance = endingBalance;
+    maxProjectedBalance = Math.max(maxProjectedBalance, currentBalance);
   }
 
   const bequestValue = schedule.find(s => s.age === 95)?.endingBalance ?? 0;
@@ -291,6 +323,179 @@ export function simulateRetirementPlan(params: RetirementPlanParams): Retirement
     totalDrawdownPaid: Math.round(totalDrawdowns),
     bequestValueAtAge95: Math.round(bequestValue),
     isFullySustainableTo100: exhaustionAge === null,
+    lumpSumWithdrawn: Math.round(lumpSum),
+    maxProjectedBalance: Math.round(maxProjectedBalance),
     schedule,
   };
+}
+
+// ─── Transfer Balance Cap Warning ─────────────────────────────────────────────
+
+/**
+ * Check a projected super balance against the general Transfer Balance Cap.
+ * Balances above the cap are not eligible for tax-free pension treatment and
+ * must be moved out of the retirement phase.
+ *
+ * Assumptions:
+ * - Uses SUPER_RULES.transferBalanceCap ($1.9M general cap).
+ *
+ * @param projectedBalance - Projected super balance ($)
+ * @param age - Member age (reserved for future age-based cap indexation)
+ */
+export function transferBalanceCapCheck(
+  projectedBalance: number,
+  age: number,
+): TransferBalanceCapCheck {
+  void age;
+  const cap = SUPER_RULES.transferBalanceCap;
+  const excess = Math.max(0, projectedBalance - cap);
+  return {
+    cap,
+    overCap: excess > 0,
+    excess,
+  };
+}
+
+// ─── Market Sequence Simulation ───────────────────────────────────────────────
+
+/**
+ * Deterministic pseudo-random generator (mulberry32). Produces the same
+ * sequence for the same seed — essential for shareable, reproducible plans.
+ */
+function mulberry32(seed: number): () => number {
+  let a = seed >>> 0;
+  return () => {
+    a += 0x6d2b79f5;
+    let t = a;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+/**
+ * Generate `count` annual return sequences of length `years` from a normal
+ * distribution (Box–Muller transform over a seeded PRNG). Returns are
+ * decimals (e.g. 0.07 for +7%).
+ *
+ * @param years - Length of each sequence
+ * @param count - Number of sequences
+ * @param meanReturn - Mean annual return as a decimal (e.g. 0.065)
+ * @param volatility - Annualised volatility as a decimal (e.g. 0.12)
+ * @param seed - Seed for reproducible sequences
+ */
+export function generateReturnSequences(
+  years: number,
+  count: number,
+  meanReturn: number,
+  volatility: number,
+  seed: number,
+): number[][] {
+  const rand = mulberry32(seed);
+  const sequences: number[][] = [];
+
+  for (let s = 0; s < count; s++) {
+    const seq: number[] = [];
+    for (let y = 0; y < years; y++) {
+      // Box–Muller
+      const u1 = Math.max(rand(), 1e-12);
+      const u2 = rand();
+      const z = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+      seq.push(meanReturn + z * volatility);
+    }
+    sequences.push(seq);
+  }
+  return sequences;
+}
+
+/**
+ * Run a single drawdown trajectory against a given sequence of annual returns
+ * (decimals, e.g. [0.08, -0.05, ...]). Mirrors `simulateRetirementPlan` but
+ * replaces the constant return with the sequence; the Age Pension is excluded
+ * so the fan chart isolates market-sequence risk on the super balance.
+ *
+ * Assumptions:
+ * - Target income is indexed by `inflationRate` each year.
+ * - Drawdown is at least the Schedule 7 minimum and is capped by the balance.
+ * - Returns apply to the post-drawdown balance; negative returns reduce it.
+ * - Balances floor at zero.
+ *
+ * @returns Ending balance per year (length = projectionYears)
+ */
+export function simulateDrawdownSequence(
+  params: RetirementPlanParams,
+  annualReturns: number[],
+): number[] {
+  const {
+    retirementAge,
+    desiredAnnualIncome,
+    inflationRate,
+    projectionYears = 35,
+    lumpSumWithdrawal = 0,
+  } = params;
+
+  let balance = Math.max(0, params.superBalanceAtRetirement - Math.max(0, lumpSumWithdrawal));
+  const balances: number[] = [];
+
+  for (let i = 0; i < projectionYears; i++) {
+    if (balance <= 0) {
+      balances.push(0);
+      continue;
+    }
+    const age = retirementAge + i;
+    const targetIncome = desiredAnnualIncome * Math.pow(1 + inflationRate, i);
+    const minRequired = balance * getMinimumDrawdownRate(age);
+    const drawdown = Math.min(balance, Math.max(minRequired, targetIncome));
+    const growthRate = annualReturns[i] ?? 0;
+    const earnings = (balance - drawdown) * growthRate;
+    balance = Math.max(0, balance - drawdown + earnings);
+    balances.push(Math.round(balance));
+  }
+
+  return balances;
+}
+
+/**
+ * Build a Monte Carlo fan (p10/p25/p50/p75/p90 per year) from many drawdown
+ * trajectories — feed the output straight into MonteCarloFanChart.
+ *
+ * @param params - Retirement plan parameters
+ * @param returnSequences - One array of annual returns per simulation
+ */
+export function monteCarloDrawdownFan(
+  params: RetirementPlanParams,
+  returnSequences: number[][],
+): PercentileFanPoint[] {
+  if (returnSequences.length === 0) return [];
+
+  const trajectories = returnSequences.map(seq => simulateDrawdownSequence(params, seq));
+  const years = trajectories[0].length;
+  const fan: PercentileFanPoint[] = [];
+
+  for (let y = 0; y < years; y++) {
+    const values = trajectories
+      .map(t => t[y] ?? 0)
+      .sort((a, b) => a - b);
+    fan.push({
+      year: y + 1,
+      p10: percentile(values, 0.10),
+      p25: percentile(values, 0.25),
+      p50: percentile(values, 0.50),
+      p75: percentile(values, 0.75),
+      p90: percentile(values, 0.90),
+    });
+  }
+  return fan;
+}
+
+/** Linear-interpolated percentile of a sorted ascending array. */
+function percentile(sortedValues: number[], q: number): number {
+  if (sortedValues.length === 0) return 0;
+  if (sortedValues.length === 1) return sortedValues[0];
+  const pos = (sortedValues.length - 1) * q;
+  const lower = Math.floor(pos);
+  const upper = Math.ceil(pos);
+  if (lower === upper) return Math.round(sortedValues[lower]);
+  const weight = pos - lower;
+  return Math.round(sortedValues[lower] * (1 - weight) + sortedValues[upper] * weight);
 }

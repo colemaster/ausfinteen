@@ -8,7 +8,7 @@ import { StatCard } from '../../components/ui/StatCard';
 import { Assumptions } from '../../components/shared/Assumptions';
 import { Disclaimer } from '../../components/shared/Disclaimer';
 import { AboutCalc } from '../../components/shared/AboutCalc';
-import { runAllScenarios, SCENARIO_COLORS, type ScenarioParams, type TaxTreatment } from './engine';
+import { runAllScenarios, SCENARIO_COLORS, applyCrashToSeries, feeDrag, cgtAdjustedFinalValue, type ScenarioParams, type TaxTreatment } from './engine';
 import { formatCurrency, formatCompact, formatPct } from '../../utils/formatters';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid,
@@ -42,6 +42,10 @@ export function InvestmentCompare() {
   const [scenarios, setScenarios] = useState<ScenarioParams[]>(DEFAULT_SCENARIOS.map(s => ({ ...s })));
   const [years, setYears] = useState(20);
   const [margTaxOverride, setMargTaxOverride] = useState(32);
+  const [showStressTest, setShowStressTest] = useState(true);
+  const [crashYear, setCrashYear] = useState(10);
+  const [crashPct, setCrashPct] = useState(30);
+  const [applyCgtOnDisposal, setApplyCgtOnDisposal] = useState(false);
 
   const sharedMarginalRate = portfolio.margTax > 0 ? portfolio.margTax : margTaxOverride;
 
@@ -68,17 +72,55 @@ export function InvestmentCompare() {
     [syncedScenarios, years],
   );
 
-  // Build chart data — one entry per year
+  // Build chart data — one entry per year (with optional crash overlay)
   const chartData = useMemo(() => {
     const maxLen = Math.max(...results.map(r => r.yearly.length));
     return Array.from({ length: maxLen }, (_, i) => {
       const row: Record<string, string | number> = { year: `Yr ${i + 1}` };
       results.forEach(r => {
         row[r.label] = r.yearly[i]?.balance ?? 0;
+        if (showStressTest) {
+          const crashed = applyCrashToSeries(
+            r.yearly.map(y => y.balance),
+            crashYear,
+            crashPct,
+          );
+          row[`${r.label} (crash)`] = crashed[i] ?? 0;
+        }
       });
       return row;
     });
-  }, [results, years]);
+  }, [results, years, showStressTest, crashYear, crashPct]);
+
+  // Crash impact per scenario (final-year balance with the crash applied)
+  const crashImpact = useMemo(
+    () => results.map(r => {
+      const crashedSeries = applyCrashToSeries(
+        r.yearly.map(y => y.balance),
+        crashYear,
+        crashPct,
+      );
+      const crashedFinal = crashedSeries[crashedSeries.length - 1] ?? 0;
+      return {
+        label: r.label,
+        normalFinal: r.finalBalance,
+        crashedFinal,
+        loss: r.finalBalance - crashedFinal,
+      };
+    }),
+    [results, crashYear, crashPct],
+  );
+
+  // MER fee drag panel (standalone baseline portfolio)
+  const feeDragResult = useMemo(
+    () => feeDrag(50000, 1000, scenarios[0]?.annualReturn ?? 8, 0.1, 1.0, years),
+    [scenarios, years],
+  );
+  const feeDragData = Array.from({ length: years }, (_, i) => ({
+    year: `Yr ${i + 1}`,
+    '0.10% MER': feeDragResult.lowFeeSeries[i] ?? 0,
+    '1.00% MER': feeDragResult.highFeeSeries[i] ?? 0,
+  }));
 
 
 
@@ -127,6 +169,12 @@ export function InvestmentCompare() {
           ? <PortfolioField label="Marginal Tax Rate (shared)" value={sharedMarginalRate} suffix="%" />
           : <SliderControl label="Marginal Tax Rate (shared)" value={margTaxOverride} onChange={setMargTaxOverride} min={0} max={49} step={1} suffix="%" />
         }
+        {showStressTest && (
+          <>
+            <SliderControl label="Crash Year" value={crashYear} onChange={v => setCrashYear(Math.round(v))} min={1} max={Math.max(2, years)} step={1} suffix="" />
+            <SliderControl label="Crash Severity" value={crashPct} onChange={setCrashPct} min={5} max={60} step={5} suffix="%" />
+          </>
+        )}
       </div>
 
       {/* Scenario cards */}
@@ -187,7 +235,18 @@ export function InvestmentCompare() {
         <a href="https://moneysmart.gov.au/saving-and-budgeting/compound-interest" target="_blank" rel="noopener noreferrer" className="text-[var(--primary)] hover:text-[var(--primary)]">MoneySmart: How compound interest works ↗</a>
       </div>
       <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-5">
-        <h3 className="text-sm font-bold text-[var(--foreground)] mb-4">Portfolio Balance Over Time</h3>
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+          <h3 className="text-sm font-bold text-[var(--foreground)]">Portfolio Balance Over Time</h3>
+          <label className="flex items-center gap-2 text-xs font-medium text-[var(--muted-foreground)]">
+            <input
+              type="checkbox"
+              checked={showStressTest}
+              onChange={e => setShowStressTest(e.target.checked)}
+              className="w-4 h-4 accent-[var(--primary)] rounded-sm cursor-pointer"
+            />
+            Stress test: -{crashPct}% crash in Yr {crashYear}
+          </label>
+        </div>
         <ChartContainer config={buildInvestmentCompareConfig(results.map(r => ({ name: r.label })))} className="h-[350px] w-full">
           <LineChart data={chartData} margin={{ top: 4, right: 16, left: 8, bottom: 4 }}>
             <CartesianGrid vertical={false} strokeDasharray="3 3" />
@@ -198,6 +257,51 @@ export function InvestmentCompare() {
             {results.map(r => (
               <Line key={r.label} type="monotone" dataKey={r.label} stroke={`var(--color-${r.label.replace(/\s+/g, '')})`} strokeWidth={2.5} dot={false} animationDuration={1200} animationEasing="ease-in-out" />
             ))}
+            {showStressTest && results.map(r => (
+              <Line key={`${r.label}-crash`} type="monotone" dataKey={`${r.label} (crash)`} stroke={`var(--color-${r.label.replace(/\s+/g, '')})`} strokeWidth={1.5} strokeDasharray="5 4" dot={false} opacity={0.7} animationDuration={1200} animationEasing="ease-in-out" />
+            ))}
+          </LineChart>
+        </ChartContainer>
+        {showStressTest && (
+          <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            {crashImpact.map(c => (
+              <div key={c.label} className="rounded-xl border border-[var(--border)] px-4 py-3 text-xs">
+                <div className="font-semibold text-[var(--foreground)] mb-1">{c.label}</div>
+                <div className="flex justify-between text-[var(--muted-foreground)]">
+                  <span>Final (normal)</span>
+                  <span className="font-mono">{formatCompact(c.normalFinal)}</span>
+                </div>
+                <div className="flex justify-between text-[var(--muted-foreground)]">
+                  <span>After crash</span>
+                  <span className="font-mono">{formatCompact(c.crashedFinal)}</span>
+                </div>
+                <div className="flex justify-between text-[var(--danger)] font-semibold mt-1">
+                  <span>Loss</span>
+                  <span className="font-mono">-{formatCurrency(c.loss)}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* MER fee drag */}
+      <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-5">
+        <h3 className="text-sm font-bold text-[var(--foreground)] mb-1">MER Fee Drag</h3>
+        <p className="text-[10px] text-[var(--muted-foreground)] mb-4">
+          Same $50k start, $1k/mo, {scenarios[0]?.annualReturn ?? 8}% return — the only difference is the fee. Over {years} years a 0.9% fee gap costs{' '}
+          <span className="font-mono font-semibold text-[var(--danger)]">{formatCurrency(feeDragResult.finalLoss)}</span>{' '}
+          ({formatPct(feeDragResult.lostPct)} of the low-fee final balance).
+        </p>
+        <ChartContainer config={buildInvestmentCompareConfig([{ name: '0.10% MER' }, { name: '1.00% MER' }])} className="h-[280px] w-full">
+          <LineChart data={feeDragData} margin={{ top: 4, right: 16, left: 8, bottom: 4 }}>
+            <CartesianGrid vertical={false} strokeDasharray="3 3" />
+            <XAxis dataKey="year" tickLine={false} axisLine={false} tick={{ fontSize: 10 }} interval={Math.max(0, Math.floor(years / 6) - 1)} />
+            <YAxis tickLine={false} axisLine={false} tickFormatter={v => formatCompact(typeof v === 'number' ? v : 0)} tick={{ fontSize: 10 }} />
+            <ChartTooltip content={<ChartTooltipContent />} />
+            <ChartLegend content={<ChartLegendContent />} />
+            <Line type="monotone" dataKey="0.10% MER" stroke="var(--chart-2)" strokeWidth={2.5} dot={false} animationDuration={1200} animationEasing="ease-in-out" />
+            <Line type="monotone" dataKey="1.00% MER" stroke="var(--chart-5)" strokeWidth={2.5} dot={false} strokeDasharray="6 3" animationDuration={1200} animationEasing="ease-in-out" />
           </LineChart>
         </ChartContainer>
       </div>
@@ -217,27 +321,52 @@ export function InvestmentCompare() {
 
       {/* Final values table */}
       <div className="overflow-x-auto rounded-xl border border-[var(--border)]">
+        <div className="flex flex-wrap items-center justify-between gap-3 px-4 pt-3 pb-1">
+          <div>
+            <h4 className="text-xs font-semibold text-[var(--muted-foreground)]">Final Values</h4>
+          </div>
+          <label className="flex items-center gap-2 text-xs font-medium text-[var(--muted-foreground)]">
+            <input
+              type="checkbox"
+              checked={applyCgtOnDisposal}
+              onChange={e => setApplyCgtOnDisposal(e.target.checked)}
+              className="w-4 h-4 accent-[var(--primary)] rounded-sm cursor-pointer"
+            />
+            Apply 50% CGT discount on disposal
+          </label>
+        </div>
         <table className="w-full text-xs border-collapse">
           <thead>
             <tr className="bg-[var(--background)]">
-              {['Scenario', 'Tax Treatment', `Final Balance (${years} yr)`, 'Total Fees', 'Total Contributions', 'Net Return'].map(h => (
+              {['Scenario', 'Tax Treatment', `Final Balance (${years} yr)`, ...(applyCgtOnDisposal ? ['After CGT (Disposal)'] : []), 'Total Fees', 'Total Contributions', 'Net Return'].map(h => (
                 <th key={h} className="px-4 py-2.5 text-right text-[10px] uppercase tracking-wide text-[var(--muted-foreground)] font-medium border-b border-[var(--border)] first:text-left">{h}</th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {results.map((r, i) => (
-              <tr key={r.label} className="border-b border-slate-100 last:border-0">
-                <td className="px-4 py-2 font-semibold" style={{ color: SCENARIO_COLORS[i] }}>{r.label}</td>
-                <td className="px-4 py-2 text-right text-[var(--muted-foreground)]">{TAX_LABELS[syncedScenarios[i].taxTreatment]}</td>
-                <td className="px-4 py-2 text-right font-mono font-semibold text-[var(--foreground)]">{formatCurrency(r.finalBalance)}</td>
-                <td className="px-4 py-2 text-right font-mono text-[var(--danger)]">{formatCurrency(r.totalFeesPaid)}</td>
-                <td className="px-4 py-2 text-right font-mono text-[var(--muted-foreground)]">{formatCurrency(r.totalContributions)}</td>
-                <td className="px-4 py-2 text-right font-mono text-[var(--success)]">
-                  {formatPct(((r.finalBalance - r.totalContributions) / r.totalContributions) * 100)}
-                </td>
-              </tr>
-            ))}
+            {results.map((r, i) => {
+              const afterCgt = cgtAdjustedFinalValue(
+                syncedScenarios[i].initial,
+                r.totalContributions,
+                r.finalBalance,
+                sharedMarginalRate / 100,
+              );
+              return (
+                <tr key={r.label} className="border-b border-slate-100 last:border-0">
+                  <td className="px-4 py-2 font-semibold" style={{ color: SCENARIO_COLORS[i] }}>{r.label}</td>
+                  <td className="px-4 py-2 text-right text-[var(--muted-foreground)]">{TAX_LABELS[syncedScenarios[i].taxTreatment]}</td>
+                  <td className="px-4 py-2 text-right font-mono font-semibold text-[var(--foreground)]">{formatCurrency(r.finalBalance)}</td>
+                  {applyCgtOnDisposal && (
+                    <td className="px-4 py-2 text-right font-mono text-[var(--success)]">{formatCurrency(afterCgt)}</td>
+                  )}
+                  <td className="px-4 py-2 text-right font-mono text-[var(--danger)]">{formatCurrency(r.totalFeesPaid)}</td>
+                  <td className="px-4 py-2 text-right font-mono text-[var(--muted-foreground)]">{formatCurrency(r.totalContributions)}</td>
+                  <td className="px-4 py-2 text-right font-mono text-[var(--success)]">
+                    {formatPct(((r.finalBalance - r.totalContributions) / r.totalContributions) * 100)}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>

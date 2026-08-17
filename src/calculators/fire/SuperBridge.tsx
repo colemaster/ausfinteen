@@ -3,7 +3,7 @@ import { StatCard } from '../../components/ui/StatCard';
 import { NumberInput } from '../../components/ui/NumberInput';
 import { SliderControl } from '../../components/ui/SliderControl';
 import { PortfolioField } from '../../components/ui/PortfolioField';
-import { calculateSuperBridge, PRESERVATION_AGE } from './engine';
+import { calculateSuperBridge, PRESERVATION_AGE, netSuperContribution } from './engine';
 import { formatCurrency, formatCompact } from '../../utils/formatters';
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, ReferenceLine,
@@ -25,40 +25,32 @@ export function SuperBridge({ currentAge, nonSuperBalance, superBalance, onSuper
   const [annualExpenses, setAnnualExpenses] = useState(60000);
   const [annualSavingsNonSuper, setAnnualSavingsNonSuper] = useState(20000);
   const [annualSuperContribs, setAnnualSuperContribs] = useState(15000);
+  const [concessionalShare, setConcessionalShare] = useState(60);
+
+  const bridgeParams = (retireAge: number) => ({
+    currentAge,
+    earlyRetirementAge: retireAge,
+    preservationAge: PRESERVATION_AGE,
+    nonSuperBalance,
+    superBalance,
+    annualSavingsNonSuper,
+    annualSuperContribs,
+    annualExpenses,
+    nonSuperReturn: returnRate,
+    superReturn: returnRate,
+    concessionalShareOfContribs: concessionalShare / 100,
+  });
 
   const scenarios = [45, 50, 55].map(retireAge => {
     return {
       retireAge,
-      result: calculateSuperBridge({
-        currentAge,
-        earlyRetirementAge: retireAge,
-        preservationAge: PRESERVATION_AGE,
-        nonSuperBalance,
-        superBalance,
-        annualSavingsNonSuper,
-        annualSuperContribs,
-        annualExpenses,
-        nonSuperReturn: returnRate,
-        superReturn: returnRate,
-      }),
+      result: calculateSuperBridge(bridgeParams(retireAge)),
     };
   });
 
   const primary = useMemo(
-    () =>
-      calculateSuperBridge({
-        currentAge,
-        earlyRetirementAge,
-        preservationAge: PRESERVATION_AGE,
-        nonSuperBalance,
-        superBalance,
-        annualSavingsNonSuper,
-        annualSuperContribs,
-        annualExpenses,
-        nonSuperReturn: returnRate,
-        superReturn: returnRate,
-      }),
-    [currentAge, earlyRetirementAge, nonSuperBalance, superBalance, annualSavingsNonSuper, annualSuperContribs, annualExpenses, returnRate],
+    () => calculateSuperBridge(bridgeParams(earlyRetirementAge)),
+    [currentAge, earlyRetirementAge, nonSuperBalance, superBalance, annualSavingsNonSuper, annualSuperContribs, annualExpenses, returnRate, concessionalShare],
   );
 
   const chartData = primary.yearly
@@ -70,6 +62,7 @@ export function SuperBridge({ currentAge, nonSuperBalance, superBalance, onSuper
     }));
 
   const bridgeYears = Math.max(0, PRESERVATION_AGE - earlyRetirementAge);
+  const netContrib = netSuperContribution(annualSuperContribs, concessionalShare / 100);
 
   return (
     <div className="space-y-5">
@@ -84,6 +77,21 @@ export function SuperBridge({ currentAge, nonSuperBalance, superBalance, onSuper
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 bg-[var(--background)] border border-[var(--border)] rounded-xl p-4">
         <NumberInput label="Annual Savings (non-super)" value={annualSavingsNonSuper} onChange={setAnnualSavingsNonSuper} min={0} max={500000} step={5000} prefix="$" />
         <NumberInput label="Annual Expenses" value={annualExpenses} onChange={setAnnualExpenses} min={10000} max={300000} step={5000} prefix="$" />
+        <SliderControl
+          label="Concessional Share of Super Contribs"
+          value={concessionalShare}
+          onChange={setConcessionalShare}
+          min={0}
+          max={100}
+          step={5}
+          suffix="%"
+        />
+      </div>
+
+      <div className="rounded-xl px-5 py-3 border text-xs text-[var(--muted-foreground)] bg-[var(--background)]">
+        At a {concessionalShare}% concessional split, {formatCurrency(annualSuperContribs)} of contributions lands{' '}
+        <span className="font-mono font-semibold text-[var(--foreground)]">{formatCurrency(netContrib)}</span> net in super
+        (15% contributions tax on the concessional portion, non-concessional untaxed).
       </div>
 
       {/* Key Answer */}

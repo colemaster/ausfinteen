@@ -34,7 +34,7 @@ export const TickerMarquee = memo(function TickerMarquee({
       role="marquee"
       aria-label="Live money facts ticker"
     >
-      <div className="inline-flex items-center gap-4 pr-4 animate-ticker will-change-transform" style={{ animationDuration: speed }}>
+      <div className="inline-flex items-center gap-4 pr-4 animate-ticker will-change-transform motion-reduce:animate-none" style={{ animationDuration: speed }}>
         {doubled.map((item, i) => (
           <span
             key={`${item.label}-${i}`}

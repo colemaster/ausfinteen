@@ -1,8 +1,8 @@
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
 } from 'recharts';
-import { formatCompact } from '../../utils/formatters';
-import { useReducedMotion } from './chart';
+import { formatCompact, formatCurrency } from '../../utils/formatters';
+import { useReducedMotion, type MoneyFormat } from './chart';
 
 interface BarCompareProps {
   data: Record<string, string | number>[];
@@ -11,10 +11,20 @@ interface BarCompareProps {
   xLabel?: string;
   yLabel?: string;
   height?: number;
+  /** Axis + tooltip money formatting. Defaults to compact ($1.2M style). */
+  moneyFormat?: MoneyFormat;
 }
 
-export function BarCompare({ data, keys, xKey, height = 280 }: BarCompareProps) {
+export function BarCompare({
+  data,
+  keys,
+  xKey,
+  height = 280,
+  moneyFormat = 'compact',
+}: BarCompareProps) {
   const reduced = useReducedMotion();
+  const formatMoney = (v: number) =>
+    moneyFormat === 'full' ? formatCurrency(v) : formatCompact(v);
   return (
     <ResponsiveContainer width="100%" height={height}>
       <BarChart data={data} margin={{ top: 4, right: 16, left: 8, bottom: 4 }}>
@@ -25,12 +35,15 @@ export function BarCompare({ data, keys, xKey, height = 280 }: BarCompareProps) 
           className="text-slate-400"
         />
         <YAxis
-          tickFormatter={v => formatCompact(v as number)}
+          tickFormatter={v => formatMoney(v as number)}
           tick={{ fontSize: 11 }}
           className="text-slate-400"
         />
         <Tooltip
-          formatter={(value, name) => [formatCompact(typeof value === 'number' ? value : 0), name]}
+          formatter={(value, name) => [
+            typeof value === 'number' ? formatMoney(value) : '',
+            name,
+          ]}
           contentStyle={{ fontSize: 12 }}
         />
         <Legend wrapperStyle={{ fontSize: 12 }} />

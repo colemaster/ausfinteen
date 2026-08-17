@@ -8,6 +8,14 @@ export default defineConfig({
   site: 'https://ausfintools.com',
   base: process.env.VITE_BASE ?? '/',
   output: 'static',
+  compressHTML: 'jsx',
+  prefetch: {
+    defaultStrategy: 'hover',
+    prefetchAll: true,
+  },
+  experimental: {
+    clientPrerender: true,
+  },
   integrations: [react(), sitemap()],
   server: {
     host: '0.0.0.0',

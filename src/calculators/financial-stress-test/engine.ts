@@ -5,6 +5,7 @@
  */
 
 import { getCombinedMarginalRate } from '../../data/tax-brackets';
+import { monthlyRepayment } from '../../utils/financial';
 
 export interface StressTestParams {
   grossAnnualIncome: number;
@@ -69,6 +70,190 @@ export function calcJobSeekerLAWP(liquidAssets: number, isSingle: boolean, hasDe
   const excess = liquidAssets - threshold;
   const unit = (isSingle && !hasDependents) ? 500 : 1000;
   return Math.min(13, Math.ceil(excess / unit));
+}
+
+export interface ReverseStressResult {
+  maxRate: number;             // highest annual rate % the borrower survives
+  maxRateIncreasePts: number;  // percentage points above currentRate
+  monthlyRepaymentAtMax: number;
+  surplusAtMax: number;        // monthly income − expenses − repayment at maxRate
+  survivesAnyRise: boolean;
+  capped: boolean;             // true when the search ceiling was hit without failing
+  ceiling: number;             // rate % at which the search stops
+}
+
+/**
+ * Reverse stress test: find the maximum interest rate rise the borrower can
+ * survive, given monthly income and expenses (excluding the mortgage
+ * repayment, which is computed for each candidate rate).
+ *
+ * @param monthlyIncome - Monthly after-tax income (AUD)
+ * @param monthlyExpenses - Monthly expenses excluding mortgage repayment (AUD)
+ * @param loan - Outstanding mortgage balance (AUD)
+ * @param currentRate - Current annual rate as a percentage (e.g. 6.2)
+ * @param loanTermYears - Remaining loan term in years (default 30)
+ * @param bufferPct - Additional buffer on the repayment (e.g. 3 for +3%)
+ * @param ceilingPct - Search ceiling above currentRate in percentage points (default 20)
+ *
+ * Assumptions:
+ * - P&I repayments, monthly compounding, rate held at each candidate level.
+ * - Borrower survives a rate if income ≥ expenses + repayment × (1 + buffer).
+ * - Binary search over [currentRate, currentRate + ceilingPct].
+ */
+export function maxSurvivableRate(
+  monthlyIncome: number,
+  monthlyExpenses: number,
+  loan: number,
+  currentRate: number,
+  loanTermYears = 30,
+  bufferPct = 0,
+  ceilingPct = 20,
+): ReverseStressResult {
+  const ceiling = currentRate + ceilingPct;
+  const surplus = (rate: number): number => {
+    const repayment = monthlyRepayment(loan, rate, loanTermYears) * (1 + bufferPct / 100);
+    return monthlyIncome - monthlyExpenses - repayment;
+  };
+
+  // Cannot even survive at the current rate
+  if (surplus(currentRate) < 0) {
+    return {
+      maxRate: currentRate,
+      maxRateIncreasePts: 0,
+      monthlyRepaymentAtMax: Math.round(monthlyRepayment(loan, currentRate, loanTermYears)),
+      surplusAtMax: Math.round(surplus(currentRate)),
+      survivesAnyRise: false,
+      capped: false,
+      ceiling,
+    };
+  }
+
+  // Survives everywhere up to the ceiling
+  if (surplus(ceiling) >= 0) {
+    return {
+      maxRate: ceiling,
+      maxRateIncreasePts: Math.round((ceiling - currentRate) * 100) / 100,
+      monthlyRepaymentAtMax: Math.round(monthlyRepayment(loan, ceiling, loanTermYears)),
+      surplusAtMax: Math.round(surplus(ceiling)),
+      survivesAnyRise: true,
+      capped: true,
+      ceiling,
+    };
+  }
+
+  // Binary search for the highest survivable rate (surplus is monotone falling)
+  let lo = currentRate;
+  let hi = ceiling;
+  for (let i = 0; i < 60; i++) {
+    const mid = (lo + hi) / 2;
+    if (surplus(mid) >= 0) lo = mid;
+    else hi = mid;
+  }
+
+  return {
+    maxRate: Math.round(lo * 100) / 100,
+    maxRateIncreasePts: Math.round((lo - currentRate) * 100) / 100,
+    monthlyRepaymentAtMax: Math.round(monthlyRepayment(loan, lo, loanTermYears)),
+    surplusAtMax: Math.round(surplus(lo)),
+    survivesAnyRise: true,
+    capped: false,
+    ceiling,
+  };
+}
+
+export interface CumulativeScenarioInput {
+  monthlyNetIncome: number;
+  monthlyEssentialExpenses: number;
+  monthlyDiscretionaryExpenses: number;
+  mortgageDebtBalance: number;
+  mortgageOffsetBalance: number;
+  currentMortgageInterestRate: number;  // decimal (e.g. 0.062)
+  liquidCashSavings: number;
+  /** Interest rate rise in percentage points (e.g. 2 for +2%). */
+  rateRisePct: number;
+  /** Months of total job loss applied to the scenario (0 = no job loss). */
+  jobLossMonths: number;
+  /** Expense shock as % of total monthly expenses (e.g. 10 for +10%). */
+  expenseShockPct: number;
+  /** Repayment buffer as % of the mortgage repayment (e.g. 3 for +3%). */
+  bufferPct: number;
+}
+
+export interface CumulativeScenarioResult {
+  effectiveRate: number;          // current + rise (decimal)
+  extraMonthlyInterest: number;
+  expenseShockMonthly: number;
+  repaymentBufferMonthly: number;
+  monthlySurplusAfterShocks: number;
+  isFatal: boolean;
+  survivingMonths: number;        // liquid ÷ monthly burn while income is lost
+  notes: string;
+}
+
+/**
+ * Apply cumulative scenario presets (rate rise + job loss + expense shock +
+ * repayment buffer) to a borrower's monthly cashflow.
+ *
+ * Assumptions:
+ * - `monthlyEssentialExpenses` already includes the current mortgage
+ *   repayment (consistent with runFinancialStressTest), so a rate rise only
+ *   adds the incremental interest on the rate rise and the optional buffer —
+ *   it does not re-price the full repayment.
+ * - During job-loss months income is $0; runway = liquid funds ÷ monthly burn.
+ * - Offset balance fully offsets interest for the incremental calculation.
+ */
+export function applyCumulativeScenarios(input: CumulativeScenarioInput): CumulativeScenarioResult {
+  const effectiveRate = input.currentMortgageInterestRate + input.rateRisePct / 100;
+  const netDebt = Math.max(0, input.mortgageDebtBalance - input.mortgageOffsetBalance);
+  const baseRepayment = monthlyRepayment(netDebt, input.currentMortgageInterestRate * 100, 30);
+  const repaymentBufferMonthly = baseRepayment * (input.bufferPct / 100);
+  const extraMonthlyInterest = Math.max(0, netDebt * (input.rateRisePct / 100) / 12);
+
+  const totalExpenses = input.monthlyEssentialExpenses + input.monthlyDiscretionaryExpenses;
+  const expenseShockMonthly = totalExpenses * (input.expenseShockPct / 100);
+
+  const income = input.jobLossMonths > 0 ? 0 : input.monthlyNetIncome;
+  const outgoings =
+    totalExpenses +
+    extraMonthlyInterest +
+    repaymentBufferMonthly +
+    expenseShockMonthly;
+  const monthlySurplusAfterShocks = income - outgoings;
+
+  const totalLiquid = input.liquidCashSavings + input.mortgageOffsetBalance;
+  const burn = Math.max(0, outgoings - income);
+  const survivingMonths =
+    input.jobLossMonths > 0
+      ? burn > 0
+        ? Math.round((totalLiquid / burn) * 10) / 10
+        : 99
+      : monthlySurplusAfterShocks >= 0
+        ? 99
+        : Math.round((totalLiquid / Math.abs(monthlySurplusAfterShocks)) * 10) / 10;
+
+  const isFatal =
+    (input.jobLossMonths > 0 && burn > totalLiquid) ||
+    (input.jobLossMonths === 0 && monthlySurplusAfterShocks < 0 && totalLiquid < Math.abs(monthlySurplusAfterShocks) * 6);
+
+  const parts: string[] = [];
+  if (input.rateRisePct > 0) parts.push(`+${input.rateRisePct}% rate rise (${(effectiveRate * 100).toFixed(1)}%)`);
+  if (input.jobLossMonths > 0) parts.push(`${input.jobLossMonths}-month job loss`);
+  if (input.expenseShockPct > 0) parts.push(`+${input.expenseShockPct}% expense shock`);
+  if (input.bufferPct > 0) parts.push(`+${input.bufferPct}% repayment buffer`);
+  const summary = parts.length > 0 ? parts.join(' + ') : 'No shocks applied';
+
+  return {
+    effectiveRate,
+    extraMonthlyInterest: Math.round(extraMonthlyInterest),
+    expenseShockMonthly: Math.round(expenseShockMonthly),
+    repaymentBufferMonthly: Math.round(repaymentBufferMonthly),
+    monthlySurplusAfterShocks: Math.round(monthlySurplusAfterShocks),
+    isFatal,
+    survivingMonths,
+    notes: isFatal
+      ? `Fatal under: ${summary}. Runway exhausted in ${survivingMonths === 99 ? 'forever' : `${survivingMonths} months`}.`
+      : `Survives under: ${summary}${survivingMonths === 99 ? ' — cashflow stays positive.' : ` — reserves last ${survivingMonths} months.`}`,
+  };
 }
 
 /**

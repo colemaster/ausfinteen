@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { monthlyRepayment } from '../../utils/financial';
-import { runOffset, runDebtRecycling } from './engine';
+import { runOffset, runDebtRecycling, runExtraRepayment, splitComparison } from './engine';
 
 describe('monthlyRepayment', () => {
   it('calculates correctly for $500k at 6% over 30 years', () => {
@@ -63,5 +63,68 @@ describe('runDebtRecycling', () => {
   it('cgtIfSold = 0 when margTax = 0', () => {
     const result = runDebtRecycling(500000, 6, 15, 100000, 8, 3, 0, 50);
     expect(result.cgtIfSold).toBe(0);
+  });
+});
+
+describe('runExtraRepayment', () => {
+  it('known answer: $500k at 6% 30yr with $1,000/mo extra pays off in ~15.5 years', () => {
+    const result = runExtraRepayment(500000, 6, 30, 1000);
+    // Scheduled payment 2997.75; with +$1000/mo the loan clears in ~15.5 years.
+    expect(result.monthsToPayoff).toBeGreaterThan(160);
+    expect(result.monthsToPayoff).toBeLessThan(230);
+  });
+
+  it('extra repayment saves interest vs base loan', () => {
+    const result = runExtraRepayment(500000, 6, 30, 500);
+    expect(result.interestSaved).toBeGreaterThan(0);
+    expect(result.totalInterest).toBeLessThan(579191);
+  });
+
+  it('zero extra repayment → identical to base amortisation', () => {
+    const result = runExtraRepayment(500000, 6, 30, 0);
+    const base = runOffset(500000, 6, 30, 0);
+    expect(result.totalInterest).toBe(base.totalInterest);
+    expect(result.yearsToPayoff).toBe('30.0');
+  });
+
+  it('no extra repaid when loan is already paid off by scheduled payment', () => {
+    const result = runExtraRepayment(120000, 0, 10, 0);
+    expect(result.monthsToPayoff).toBe(120);
+    expect(result.totalInterest).toBe(0);
+  });
+});
+
+describe('splitComparison', () => {
+  it('offsetFraction 1 → allOffset equals split outcome', () => {
+    const r = splitComparison(500000, 6, 10, 1000, 1, 8, 3, 34.5, 50);
+    expect(r.split.netWealthAfterCGT).toBe(r.allOffset.netWealthAfterCGT);
+    expect(r.split.portfolioValue).toBe(0);
+  });
+
+  it('offsetFraction 0 → allDR equals split outcome', () => {
+    const r = splitComparison(500000, 6, 10, 1000, 0, 8, 3, 34.5, 50);
+    expect(r.split.netWealthAfterCGT).toBe(r.allDR.netWealthAfterCGT);
+    expect(r.split.portfolioValue).toBe(r.allDR.portfolioValue);
+    // Offset balance > 0 only from tax refunds on investment interest
+    expect(r.split.offsetBalance).toBeGreaterThan(0);
+  });
+
+  it('offset balance grows at least with the offset portion of surplus', () => {
+    const r = splitComparison(500000, 6, 5, 2000, 0.5, 8, 3, 34.5, 50);
+    // 50% × $2,000 × 60 months = $60,000 baseline, plus interest refunds
+    expect(r.split.offsetBalance).toBeGreaterThanOrEqual(60000);
+  });
+
+  it('allOffset preserves more cash; allDR builds a portfolio', () => {
+    const r = splitComparison(500000, 6, 10, 1000, 0.5, 8, 3, 34.5, 50);
+    expect(r.allOffset.portfolioValue).toBe(0);
+    expect(r.allDR.portfolioValue).toBeGreaterThan(0);
+    expect(r.allDR.portfolioValue).toBeGreaterThan(r.allOffset.portfolioValue);
+  });
+
+  it('surplus zero → zero growth in offset and portfolio', () => {
+    const r = splitComparison(500000, 6, 5, 0, 0.5, 8, 3, 34.5, 50);
+    expect(r.split.offsetBalance).toBe(0);
+    expect(r.split.portfolioValue).toBe(0);
   });
 });

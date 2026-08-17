@@ -18,6 +18,97 @@ import { PROPERTY_HOLDING_COST_DEFAULTS } from '../../data/constants';
 
 export type { AustralianState };
 
+export interface RateScenarioRow {
+  rate: number;               // annual rate %
+  monthlyRepayment: number;   // P&I repayment at this rate
+  totalInterest: number;      // total interest over the full loan term
+}
+
+/**
+ * Rate-sensitivity matrix: repayment + total-interest at each candidate rate.
+ * Assumptions: monthly compounding P&I; total interest = (payment × n) − principal.
+ */
+export function rateScenarioTable(
+  price: number,
+  deposit: number,
+  loanTermYears: number,
+  rates: number[],
+): RateScenarioRow[] {
+  const loanAmount = Math.max(0, price - deposit);
+  return rates.map(rate => {
+    const payment = loanAmount > 0 ? monthlyRepayment(loanAmount, rate, loanTermYears) : 0;
+    const n = loanTermYears * 12;
+    const totalInterest = Math.round(payment * n - loanAmount);
+    return { rate, monthlyRepayment: Math.round(payment), totalInterest };
+  });
+}
+
+export interface MonthlyBufferResult {
+  monthlyMortgage: number;    // P&I repayment
+  monthlyHoldingCosts: number;// council rates + water + insurance (shared defaults)
+  totalMonthlyCost: number;   // mortgage + holding costs
+  monthlyIncome: number;      // combined gross income / 12
+  bufferRequired: number;     // monthly cost × buffer fraction
+  requiredIncome: number;     // totalMonthlyCost × (1 + buffer)
+  affordableWithBuffer: boolean;
+  surplus: number;            // monthlyIncome − requiredIncome
+}
+
+/**
+ * Monthly buffer affordability check: mortgage + holding costs vs income,
+ * with a % buffer on the monthly cost.
+ * Assumptions: monthly holding costs use shared property defaults; income is gross monthly.
+ */
+export function monthlyBufferCheck(
+  price: number,
+  deposit: number,
+  loanTermYears: number,
+  rate: number,
+  grossAnnualIncome: number,
+  partnerAnnualIncome = 0,
+  bufferPct = 10,
+): MonthlyBufferResult {
+  const loanAmount = Math.max(0, price - deposit);
+  const mortgage = loanAmount > 0 ? monthlyRepayment(loanAmount, rate, loanTermYears) : 0;
+  const d = PROPERTY_HOLDING_COST_DEFAULTS;
+  const holdingCosts = (d.councilRatesAnnual + d.waterRatesAnnual + d.insuranceAnnual) / 12;
+  const total = mortgage + holdingCosts;
+  const bufferRequired = total * (bufferPct / 100);
+  const requiredIncome = total + bufferRequired;
+  const monthlyIncome = (grossAnnualIncome + partnerAnnualIncome) / 12;
+  return {
+    monthlyMortgage: Math.round(mortgage),
+    monthlyHoldingCosts: Math.round(holdingCosts),
+    totalMonthlyCost: Math.round(total),
+    monthlyIncome: Math.round(monthlyIncome),
+    bufferRequired: Math.round(bufferRequired),
+    requiredIncome: Math.round(requiredIncome),
+    affordableWithBuffer: monthlyIncome >= requiredIncome,
+    surplus: Math.round(monthlyIncome - requiredIncome),
+  };
+}
+
+/**
+ * Months required to reach a target deposit.
+ * Assumptions: monthly compounding on invested savings; monthly saving added at end of month.
+ */
+export function monthsToDeposit(
+  targetDeposit: number,
+  monthlySaving: number,
+  investmentReturnPct: number,
+  maxMonths = 600,
+): number {
+  if (targetDeposit <= 0) return 0;
+  if (monthlySaving <= 0) return maxMonths;
+  const r = investmentReturnPct / 100 / 12;
+  let balance = 0;
+  for (let m = 1; m <= maxMonths; m++) {
+    balance = balance * (1 + r) + monthlySaving;
+    if (balance >= targetDeposit) return m;
+  }
+  return maxMonths;
+}
+
 export interface HouseParams {
   grossIncome: number;
   partnerIncome: number;

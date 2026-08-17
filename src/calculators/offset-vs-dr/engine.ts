@@ -11,6 +11,216 @@ import type { OffsetResult, DRResult } from './types';
 
 export { monthlyRepayment };
 
+export interface ExtraRepaymentResult {
+  totalInterest: number;
+  interestSaved: number;
+  monthsToPayoff: number;
+  yearsToPayoff: string;
+  totalExtraPaid: number;
+  extraRepaymentMonthly: number;
+  yearly: OffsetResult['yearly'];
+}
+
+/**
+ * Model a P&I home loan with a constant monthly extra repayment on top of the
+ * scheduled payment (extra goes entirely to principal).
+ *
+ * @param loan - Loan principal (AUD)
+ * @param rate - Annual interest rate as a percentage (e.g. 5.7)
+ * @param years - Loan term in years
+ * @param extraMonthly - Extra principal repayment each month (AUD)
+ *
+ * Assumptions:
+ * - Monthly compounding; scheduled P&I payment plus a fixed extra payment.
+ * - Base interest (no extra) calculated separately to derive interestSaved.
+ * - Total extra paid = extraMonthly × months until payoff.
+ */
+export function runExtraRepayment(
+  loan: number,
+  rate: number,
+  years: number,
+  extraMonthly: number,
+): ExtraRepaymentResult {
+  const r = rate / 100 / 12;
+  const n = years * 12;
+  const payment = monthlyRepayment(loan, rate, years);
+  let balance = loan;
+  let totalInterest = 0;
+  let months = 0;
+  const yearly: ExtraRepaymentResult['yearly'] = [];
+
+  for (let m = 1; m <= n && balance > 0; m++) {
+    const interest = balance * r;
+    const principalPaid = Math.min(balance, payment - interest + Math.max(0, extraMonthly));
+    balance = Math.max(0, balance - principalPaid);
+    totalInterest += interest;
+    months = m;
+    if (m % 12 === 0 || balance <= 0) {
+      yearly.push({
+        year: Math.ceil(m / 12),
+        balance: Math.round(balance),
+        totalInterest: Math.round(totalInterest),
+        netWealth: Math.round(extraMonthly * m - balance),
+      });
+    }
+    if (balance <= 0) break;
+  }
+
+  // Base interest (no extra repayment)
+  let baseBal = loan;
+  let baseInterest = 0;
+  for (let m = 1; m <= n && baseBal > 0; m++) {
+    const int = baseBal * r;
+    baseBal = Math.max(0, baseBal - (payment - int));
+    baseInterest += int;
+  }
+
+  return {
+    totalInterest: Math.round(totalInterest),
+    interestSaved: Math.round(baseInterest - totalInterest),
+    monthsToPayoff: months,
+    yearsToPayoff: (months / 12).toFixed(1),
+    totalExtraPaid: Math.round(extraMonthly * months),
+    extraRepaymentMonthly: extraMonthly,
+    yearly,
+  };
+}
+
+export interface SplitOutcome {
+  netWealth: number;          // portfolio + offset − total debt
+  netWealthAfterCGT: number;  // netWealth with CGT on portfolio gains
+  offsetBalance: number;
+  portfolioValue: number;
+  homeLoanBalance: number;
+  investLoanBalance: number;
+  totalDebt: number;
+}
+
+export interface SplitComparisonResult {
+  years: number;
+  offsetFraction: number;   // 0..1 share of surplus to offset
+  allOffset: SplitOutcome;
+  allDR: SplitOutcome;
+  split: SplitOutcome;
+  bestNetWealthAfterCGT: number;
+  bestStrategy: 'All Offset' | 'All Debt Recycling' | 'Split';
+}
+
+/**
+ * Split-strategy comparison: monthly surplus allocated between a mortgage
+ * offset account and a debt-recycling investment (ETF), each month.
+ *
+ * @param loan - Home loan principal (AUD)
+ * @param rate - Home loan rate as % (offset rate assumed equal to loan rate)
+ * @param years - Loan term in years
+ * @param surplusMonthly - Monthly surplus available (AUD)
+ * @param offsetFraction - Fraction of surplus to offset (0 = all DR, 1 = all offset)
+ * @param etfReturn - Total annual ETF return as %
+ * @param divYield - Dividend yield as %
+ * @param margTax - Marginal tax rate as PERCENTAGE (e.g. 47 for 47%)
+ * @param cgtDiscount - CGT discount as PERCENTAGE (e.g. 50 for 50%)
+ *
+ * Assumptions:
+ * - Monthly compounding; scheduled P&I payment on the home loan.
+ * - Offset earns the loan rate tax-free (offset rate = loan rate).
+ * - DR: surplus repays non-deductible home loan while an equal amount is
+ *   borrowed into the investment loan and invested — total debt unchanged by
+ *   recycling, exactly like runDebtRecycling. Investment interest is
+ *   tax-deductible at margTax (refund credited to the offset account each
+ *   month); dividends taxed at margTax; CGT discounted on disposal at year
+ *   `years`.
+ */
+export function splitComparison(
+  loan: number,
+  rate: number,
+  years: number,
+  surplusMonthly: number,
+  offsetFraction: number,
+  etfReturn: number,
+  divYield: number,
+  margTaxPct: number,
+  cgtDiscountPct: number,
+): SplitComparisonResult {
+  const margTax = margTaxPct / 100;
+  const cgtDiscount = cgtDiscountPct / 100;
+  const r = rate / 100 / 12;
+  const n = years * 12;
+  const payment = monthlyRepayment(loan, rate, years);
+  const growthOnlyMonthly = (etfReturn - divYield) / 100 / 12;
+  const monthlyDivGross = divYield / 100 / 12;
+  const frac = Math.min(1, Math.max(0, offsetFraction));
+
+  function simulate(offsetShare: number): SplitOutcome {
+    let homeLoan = loan;
+    let offset = 0;
+    let investLoan = 0;
+    let portfolio = 0;
+    let costBase = 0;
+
+    for (let m = 1; m <= n; m++) {
+      const homeInt = homeLoan > 0 ? Math.max(0, homeLoan - offset) * r : 0;
+      const investInt = investLoan > 0 ? investLoan * r : 0;
+
+      if (homeLoan > 0) {
+        homeLoan = Math.max(0, homeLoan - Math.min(homeLoan, payment - homeInt));
+      }
+
+      const toOffset = surplusMonthly * offsetShare;
+      const toDR = surplusMonthly * (1 - offsetShare);
+      offset += toOffset;
+      if (toDR > 0) {
+        homeLoan = Math.max(0, homeLoan - toDR);
+        investLoan += toDR;
+        portfolio += toDR;
+        costBase += toDR;
+      }
+
+      offset += investInt * margTax; // tax refund on investment interest
+
+      const growth = portfolio * growthOnlyMonthly;
+      const divGross = portfolio * monthlyDivGross;
+      portfolio += growth + divGross * (1 - margTax);
+    }
+
+    const unrealisedGain = Math.max(0, portfolio - costBase);
+    const cgt = unrealisedGain * (1 - cgtDiscount) * margTax;
+    const netWealth = portfolio + offset - homeLoan - investLoan;
+    return {
+      netWealth: Math.round(netWealth),
+      netWealthAfterCGT: Math.round(netWealth - cgt),
+      offsetBalance: Math.round(offset),
+      portfolioValue: Math.round(portfolio),
+      homeLoanBalance: Math.round(homeLoan),
+      investLoanBalance: Math.round(investLoan),
+      totalDebt: Math.round(homeLoan + investLoan),
+    };
+  }
+
+  const allOffset = simulate(1);
+  const allDR = simulate(0);
+  const split = simulate(frac);
+
+  let bestStrategy: SplitComparisonResult['bestStrategy'];
+  const best = Math.max(allOffset.netWealthAfterCGT, allDR.netWealthAfterCGT, split.netWealthAfterCGT);
+  if (split.netWealthAfterCGT === best && split.netWealthAfterCGT > Math.max(allOffset.netWealthAfterCGT, allDR.netWealthAfterCGT)) {
+    bestStrategy = 'Split';
+  } else if (allDR.netWealthAfterCGT >= allOffset.netWealthAfterCGT) {
+    bestStrategy = 'All Debt Recycling';
+  } else {
+    bestStrategy = 'All Offset';
+  }
+
+  return {
+    years,
+    offsetFraction: frac,
+    allOffset,
+    allDR,
+    split,
+    bestNetWealthAfterCGT: best,
+    bestStrategy,
+  };
+}
+
 /**
  * Model a P&I home loan with an offset account.
  *

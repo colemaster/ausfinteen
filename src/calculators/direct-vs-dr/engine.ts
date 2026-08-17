@@ -6,6 +6,8 @@
  * Rates are PERCENTAGES (e.g. 8.5 for 8.5% pa).
  */
 
+import { CGT_DISCOUNT_INDIVIDUAL } from '../../data/constants';
+
 export interface DirectYearlyRow {
   year: number;
   portfolioValue: number;
@@ -115,9 +117,15 @@ export function runDirectInvest(
  * @param margTax - Marginal tax rate as DECIMAL
  * @param cgtDiscount - CGT discount as DECIMAL
  * @param years - Projection horizon
+ * @param recycleFraction - Fraction of `amount` converted to the investment
+ *        structure per year (debt recycling cycle speed). 1 = fully recycled
+ *        at t=0 (default); 0.25 = a quarter of the capital is recycled each
+ *        year until fully converted.
  *
  * Assumptions:
  * - IO loan at mortgageRate; interest deducted at margTax each month.
+ * - Recycle chunks are borrowed and invested at the start of each year; the
+ *   un-recycled remainder earns nothing until converted (held as cash).
  * - Portfolio grows same as direct but interest is an ongoing cost.
  * - Net wealth = portfolioValue - loanBalance.
  */
@@ -129,20 +137,33 @@ export function runDebtRecyclingStandalone(
   margTax: number,
   cgtDiscount: number,
   years: number,
+  recycleFraction = 1,
 ): DRStandaloneResult {
   const growthOnlyMonthly = (etfReturn - divYield) / 100 / 12;
   const monthlyDivGross = divYield / 100 / 12;
   const monthlyInterestRate = mortgageRate / 100 / 12;
 
-  let portfolioValue = amount;
-  const loanBalance = amount; // IO — stays constant
+  const target = amount;
+  const annualChunk = amount * Math.min(1, Math.max(0, recycleFraction));
+  let invested = Math.min(target, annualChunk);
+  let portfolioValue = invested;
+  let loanBalance = invested;
+  let costBase = invested;
   let totalInterestPaid = 0;
   let totalTaxDeductions = 0;
   let totalDividendsTaxPaid = 0;
-  const costBase = amount;
   const yearly: DRStandaloneResult['yearly'] = [];
 
   for (let m = 1; m <= years * 12; m++) {
+    // Start of each subsequent year: recycle the next chunk
+    if (m > 1 && m % 12 === 1 && invested < target) {
+      const chunk = Math.min(target - invested, annualChunk);
+      invested += chunk;
+      portfolioValue += chunk;
+      loanBalance += chunk;
+      costBase += chunk;
+    }
+
     const growth = portfolioValue * growthOnlyMonthly;
     const divGross = portfolioValue * monthlyDivGross;
     const divTax = divGross * margTax;
@@ -198,4 +219,44 @@ export function findBreakevenReturn(
   margTaxPct: number,
 ): number {
   return mortgageRate * (1 - margTaxPct / 100);
+}
+
+export interface CgtOutcome {
+  taxableGain: number;      // gain × (1 − discount) — gain assessed for tax
+  discountAmount: number;   // portion of the gain exempt via the CGT discount
+  cgtPayable: number;       // taxableGain × marginalRate
+  proceedsAfterCgt: number; // investmentValue − cgtPayable
+}
+
+/**
+ * CGT payable on disposal of an investment, applying the 50% individual CGT
+ * discount when the asset has been held longer than 12 months.
+ *
+ * @param investmentValue - Current market value at sale (AUD)
+ * @param costBase - Original cost base (AUD)
+ * @param holdingYears - Years held (time-weighted: ≥1 → discount applies)
+ * @param marginalRate - Marginal tax rate as DECIMAL (e.g. 0.32)
+ * @param discount - CGT discount as DECIMAL (default 0.50 from data/constants)
+ *
+ * Assumptions:
+ * - 50% discount only applies when holdingYears >= 1 (ATO rule).
+ * - No indexation, no carry-forward capital losses, no other disposals.
+ */
+export function cgtAfterSell(
+  investmentValue: number,
+  costBase: number,
+  holdingYears: number,
+  marginalRate: number,
+  discount: number = CGT_DISCOUNT_INDIVIDUAL,
+): CgtOutcome {
+  const gain = Math.max(0, investmentValue - costBase);
+  const discountAmount = holdingYears >= 1 ? gain * discount : 0;
+  const taxableGain = gain - discountAmount;
+  const cgtPayable = taxableGain * marginalRate;
+  return {
+    taxableGain,
+    discountAmount,
+    cgtPayable,
+    proceedsAfterCgt: investmentValue - cgtPayable,
+  };
 }

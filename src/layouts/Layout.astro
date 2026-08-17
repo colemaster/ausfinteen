@@ -97,13 +97,40 @@ const siteTitle = title.includes('AusFinance') ? title : `${title} | AusFinance 
     <script is:inline>
       (function() {
         try {
-          const urlTheme = new URLSearchParams(window.location.search).get('theme');
+          const params = new URLSearchParams(window.location.search);
+          const urlTheme = params.get('theme');
           const stored = localStorage.getItem('theme');
           const isDark = (urlTheme === 'dark' || (!urlTheme && stored === 'dark') || (!urlTheme && !stored && window.matchMedia('(prefers-color-scheme: dark)').matches));
-          if (isDark) {
-            document.documentElement.classList.add('dark');
-          } else {
-            document.documentElement.classList.remove('dark');
+          document.documentElement.classList.toggle('dark', isDark);
+
+          const ACCENTS = ['emerald', 'violet', 'amber', 'rose', 'cyan', 'default'];
+          const accent = params.get('accent');
+          if (accent && ACCENTS.indexOf(accent) !== -1) {
+            if (accent === 'default') {
+              delete document.documentElement.dataset.accent;
+            } else {
+              document.documentElement.dataset.accent = accent;
+            }
+          }
+
+          const SCALES = ['sm', 'md', 'lg'];
+          const scale = params.get('scale');
+          if (scale && SCALES.indexOf(scale) !== -1) {
+            if (scale === 'sm') {
+              delete document.documentElement.dataset.scale;
+            } else {
+              document.documentElement.dataset.scale = scale;
+            }
+          }
+
+          const CONTRASTS = ['normal', 'high'];
+          const contrast = params.get('contrast');
+          if (contrast && CONTRASTS.indexOf(contrast) !== -1) {
+            if (contrast === 'normal') {
+              delete document.documentElement.dataset.contrast;
+            } else {
+              document.documentElement.dataset.contrast = contrast;
+            }
           }
         } catch (e) {}
       })();

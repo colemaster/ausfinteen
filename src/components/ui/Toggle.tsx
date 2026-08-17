@@ -5,9 +5,10 @@ interface ToggleProps {
   checked: boolean;
   onChange: (v: boolean) => void;
   description?: string;
+  variant?: 'primary' | 'accent';
 }
 
-export function Toggle({ label, checked, onChange, description }: ToggleProps) {
+export function Toggle({ label, checked, onChange, description, variant = 'primary' }: ToggleProps) {
   return (
     <div className="flex items-start gap-3">
       <button
@@ -19,13 +20,16 @@ export function Toggle({ label, checked, onChange, description }: ToggleProps) {
         className={cn(
           'relative mt-0.5 inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border border-transparent p-0.5 outline-none transition-all duration-300 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-95',
           checked
-            ? 'bg-primary shadow-[inset_0_1px_2px_rgba(0,0,0,0.2)]'
+            ? variant === 'accent'
+              ? 'bg-accent shadow-[inset_0_1px_2px_rgba(0,0,0,0.2)]'
+              : 'bg-primary shadow-[inset_0_1px_2px_rgba(0,0,0,0.2)]'
             : 'bg-muted ring-1 ring-inset ring-border/50'
         )}
       >
         <span
           className={cn(
-            'pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow-md ring-1 ring-black/10 transition-transform duration-300 ease-out',
+            'pointer-events-none inline-block h-5 w-5 rounded-full shadow-md ring-1 ring-black/10 transition-transform duration-300 ease-out',
+            variant === 'accent' ? 'bg-accent-foreground' : 'bg-white',
             checked ? 'translate-x-5' : 'translate-x-0'
           )}
         />

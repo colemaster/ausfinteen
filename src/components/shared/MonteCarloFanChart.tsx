@@ -15,6 +15,36 @@ interface MonteCarloFanChartProps {
   subtitle?: string;
   height?: number;
   currencyPrefix?: string;
+  /** Extra percentiles (e.g. [10, 25, 75, 90]) to overlay as dashed lines. */
+  percentiles?: number[];
+  /** Horizontal dashed overlay line at this value (e.g. a goal target). */
+  baseline?: number;
+  /** Legend label for the baseline overlay. */
+  baselineLabel?: string;
+}
+
+const KNOWN_PERCENTILES: { p: number; key: keyof FanChartDataPoint }[] = [
+  { p: 10, key: 'p10' },
+  { p: 25, key: 'p25' },
+  { p: 50, key: 'p50' },
+  { p: 75, key: 'p75' },
+  { p: 90, key: 'p90' },
+];
+
+function percentileValue(d: FanChartDataPoint, p: number): number {
+  if (p <= 10) return d.p10;
+  if (p >= 90) return d.p90;
+  for (let i = 0; i < KNOWN_PERCENTILES.length - 1; i++) {
+    const lo = KNOWN_PERCENTILES[i];
+    const hi = KNOWN_PERCENTILES[i + 1];
+    if (p >= lo.p && p <= hi.p) {
+      const loV = d[lo.key] as number;
+      const hiV = d[hi.key] as number;
+      const t = (p - lo.p) / (hi.p - lo.p);
+      return loV + (hiV - loV) * t;
+    }
+  }
+  return d.p50;
 }
 
 export function MonteCarloFanChart({
@@ -23,6 +53,9 @@ export function MonteCarloFanChart({
   subtitle = 'Projected wealth distributions across 10th, 25th, 50th (median), 75th, and 90th percentiles',
   height = 280,
   currencyPrefix = '$',
+  percentiles,
+  baseline,
+  baselineLabel = 'Target',
 }: MonteCarloFanChartProps) {
   const chartId = useId().replace(/:/g, '');
 
@@ -38,7 +71,10 @@ export function MonteCarloFanChart({
   const minVal = 0;
 
   const getX = (idx: number) => padding.left + (idx / (data.length - 1)) * innerWidth;
-  const getY = (val: number) => padding.top + innerHeight - ((val - minVal) / (maxVal - minVal)) * innerHeight;
+  const getY = (val: number) => {
+    const clamped = Math.min(maxVal, Math.max(minVal, val));
+    return padding.top + innerHeight - ((clamped - minVal) / (maxVal - minVal)) * innerHeight;
+  };
 
   // Create area paths for p10-p90 band and p25-p75 band
   const top90 = data.map((d, i) => `${i === 0 ? 'M' : 'L'} ${getX(i)} ${getY(d.p90)}`).join(' ');
@@ -53,6 +89,12 @@ export function MonteCarloFanChart({
 
   // Y-axis ticks
   const yTicks = [0, 0.25, 0.5, 0.75, 1].map(pct => Math.round(maxVal * pct));
+
+  const sortedPercentiles = percentiles
+    ? [...new Set(percentiles)]
+        .filter(p => Number.isFinite(p) && p > 0 && p < 100)
+        .sort((a, b) => a - b)
+    : [];
 
   return (
     <div className="w-full rounded-2xl bg-card border border-border p-4 shadow-sm space-y-3">
@@ -121,6 +163,45 @@ export function MonteCarloFanChart({
             strokeLinecap="round"
           />
 
+          {/* Extra percentile overlay lines */}
+          {sortedPercentiles.map(p => {
+            const line = data.map((d, i) => `${i === 0 ? 'M' : 'L'} ${getX(i)} ${getY(percentileValue(d, p))}`).join(' ');
+            return (
+              <path
+                key={p}
+                d={line}
+                fill="none"
+                stroke="var(--muted-foreground)"
+                strokeWidth="1.5"
+                strokeDasharray="6 4"
+                strokeLinecap="round"
+              />
+            );
+          })}
+
+          {/* Baseline overlay */}
+          {baseline !== undefined && (
+            <g>
+              <line
+                x1={padding.left}
+                y1={getY(baseline)}
+                x2={width - padding.right}
+                y2={getY(baseline)}
+                stroke="var(--danger)"
+                strokeWidth="1.5"
+                strokeDasharray="3 3"
+              />
+              <text
+                x={width - padding.right - 4}
+                y={getY(baseline) - 4}
+                textAnchor="end"
+                className="fill-[var(--danger)] text-[9px] font-mono font-bold"
+              >
+                {currencyPrefix}{baseline >= 1000000 ? `${(baseline / 1000000).toFixed(1)}M` : `${Math.round(baseline / 1000)}k`}
+              </text>
+            </g>
+          )}
+
           {/* X-axis labels */}
           {data.filter((_, idx) => idx % Math.ceil(data.length / 6) === 0 || idx === data.length - 1).map((d) => {
             const idx = data.indexOf(d);
@@ -154,6 +235,18 @@ export function MonteCarloFanChart({
           <span className="w-4 h-0.5 bg-primary inline-block"></span>
           <span className="font-bold text-foreground">50th Percentile (Median)</span>
         </div>
+        {sortedPercentiles.map(p => (
+          <div key={p} className="flex items-center gap-1.5">
+            <span className="w-4 h-0.5 bg-[var(--muted-foreground)] inline-block" style={{ borderTop: '1.5px dashed var(--muted-foreground)', height: 0 }}></span>
+            <span>p{p}</span>
+          </div>
+        ))}
+        {baseline !== undefined && (
+          <div className="flex items-center gap-1.5">
+            <span className="w-4 h-0 inline-block" style={{ borderTop: '1.5px dashed var(--danger)' }}></span>
+            <span className="text-[var(--danger)] font-semibold">{baselineLabel}</span>
+          </div>
+        )}
       </div>
     </div>
   );

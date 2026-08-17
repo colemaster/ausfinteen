@@ -1,9 +1,12 @@
 import * as React from "react";
 import * as RechartsPrimitive from "recharts";
 import { cn } from "@/lib/utils";
+import { formatCompact, formatCurrency } from "@/utils/formatters";
 
 // Format: { THEME_NAME: CSS_SELECTOR }
 const THEMES = { light: "", dark: ".dark" } as const;
+
+export type MoneyFormat = "compact" | "full";
 
 export type ChartConfig = {
   [k in string]: {
@@ -17,6 +20,7 @@ export type ChartConfig = {
 
 type ChartContextProps = {
   config: ChartConfig;
+  moneyFormat?: MoneyFormat;
 };
 
 const ChartContext = React.createContext<ChartContextProps | null>(null);
@@ -54,16 +58,17 @@ const ChartContainer = React.forwardRef<
   HTMLDivElement,
   React.ComponentProps<"div"> & {
     config: ChartConfig;
+    moneyFormat?: MoneyFormat;
     children: React.ComponentProps<
       typeof RechartsPrimitive.ResponsiveContainer
     >["children"];
   }
->(({ id, className, children, config, ...props }, ref) => {
+>(({ id, className, children, config, moneyFormat, ...props }, ref) => {
   const uniqueId = React.useId();
   const chartId = `chart-${id || uniqueId.replace(/:/g, "")}`;
 
   return (
-    <ChartContext.Provider value={{ config }}>
+    <ChartContext.Provider value={{ config, moneyFormat }}>
       <div
         data-chart={chartId}
         ref={ref}
@@ -164,7 +169,7 @@ const ChartTooltipContent = React.forwardRef<
     },
     ref
   ) => {
-    const { config } = useChart();
+    const { config, moneyFormat } = useChart();
 
     const tooltipLabel = React.useMemo(() => {
       if (hideLabel || !payload?.length) {
@@ -273,7 +278,13 @@ const ChartTooltipContent = React.forwardRef<
                       </div>
                       {item.value !== undefined && (
                         <span className="font-mono font-medium tabular-nums text-[var(--foreground)]">
-                          {item.value.toLocaleString()}
+                          {typeof item.value === "number" &&
+                          moneyFormat === "compact"
+                            ? formatCompact(item.value)
+                            : typeof item.value === "number" &&
+                                moneyFormat === "full"
+                              ? formatCurrency(item.value)
+                              : item.value.toLocaleString()}
                         </span>
                       )}
                     </div>

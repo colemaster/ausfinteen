@@ -1,5 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import { yearsToFIREFromNW, yearsToFIREBySavingsRate, projectBySavingsRate } from './engine';
+import {
+  yearsToFIREFromNW,
+  yearsToFIREBySavingsRate,
+  projectBySavingsRate,
+  projectPayStrategies,
+  rateToRetirementYears,
+  takeHomeBreakdown,
+} from './engine';
 
 describe('yearsToFIREFromNW', () => {
   it('returns 0 when already at FIRE number', () => {
@@ -90,5 +97,82 @@ describe('projectBySavingsRate', () => {
     const proj10 = projectBySavingsRate(100000, 0, 10, 7, 20);
     const proj50 = projectBySavingsRate(100000, 0, 50, 7, 20);
     expect(proj50[19]).toBeGreaterThan(proj10[19]);
+  });
+});
+
+describe('projectPayStrategies', () => {
+  it('pay-first always beats pay-at-end for the same savings rate', () => {
+    const result = projectPayStrategies(100000, 0, 30, 7, 20);
+    expect(result.payAtEnd).toHaveLength(20);
+    expect(result.payFirst).toHaveLength(20);
+    for (let i = 0; i < 20; i++) {
+      expect(result.payFirst[i]).toBeGreaterThan(result.payAtEnd[i]);
+    }
+  });
+
+  it('known-answer: year 1 balances differ by one year of growth', () => {
+    const result = projectPayStrategies(100000, 0, 30, 10, 1);
+    // pay-at-end: 30000; pay-first: 30000 * 1.10 = 33000
+    expect(result.payAtEnd[0]).toBe(30000);
+    expect(result.payFirst[0]).toBe(33000);
+  });
+
+  it('zero savings rate leaves both strategies equal', () => {
+    const result = projectPayStrategies(100000, 5000, 0, 7, 5);
+    expect(result.payFirst).toEqual(result.payAtEnd);
+  });
+});
+
+describe('rateToRetirementYears', () => {
+  it('returns a row per supplied rate', () => {
+    const rows = rateToRetirementYears(100000, 0, 7, [0.2, 0.5, 0.8]);
+    expect(rows).toHaveLength(3);
+  });
+
+  it('higher rate -> higher savings, lower expenses, fewer years', () => {
+    const rows = rateToRetirementYears(100000, 0, 7, [0.2, 0.8]);
+    expect(rows[1].annualSavings).toBeGreaterThan(rows[0].annualSavings);
+    expect(rows[1].annualExpenses).toBeLessThan(rows[0].annualExpenses);
+    expect(rows[1].years).toBeLessThanOrEqual(rows[0].years);
+  });
+
+  it('FIRE number = expenses / 0.04 at 50% rate on $100k', () => {
+    const rows = rateToRetirementYears(100000, 0, 7, [0.5]);
+    expect(rows[0].annualExpenses).toBe(50000);
+    expect(rows[0].fireNumber).toBe(1250000);
+  });
+
+  it('clamps rates to a sane 0–0.99 range', () => {
+    const rows = rateToRetirementYears(100000, 0, 7, [2, -1]);
+    expect(rows[0].rate).toBe(0.99);
+    expect(rows[1].rate).toBe(0);
+  });
+});
+
+describe('takeHomeBreakdown', () => {
+  it('no HELP debt -> zero repayment', () => {
+    const b = takeHomeBreakdown(100000, 0.32, false);
+    expect(b.helpRepayment).toBe(0);
+    expect(b.superGuarantee).toBeCloseTo(12000, 0);
+    expect(b.taxEstimate).toBe(32000);
+    expect(b.netTakeHome).toBe(68000);
+  });
+
+  it('with HELP debt -> ATO 2026-27 repayment applied', () => {
+    const b = takeHomeBreakdown(80000, 0.32, true);
+    // 2026-27: $75,001–$80,000 tier = 2.0% -> 80000 * 0.02 = 1600
+    expect(b.helpRepayment).toBe(1600);
+    expect(b.netTakeHome).toBe(80000 - 25600 - 1600);
+  });
+
+  it('takeHomeRate is net/gross', () => {
+    const b = takeHomeBreakdown(50000, 0.16, false);
+    expect(b.takeHomeRate).toBeCloseTo(0.84, 5);
+  });
+
+  it('zero income is safe', () => {
+    const b = takeHomeBreakdown(0, 0.32, true);
+    expect(b.netTakeHome).toBe(0);
+    expect(b.takeHomeRate).toBe(0);
   });
 });

@@ -2,8 +2,11 @@ import { useState, useMemo } from 'react';
 import { StatCard } from '../../components/ui/StatCard';
 import { NumberInput } from '../../components/ui/NumberInput';
 import { SliderControl } from '../../components/ui/SliderControl';
-import { calculateFIRENumber, coastFIRENumber } from './engine';
+import { calculateFIRENumber, coastFIRENumber, projectCoastToRetirement } from './engine';
 import { formatCurrency, formatCompact } from '../../utils/formatters';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, ReferenceLine } from 'recharts';
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+import { fireTrajectoryConfig } from '@/lib/chart-configs';
 
 interface Props {
   currentInvestments: number;
@@ -26,6 +29,16 @@ export function CoastFIRE({ currentInvestments, returnRate }: Props) {
     () => coastFIRENumber(fireNumber, returnRate, yearsToRetirement),
     [fireNumber, returnRate, yearsToRetirement],
   );
+
+  const coastTrajectory = useMemo(
+    () => projectCoastToRetirement(currentInvestments, returnRate, yearsToRetirement),
+    [currentInvestments, returnRate, yearsToRetirement],
+  );
+
+  const chartData = coastTrajectory.map((v, i) => ({
+    age: currentAge + i + 1,
+    Portfolio: v,
+  }));
 
   const reached = currentInvestments >= coastNumber;
   const gap = coastNumber - currentInvestments;
@@ -53,6 +66,30 @@ export function CoastFIRE({ currentInvestments, returnRate }: Props) {
         <StatCard label="FIRE Number (target)" value={formatCompact(fireNumber)} color="green" subtext={`${(annualExpenses / 1000).toFixed(0)}k expenses / ${swr}% SWR`} />
         <StatCard label={reached ? 'Surplus' : 'Gap to Coast'} value={formatCurrency(Math.abs(gap))} color={reached ? 'green' : 'amber'} />
       </div>
+
+      {chartData.length > 0 && (
+        <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-4">
+          <h4 className="text-xs font-semibold text-[var(--muted-foreground)] mb-3">
+            Coast Trajectory — current portfolio growing to age {retirementAge} (no further contributions)
+          </h4>
+          <ChartContainer config={fireTrajectoryConfig} className="h-[280px] w-full">
+            <AreaChart data={chartData} margin={{ top: 4, right: 16, left: 8, bottom: 4 }}>
+              <defs>
+                <linearGradient id="fillCoast" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="var(--color-portfolio)" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="var(--color-portfolio)" stopOpacity={0.0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid vertical={false} strokeDasharray="3 3" />
+              <XAxis dataKey="age" tickLine={false} axisLine={false} tick={{ fontSize: 10 }} label={{ value: 'Age', position: 'insideBottom', offset: -2, fontSize: 10 }} />
+              <YAxis tickLine={false} axisLine={false} tickFormatter={v => formatCompact(typeof v === 'number' ? v : 0)} tick={{ fontSize: 10 }} />
+              <ChartTooltip content={<ChartTooltipContent />} />
+              <ReferenceLine y={fireNumber} stroke="var(--color-fireTarget)" strokeDasharray="4 4" label={{ value: 'FIRE target', fontSize: 10, fill: 'var(--color-fireTarget)' }} />
+              <Area type="monotone" dataKey="Portfolio" stroke="var(--color-portfolio)" fill="url(#fillCoast)" strokeWidth={2.5} animationDuration={1200} animationEasing="ease-in-out" />
+            </AreaChart>
+          </ChartContainer>
+        </div>
+      )}
     </div>
   );
 }

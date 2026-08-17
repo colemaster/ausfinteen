@@ -1,6 +1,7 @@
 import { HECSPayoffCalc } from '@/calculators/hecs-payoff/HECSPayoffCalc';
 import { TopicGuideAccordion } from '@/components/shared/TopicGuideAccordion';
 import { Disclaimer } from '@/components/shared/Disclaimer';
+import { PrintResultButton } from '@/components/shared/PrintResultButton';
 import { ArrowLeft } from 'lucide-react';
 import { Link } from '@/lib/router';
 
@@ -43,7 +44,13 @@ export function HECSPayoff() {
         <span className="text-foreground">HECS-HELP Payoff Simulator</span>
       </div>
 
-      <HECSPayoffCalc />
+      <section data-print-section>
+        <HECSPayoffCalc />
+      </section>
+
+      <div className="flex justify-end">
+        <PrintResultButton />
+      </div>
 
       <div className="max-w-5xl mx-auto space-y-6">
         <TopicGuideAccordion

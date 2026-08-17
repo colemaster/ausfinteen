@@ -48,6 +48,41 @@ export function calcHELPRepayment(repaymentIncome: number): number {
   return 0;
 }
 
+/**
+ * Return the HELP/HECS repayment rate (0% to 10%) for a given repayment income.
+ * Returns 0 for incomes at or below the minimum threshold ($67,000).
+ */
+export function calcHELPRate(repaymentIncome: number): number {
+  for (const t of HELP_REPAYMENT_THRESHOLDS_2026_27) {
+    if (repaymentIncome <= t.max) {
+      return t.rate;
+    }
+  }
+  return 0;
+}
+
+/**
+ * Return the HELP/HECS threshold bracket a given repayment income falls into.
+ * @returns The matching HELPThreshold or undefined below $67,000.
+ */
+export function getHELPBracket(repaymentIncome: number): HELPThreshold | undefined {
+  return HELP_REPAYMENT_THRESHOLDS_2026_27.find(
+    (t, i) =>
+      repaymentIncome <= t.max &&
+      (i === 0 || repaymentIncome >= HELP_REPAYMENT_THRESHOLDS_2026_27[i - 1]!.max + 1),
+  );
+}
+
+// ─── PAYG Withholding & Tax-Free Threshold ───────────────────────────────────
+/** $18,200 tax-free threshold for residents — built into TAX_BRACKETS_2026_27 */
+export const TAX_FREE_THRESHOLD = 18200;
+
+/** Top marginal rate used when a TFN is NOT provided (or exemption not claimed) */
+export const TFN_WITHHOLDING_RATE = 0.47;
+
+/** Weeks in a standard working year used for weekly → annual estimates */
+export const WEEKS_PER_YEAR = 52;
+
 // ─── CGT Discount Rates ───────────────────────────────────────────────────────
 
 /** 50% CGT discount for individuals — assets held >12 months */

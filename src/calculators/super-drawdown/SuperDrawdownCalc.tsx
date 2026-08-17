@@ -1,5 +1,12 @@
 import { useState, useMemo } from 'react';
-import { simulateRetirementPlan, calculateAgePension } from './engine';
+import {
+  simulateRetirementPlan,
+  calculateAgePension,
+  generateReturnSequences,
+  monteCarloDrawdownFan,
+  transferBalanceCapCheck,
+} from './engine';
+import { MonteCarloFanChart } from '@/components/shared/MonteCarloFanChart';
 import { OdometerCounter } from '@/components/shared/OdometerCounter';
 import { sound } from '@/lib/sound-synthesizer';
 import { exportToCSV, encodePlanToHash, generateSimpleQRCodeSVG } from '@/lib/share-state';
@@ -9,8 +16,12 @@ import {
   Download,
   Share2,
   X,
+  AlertTriangle,
 } from 'lucide-react';
 import { toast } from 'sonner';
+
+const MONTE_CARLO_SIMS = 40;
+const MONTE_CARLO_VOLATILITY = 0.12;
 
 export function SuperDrawdownCalc() {
   const currentAge = 60;
@@ -20,6 +31,7 @@ export function SuperDrawdownCalc() {
   const [desiredIncome, setDesiredIncome] = useState<number>(60000);
   const [expectedReturn, setExpectedReturn] = useState<number>(6.5);
   const [inflationRate, setInflationRate] = useState<number>(2.5);
+  const [lumpSum, setLumpSum] = useState<number>(0);
   const [relationshipStatus, setRelationshipStatus] = useState<'single' | 'couple'>('single');
   const [isHomeowner, setIsHomeowner] = useState<boolean>(true);
   const [showShareModal, setShowShareModal] = useState<boolean>(false);
@@ -37,6 +49,7 @@ export function SuperDrawdownCalc() {
       isHomeowner,
       otherAssessableAssets: otherAssets,
       projectionYears: 35,
+      lumpSumWithdrawal: lumpSum,
     });
   }, [
     currentAge,
@@ -48,7 +61,38 @@ export function SuperDrawdownCalc() {
     relationshipStatus,
     isHomeowner,
     otherAssets,
+    lumpSum,
   ]);
+
+  // Monte Carlo market-sequence overlay (seeded for reproducible plans)
+  const fanChartData = useMemo(() => {
+    const sequences = generateReturnSequences(
+      35,
+      MONTE_CARLO_SIMS,
+      expectedReturn / 100,
+      MONTE_CARLO_VOLATILITY,
+      42,
+    );
+    return monteCarloDrawdownFan({
+      currentAge,
+      retirementAge,
+      superBalanceAtRetirement: superBalance,
+      desiredAnnualIncome: desiredIncome,
+      expectedAnnualReturn: expectedReturn / 100,
+      inflationRate: inflationRate / 100,
+      relationshipStatus,
+      isHomeowner,
+      otherAssessableAssets: otherAssets,
+      projectionYears: 35,
+      lumpSumWithdrawal: lumpSum,
+    }, sequences);
+  }, [currentAge, retirementAge, superBalance, desiredIncome, expectedReturn, inflationRate, relationshipStatus, isHomeowner, otherAssets, lumpSum]);
+
+  // Transfer Balance Cap warning on the highest projected balance
+  const tbcCheck = useMemo(
+    () => transferBalanceCapCheck(simResult.maxProjectedBalance, retirementAge),
+    [simResult.maxProjectedBalance, retirementAge],
+  );
 
   const pensionAt67 = useMemo(() => {
     return calculateAgePension({
@@ -315,6 +359,30 @@ export function SuperDrawdownCalc() {
             />
           </div>
 
+          {/* Lump Sum at Retirement */}
+          <div className="space-y-1.5">
+            <div className="flex justify-between text-xs font-semibold">
+              <label htmlFor="super-lump-sum" className="text-muted-foreground">Lump Sum at Retirement (min pension)</label>
+              <span className="font-mono text-foreground">${lumpSum.toLocaleString()}</span>
+            </div>
+            <input
+              id="super-lump-sum"
+              type="range"
+              min={0}
+              max={Math.min(500000, Math.max(0, superBalance))}
+              step={10000}
+              value={lumpSum}
+              onChange={e => {
+                sound.playTick();
+                setLumpSum(Number(e.target.value));
+              }}
+              className="w-full accent-primary cursor-pointer"
+            />
+            <p className="text-[10px] text-muted-foreground">
+              Withdrawn tax-free at retirement; the rest runs the account-based pension. Remaining balance: <span className="font-mono font-bold text-foreground">${Math.max(0, superBalance - lumpSum).toLocaleString()}</span>
+            </p>
+          </div>
+
           {/* Return & Inflation */}
           <div className="grid grid-cols-2 gap-3 pt-2 border-t border-border/60">
             <div className="space-y-1">
@@ -351,6 +419,33 @@ export function SuperDrawdownCalc() {
 
         {/* Schedule & Breakdown */}
         <div className="lg:col-span-7 space-y-4">
+          {/* Transfer Balance Cap warning */}
+          {tbcCheck.overCap && (
+            <div className="p-4 rounded-2xl border border-amber-500/40 bg-amber-500/10 space-y-1">
+              <div className="flex items-center gap-2 text-xs font-bold text-amber-600 dark:text-amber-400">
+                <AlertTriangle className="w-4 h-4" />
+                Transfer Balance Cap Warning
+              </div>
+              <p className="text-xs text-amber-700 dark:text-amber-200/80 leading-relaxed">
+                Your projected super balance peaks at{' '}
+                <span className="font-mono font-bold">${simResult.maxProjectedBalance.toLocaleString()}</span>, which exceeds
+                the general Transfer Balance Cap of{' '}
+                <span className="font-mono font-bold">${tbcCheck.cap.toLocaleString()}</span> by{' '}
+                <span className="font-mono font-bold">${tbcCheck.excess.toLocaleString()}</span>.
+                Amounts above the cap cannot remain in the tax-free pension phase and would need to be moved to accumulation
+                phase or withdrawn.
+              </p>
+            </div>
+          )}
+
+          {/* Monte Carlo sequence fan */}
+          <MonteCarloFanChart
+            data={fanChartData}
+            title="Market Sequence Risk — 40 Simulated Return Paths"
+            subtitle={`Projected super balance percentiles (10th–90th) across ${MONTE_CARLO_SIMS} seeded Monte Carlo sequences at ${expectedReturn.toFixed(1)}% mean return / ${MONTE_CARLO_VOLATILITY * 100}% volatility`}
+            height={280}
+          />
+
           <div className="p-4 rounded-2xl bg-card border border-border space-y-3">
             <h4 className="text-xs font-bold text-foreground flex items-center gap-1.5">
               <Sparkles className="w-4 h-4 text-primary" />

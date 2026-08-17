@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/Badge';
 import { WebReferenceLink } from '@/components/shared/WebReferenceLink';
 import { OFFICIAL_WEB_LINKS } from '@/data/teen-finance-data';
 import { EV_VS_PETROL_DEFAULTS } from '@/data/car-data';
+import { evVsPetrolRunningCost } from './engine';
 import { Zap, Fuel } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip, Cell } from 'recharts';
 import { ChartContainer, ChartTooltipContent } from '@/components/ui/chart';
@@ -19,18 +20,17 @@ export function EvVsPetrolCalculator() {
   const [fastPrice, setFastPrice] = useState<number>(EV_VS_PETROL_DEFAULTS.publicFastPricePerKwh);
   const [fastSharePct, setFastSharePct] = useState<number>(EV_VS_PETROL_DEFAULTS.publicFastSharePct);
 
-  const hundredKmPerYear = kmPerYear / 100;
+  const comparison = evVsPetrolRunningCost({
+    kmPerYear,
+    petrolLPer100km,
+    petrolPricePerLitre: petrolPrice,
+    evKwhPer100km,
+    homeOffPeakPricePerKwh: homePrice,
+    publicFastPricePerKwh: fastPrice,
+    publicFastSharePct: fastSharePct,
+  });
 
-  const petrolAnnual = hundredKmPerYear * petrolLPer100km * petrolPrice;
-  const petrolPer100km = petrolLPer100km * petrolPrice;
-
-  const homeShare = (100 - fastSharePct) / 100;
-  const evBlendedPricePerKwh = homePrice * homeShare + fastPrice * (fastSharePct / 100);
-  const evAnnual = hundredKmPerYear * evKwhPer100km * evBlendedPricePerKwh;
-  const evPer100km = evKwhPer100km * evBlendedPricePerKwh;
-
-  const savingsAnnual = petrolAnnual - evAnnual;
-  const savingsPct = petrolAnnual > 0 ? (savingsAnnual / petrolAnnual) * 100 : 0;
+  const { petrolAnnual, petrolPer100km, evAnnual, evPer100km, savingsAnnual, savingsPct } = comparison;
 
   const chartData = useMemo(() => {
     return [

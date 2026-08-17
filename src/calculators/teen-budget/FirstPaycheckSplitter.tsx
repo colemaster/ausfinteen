@@ -1,37 +1,63 @@
 import { useState, useMemo } from 'react';
 import { Card } from '@/components/ui/Card';
 import { NumberInput } from '@/components/ui/NumberInput';
+import { SliderControl } from '@/components/ui/SliderControl';
 import { StatCard } from '@/components/ui/StatCard';
 import { Badge } from '@/components/ui/Badge';
+import { PaymentPeriodToggle, type PaymentPeriod } from '@/components/ui/PaymentPeriodToggle';
 import { OFFICIAL_WEB_LINKS } from '@/data/teen-finance-data';
 import { WebReferenceLink } from '@/components/shared/WebReferenceLink';
 import { PieChart as PieChartIcon, Sparkles } from 'lucide-react';
 import { useTeenProfile } from '@/context/TeenProfileContext';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { ChartContainer, ChartTooltipContent } from '@/components/ui/chart';
+import { splitPaycheck, adjustSplitKeepingTotal, convertPaycheckPeriod, type BucketKey } from './engine';
 
 const BUCKET_COLORS = ['#f59e0b', '#10b981', '#a855f7', '#3b82f6'];
+
+type SplitSystem = 'barefoot' | 'rule503020' | 'bucket4' | 'custom';
 
 export function FirstPaycheckSplitter() {
   const { weeklyNetPay } = useTeenProfile();
   const [paycheckAmount, setPaycheckAmount] = useState<number>(weeklyNetPay > 0 ? weeklyNetPay : 234);
-  const [systemStyle, setSystemStyle] = useState<'barefoot' | 'rule503020' | 'bucket4'>('barefoot');
+  const [period, setPeriod] = useState<PaymentPeriod>('weekly');
+  const [systemStyle, setSystemStyle] = useState<SplitSystem>('barefoot');
+  const [customSplit, setCustomSplit] = useState({ needs: 50, wants: 30, savings: 20 });
 
-  // Barefoot 3-Bucket (Blow 60%, Mojo 20%, Grow 20%)
+  // Amount expressed per week regardless of the selected period
+  const weeklyEquivalent = convertPaycheckPeriod(paycheckAmount, period, 'weekly');
+
+  const applyPreset = (split: 'barefoot' | 'rule503020' | 'bucket4' | 'custom') => {
+    setSystemStyle(split);
+    if (split === 'rule503020') setCustomSplit({ needs: 50, wants: 30, savings: 20 });
+    if (split === 'barefoot') setCustomSplit({ needs: 60, wants: 20, savings: 20 });
+  };
+
+  const onCustomSlider = (key: BucketKey, pct: number) => {
+    setCustomSplit(prev => adjustSplitKeepingTotal(prev, key, pct));
+  };
+
+  const customTotal = customSplit.needs + customSplit.wants + customSplit.savings;
+
+  // Barefoot 3-Bucket (Blow 60%, Mojo 20%, Grow 20%) — mapped as needs/wants/savings
   const barefootBlow = paycheckAmount * 0.60;
   const barefootMojo = paycheckAmount * 0.20;
   const barefootGrow = paycheckAmount * 0.20;
 
   // 50/30/20 Rule
-  const needs50 = paycheckAmount * 0.50;
-  const wants30 = paycheckAmount * 0.30;
-  const savings20 = paycheckAmount * 0.20;
+  const ruleSplit = splitPaycheck(paycheckAmount, 50, 30, 20);
+  const needs50 = ruleSplit.needs;
+  const wants30 = ruleSplit.wants;
+  const savings20 = ruleSplit.savings;
 
   // 4-Bucket Split
   const b4Everyday = paycheckAmount * 0.40;
   const b4Savings = paycheckAmount * 0.30;
   const b4Emergency = paycheckAmount * 0.20;
   const b4BigGoal = paycheckAmount * 0.10;
+
+  // Custom split
+  const customAmounts = splitPaycheck(paycheckAmount, customSplit.needs, customSplit.wants, customSplit.savings);
 
   const chartData = useMemo(() => {
     if (systemStyle === 'barefoot') {
@@ -46,6 +72,12 @@ export function FirstPaycheckSplitter() {
         { name: 'Wants (30%)', value: Math.round(wants30), color: '#a855f7' },
         { name: 'Savings (20%)', value: Math.round(savings20), color: '#10b981' },
       ];
+    } else if (systemStyle === 'custom') {
+      return [
+        { name: `Needs (${customSplit.needs.toFixed(0)}%)`, value: Math.round(customAmounts.needs), color: '#3b82f6' },
+        { name: `Wants (${customSplit.wants.toFixed(0)}%)`, value: Math.round(customAmounts.wants), color: '#a855f7' },
+        { name: `Savings (${customSplit.savings.toFixed(0)}%)`, value: Math.round(customAmounts.savings), color: '#10b981' },
+      ];
     } else {
       return [
         { name: 'Everyday (40%)', value: Math.round(b4Everyday), color: '#3b82f6' },
@@ -54,7 +86,7 @@ export function FirstPaycheckSplitter() {
         { name: 'Big Goal (10%)', value: Math.round(b4BigGoal), color: '#a855f7' },
       ];
     }
-  }, [systemStyle, paycheckAmount, barefootBlow, barefootMojo, barefootGrow, needs50, wants30, savings20, b4Everyday, b4Savings, b4Emergency, b4BigGoal]);
+  }, [systemStyle, paycheckAmount, barefootBlow, barefootMojo, barefootGrow, needs50, wants30, savings20, b4Everyday, b4Savings, b4Emergency, b4BigGoal, customSplit, customAmounts]);
 
   const chartConfig = useMemo(() => {
     const config: Record<string, { label: string; color: string }> = {};
@@ -83,22 +115,32 @@ export function FirstPaycheckSplitter() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div className="space-y-4">
+          <div className="space-y-2">
+            <label className="text-xs font-semibold text-muted-foreground block">Paycheck Deposit Period</label>
+            <PaymentPeriodToggle value={period} onChange={setPeriod} fullWidth />
+          </div>
           <NumberInput
-            label="Weekly Paycheck Deposit ($)"
+            label={`Paycheck Amount ($${period === 'weekly' ? 'wk' : period === 'fortnightly' ? 'fn' : 'mo'})`}
             value={paycheckAmount}
             onChange={v => setPaycheckAmount(v)}
             min={50}
-            max={2000}
+            max={4000}
             step={10}
             prefix="$"
           />
+          {period !== 'weekly' && (
+            <p className="text-[11px] text-muted-foreground">
+              That's <strong className="font-mono">${weeklyEquivalent.toFixed(2)}/wk</strong> — the chart shows your
+              split per paycheck.
+            </p>
+          )}
 
           <div className="space-y-2">
             <label className="text-xs font-semibold text-muted-foreground block">Select Budgeting Framework</label>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 gap-2">
               <button
                 type="button"
-                onClick={() => setSystemStyle('barefoot')}
+                onClick={() => applyPreset('barefoot')}
                 className={`py-2 px-2 text-xs font-bold rounded-xl border transition-all ${
                   systemStyle === 'barefoot'
                     ? 'bg-amber-500 text-white border-amber-500 shadow-xs'
@@ -109,7 +151,7 @@ export function FirstPaycheckSplitter() {
               </button>
               <button
                 type="button"
-                onClick={() => setSystemStyle('rule503020')}
+                onClick={() => applyPreset('rule503020')}
                 className={`py-2 px-2 text-xs font-bold rounded-xl border transition-all ${
                   systemStyle === 'rule503020'
                     ? 'bg-primary text-primary-foreground border-primary shadow-xs'
@@ -120,7 +162,7 @@ export function FirstPaycheckSplitter() {
               </button>
               <button
                 type="button"
-                onClick={() => setSystemStyle('bucket4')}
+                onClick={() => applyPreset('bucket4')}
                 className={`py-2 px-2 text-xs font-bold rounded-xl border transition-all ${
                   systemStyle === 'bucket4'
                     ? 'bg-purple-500 text-white border-purple-500 shadow-xs'
@@ -129,8 +171,64 @@ export function FirstPaycheckSplitter() {
               >
                 4-Bucket Split
               </button>
+              <button
+                type="button"
+                onClick={() => applyPreset('custom')}
+                className={`py-2 px-2 text-xs font-bold rounded-xl border transition-all ${
+                  systemStyle === 'custom'
+                    ? 'bg-emerald-500 text-white border-emerald-500 shadow-xs'
+                    : 'bg-card border-border hover:bg-muted text-foreground'
+                }`}
+              >
+                Custom Split
+              </button>
             </div>
           </div>
+
+          {systemStyle === 'custom' && (
+            <div className="space-y-3 rounded-2xl border border-emerald-500/30 bg-emerald-500/5 p-3.5 animate-fade-in">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-foreground">Custom % Split</span>
+                <span
+                  className={`text-xs font-mono font-bold ${
+                    customTotal === 100 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-500'
+                  }`}
+                >
+                  {customTotal.toFixed(0)}% total
+                </span>
+              </div>
+              <SliderControl
+                label="Needs %"
+                value={customSplit.needs}
+                onChange={v => onCustomSlider('needs', v)}
+                min={0}
+                max={100}
+                step={1}
+                suffix="%"
+              />
+              <SliderControl
+                label="Wants %"
+                value={customSplit.wants}
+                onChange={v => onCustomSlider('wants', v)}
+                min={0}
+                max={100}
+                step={1}
+                suffix="%"
+              />
+              <SliderControl
+                label="Savings %"
+                value={customSplit.savings}
+                onChange={v => onCustomSlider('savings', v)}
+                min={0}
+                max={100}
+                step={1}
+                suffix="%"
+              />
+              <p className="text-[11px] text-muted-foreground">
+                Sliders self-balance to always total 100% — drag Needs and Wants/Savings adjust proportionally.
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Visual Donut Chart */}
@@ -264,6 +362,45 @@ export function FirstPaycheckSplitter() {
               color="purple"
               subtext="Car or travel fund"
             />
+          </div>
+        </div>
+      )}
+
+      {systemStyle === 'custom' && (
+        <div className="space-y-4 animate-fade-in">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <StatCard
+              label={`Needs (${customSplit.needs.toFixed(0)}%)`}
+              value={`$${customAmounts.needs.toFixed(2)}/${period === 'fortnightly' ? 'fn' : period === 'monthly' ? 'mo' : 'wk'}`}
+              numericValue={customAmounts.needs}
+              format="currency"
+              color="blue"
+              subtext="Essential phone, transport, school"
+            />
+            <StatCard
+              label={`Wants (${customSplit.wants.toFixed(0)}%)`}
+              value={`$${customAmounts.wants.toFixed(2)}/${period === 'fortnightly' ? 'fn' : period === 'monthly' ? 'mo' : 'wk'}`}
+              numericValue={customAmounts.wants}
+              format="currency"
+              color="purple"
+              subtext="Guilt-free eating out & fun"
+            />
+            <StatCard
+              label={`Savings (${customSplit.savings.toFixed(0)}%)`}
+              value={`$${customAmounts.savings.toFixed(2)}/${period === 'fortnightly' ? 'fn' : period === 'monthly' ? 'mo' : 'wk'}`}
+              numericValue={customAmounts.savings}
+              format="currency"
+              color="green"
+              subtext="High-yield savings goal"
+            />
+          </div>
+          <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-xs flex items-start gap-2">
+            <Sparkles className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+            <div>
+              <span className="font-bold block mb-0.5">Custom Rule Tip:</span>
+              A good teen target is <strong>50% needs / 30% wants / 20% savings</strong>. If your split totals
+              100% you're allocating every dollar on purpose — no money leaks away!
+            </div>
           </div>
         </div>
       )}

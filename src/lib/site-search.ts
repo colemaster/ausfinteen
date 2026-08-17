@@ -34,7 +34,7 @@ interface ToolEntry {
   route: string;
 }
 
-const ALL_TOOLS: ToolEntry[] = [
+export const ALL_TOOLS: ToolEntry[] = [
   // 5 High-Demand Next-Gen Australian Calculators
   { name: 'HECS-HELP Payoff vs Investing Simulator', description: '2025-2027 marginal HELP system ($67k threshold), min(CPI, WPI) indexation cap, offset & ASX ETF wealth arbitrage, APRA borrowing capacity impact.', route: '/hecs-payoff' },
   { name: 'Super Drawdown & Age Pension Optimizer', description: 'Schedule 7 SISR minimum drawdowns, 0% ECPI tax rate, deeming rates (1.25%/3.25%), and Centrelink Age Pension Means Test.', route: '/super-drawdown' },
@@ -205,3 +205,28 @@ export const POPULAR_SEARCHES = [
   'ETF',
   'Mojo buffer',
 ];
+
+const MAX_RECENT_SEARCHES = 5;
+let recentSearches: string[] = [];
+
+/**
+ * Session-only history of the user's most recent searches (max 5).
+ * Deliberately in-memory (module scope) and NEVER persisted — privacy-first,
+ * no localStorage, nothing written to disk. Resets on page reload.
+ */
+export function getRecentSearches(): string[] {
+  return [...recentSearches];
+}
+
+export function addRecentSearch(query: string): void {
+  const trimmed = query.trim();
+  if (trimmed.length < 2) return;
+  recentSearches = [
+    trimmed,
+    ...recentSearches.filter(q => q.toLowerCase() !== trimmed.toLowerCase()),
+  ].slice(0, MAX_RECENT_SEARCHES);
+}
+
+export function clearRecentSearches(): void {
+  recentSearches = [];
+}

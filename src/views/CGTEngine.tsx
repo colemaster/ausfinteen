@@ -1,6 +1,7 @@
 import { CGTEngineCalc } from '@/calculators/cgt-engine/CGTEngineCalc';
 import { TopicGuideAccordion } from '@/components/shared/TopicGuideAccordion';
 import { Disclaimer } from '@/components/shared/Disclaimer';
+import { PrintResultButton } from '@/components/shared/PrintResultButton';
 import { ArrowLeft } from 'lucide-react';
 import { Link } from '@/lib/router';
 
@@ -43,7 +44,13 @@ export function CGTEngine() {
         <span className="text-foreground">Capital Gains Tax & 6-Year Rule Engine</span>
       </div>
 
-      <CGTEngineCalc />
+      <section data-print-section>
+        <CGTEngineCalc />
+      </section>
+
+      <div className="flex justify-end">
+        <PrintResultButton />
+      </div>
 
       <div className="max-w-5xl mx-auto space-y-6">
         <TopicGuideAccordion

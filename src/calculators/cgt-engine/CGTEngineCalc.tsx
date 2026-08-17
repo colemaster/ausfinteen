@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { calculateCGT } from './engine';
+import { calculateCGT, cgtOnDisposal } from './engine';
 import { OdometerCounter } from '@/components/shared/OdometerCounter';
 import { sound } from '@/lib/sound-synthesizer';
 import { exportToCSV, encodePlanToHash, generateSimpleQRCodeSVG } from '@/lib/share-state';
@@ -11,8 +11,19 @@ import {
   Share2,
   X,
   AlertCircle,
+  Hammer,
+  KeyRound,
+  Landmark,
+  ReceiptText,
 } from 'lucide-react';
 import { toast } from 'sonner';
+
+const WORKFLOW_STEPS = [
+  { id: 'buy', label: 'Buy', icon: KeyRound },
+  { id: 'improve', label: 'Improve', icon: Hammer },
+  { id: 'rent', label: 'Rent', icon: Home },
+  { id: 'sell', label: 'Sell', icon: Landmark },
+] as const;
 
 export function CGTEngineCalc() {
   const [assetType, setAssetType] = useState<'property' | 'shares' | 'crypto'>('property');
@@ -20,7 +31,7 @@ export function CGTEngineCalc() {
   const [salePrice, setSalePrice] = useState<number>(920000);
   const [ownershipMonths, setOwnershipMonths] = useState<number>(36);
   const [buyingCosts, setBuyingCosts] = useState<number>(28000); // Stamp duty & conveyancing
-  const [renovations] = useState<number>(15000);
+  const [renovations, setRenovations] = useState<number>(15000);
   const [sellingCosts, setSellingCosts] = useState<number>(22000); // Agent commission & legal
   const [div43Clawback, setDiv43Clawback] = useState<number>(8000); // Capital works depreciation
   const currentLosses = 0;
@@ -33,6 +44,22 @@ export function CGTEngineCalc() {
   const [electedSixYear, setElectedSixYear] = useState<boolean>(true);
   const [showShareModal, setShowShareModal] = useState<boolean>(false);
   const [shareUrl, setShareUrl] = useState<string>('');
+
+  // ATO section references for the current scenario (workflow model)
+  const disposalRefs = useMemo(
+    () => {
+      const r = cgtOnDisposal(purchasePrice, salePrice, {
+        buyCosts: buyingCosts,
+        sellCosts: sellingCosts,
+        capitalWorksClaimed: assetType === 'property' ? div43Clawback : 0,
+        incomeProducedWhileRented: assetType === 'property' && wasRentedOut ? 1 : 0,
+        monthsRented: assetType === 'property' ? rentedMonths : 0,
+        totalMonthsOwned: ownershipMonths,
+      }, { currentYearLosses: currentLosses, carriedForwardLosses: priorLosses });
+      return r.atoReferences;
+    },
+    [assetType, purchasePrice, salePrice, buyingCosts, sellingCosts, div43Clawback, wasRentedOut, rentedMonths, ownershipMonths, currentLosses, priorLosses],
+  );
 
   const result = useMemo(() => {
     return calculateCGT({
@@ -168,6 +195,41 @@ export function CGTEngineCalc() {
         ))}
       </div>
 
+      {/* Workflow Stepper: Buy → Improve → Rent → Sell */}
+      <div className="p-4 rounded-2xl bg-card border border-border">
+        <div className="flex items-center justify-between gap-2">
+          {WORKFLOW_STEPS.map((step, i) => {
+            const Icon = step.icon;
+            return (
+              <div key={step.id} className="flex items-center gap-2 flex-1 last:flex-none">
+                <button
+                  type="button"
+                  onClick={() => {
+                    sound.playClick();
+                    document.getElementById(`cgt-step-${step.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }}
+                  className="flex items-center gap-2 px-2 py-1.5 rounded-xl hover:bg-muted transition-colors group"
+                >
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary text-xs font-extrabold border border-primary/20 group-hover:bg-primary/20 transition-colors">
+                    <Icon className="w-4 h-4" />
+                  </span>
+                  <span className="hidden sm:block text-left">
+                    <span className="block text-[9px] uppercase tracking-wider text-muted-foreground">Step {i + 1}</span>
+                    <span className="block text-xs font-bold text-foreground">{step.label}</span>
+                  </span>
+                </button>
+                {i < WORKFLOW_STEPS.length - 1 && (
+                  <div className="h-px flex-1 bg-border" />
+                )}
+              </div>
+            );
+          })}
+        </div>
+        <p className="mt-2 text-[10px] text-muted-foreground">
+          Follow the ownership journey: buy → improvements → renting (6-year rule) → sell. Adjust the month sliders in each step to see the CGT outcome.
+        </p>
+      </div>
+
       {/* KPI Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <div className="p-4 rounded-2xl bg-card border border-border space-y-1">
@@ -216,29 +278,11 @@ export function CGTEngineCalc() {
       {/* Main Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Purchase & Sale Sliders */}
-        <div className="lg:col-span-6 space-y-4 p-5 rounded-2xl bg-card border border-border">
-          <h3 className="text-sm font-bold text-foreground">Transaction & Cost Base Elements</h3>
-
-          {/* Sale Price */}
-          <div className="space-y-1.5">
-            <div className="flex justify-between text-xs font-semibold">
-              <label htmlFor="cgt-sale-price" className="text-muted-foreground">Sale / Disposal Price</label>
-              <span className="font-mono text-foreground">${salePrice.toLocaleString()}</span>
-            </div>
-            <input
-              id="cgt-sale-price"
-              type="range"
-              min={10000}
-              max={2500000}
-              step={10000}
-              value={salePrice}
-              onChange={e => {
-                sound.playTick();
-                setSalePrice(Number(e.target.value));
-              }}
-              className="w-full accent-primary cursor-pointer"
-            />
-          </div>
+        <div id="cgt-step-buy" className="lg:col-span-6 space-y-4 p-5 rounded-2xl bg-card border border-border scroll-mt-6">
+          <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+            <KeyRound className="w-4 h-4 text-primary" />
+            Step 1 — Buy
+          </h3>
 
           {/* Purchase Price */}
           <div className="space-y-1.5">
@@ -284,31 +328,86 @@ export function CGTEngineCalc() {
             />
           </div>
 
-          {/* Regular Income */}
+        {/* Buying Costs */}
           <div className="space-y-1.5">
             <div className="flex justify-between text-xs font-semibold">
-              <label htmlFor="cgt-taxable-income" className="text-muted-foreground">Your Regular Annual Taxable Income</label>
-              <span className="font-mono text-foreground">${taxableIncome.toLocaleString()}</span>
+              <label htmlFor="cgt-buying-costs" className="text-muted-foreground">Buying Costs (Stamp Duty, Conveyancing)</label>
+              <span className="font-mono text-foreground">${buyingCosts.toLocaleString()}</span>
             </div>
             <input
-              id="cgt-taxable-income"
+              id="cgt-buying-costs"
               type="range"
               min={0}
-              max={250000}
-              step={5000}
-              value={taxableIncome}
+              max={150000}
+              step={1000}
+              value={buyingCosts}
               onChange={e => {
                 sound.playTick();
-                setTaxableIncome(Number(e.target.value));
+                setBuyingCosts(Number(e.target.value));
               }}
               className="w-full accent-primary cursor-pointer"
             />
           </div>
         </div>
 
-        {/* 6-Year Rule & Deductions Column */}
-        <div className="lg:col-span-6 space-y-4 p-5 rounded-2xl bg-card border border-border">
-          <h3 className="text-sm font-bold text-foreground">Exemptions & Cost Base Adjustments</h3>
+        {/* Step 2 — Improve (renovations + Div 43) */}
+        <div id="cgt-step-improve" className="lg:col-span-6 space-y-4 p-5 rounded-2xl bg-card border border-border scroll-mt-6">
+          <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+            <Hammer className="w-4 h-4 text-primary" />
+            Step 2 — Improve (capital works)
+          </h3>
+
+          <div className="space-y-1 text-xs">
+            <div className="flex justify-between">
+              <label htmlFor="cgt-renovations" className="text-[11px] text-muted-foreground font-semibold">Renovations & Capital Improvements (adds to cost base)</label>
+              <span className="font-mono text-foreground font-bold">+${renovations.toLocaleString()}</span>
+            </div>
+            <input
+              id="cgt-renovations"
+              type="range"
+              min={0}
+              max={300000}
+              step={5000}
+              value={renovations}
+              onChange={e => {
+                sound.playTick();
+                setRenovations(Number(e.target.value));
+              }}
+              className="w-full accent-primary cursor-pointer"
+            />
+          </div>
+
+          {/* Div 43 Clawback */}
+          {assetType === 'property' && (
+            <div className="space-y-1 text-xs">
+              <div className="flex justify-between">
+                <label htmlFor="cgt-div43" className="text-[11px] text-muted-foreground font-semibold">Div 43 Capital Works Depreciation Claimed (Clawback)</label>
+                <span className="font-mono text-danger font-bold">-${div43Clawback.toLocaleString()}</span>
+              </div>
+              <input
+                id="cgt-div43"
+                type="range"
+                min={0}
+                max={200000}
+                step={1000}
+                value={div43Clawback}
+                onChange={e => {
+                  sound.playTick();
+                  setDiv43Clawback(Number(e.target.value));
+                }}
+                className="w-full accent-primary cursor-pointer"
+              />
+              <p className="text-[10px] text-muted-foreground">Building-structure depreciation claimed during ownership must be subtracted from the cost base on sale (ITAA 1997 s 110-45).</p>
+            </div>
+          )}
+        </div>
+
+        {/* Step 3 — Rent (6-Year Rule) */}
+        <div id="cgt-step-rent" className="lg:col-span-6 space-y-4 p-5 rounded-2xl bg-card border border-border scroll-mt-6">
+          <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+            <Home className="w-4 h-4 text-primary" />
+            Step 3 — Rent (6-year main-residence rule)
+          </h3>
 
           {assetType === 'property' && (
             <div className="p-3.5 rounded-xl bg-muted/60 border border-border space-y-3">
@@ -359,48 +458,102 @@ export function CGTEngineCalc() {
               )}
             </div>
           )}
-
-          {/* Incidental & Selling Costs */}
-          <div className="grid grid-cols-2 gap-3 text-xs">
-            <div className="space-y-1">
-              <label htmlFor="cgt-buying-costs" className="text-[11px] text-muted-foreground font-semibold">Buying Costs (Stamp Duty)</label>
-              <input
-                id="cgt-buying-costs"
-                type="number"
-                value={buyingCosts}
-                onChange={e => setBuyingCosts(Number(e.target.value))}
-                className="w-full p-2 rounded-xl bg-muted border border-border font-mono text-foreground"
-              />
-            </div>
-            <div className="space-y-1">
-              <label htmlFor="cgt-selling-costs" className="text-[11px] text-muted-foreground font-semibold">Selling Costs (Agent/Legal)</label>
-              <input
-                id="cgt-selling-costs"
-                type="number"
-                value={sellingCosts}
-                onChange={e => setSellingCosts(Number(e.target.value))}
-                className="w-full p-2 rounded-xl bg-muted border border-border font-mono text-foreground"
-              />
-            </div>
-          </div>
-
-          {/* Div 43 Clawback */}
-          {assetType === 'property' && (
-            <div className="space-y-1 text-xs">
-              <div className="flex justify-between">
-                <label htmlFor="cgt-div43" className="text-[11px] text-muted-foreground font-semibold">Div 43 Capital Works Depreciation Claimed (Clawback)</label>
-                <span className="font-mono text-danger font-bold">-${div43Clawback.toLocaleString()}</span>
-              </div>
-              <input
-                id="cgt-div43"
-                type="number"
-                value={div43Clawback}
-                onChange={e => setDiv43Clawback(Number(e.target.value))}
-                className="w-full p-2 rounded-xl bg-muted border border-border font-mono text-foreground"
-              />
-            </div>
+          {assetType !== 'property' && (
+            <p className="text-xs text-muted-foreground">
+              The 6-year main-residence rule only applies to real estate. {assetType === 'shares' ? 'Shares' : 'Crypto'} are always fully taxable on disposal.
+            </p>
           )}
         </div>
+
+        {/* Step 4 — Sell */}
+        <div id="cgt-step-sell" className="lg:col-span-6 space-y-4 p-5 rounded-2xl bg-card border border-border scroll-mt-6">
+          <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+            <Landmark className="w-4 h-4 text-primary" />
+            Step 4 — Sell (disposal)
+          </h3>
+
+          {/* Sale Price */}
+          <div className="space-y-1.5">
+            <div className="flex justify-between text-xs font-semibold">
+              <label htmlFor="cgt-sale-price" className="text-muted-foreground">Sale / Disposal Price</label>
+              <span className="font-mono text-foreground">${salePrice.toLocaleString()}</span>
+            </div>
+            <input
+              id="cgt-sale-price"
+              type="range"
+              min={10000}
+              max={2500000}
+              step={10000}
+              value={salePrice}
+              onChange={e => {
+                sound.playTick();
+                setSalePrice(Number(e.target.value));
+              }}
+              className="w-full accent-primary cursor-pointer"
+            />
+          </div>
+
+          {/* Selling Costs */}
+          <div className="space-y-1.5">
+            <div className="flex justify-between text-xs font-semibold">
+              <label htmlFor="cgt-selling-costs" className="text-muted-foreground">Selling Costs (Agent Commission, Legal)</label>
+              <span className="font-mono text-foreground">${sellingCosts.toLocaleString()}</span>
+            </div>
+            <input
+              id="cgt-selling-costs"
+              type="range"
+              min={0}
+              max={150000}
+              step={1000}
+              value={sellingCosts}
+              onChange={e => {
+                sound.playTick();
+                setSellingCosts(Number(e.target.value));
+              }}
+              className="w-full accent-primary cursor-pointer"
+            />
+          </div>
+
+          {/* Regular Income */}
+          <div className="space-y-1.5">
+            <div className="flex justify-between text-xs font-semibold">
+              <label htmlFor="cgt-taxable-income" className="text-muted-foreground">Your Regular Annual Taxable Income</label>
+              <span className="font-mono text-foreground">${taxableIncome.toLocaleString()}</span>
+            </div>
+            <input
+              id="cgt-taxable-income"
+              type="range"
+              min={0}
+              max={250000}
+              step={5000}
+              value={taxableIncome}
+              onChange={e => {
+                sound.playTick();
+                setTaxableIncome(Number(e.target.value));
+              }}
+              className="w-full accent-primary cursor-pointer"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* ATO References & Notes */}
+      <div className="p-5 rounded-2xl bg-card border border-border space-y-3">
+        <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+          <ReceiptText className="w-4 h-4 text-primary" />
+          ATO Section References for This Scenario
+        </h3>
+        <ul className="space-y-1.5">
+          {disposalRefs.map(ref => (
+            <li key={ref} className="text-xs text-muted-foreground flex items-start gap-2">
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" />
+              {ref}
+            </li>
+          ))}
+        </ul>
+        <p className="text-[10px] text-muted-foreground border-t border-border/60 pt-2">
+          Based on 2024-25 / 2026-27 ATO rates — ITAA 1997 Div 115 (50% discount), s 102-5 (loss ordering), s 118-145 (6-year rule), s 110-45 (Div 43 clawback). This is a model, not financial advice.
+        </p>
       </div>
 
       {/* Share Modal */}

@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect, useRef, type ReactNode } from 'react';
 import { TeenProfileProvider } from '@/context/TeenProfileContext';
+import { useNavigate } from '@/lib/router';
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
 import { Toaster } from '@/components/ui/Toaster';
@@ -8,8 +9,63 @@ import { ErrorBoundary } from '@/components/ErrorBoundary';
 const CommandPalette = lazy(() => import('@/components/CommandPalette').then(m => ({ default: m.CommandPalette })));
 const KeyboardShortcutsModal = lazy(() => import('@/components/KeyboardShortcutsModal').then(m => ({ default: m.KeyboardShortcutsModal })));
 
+const isTypingTarget = (target: EventTarget | null): boolean => {
+  if (!(target instanceof HTMLElement)) return false;
+  return target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT' || target.isContentEditable;
+};
+
 export function AppShell({ children }: { children?: ReactNode }) {
   const progressRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
+
+  // Single global keydown listener: g→h/g→p sequences, ? (shortcuts),
+  // / (focus search) and Esc (close everything).
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    let gPressedAt = 0;
+    const G_WINDOW_MS = 1200;
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      // Esc always closes everything, even while typing in an input
+      if (e.key === 'Escape') {
+        document.dispatchEvent(new CustomEvent('close-command-palette'));
+        document.dispatchEvent(new CustomEvent('close-shortcuts-modal'));
+        return;
+      }
+
+      // Never hijack keys while the user is typing in a field
+      if (isTypingTarget(e.target)) return;
+
+      if (e.key === '?' || (e.shiftKey && e.key === '/')) {
+        e.preventDefault();
+        document.dispatchEvent(new CustomEvent('toggle-shortcuts-modal'));
+        return;
+      }
+
+      if (e.key === '/') {
+        e.preventDefault();
+        const input = document.getElementById('site-search-input');
+        if (input instanceof HTMLInputElement) input.focus();
+        return;
+      }
+
+      const key = e.key.toLowerCase();
+
+      // 'g' then 'h' (home) / 'g' then 'p' (profile)
+      if (key === 'g') {
+        gPressedAt = Date.now();
+        return;
+      }
+      if (gPressedAt > 0 && Date.now() - gPressedAt <= G_WINDOW_MS) {
+        gPressedAt = 0;
+        if (key === 'h') navigate('/');
+        else if (key === 'p') navigate('/profile');
+      }
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [navigate]);
 
   // Scroll progress bar directly updated without React re-renders
   useEffect(() => {

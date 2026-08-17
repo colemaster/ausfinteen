@@ -3,7 +3,7 @@ import { SliderControl } from '../../components/ui/SliderControl';
 import { NumberInput } from '../../components/ui/NumberInput';
 import { PortfolioField } from '../../components/ui/PortfolioField';
 import { StatCard } from '../../components/ui/StatCard';
-import { calculateSuperSacrifice } from './engine';
+import { calculateSuperSacrifice, div293Exposure } from './engine';
 import { formatCurrency, formatCompact } from '../../utils/formatters';
 import { SUPER_RULES } from '../../data/super-rules';
 import { Toggle } from '../../components/ui/Toggle';
@@ -28,6 +28,8 @@ export function SuperSalarySacrifice({ grossSalary, onGrossSalaryChange }: Props
   const [retirementAge, setRetirementAge] = useState(60);
   const [superReturn, setSuperReturn] = useState(7);
   const [useCarryForward, setUseCarryForward] = useState(false);
+  const [includeHELP, setIncludeHELP] = useState(false);
+  const [helpDebt, setHelpDebt] = useState(30000);
 
   const result = useMemo(
     () =>
@@ -40,8 +42,16 @@ export function SuperSalarySacrifice({ grossSalary, onGrossSalaryChange }: Props
         age,
         retirementAge,
         superReturn,
+        includeHELP,
+        helpDebt,
       }),
-    [grossSalary, currentSuper, sgRate, additionalSacrifice, unusedCarryForward, useCarryForward, age, retirementAge, superReturn],
+    [grossSalary, currentSuper, sgRate, additionalSacrifice, unusedCarryForward, useCarryForward, age, retirementAge, superReturn, includeHELP, helpDebt],
+  );
+
+  // Div 293 exposure on gross income + employer SG (even without sacrificing)
+  const div293ExposurePre = useMemo(
+    () => div293Exposure(grossSalary, result.employerSG),
+    [grossSalary, result.employerSG],
   );
 
   return (
@@ -69,9 +79,23 @@ export function SuperSalarySacrifice({ grossSalary, onGrossSalaryChange }: Props
           )}
         </div>
       </div>
+      <div className="flex flex-wrap items-center gap-4 bg-[var(--background)] border border-[var(--border)] rounded-xl p-4">
+        <Toggle label="Include HELP/HECS repayment" checked={includeHELP} onChange={setIncludeHELP} description="Reduces take-home; repayment rate 0–10% by income" />
+        {includeHELP && (
+          <div className="w-48">
+            <NumberInput label="HELP Debt" value={helpDebt} onChange={setHelpDebt} min={1000} max={200000} step={5000} prefix="$" />
+          </div>
+        )}
+      </div>
+
+      {div293ExposurePre.applies && (
+        <div className="rounded-xl px-4 py-3 bg-amber-50 border border-amber-200 text-amber-700 text-xs dark:bg-amber-500/10 dark:border-amber-500/30 dark:text-amber-300">
+          <strong>Division 293 applies — even before sacrificing.</strong> Income ({formatCurrency(grossSalary)}) + employer SG ({formatCurrency(result.employerSG)}) already exceed ${(SUPER_RULES.division293Threshold / 1000).toFixed(0)}k. Extra 15% tax: {formatCurrency(Math.round(div293ExposurePre.extraTax))}. Sacrificing more will increase this.
+        </div>
+      )}
 
       {result.isDiv293 && (
-        <div className="rounded-xl px-4 py-3 bg-amber-50 border border-amber-200 text-amber-700 text-xs">
+        <div className="rounded-xl px-4 py-3 bg-amber-50 border border-amber-200 text-amber-700 text-xs dark:bg-amber-500/10 dark:border-amber-500/30 dark:text-amber-300">
           <strong>Division 293 applies.</strong> An extra 15% tax is payable on your concessional contributions because your income + contributions exceed ${(SUPER_RULES.division293Threshold / 1000).toFixed(0)}k.
           Extra tax: <span className="font-mono">{formatCurrency(result.div293Tax)}</span>
         </div>
@@ -99,6 +123,9 @@ export function SuperSalarySacrifice({ grossSalary, onGrossSalaryChange }: Props
             {[
               ['Taxable Income', formatCurrency(grossSalary - result.actualSacrifice), formatCurrency(grossSalary), formatCurrency(-(result.actualSacrifice))],
               ['Income Tax + Medicare', formatCurrency(result.incomeTaxWithSacrifice), formatCurrency(result.incomeTaxWithoutSacrifice), formatCurrency(result.incomeTaxWithSacrifice - result.incomeTaxWithoutSacrifice)],
+              ...(includeHELP ? [
+                ['HELP Repayment', formatCurrency(result.helpWithSacrifice), formatCurrency(result.helpWithoutSacrifice), formatCurrency(result.helpWithSacrifice - result.helpWithoutSacrifice)],
+              ] : []),
               ['Tax in Super (15%)', formatCurrency(result.taxInSuper), '$0', ''],
               ['Net Tax Saving', '', '', formatCurrency(result.taxSaving)],
             ].map(([label, a, b, diff]) => (

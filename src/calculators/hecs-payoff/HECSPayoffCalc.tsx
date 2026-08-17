@@ -1,16 +1,37 @@
 import { useState, useMemo } from 'react';
-import { simulateHECSPayoff, calcHECSRepayment } from './engine';
+import {
+  simulateHECSPayoff,
+  calcHECSRepayment,
+  comparePaydownVsInvest,
+  compareIndexationScenarios,
+  repaymentSplitSchedule,
+} from './engine';
 import { OdometerCounter } from '@/components/shared/OdometerCounter';
 import { sound } from '@/lib/sound-synthesizer';
 import { exportToCSV, encodePlanToHash, generateSimpleQRCodeSVG } from '@/lib/share-state';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, LineChart, Line, Legend } from 'recharts';
+import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from '@/components/ui/chart';
+import { formatCurrency, formatCompact } from '../../utils/formatters';
 import {
   GraduationCap,
   Download,
   Share2,
   Sparkles,
   X,
+  Gauge,
 } from 'lucide-react';
 import { toast } from 'sonner';
+
+const SPLIT_CONFIG = {
+  compulsory: { label: 'Compulsory', color: 'var(--chart-2)' },
+  voluntary: { label: 'Voluntary', color: 'var(--chart-1)' },
+  indexation: { label: 'Indexation', color: 'var(--chart-5)' },
+} satisfies ChartConfig;
+
+const PAYDOWN_CONFIG = {
+  investWealth: { label: 'Investment Wealth', color: 'var(--chart-2)' },
+  extraDebt: { label: 'Extra Debt Kept', color: 'var(--chart-5)' },
+} satisfies ChartConfig;
 
 export function HECSPayoffCalc() {
   // State
@@ -21,11 +42,12 @@ export function HECSPayoffCalc() {
   const [mortgageRate, setMortgageRate] = useState<number>(6.2);
   const [etfReturn, setEtfReturn] = useState<number>(8.0);
   const [useMarginal, setUseMarginal] = useState<boolean>(true);
+  const [indexationRate, setIndexationRate] = useState<number>(3.2);
   const [showShareModal, setShowShareModal] = useState<boolean>(false);
   const [shareUrl, setShareUrl] = useState<string>('');
 
   const incomeGrowthRate = 3.5;
-  const indexationRate = 3.2; // min(CPI, WPI)
+  const projectionYears = 15;
 
   // Calculation
   const result = useMemo(() => {
@@ -39,7 +61,7 @@ export function HECSPayoffCalc() {
       mortgageRate: mortgageRate / 100,
       etfExpectedReturn: etfReturn / 100,
       useMarginal2025System: useMarginal,
-      projectionYears: 15,
+      projectionYears,
     });
   }, [
     currentDebt,
@@ -52,6 +74,43 @@ export function HECSPayoffCalc() {
     etfReturn,
     useMarginal,
   ]);
+
+  // Indexation (CPI) scenario comparison
+  const indexationScenarios = useMemo(
+    () => compareIndexationScenarios(
+      currentDebt,
+      annualIncome,
+      incomeGrowthRate / 100,
+      lumpSumAvailable,
+      monthlyVoluntary,
+      [0.025, 0.032, 0.05],
+    ),
+    [currentDebt, annualIncome, incomeGrowthRate, lumpSumAvailable, monthlyVoluntary],
+  );
+
+  // Pay down faster vs invest surplus
+  const paydownVsInvest = useMemo(
+    () => comparePaydownVsInvest(currentDebt, monthlyVoluntary, indexationRate / 100, etfReturn / 100, projectionYears),
+    [currentDebt, monthlyVoluntary, indexationRate, etfReturn],
+  );
+  const paydownChartData = paydownVsInvest.rows.map(r => ({
+    year: `Yr ${r.year}`,
+    investWealth: r.investWealth,
+    extraDebt: r.investDebt - r.paydownDebt,
+  }));
+
+  // Compulsory vs voluntary split visual
+  const splitRows = useMemo(
+    () => repaymentSplitSchedule(
+      currentDebt,
+      annualIncome,
+      incomeGrowthRate / 100,
+      indexationRate / 100,
+      monthlyVoluntary,
+      projectionYears,
+    ),
+    [currentDebt, annualIncome, incomeGrowthRate, indexationRate, monthlyVoluntary],
+  );
 
   const initialRepayment = useMemo(() => {
     return calcHECSRepayment(annualIncome, useMarginal);
@@ -326,6 +385,30 @@ export function HECSPayoffCalc() {
                 <span>%</span>
               </div>
             </div>
+
+            <div className="space-y-1 col-span-2">
+              <label htmlFor="hecs-indexation" className="text-[11px] font-semibold text-muted-foreground flex items-center gap-1">
+                <Gauge className="w-3 h-3" />
+                HELP Indexation Scenario (CPI %/yr)
+              </label>
+              <div className="flex items-center gap-2">
+                <input
+                  id="hecs-indexation"
+                  type="range"
+                  min={0}
+                  max={8}
+                  step={0.1}
+                  value={indexationRate}
+                  onChange={e => {
+                    sound.playTick();
+                    setIndexationRate(Number(e.target.value));
+                  }}
+                  className="flex-1 accent-primary cursor-pointer"
+                />
+                <span className="font-mono text-xs font-bold text-foreground w-12 text-right">{indexationRate.toFixed(1)}%</span>
+              </div>
+              <p className="text-[10px] text-muted-foreground">Indexation is capped at min(CPI, WPI). Default 3.2%.</p>
+            </div>
           </div>
         </div>
 
@@ -379,6 +462,106 @@ export function HECSPayoffCalc() {
               </div>
               <p className="text-[10px] text-muted-foreground">8.0% historical long-term compound return</p>
             </div>
+          </div>
+
+          {/* Indexation scenario comparison */}
+          <div className="rounded-2xl bg-card border border-border p-4 space-y-2">
+            <h4 className="text-xs font-bold text-foreground flex items-center gap-1.5">
+              <Gauge className="w-4 h-4 text-primary" />
+              Indexation Scenario Comparison
+            </h4>
+            <p className="text-[10px] text-muted-foreground">
+              How different CPI outcomes change payoff time and total indexation (same repayments in every scenario).
+            </p>
+            <div className="overflow-x-auto">
+              <table className="w-full text-[11px] text-left">
+                <thead className="text-muted-foreground border-b border-border/60">
+                  <tr>
+                    <th className="py-1.5 px-2">Indexation</th>
+                    <th className="py-1.5 px-2">Payoff Time</th>
+                    <th className="py-1.5 px-2">Total Indexation</th>
+                    <th className="py-1.5 px-2">Total Repaid</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border/40 font-mono">
+                  {indexationScenarios.map(row => {
+                    const pct = Math.round(row.indexationRate * 1000) / 10;
+                    const isCurrent = Math.abs(row.indexationRate - indexationRate / 100) < 0.005;
+                    return (
+                      <tr key={pct} className={isCurrent ? 'bg-primary/10' : ''}>
+                        <td className="py-1.5 px-2 font-bold">
+                          {pct.toFixed(1)}%{isCurrent && <span className="ml-1 text-[9px] text-primary font-semibold">(current)</span>}
+                        </td>
+                        <td className="py-1.5 px-2">{row.payoffYears} yrs</td>
+                        <td className="py-1.5 px-2 text-amber-500">${row.totalIndexation.toLocaleString()}</td>
+                        <td className="py-1.5 px-2">${row.totalRepaid.toLocaleString()}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Pay down faster vs invest surplus */}
+          <div className="rounded-2xl bg-card border border-border p-4 space-y-3">
+            <h4 className="text-xs font-bold text-foreground">Pay Down Faster vs Invest Your Surplus</h4>
+            <p className="text-[10px] text-muted-foreground">
+              Your monthly surplus of <span className="font-mono font-bold text-foreground">${monthlyVoluntary.toLocaleString()}/mo</span> vs a{' '}
+              <span className="font-mono font-bold text-foreground">{indexationRate.toFixed(1)}%</span> indexation rate and a{' '}
+              <span className="font-mono font-bold text-foreground">{etfReturn.toFixed(1)}%</span> investment return over {projectionYears} years.
+            </p>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div className="p-3 rounded-xl bg-muted/40 border border-border space-y-0.5">
+                <span className="text-[10px] font-semibold text-muted-foreground uppercase">Debt if Paying Down</span>
+                <div className="text-sm font-bold font-mono text-success">{formatCurrency(paydownVsInvest.finalDebtIfPaydown)}</div>
+              </div>
+              <div className="p-3 rounded-xl bg-muted/40 border border-border space-y-0.5">
+                <span className="text-[10px] font-semibold text-muted-foreground uppercase">Debt if Investing</span>
+                <div className="text-sm font-bold font-mono text-danger">{formatCurrency(paydownVsInvest.finalDebtIfInvest)}</div>
+              </div>
+              <div className="p-3 rounded-xl bg-muted/40 border border-border space-y-0.5">
+                <span className="text-[10px] font-semibold text-muted-foreground uppercase">Wealth if Investing</span>
+                <div className="text-sm font-bold font-mono text-primary">{formatCurrency(paydownVsInvest.finalWealthIfInvest)}</div>
+              </div>
+              <div className={`p-3 rounded-xl border space-y-0.5 ${paydownVsInvest.netAdvantageInvest >= 0 ? 'bg-emerald-500/10 border-emerald-500/30' : 'bg-amber-500/10 border-amber-500/30'}`}>
+                <span className="text-[10px] font-semibold text-muted-foreground uppercase">Net Advantage</span>
+                <div className={`text-sm font-bold font-mono ${paydownVsInvest.netAdvantageInvest >= 0 ? 'text-success' : 'text-amber-600 dark:text-amber-400'}`}>
+                  {paydownVsInvest.netAdvantageInvest >= 0 ? '+' : ''}{formatCurrency(paydownVsInvest.netAdvantageInvest)}
+                </div>
+              </div>
+            </div>
+            <ChartContainer config={PAYDOWN_CONFIG} className="h-[240px] w-full">
+              <LineChart data={paydownChartData} margin={{ top: 4, right: 8, left: 8, bottom: 4 }}>
+                <CartesianGrid strokeDasharray="3 3" className="stroke-border/60" vertical={false} />
+                <XAxis dataKey="year" tick={{ fontSize: 10 }} tickLine={false} axisLine={false} interval={Math.floor(projectionYears / 5)} />
+                <YAxis tickFormatter={v => formatCompact(typeof v === 'number' ? v : 0)} tick={{ fontSize: 10 }} tickLine={false} axisLine={false} />
+                <ChartTooltip content={<ChartTooltipContent />} />
+                <Legend wrapperStyle={{ fontSize: 10 }} />
+                <Line type="monotone" dataKey="investWealth" name="Investment Wealth" stroke="var(--color-investWealth)" strokeWidth={2.5} dot={false} />
+                <Line type="monotone" dataKey="extraDebt" name="Extra Debt Kept" stroke="var(--color-extraDebt)" strokeWidth={2.5} dot={false} strokeDasharray="6 3" />
+              </LineChart>
+            </ChartContainer>
+          </div>
+
+          {/* Compulsory vs voluntary repayment split */}
+          <div className="rounded-2xl bg-card border border-border p-4 space-y-2">
+            <h4 className="text-xs font-bold text-foreground">Compulsory vs Voluntary Repayment Split</h4>
+            <p className="text-[10px] text-muted-foreground">
+              Year-by-year composition of debt reduction — compulsory (PAYG) and voluntary payments against indexation growth.
+            </p>
+            <ChartContainer config={SPLIT_CONFIG} className="h-[240px] w-full">
+              <BarChart data={splitRows} margin={{ top: 4, right: 8, left: 8, bottom: 4 }}>
+                <CartesianGrid strokeDasharray="3 3" className="stroke-border/60" vertical={false} />
+                <XAxis dataKey="year" tick={{ fontSize: 10 }} tickLine={false} axisLine={false} interval={Math.floor(splitRows.length / 5)} />
+                <YAxis tickFormatter={v => formatCompact(typeof v === 'number' ? v : 0)} tick={{ fontSize: 10 }} tickLine={false} axisLine={false} />
+                <ChartTooltip content={<ChartTooltipContent />} />
+                <Legend wrapperStyle={{ fontSize: 10 }} />
+                <Bar dataKey="compulsory" name="Compulsory" stackId="a" fill="var(--color-compulsory)" radius={[0, 0, 0, 0]} />
+                <Bar dataKey="voluntary" name="Voluntary" stackId="a" fill="var(--color-voluntary)" radius={[2, 2, 0, 0]} />
+                <Bar dataKey="indexation" name="Indexation" stackId="b" fill="var(--color-indexation)" radius={[2, 2, 0, 0]} />
+              </BarChart>
+            </ChartContainer>
           </div>
 
           {/* Schedule Table Preview */}

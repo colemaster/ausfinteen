@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { searchSite, autocomplete, POPULAR_SEARCHES } from '@/lib/site-search';
+import { describe, it, expect, beforeEach } from 'vitest';
+import { searchSite, autocomplete, POPULAR_SEARCHES, addRecentSearch, getRecentSearches, clearRecentSearches } from '@/lib/site-search';
 
 describe('searchSite', () => {
   it('returns empty results for a query under 2 characters', () => {
@@ -78,5 +78,50 @@ describe('POPULAR_SEARCHES', () => {
       const { total } = searchSite(q);
       expect(total, `popular search "${q}" should return results`).toBeGreaterThan(0);
     });
+  });
+});
+
+describe('recent searches (session-only)', () => {
+  beforeEach(() => {
+    clearRecentSearches();
+  });
+
+  it('records queries most-recent-first', () => {
+    addRecentSearch('HECS');
+    addRecentSearch('super');
+    expect(getRecentSearches()).toEqual(['super', 'HECS']);
+  });
+
+  it('dedupes case-insensitively and moves the duplicate to the front', () => {
+    addRecentSearch('hecs');
+    addRecentSearch('super');
+    addRecentSearch('HECS');
+    expect(getRecentSearches()).toEqual(['HECS', 'super']);
+  });
+
+  it('caps the history at 5 entries', () => {
+    for (const q of ['aa', 'bb', 'cc', 'dd', 'ee', 'ff']) addRecentSearch(q);
+    expect(getRecentSearches()).toHaveLength(5);
+    expect(getRecentSearches()[0]).toBe('ff');
+    expect(getRecentSearches()[4]).toBe('bb');
+  });
+
+  it('ignores blank and too-short queries', () => {
+    addRecentSearch('   ');
+    addRecentSearch('x');
+    expect(getRecentSearches()).toHaveLength(0);
+  });
+
+  it('returns a copy so callers cannot mutate the store', () => {
+    addRecentSearch('HECS');
+    const first = getRecentSearches();
+    first.push('hacked');
+    expect(getRecentSearches()).toEqual(['HECS']);
+  });
+
+  it('clears all entries', () => {
+    addRecentSearch('HECS');
+    clearRecentSearches();
+    expect(getRecentSearches()).toHaveLength(0);
   });
 });

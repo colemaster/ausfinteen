@@ -16,6 +16,8 @@ export interface TeenProfile {
   currentSavings: number;
   weeklyBoardPaid: number;
   phoneContractMonthly: number;
+  hasPartTimeJob: boolean;
+  weeklyHours: number;
 }
 
 export const DEFAULT_LOCATION = 'Brisbane, QLD';
@@ -50,6 +52,8 @@ const DEFAULT_PROFILE: TeenProfile = {
   currentSavings: 850,
   weeklyBoardPaid: 0,
   phoneContractMonthly: 35,
+  hasPartTimeJob: true,
+  weeklyHours: 12,
 };
 
 interface TeenProfileContextType {
@@ -103,6 +107,8 @@ export function TeenProfileProvider({ children }: { children: React.ReactNode })
       savingsGoalName: preset.savingsGoalName,
       savingsGoalTarget: preset.savingsGoalTarget,
       currentSavings: preset.currentSavings,
+      hasPartTimeJob: true,
+      weeklyHours: preset.hoursPerWeek,
     }));
   };
 

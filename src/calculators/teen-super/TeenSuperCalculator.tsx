@@ -6,10 +6,12 @@ import { StatCard } from '@/components/ui/StatCard';
 import { Badge } from '@/components/ui/Badge';
 import { OFFICIAL_WEB_LINKS } from '@/data/teen-finance-data';
 import { WebReferenceLink } from '@/components/shared/WebReferenceLink';
-import { Sparkles, Info, ShieldCheck } from 'lucide-react';
+import { Sparkles, Info, ShieldCheck, Scale } from 'lucide-react';
 import { useTeenProfile } from '@/context/TeenProfileContext';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip } from 'recharts';
 import { ChartContainer, ChartTooltipContent } from '@/components/ui/chart';
+import { compoundGrowthWithFees, superComparison, teenMarginalRate } from './engine';
+import { SUPER_RULES } from '@/data/super-rules';
 
 const SUPER_SG_RATE_2026_27 = 0.12; // 12.0% statutory SG FY 2026-27
 
@@ -19,6 +21,7 @@ export function TeenSuperCalculator() {
   const [hoursWk, setHoursWk] = useState<number>(profile.hoursPerWeek);
   const [hourlyPay, setHourlyPay] = useState<number>(profile.hourlyRate);
   const [age] = useState<number>(profile.age);
+  const [merPct, setMerPct] = useState<number>(0.5);
   const [fundStrategy, setFundStrategy] = useState<'indexed_high_growth' | 'default_mysuper'>('indexed_high_growth');
 
   const grossWk = hourlyPay * hoursWk;
@@ -29,19 +32,27 @@ export function TeenSuperCalculator() {
   // 40-year compound super growth (age to 60)
   const returnRate = fundStrategy === 'indexed_high_growth' ? 0.085 : 0.065;
   const years = 60 - age;
-  const r = returnRate / 12;
-  const n = years * 12;
   const monthlyContrib = annualSuper / 12;
 
-  const fvSuper = isEligible && r > 0 ? monthlyContrib * ((Math.pow(1 + r, n) - 1) / r) : 0;
+  const growthWithFees = useMemo(() => {
+    return compoundGrowthWithFees(monthlyContrib, years, returnRate, merPct / 100);
+  }, [monthlyContrib, years, returnRate, merPct]);
 
-  // Build growth projection trajectory over time
+  const decision = useMemo(() => {
+    const annualIncome = grossWk * 52;
+    const personalRate = teenMarginalRate(annualIncome);
+    return superComparison(annualIncome, personalRate, SUPER_RULES.sgRate);
+  }, [grossWk]);
+
+  // Build growth projection trajectory over time (after fee drag)
+  const netRate = returnRate - merPct / 100;
   const trajectoryData = useMemo(() => {
     const data: { ageLabel: string; balance: number; contributions: number }[] = [];
     let cumulativeContrib = 0;
     for (let y = 0; y <= years; y += 5) {
       const currentN = y * 12;
-      const val = isEligible && r > 0 ? monthlyContrib * ((Math.pow(1 + r, currentN) - 1) / r) : 0;
+      const rNet = netRate / 12;
+      const val = rNet > 0 ? monthlyContrib * ((Math.pow(1 + rNet, currentN) - 1) / rNet) : monthlyContrib * currentN;
       cumulativeContrib = annualSuper * y;
       data.push({
         ageLabel: `Age ${age + y}`,
@@ -50,7 +61,7 @@ export function TeenSuperCalculator() {
       });
     }
     return data;
-  }, [age, years, isEligible, r, monthlyContrib, annualSuper]);
+  }, [age, years, monthlyContrib, annualSuper, netRate]);
 
   const chartConfig = useMemo(() => {
     return {
@@ -160,8 +171,8 @@ export function TeenSuperCalculator() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
         <StatCard
           label="Weekly Super (12%)"
-          value={`$${(isEligible ? grossWk * 0.125 : 0).toFixed(2)}/wk`}
-          numericValue={isEligible ? grossWk * 0.125 : 0}
+          value={`$${(isEligible ? grossWk * SUPER_SG_RATE_2026_27 : 0).toFixed(2)}/wk`}
+          numericValue={isEligible ? grossWk * SUPER_SG_RATE_2026_27 : 0}
           format="currency"
           color={isEligible ? 'cyan' : 'red'}
           subtext={isEligible ? 'Paid by employer' : 'Requires >30h/wk for under 18s'}
@@ -176,12 +187,69 @@ export function TeenSuperCalculator() {
         />
         <StatCard
           label="Projected Super Balance at 60"
-          value={`$${Math.round(fvSuper).toLocaleString()}`}
-          numericValue={Math.round(fvSuper)}
+          value={`$${growthWithFees.futureValueWithFees.toLocaleString()}`}
+          numericValue={growthWithFees.futureValueWithFees}
           format="currency"
           color="purple"
-          subtext={`Over ${years} years compounding!`}
+          subtext={`After ${merPct.toFixed(1)}% MER fees (loses $${growthWithFees.feeDragLoss.toLocaleString()})`}
         />
+      </div>
+
+      {/* Fee Drag Slider */}
+      <div className="rounded-2xl border border-border bg-card/60 p-4 space-y-2">
+        <SliderControl
+          label="Super Fund Fee Drag (MER)"
+          value={merPct}
+          onChange={v => setMerPct(v)}
+          min={0}
+          max={2}
+          step={0.1}
+          suffix="% / yr"
+        />
+        <p className="text-[11px] text-muted-foreground">
+          A 0.5% MER on a {fundStrategy === 'indexed_high_growth' ? 'high-growth' : 'balanced'} portfolio costs you{' '}
+          <strong className="font-mono">${growthWithFees.feeDragLoss.toLocaleString()}</strong> over {years} years
+          ({growthWithFees.feeDragPct.toFixed(1)}% of your no-fee balance). Indexed funds (0.0-0.1%) keep nearly all of it.
+        </p>
+      </div>
+
+      {/* Super vs Outside Investing Decision */}
+      <div className="rounded-2xl border border-border bg-card/60 p-4 space-y-3">
+        <div className="flex items-center gap-2">
+          <Scale className="w-4 h-4 text-primary" />
+          <h3 className="text-sm font-bold text-foreground">Super vs Outside Investing — the 15% vs Marginal Tax Decision</h3>
+        </div>
+        <p className="text-[11px] text-muted-foreground">
+          For every <strong>$1 of pre-tax salary</strong>, super keeps {(decision.perDollarSuper * 100).toFixed(0)}c (after 15% contribution tax)
+          while investing outside super keeps {(decision.perDollarOutside * 100).toFixed(0)}c (after your {Math.round(decision.outsideTaxRate * 100)}% marginal rate).
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="rounded-xl border border-border bg-card p-3 text-center">
+            <div className="text-[10px] uppercase tracking-wide text-muted-foreground font-semibold">Inside Super</div>
+            <div className="text-lg font-bold font-mono text-violet-500">${decision.futureValueSuper.toLocaleString()}</div>
+            <div className="text-[10px] text-muted-foreground">by age 60 ({decision.yearsTo60} yrs @ 7.5%)</div>
+          </div>
+          <div className="rounded-xl border border-border bg-card p-3 text-center">
+            <div className="text-[10px] uppercase tracking-wide text-muted-foreground font-semibold">Outside Super</div>
+            <div className="text-lg font-bold font-mono text-foreground">${decision.futureValueOutside.toLocaleString()}</div>
+            <div className="text-[10px] text-muted-foreground">same money, after marginal tax</div>
+          </div>
+          <div className={`rounded-xl border p-3 text-center ${decision.superAdvantage >= 0 ? 'border-emerald-500/40 bg-emerald-500/10' : 'border-amber-500/40 bg-amber-500/10'}`}>
+            <div className="text-[10px] uppercase tracking-wide text-muted-foreground font-semibold">Super Advantage</div>
+            <div className={`text-lg font-bold font-mono ${decision.superAdvantage >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'}`}>
+              ${Math.abs(decision.superAdvantage).toLocaleString()}
+            </div>
+            <div className="text-[10px] text-muted-foreground">
+              {decision.superAdvantage >= 0 ? 'super wins by this much' : 'outside investing wins by this much'}
+            </div>
+          </div>
+        </div>
+        <p className="text-[11px] text-muted-foreground">
+          {decision.division293Applies
+            ? '⚠️ Division 293: income + concessional contributions exceed $250,000 — the extra 15% tax narrows super\'s advantage.'
+            : `With your ${Math.round(decision.outsideTaxRate * 100)}% marginal rate, salary-sacrificing into super beats outside investing on $${decision.annualContributionCompared.toLocaleString()}/yr of pre-tax pay.`}
+          {' '}Remember: super is locked away until preservation age (60) — only sacrifice money you won't need before then.
+        </p>
       </div>
 
       {/* ATO Under 18 Rule Info */}

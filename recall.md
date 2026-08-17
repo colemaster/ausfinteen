@@ -38,7 +38,7 @@
 | v5.0.0  | 2030 SDK & Perf| Latest SDKs (lucide-react 1.30, vite 8.2.1, tw-animate-css), MagneticButton + TickerMarquee widgets, latin-only fonts, AVIF/WebP imagery, PWA precache -43%, View Transition theme toggle, zero-render scroll progress | Local (push blocked) |
 | v4.5.0  | Banking & Finance Deep Audit | Comprehensive audit and expansion of banking, high-interest savings accounts (HISA 5.0%+), APRA $250k deposit guarantee, PayID/Osko fast payments, PayTo direct debits, Open Banking (CDR) ACCC security, TFN withholding tax (47%), Comprehensive Credit Reporting (Equifax/Experian/Illion), and National Debt Helpline (1800 007 007) | Local |
 | v5.1.0  | Frontend E2E UX Flow Review | Full end-to-end UX audit and enhancement. Fixed: scroll-to-top on route change, dead scroll-fade-in CSS, site-search dropdown clipping (overflow-hidden moved to decorative layers), `?topic=` deep-links landing on the wrong careers tab. Added: URL-shareable tabs (Careers/CarDriving/BrisbaneQLD), 404 page, per-page document titles, ModulePrevNext 11-module pager on every page, Command Palette ⌘K search button in Navbar, skip-link a11y + aria-expanded/aria-current, profile next-steps, Footer rebranded to AusTeen Money. Corrected stale 12.5% → 12.0% SG rate (matches v4.3.0 audit + data/super-rules.ts) across context, calculator, widgets and module copy | Local |
-| v5.2.0  | 2030 SDK + Frontend Enhancement | Session task (17 Aug 2026): update all SDKs/deps/libs to latest, fix WIP migration TS errors, commit uncommitted Astro migration, then 10 parallel subagents enhance frontend: (1) perf/SDK/PWA, (2) Landing, (3) Nav/Search/⌘K, (4) theme options, (5) shared UI user options, (6) core calculators (FIRE/savings/invest/super-drawdown/HECS), (7) mortgage calculators, (8) tax calculators, (9) teen/EV calculators, (10) SEO/Footer/share/print. All engines pure + tested, strict TS, light+dark, URL params, 2030 perf (View Transitions, content-visibility, es2025 target) | In progress |
+| v5.2.0  | 2030 SDK + Frontend Enhancement | Session task (17 Aug 2026): update all SDKs/deps/libs to latest, fix WIP migration TS errors, commit uncommitted Astro migration, then 10 parallel subagents enhance frontend: (1) perf/SDK/PWA, (2) Landing, (3) Nav/Search/⌘K, (4) theme options, (5) shared UI user options, (6) core calculators (FIRE/savings/invest/super-drawdown/HECS), (7) mortgage calculators, (8) tax calculators, (9) teen/EV calculators, (10) SEO/Footer/share/print. All engines pure + tested, strict TS, light+dark, URL params, 2030 perf (View Transitions, content-visibility, es2025 target) | Local (push blocked) |
 
 ---
 
@@ -58,6 +58,34 @@
 5. Launch 10 subagents (disjoint file ownership) for feature/user-option/perf work.
 6. Integrate: tsc --noEmit clean + vitest green + astro build green.
 7. Version bump package.json, update recall.md, commit, push.
+
+### Release v5.2.0 — COMPLETE (17 Aug 2026)
+
+**Outcome: all deps at absolute latest (npm outdated clean; rollup-plugin-visualizer 7.1.1); 30 pages build; 370 tests pass (26 files); strict TS clean.**
+
+**Dependency/infra (Agent 1):** astro.config.mjs gains `prefetch {defaultStrategy:'hover', prefetchAll:true}`, `experimental {clientPrerender:true}` (Speculation Rules native prerender + prefetch fallback), `compressHTML:'jsx'`. PWA manifest upgraded (id, display_override window-controls-overlay, categories, scope, lang en-AU, 4 shortcuts). Verified: astro 7.2.2, react 19.2.8, vite 8.2.1, ts 7.0.2, tailwind 4.3.3, motion 13.1.0, lucide-react 1.31.0, vitest 4.1.10 all current.
+
+**Landing (Agent 2):** module filter chips (?cat=, layoutId pill, aria tablist), 4 Quick-Start Fast Paths with real ?tab=/?topic= deep links, Featured Calculators grid with live data-derived stats (no hardcoded figures), hero OdometerCounter "Live Money Pulse", Compact view toggle (?compact=1), staggered motion entrances.
+
+**Nav/Search/⌘K (Agent 3):** recent searches (in-memory, max 5), 32 grouped ⌘K commands incl. toggle-theme, scroll top/bottom, all 25 calculators; g→h / g→p / ? / / / Esc shortcuts (also as vanilla inline script in Layout.astro); search section badges + no-results popular chips; "What's new v5.2.0" navbar badge. KeyboardShortcutsModal event-driven.
+
+**Theme user options (Agent 4, + Navbar integration):** ?accent=emerald|violet|amber|rose|cyan (data-accent on <html>, OKLCH --primary/--ring/--accent/--info tokens light+dark), ?scale=sm|md|lg (16/18/20px), ?contrast=high (--foreground/--border overrides), pre-paint no-flash script in Layout.astro, AccentSwitcher + FontScaleControl wired into a new Navbar Appearance popover. useTheme.ts → useTheme.tsx (API unchanged).
+
+**Shared UI user options (Agent 5):** NEW PaymentPeriodToggle (wk/fn/mo/yr) + convertPeriod + withPeriodSuffix; NumberInput/SliderControl gain period props + presets chips (slider) + stepButtons (input); StatCard sub/dense/target; AnimatedNumber reduced-motion + format presets; BarCompare + chart.tsx moneyFormat compact/full; MonteCarloFanChart percentiles + baseline overlay; TickerMarquee motion-reduce; Assumptions columns + copyable.
+
+**Core calculators (Agent 6):** FIRE — sequence-of-returns simulation + percentile fan, inflation-adjusted toggle, coast trajectory, concessional-share super slider, TBC 1.9M warning; SavingsRate — pay-first vs pay-at-end, take-home breakdown w/ HELP, rate→years table; InvestmentCompare — crash stress test, MER fee drag, after-CGT column; SuperDrawdown — lump-sum split, seeded 40-path Monte Carlo fan; HECSPayoff — indexation scenarios, pay-down-vs-invest, split schedule. 111 new/updated engine tests across 5 zones.
+
+**Mortgage calculators (Agent 7):** rate-sensitivity matrix, monthly-buffer check, deposit timeline; offset-vs-DR extra-repayment row + split-strategy ScenarioSplitterWidget; direct-vs-DR recycle-fraction + at-sale CGT view; property-research weight sliders + suburb yield metrics; reverse stress test (max survivable rate) + cumulative scenario presets. 84 tests.
+
+**Tax calculators (Agent 8):** taxWithHELP (marginal HELP rates), div293Exposure banner, marginal-rate bracket table, CGT full disposal workflow (6-year rule, partial exemption, loss ordering before 50% discount, Div 43 clawback) with ATO section refs, teen after-school-job tax engine + TFN 47% withholding + payslip preview. 83 tests incl. data suites.
+
+**Teen/EV calculators (Agent 9):** paycheck split presets (Barefoot/50-30-20/4-bucket/custom, self-balancing), BNPL late-fee cascade, EV vs petrol blended charging rate, first-car TCO, 50c-fare savings, monthly-compound savings projection, hasPartTimeJob/weeklyHours profile fields. 76 tests.
+
+**SEO/share/print (Agent 10):** NEW PrintResultButton + usePrint + injectPrintStyles ([data-print-section] convention — wired into 5 flagship calc views), copyShareLink + shareNative, SoundToggle (?sound=1, default off), useWakeLock (?wakelock=1), Footer Tools column + dynamic v5.2.0 version, ModulePrevNext breadcrumbs, accordion expand/collapse all, NotFound quick links, ErrorBoundary reload/mailto.
+
+**Integration fixes (coordinator):** 3 agents' work was lost mid-session to a parallel git revert — redone sequentially (f4721aa infra, cbafa4f theme, 4245091 ui) and verified. Global keyboard-shortcut inline script added to Layout.astro (g h / g p / ? / / / Esc, vanilla, no island cost). Appearance popover wired into Navbar. PrintResultButton + data-print-section added to CGTEngine/HECSPayoff/SuperDrawdown/EVNovatedLease/FinancialStressTest views. Final: tsc 0 errors, 370/370 tests, 30 pages build green.
+
+**Push:** blocked — no GitHub credentials in environment (same as prior sessions; 17 commits awaiting push: 97fabb7..HEAD).
 
 ---
 
@@ -610,3 +638,44 @@ All 12 phases delivered + v1.1.0 and v1.2.0 UX polish. 9 views (Portfolio + 8 ca
 **UI:** rate-sensitivity matrix table, monthly-buffer panel + slider, deposit timeline (saving input + return slider); offset extra-repayment panel + chart bar + snap stat, split-strategy section with ScenarioSplitterWidget + fraction/surplus/horizon sliders + best-strategy card, offset-rate=loan-rate assumption note; DR recycleFraction slider + chart-mode toggle (after-tax proceeds vs gross) + CGT breakdown card; property layer-weight sliders (renorm to 100, live recompute) + suburb yield summary table; reverse stress test cards + buffer slider (0–5%) + 5 cumulative preset buttons.
 
 **Note:** parallel agents share this working tree and reverted my first engine pass — mitigated by committing early. Remaining repo tsc errors are in other agents' zones (cgt-engine/fire/teen-tax/investment-compare at various times), never in my zone. Full suite: 359 tests pass.
+
+### Agent 9 workstream (2nd pass, session 2) — v6.0.0-beta teen modules feature pass
+
+**Engines added this session (all tested, zone totals: teen-budget 8, teen-debt 8, teen-car 8, teen-brisbane 4, teen-savings 7; 76 tests across all 9 zone dirs):**
+- teen-budget/engine.ts: `splitPaycheck` (normalises to 100%), `adjustSplitKeepingTotal` (self-balancing sliders), `convertPaycheckPeriod` (weekly/fortnightly/monthly, reuses PERIODS_PER_YEAR)
+- teen-debt/engine.ts: `bnplLateFeeCascade` (flat fee + 1.5x escalation per missed installment, clamps to count, zero-price guard), `weeklyPayoffPlan` (weeks>=1 guard)
+- teen-car/engine.ts: `evVsPetrolRunningCost` (blended home/public $/kWh, defaults from EV_VS_PETROL_DEFAULTS; note data field is `homeOffPeakPricePerKwh`), `firstCarTotalCostOfOwnership` (5-yr TCO, cost/week+month, running-costs share)
+- teen-brisbane/engine.ts: `fiftyCentFareSavings` (QLD 50c fare; weekly/monthly/yr savings vs old avg fare)
+- teen-savings/engine.ts: `savingsWithMonthlyCompound` (monthly r/12 loop), `savingsWithSimpleInterest` (avg-balance baseline)
+
+**UI features:**
+- FirstPaycheckSplitter: 4 preset frameworks (Barefoot/50-30-20/4-Bucket/Custom), PaymentPeriodToggle (weekly/fortnightly/monthly), self-balancing custom % sliders (always total 100%), per-period stat cards
+- BNPLDebtTrapVisualizer: fee-per-missed-payment slider (5-30), miss-by-miss cascade breakdown grid, "clear purchase in X weeks" payoff plan card
+- EvVsPetrolCalculator: math extracted to engine; FirstCarCostCalculator: 5 running-cost sliders (rego/CTP/insurance/servicing/repairs) + 5-yr TCO stat row (running-costs share % via StatCard percent format — pass share as 0-1, formatter divides by 100)
+- BrisbaneBudgetCalculator: 50c-fare panel (trips/wk + old fare sliders, weekly/monthly/yearly savings)
+- TeenSavingsAccountFinder: 12-month projection panel (balance/interest/deposits/compounding-bonus) with monthly-compounding vs simple-interest toggle; best rate = max of TEEN_SAVINGS_ACCOUNTS.maxRate
+- TeenProfileContext: optional `hasPartTimeJob` (default true) + `weeklyHours` (default 12) added to interface, DEFAULT_PROFILE, applyAgePreset (weeklyHours=preset.hoursPerWeek); localStorage merge already backfills old profiles
+
+**Verification (session 2):** zone tsc clean (0 errors); full `npx vitest run` of 9 dirs → 76 passed. Remaining repo tsc errors are all out-of-zone (10 in hecs-payoff — Agent 8 in-flight; earlier teen-tax/SiteSearchBar/PrintResultButton now resolved by other agents). NOT committed — awaiting coordinator merge (branch ahead 14+ commits).
+
+### Agent 6 workstream — fire / savings-rate / investment-compare / super-drawdown / hecs-payoff feature pass (v2)
+
+**Note:** parallel agents share this working tree; my first fire engine+test pass was reverted by another agent's git op mid-session and re-applied in full. Verified present at end of session.
+
+**Engines added (all tested; zone totals: fire 29, savings-rate 26, investment-compare 18, super-drawdown 21, hecs-payoff 17 = 111 tests):**
+- fire/engine.ts: `simulateSequenceRisk(initialBalance, monthlyDrawdown, years, scenarios: {label, returns[]}[])` -> per-scenario ending/min balance + yearly rows; `fanFromScenarioYearlies(scenarios)` -> p10/25/50/75/90 fan points (MonteCarloFanChart-compatible); `inflationAdjustedSeries(initial, annualContrib, nominal%, cpi%, years)` -> {nominal, real}; `projectCoastToRetirement(current, growth%, years)`; `netSuperContribution(annualContrib, concessionalShare)` (15% tax on concessional share); SuperBridgeParams gained optional `concessionalShareOfContribs` (omitted = legacy untaxed behaviour)
+- savings-rate/engine.ts: `projectPayStrategies(income, nw, rate%, ret%, years)` -> {payAtEnd, payFirst}; `rateToRetirementYears(income, nw, ret%, rates[])` -> mapping rows; `takeHomeBreakdown(gross, marginalRate, hasHELP)` using SUPER_RULES.sgRate + calcHELPRepayment (2026-27 ATO table)
+- investment-compare/engine.ts: `applyCrashToSeries(series, crashYear, crashPct)`; `feeDrag(initial, monthly, growth%, mer1, mer2, years)` -> dual series + finalLoss/lostPct; `cgtAdjustedFinalValue(initial, contribs, final, marginalRate, discount=CGT_DISCOUNT_INDIVIDUAL)` — note bug caught by test: tax = gain × rate × (1 − discount)
+- super-drawdown/engine.ts: `transferBalanceCapCheck(balance, age)` (TBC 1.9M); seeded mulberry32 + `generateReturnSequences(years, count, mean, vol, seed)`; `simulateDrawdownSequence(params, annualReturns[])` (negative returns allowed, floors at 0); `monteCarloDrawdownFan(params, sequences)` -> percentile fan; RetirementPlanParams/Result gained optional `lumpSumWithdrawal` + `lumpSumWithdrawn`/`maxProjectedBalance` (additive, backwards compatible)
+- hecs-payoff/engine.ts: `projectDebtWithIndexation(debt, repayment, idxRate, years)`; `comparePaydownVsInvest(currentDebt, monthlySurplus, idxRate, investRate, years)` -> rows + netAdvantageInvest; `repaymentSplitSchedule(...)` -> compulsory/voluntary/indexation rows; `compareIndexationScenarios(...)` -> payoff years per CPI rate
+
+**UI features:**
+- ClassicFIRE: Target Retirement Age input + on-track banner; inflation slider + "Show inflation-adjusted" toggle (nominal vs real area chart); Sequence-of-Returns Risk section (4 scenarios table + MonteCarloFanChart via fanFromScenarioYearlies)
+- CoastFIRE: coast trajectory area chart to target age (projectCoastToRetirement)
+- SuperBridge: concessional-share slider (0-100%) wired to split param + net-contribution callout
+- SavingsRate: pay-first vs pay-at-end line chart; take-home breakdown panel with marginal-rate slider + HELP-debt checkbox; rate→years mapping table
+- InvestmentCompare: crash stress-test toggle + crash year/severity sliders + dashed crash lines + per-scenario loss cards; MER fee drag chart (0.10% vs 1.00%); "Apply 50% CGT discount on disposal" checkbox -> After CGT column
+- SuperDrawdownCalc: lump sum at retirement slider (min-pension split); 40-path seeded Monte Carlo fan chart; TBC warning banner when maxProjectedBalance > 1.9M
+- HECSPayoffCalc: indexation (CPI) scenario slider + 3-rate comparison table; pay-down-vs-invest chart + 4 stat cards; compulsory vs voluntary vs indexation stacked split bar chart
+
+**Verification (final):** zone tsc clean (0 errors; repo-wide errors remain only in other agents' zones: offset-vs-dr engine.ts unused var, teen-investing unused imports); vitest zone suite 111/111 pass. NOT committed (awaiting coordinator).

@@ -4,15 +4,18 @@ import { NumberInput } from '@/components/ui/NumberInput';
 import { SliderControl } from '@/components/ui/SliderControl';
 import { StatCard } from '@/components/ui/StatCard';
 import { Badge } from '@/components/ui/Badge';
-import { MapPin } from 'lucide-react';
+import { MapPin, TramFront } from 'lucide-react';
 import { BRISBANE_WEEKLY_BUDGET } from '@/data/brisbane-data';
 import { useTeenProfile } from '@/context/TeenProfileContext';
 import { cn } from '@/lib/utils';
+import { fiftyCentFareSavings } from './engine';
 
 export function BrisbaneBudgetCalculator() {
   const { weeklyNetPay } = useTeenProfile();
 
   const [items, setItems] = useState<number[]>(BRISBANE_WEEKLY_BUDGET.map(i => i.weekly));
+  const [tripsPerWeek, setTripsPerWeek] = useState<number>(10);
+  const [oldFare, setOldFare] = useState<number>(4.15);
 
   const updateItem = (index: number, value: number) => {
     setItems(prev => prev.map((v, i) => (i === index ? value : v)));
@@ -23,6 +26,8 @@ export function BrisbaneBudgetCalculator() {
   const annualTotal = weeklyTotal * 52;
 
   const surplus = weeklyNetPay - weeklyTotal;
+
+  const fareSavings = fiftyCentFareSavings({ tripsPerWeek, oldAverageFare: oldFare, newFare: 0.5 });
 
   return (
     <Card variant="glass" className="p-6 space-y-6">
@@ -108,6 +113,60 @@ export function BrisbaneBudgetCalculator() {
                   : `You'd be $${Math.abs(surplus).toFixed(0)}/wk short — pick a cheaper suburb or more shifts.`}
               </div>
             </div>
+          </div>
+
+          <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/5 p-4 space-y-4">
+            <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400">
+              <TramFront className="w-4 h-4" />
+              <h3 className="text-sm font-bold text-foreground">50c Public Transport Fare (QLD 2026)</h3>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <SliderControl
+                label="Trips per week (work/study)"
+                value={tripsPerWeek}
+                onChange={v => setTripsPerWeek(v)}
+                min={0}
+                max={20}
+                step={1}
+                suffix=" trips"
+              />
+              <SliderControl
+                label="Old average fare per trip"
+                value={oldFare}
+                onChange={v => setOldFare(v)}
+                min={1}
+                max={8}
+                step={0.05}
+                decimals={2}
+                prefix="$"
+              />
+            </div>
+            <div className="grid grid-cols-3 gap-3">
+              <div className="rounded-xl border border-border bg-card p-3 text-center">
+                <div className="text-[10px] uppercase tracking-wide text-muted-foreground font-semibold">Weekly</div>
+                <div className="text-lg font-bold font-mono text-emerald-600 dark:text-emerald-400">
+                  ${fareSavings.savedWeekly.toFixed(2)}
+                </div>
+              </div>
+              <div className="rounded-xl border border-border bg-card p-3 text-center">
+                <div className="text-[10px] uppercase tracking-wide text-muted-foreground font-semibold">Monthly</div>
+                <div className="text-lg font-bold font-mono text-emerald-600 dark:text-emerald-400">
+                  ${fareSavings.savedMonthly.toFixed(0)}
+                </div>
+              </div>
+              <div className="rounded-xl border border-border bg-card p-3 text-center">
+                <div className="text-[10px] uppercase tracking-wide text-muted-foreground font-semibold">Yearly</div>
+                <div className="text-lg font-bold font-mono text-emerald-600 dark:text-emerald-400">
+                  ${fareSavings.savedYearly.toLocaleString('en-AU', { maximumFractionDigits: 0 })}
+                </div>
+              </div>
+            </div>
+            <p className="text-[11px] text-muted-foreground">
+              At the capped $0.50 fare your commute costs just{' '}
+              <strong className="font-mono">${fareSavings.newWeeklyCost.toFixed(2)}/wk</strong> vs{' '}
+              <strong className="font-mono">${fareSavings.oldWeeklyCost.toFixed(2)}</strong> before — a{' '}
+              {fareSavings.savingsPct.toFixed(0)}% saving you can redirect to savings or your first car fund.
+            </p>
           </div>
 
           <div className="rounded-2xl border border-border bg-background/60 p-4">

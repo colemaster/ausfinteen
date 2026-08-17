@@ -8,6 +8,8 @@ import { OFFICIAL_WEB_LINKS, AGE_PRESETS, JUNIOR_AWARD_RATES, PENALTY_RATES, WOR
 import { WebReferenceLink } from '@/components/shared/WebReferenceLink';
 import { Calculator, Info } from 'lucide-react';
 import { useTeenProfile } from '@/context/TeenProfileContext';
+import { netPayWithAllowances, penaltyRateBreakdown, type AwardName } from './engine';
+import { FirstJobChecklist } from './FirstJobChecklist';
 
 export function PayslipAnalyzer() {
   const { profile, updateProfile, applyAgePreset } = useTeenProfile();
@@ -16,7 +18,7 @@ export function PayslipAnalyzer() {
   const [hoursPerWeek, setHoursPerWeek] = useState<number>(profile.hoursPerWeek);
   const [age, setAge] = useState<number>(profile.age);
   const [claimsThreshold, setClaimsThreshold] = useState<boolean>(profile.claimsTaxFreeThreshold);
-  const [selectedAward, setSelectedAward] = useState<keyof typeof JUNIOR_AWARD_RATES>('fast_food');
+  const [selectedAward, setSelectedAward] = useState<AwardName>('fast_food');
   const [penaltyType, setPenaltyType] = useState<keyof typeof PENALTY_RATES>('ordinary');
   const [hasMealAllowance, setHasMealAllowance] = useState<boolean>(false);
   const [hasUniformAllowance, setHasUniformAllowance] = useState<boolean>(false);
@@ -29,33 +31,20 @@ export function PayslipAnalyzer() {
     applyAgePreset(targetAge);
   };
 
-  // Penalty multiplier
-  const penaltyMultiplier = PENALTY_RATES[penaltyType].multiplier;
-  const effectiveHourlyRate = hourlyRate * penaltyMultiplier;
-
   // Allowance calculation
   const weeklyMealAllowance = hasMealAllowance ? WORKPLACE_ALLOWANCES.mealAllowance : 0;
   const weeklyUniformAllowance = hasUniformAllowance ? WORKPLACE_ALLOWANCES.uniformAllowancePerShift * 3 : 0; // assumed 3 shifts
   const totalAllowances = weeklyMealAllowance + weeklyUniformAllowance;
 
-  // Base & Gross Earnings
-  const weeklyBaseGross = effectiveHourlyRate * hoursPerWeek;
-  const weeklyTotalGross = weeklyBaseGross + totalAllowances;
-  const annualGross = weeklyTotalGross * 52;
+  const penaltyMultiplier = PENALTY_RATES[penaltyType].multiplier;
 
-  // Tax calculation
-  let weeklyTaxWithheld = 0;
-  if (!claimsThreshold) {
-    weeklyTaxWithheld = weeklyTotalGross * 0.16;
-  } else if (weeklyTotalGross > 350) {
-    const weeklyExcess = weeklyTotalGross - 350;
-    weeklyTaxWithheld = weeklyExcess * 0.16;
-  }
-  const weeklyNet = Math.max(0, weeklyTotalGross - weeklyTaxWithheld);
+  const pay = netPayWithAllowances(age, hourlyRate, hoursPerWeek, selectedAward, {
+    claimsTaxFreeThreshold: claimsThreshold,
+    weeklyAllowances: totalAllowances,
+    penaltyMultiplier,
+  });
 
-  // Super Guarantee: under 18 must work >30 hrs/wk
-  const isSuperEligible = age >= 18 || hoursPerWeek > 30;
-  const weeklySuper = isSuperEligible ? weeklyTotalGross * 0.12 : 0;
+  const penaltyRows = penaltyRateBreakdown(hourlyRate * pay.juniorPct);
 
   return (
     <Card variant="glass" className="p-6 space-y-6">
@@ -214,36 +203,63 @@ export function PayslipAnalyzer() {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 pt-2">
         <StatCard
           label="Effective Hourly Rate"
-          value={`$${effectiveHourlyRate.toFixed(2)}/hr`}
+          value={`$${pay.effectiveHourlyRate.toFixed(2)}/hr`}
           color="blue"
-          subtext={`Base $${hourlyRate.toFixed(2)} x ${penaltyMultiplier}x penalty`}
+          subtext={`Base $${hourlyRate.toFixed(2)} x ${pay.juniorPct * 100}% junior x ${penaltyMultiplier}x penalty`}
         />
         <StatCard
           label="Weekly Gross Pay"
-          value={`$${weeklyTotalGross.toFixed(2)}`}
+          value={`$${pay.grossWeekly.toFixed(2)}`}
           color="purple"
-          subtext={totalAllowances > 0 ? `Incl. $${totalAllowances.toFixed(2)} allowances` : `$${annualGross.toLocaleString()}/yr`}
+          subtext={totalAllowances > 0 ? `Incl. $${totalAllowances.toFixed(2)} allowances` : `$${pay.annualGross.toLocaleString()}/yr`}
         />
         <StatCard
           label="Take-Home Pay (Bank)"
-          value={`$${weeklyNet.toFixed(2)}`}
+          value={`$${pay.netWeekly.toFixed(2)}`}
           color="green"
-          subtext={`Tax withheld: $${weeklyTaxWithheld.toFixed(2)}`}
+          subtext={`Tax withheld: $${pay.taxWithheldWeekly.toFixed(2)}`}
         />
         <StatCard
           label="Super Guarantee (12%)"
-          value={`$${weeklySuper.toFixed(2)}`}
-          color={isSuperEligible ? 'cyan' : 'red'}
+          value={`$${pay.superWeekly.toFixed(2)}`}
+          color={pay.isSuperEligible ? 'cyan' : 'red'}
           subtext={
-            isSuperEligible
+            pay.isSuperEligible
               ? 'Paid to your Super Fund'
               : 'Under 18 rule: requires >30h/wk'
           }
         />
       </div>
 
+      {/* Penalty Rate Breakdown */}
+      <div className="rounded-2xl border border-border bg-card/60 p-4 space-y-3">
+        <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+          Full Penalty Rate Breakdown — Base ${hourlyRate.toFixed(2)}/hr ({Math.round(pay.juniorPct * 100)}% junior)
+        </h3>
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+          {penaltyRows.map(row => (
+            <div
+              key={row.type}
+              className={`rounded-xl border p-2.5 text-center transition-all ${
+                row.type === penaltyType
+                  ? 'border-primary/50 bg-primary/10'
+                  : 'border-border bg-card'
+              }`}
+            >
+              <div className="text-[10px] font-semibold text-muted-foreground leading-tight">{row.label}</div>
+              <div className="text-sm font-extrabold font-mono text-foreground mt-1">${row.effectiveRate.toFixed(2)}/hr</div>
+              <div className="text-[10px] font-mono text-muted-foreground">×{row.multiplier.toFixed(2)}</div>
+            </div>
+          ))}
+        </div>
+        <p className="text-[11px] text-muted-foreground">
+          Penalty loadings apply on top of your junior rate. A Sunday fast-food shift at your age pays{' '}
+          <span className="font-mono font-bold">${pay.effectiveHourlyRate.toFixed(2)} × 1.50 = ${(pay.effectiveHourlyRate * 1.5).toFixed(2)}/hr</span>.
+        </p>
+      </div>
+
       {/* Super Eligibility & Penalty Alert */}
-      {!isSuperEligible && (
+      {!pay.isSuperEligible && (
         <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-900 dark:text-amber-200 text-xs flex items-start gap-2.5">
           <Info className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
           <div>
@@ -257,6 +273,8 @@ export function PayslipAnalyzer() {
         <WebReferenceLink link={OFFICIAL_WEB_LINKS.fairwork_payslip} />
         <WebReferenceLink link={OFFICIAL_WEB_LINKS.fairwork_awards} />
       </div>
+
+      <FirstJobChecklist />
     </Card>
   );
 }

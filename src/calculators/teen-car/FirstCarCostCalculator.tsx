@@ -1,23 +1,25 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Card } from '@/components/ui/Card';
 import { NumberInput } from '@/components/ui/NumberInput';
+import { SliderControl } from '@/components/ui/SliderControl';
 import { StatCard } from '@/components/ui/StatCard';
 import { Badge } from '@/components/ui/Badge';
 import { OFFICIAL_WEB_LINKS, TEEN_CAR_COST_DEFAULTS } from '@/data/teen-finance-data';
 import { WebReferenceLink } from '@/components/shared/WebReferenceLink';
-import { Car, CheckCircle2, Flame } from 'lucide-react';
+import { Car, CheckCircle2, Flame, Wrench } from 'lucide-react';
+import { firstCarTotalCostOfOwnership } from './engine';
 
 export function FirstCarCostCalculator() {
   const [purchasePrice, setPurchasePrice] = useState<number>(TEEN_CAR_COST_DEFAULTS.averagePurchasePrice);
   const [purchaseType, setPurchaseType] = useState<'cash' | 'loan'>('cash');
   const [weeklyFuel, setWeeklyFuel] = useState<number>(TEEN_CAR_COST_DEFAULTS.fuelWeekly);
 
-  // Fixed running costs
-  const regoAnnual = TEEN_CAR_COST_DEFAULTS.regoAnnual;
-  const ctpAnnual = TEEN_CAR_COST_DEFAULTS.ctpGreenSlipAnnual;
-  const insuranceAnnual = TEEN_CAR_COST_DEFAULTS.comprehensiveInsuranceUnder25;
-  const servicingAnnual = TEEN_CAR_COST_DEFAULTS.servicingAnnual;
-  const repairsAnnual = TEEN_CAR_COST_DEFAULTS.tiresAndRepairsAnnual;
+  // Adjustable running costs (defaults from TEEN_CAR_COST_DEFAULTS)
+  const [regoAnnual, setRegoAnnual] = useState<number>(TEEN_CAR_COST_DEFAULTS.regoAnnual);
+  const [ctpAnnual, setCtpAnnual] = useState<number>(TEEN_CAR_COST_DEFAULTS.ctpGreenSlipAnnual);
+  const [insuranceAnnual, setInsuranceAnnual] = useState<number>(TEEN_CAR_COST_DEFAULTS.comprehensiveInsuranceUnder25);
+  const [servicingAnnual, setServicingAnnual] = useState<number>(TEEN_CAR_COST_DEFAULTS.servicingAnnual);
+  const [repairsAnnual, setRepairsAnnual] = useState<number>(TEEN_CAR_COST_DEFAULTS.tiresAndRepairsAnnual);
 
   const annualRunningCosts = regoAnnual + ctpAnnual + insuranceAnnual + servicingAnnual + repairsAnnual + (weeklyFuel * 52);
   const weeklyRunningCost = annualRunningCosts / 52;
@@ -27,6 +29,12 @@ export function FirstCarCostCalculator() {
   const loanTermYears = 3;
   const totalLoanInterest = purchaseType === 'loan' ? purchasePrice * loanInterestRate * loanTermYears : 0;
   const totalPurchaseCost = purchasePrice + totalLoanInterest;
+
+  // 5-year total cost of ownership (Barefoot horizon)
+  const tco = useMemo(
+    () => firstCarTotalCostOfOwnership(totalPurchaseCost, annualRunningCosts, 5),
+    [totalPurchaseCost, annualRunningCosts]
+  );
 
   return (
     <Card variant="glass" className="p-6 space-y-6">
@@ -70,8 +78,7 @@ export function FirstCarCostCalculator() {
         </div>
 
         <div className="space-y-2">
-          <label className="text-xs font-semibold text-muted-foreground block">Purchase Strategy (Barefoot Warning)</label>
-          <div className="grid grid-cols-2 gap-2">
+          <label className="text-xs font-semibold text-muted-foreground block">Purchase Strategy (Barefoot Warning)</label>          <div className="grid grid-cols-2 gap-2">
             <button
               type="button"
               onClick={() => setPurchaseType('cash')}
@@ -100,6 +107,69 @@ export function FirstCarCostCalculator() {
         </div>
       </div>
 
+      {/* Running cost sliders */}
+      <div className="rounded-2xl border border-border bg-card p-4 space-y-4">
+        <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400">
+          <Wrench className="w-4 h-4" />
+          <h3 className="font-bold text-sm text-foreground">Yearly Running Costs (QLD 2026)</h3>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+          <SliderControl
+            label="Registration (QLD rego)"
+            value={regoAnnual}
+            onChange={v => setRegoAnnual(v)}
+            min={600}
+            max={1200}
+            step={10}
+            prefix="$"
+            suffix="/yr"
+          />
+          <SliderControl
+            label="CTP Green Slip (compulsory 3rd party)"
+            value={ctpAnnual}
+            onChange={v => setCtpAnnual(v)}
+            min={400}
+            max={900}
+            step={10}
+            prefix="$"
+            suffix="/yr"
+          />
+          <SliderControl
+            label="Comprehensive Insurance (under 25)"
+            value={insuranceAnnual}
+            onChange={v => setInsuranceAnnual(v)}
+            min={900}
+            max={3000}
+            step={50}
+            prefix="$"
+            suffix="/yr"
+          />
+          <SliderControl
+            label="Servicing & Maintenance"
+            value={servicingAnnual}
+            onChange={v => setServicingAnnual(v)}
+            min={200}
+            max={1000}
+            step={25}
+            prefix="$"
+            suffix="/yr"
+          />
+          <SliderControl
+            label="Tires & Unexpected Repairs"
+            value={repairsAnnual}
+            onChange={v => setRepairsAnnual(v)}
+            min={0}
+            max={1200}
+            step={50}
+            prefix="$"
+            suffix="/yr"
+          />
+        </div>
+        <p className="text-[11px] text-muted-foreground">
+          Running costs often exceed the purchase price over 5 years — see the Total Cost of Ownership below.
+        </p>
+      </div>
+
       {/* Results */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
         <StatCard
@@ -119,6 +189,34 @@ export function FirstCarCostCalculator() {
           value={`$${(weeklyRunningCost + (totalLoanInterest / 156)).toFixed(2)}/wk`}
           color="purple"
           subtext="True weekly cost out of your paycheck"
+        />
+      </div>
+
+      {/* 5-year total cost of ownership */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <StatCard
+          label="5-Year Total Cost of Ownership"
+          value={`$${tco.tcoOverYears.toLocaleString()}`}
+          numericValue={tco.tcoOverYears}
+          format="currency"
+          color={tco.runningCostsShare > 0.5 ? 'red' : 'blue'}
+          subtext={`Purchase + ${tco.years} years of running costs`}
+        />
+        <StatCard
+          label="Running Costs Share of TCO"
+          value={`${(tco.runningCostsShare * 100).toFixed(0)}%`}
+          numericValue={tco.runningCostsShare}
+          format="percent"
+          color="purple"
+          subtext="The real cost of a car is running it"
+        />
+        <StatCard
+          label="True Weekly Cost (5-yr avg)"
+          value={`$${tco.costPerWeek.toFixed(2)}/wk`}
+          numericValue={tco.costPerWeek}
+          format="currency"
+          color="amber"
+          subtext={`≈ $${tco.costPerMonth.toFixed(0)}/month out of your paycheck`}
         />
       </div>
 

@@ -3,12 +3,15 @@ import { Card } from '@/components/ui/Card';
 import { NumberInput } from '@/components/ui/NumberInput';
 import { StatCard } from '@/components/ui/StatCard';
 import { Badge } from '@/components/ui/Badge';
+import { Toggle } from '@/components/ui/Toggle';
 import { OFFICIAL_WEB_LINKS, MINOR_UNEARNED_TAX_RATES } from '@/data/teen-finance-data';
 import { WebReferenceLink } from '@/components/shared/WebReferenceLink';
-import { Calculator, ShieldAlert } from 'lucide-react';
+import { Calculator, ShieldAlert, ReceiptText } from 'lucide-react';
 import { useTeenProfile } from '@/context/TeenProfileContext';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { ChartContainer, ChartTooltipContent } from '@/components/ui/chart';
+import { afterSchoolJobTax, payslipBreakdown } from './engine';
+import { PaySlipPreview } from './PaySlipPreview';
 
 export function TeenTaxCalculator() {
   const { profile } = useTeenProfile();
@@ -17,6 +20,22 @@ export function TeenTaxCalculator() {
   const [uniformExpenses, setUniformExpenses] = useState<number>(120);
   const [rsaRcgCourseFees, setRsaRcgCourseFees] = useState<number>(0);
   const [unearnedInterestIncome, setUnearnedInterestIncome] = useState<number>(150);
+
+  // After-school job model: weekly hours × hourly rate → annual estimate
+  const [weeklyHours, setWeeklyHours] = useState<number>(profile.hoursPerWeek);
+  const [hourlyRate, setHourlyRate] = useState<number>(profile.hourlyRate);
+  const [claimTFNExemption, setClaimTFNExemption] = useState<boolean>(profile.claimsTaxFreeThreshold);
+  const [includeTeenHELP, setIncludeTeenHELP] = useState<boolean>(false);
+
+  const jobTax = useMemo(
+    () => afterSchoolJobTax(weeklyHours, hourlyRate, { includeHELP: includeTeenHELP }),
+    [weeklyHours, hourlyRate, includeTeenHELP],
+  );
+
+  const payslip = useMemo(
+    () => payslipBreakdown(weeklyHours, hourlyRate, { claimExemption: claimTFNExemption }),
+    [weeklyHours, hourlyRate, claimTFNExemption],
+  );
 
   const totalDeductions = uniformExpenses + rsaRcgCourseFees;
   const taxableEarnedIncome = Math.max(0, annualEarnedIncome - totalDeductions);
@@ -167,6 +186,101 @@ export function TeenTaxCalculator() {
           color={unearnedTax === 0 ? 'green' : 'red'}
           subtext={unearnedInterestIncome <= 416 ? 'Under $416 tax-free minor limit' : '66% ATO minor unearned rate'}
         />
+      </div>
+
+      {/* After-School Job Estimate (weekly → annual) */}
+      <div className="bg-card/50 border border-border/60 rounded-xl p-4 space-y-4">
+        <div className="flex items-center gap-2">
+          <ReceiptText className="w-4 h-4 text-emerald-500" />
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground font-mono">
+            After-School Job — Weekly → Annual Estimate
+          </h3>
+          <Badge variant="info" className="ml-auto">
+            {jobTax.annualGross.toLocaleString('en-AU')}/yr
+          </Badge>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <NumberInput
+            label="Hours Per Week"
+            value={weeklyHours}
+            onChange={v => setWeeklyHours(Math.max(0, v))}
+            min={0}
+            max={40}
+            step={0.5}
+            suffix="hrs"
+          />
+          <NumberInput
+            label="Hourly Rate ($)"
+            value={hourlyRate}
+            onChange={v => setHourlyRate(Math.max(0, v))}
+            min={0}
+            max={60}
+            step={0.5}
+            prefix="$"
+          />
+          <div className="col-span-2 flex flex-col justify-center gap-2">
+            <Toggle
+              label="Claim TFN tax-free-threshold exemption"
+              checked={claimTFNExemption}
+              onChange={setClaimTFNExemption}
+              description={jobTax.annualGross <= 18200 ? 'Valid — your job income is under $18,200/yr' : 'Not valid above $18,200/yr — employer must withhold 47%'}
+            />
+            <Toggle
+              label="Include HELP/HECS repayment (uni students)"
+              checked={includeTeenHELP}
+              onChange={setIncludeTeenHELP}
+              description="Repayment rate 0–10% by income, based on 2026-27 ATO thresholds"
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <PaySlipPreview
+            rows={payslip.rows}
+            grossWeekly={payslip.grossWeekly}
+            netWeekly={payslip.netWeekly}
+            superWeekly={payslip.superWeekly}
+            annualGross={jobTax.annualGross}
+            weeklyHours={weeklyHours}
+            hourlyRate={hourlyRate}
+            claimExemption={claimTFNExemption && jobTax.annualGross <= 18200}
+          />
+          <div className="grid grid-cols-2 gap-3 content-start">
+            <StatCard
+              label="Weekly Net Pay"
+              value={`$${payslip.netWeekly.toFixed(2)}`}
+              numericValue={payslip.netWeekly}
+              format="currency"
+              color="green"
+              subtext={`PAYG: $${payslip.taxWithheldWeekly.toFixed(2)}/wk`}
+            />
+            <StatCard
+              label="Annual Tax Estimate"
+              value={`$${jobTax.totalTax.toLocaleString('en-AU')}`}
+              numericValue={jobTax.totalTax}
+              format="currency"
+              color={jobTax.totalTax === 0 ? 'green' : 'amber'}
+              subtext={jobTax.totalTax === 0 ? 'Under $18,200 — tax-free!' : `${(jobTax.effectiveRate * 100).toFixed(1)}% effective rate`}
+            />
+            <StatCard
+              label="Employer Super (12%)"
+              value={`$${payslip.superWeekly.toFixed(2)}`}
+              numericValue={payslip.superWeekly}
+              format="currency"
+              color="blue"
+              subtext="Paid on top of your wage"
+            />
+            <StatCard
+              label="Net Annual Take-Home"
+              value={`$${jobTax.netAnnual.toLocaleString('en-AU')}`}
+              numericValue={jobTax.netAnnual}
+              format="currency"
+              color="purple"
+              subtext={includeTeenHELP ? `HELP: $${jobTax.helpRepayment.toLocaleString('en-AU')}/yr` : 'No HELP repayment included'}
+            />
+          </div>
+        </div>
       </div>
 
       {unearnedInterestIncome > 416 && (

@@ -1,6 +1,7 @@
 import { EVNovatedLeaseCalc } from '@/calculators/ev-novated-lease/EVNovatedLeaseCalc';
 import { TopicGuideAccordion } from '@/components/shared/TopicGuideAccordion';
 import { Disclaimer } from '@/components/shared/Disclaimer';
+import { PrintResultButton } from '@/components/shared/PrintResultButton';
 import { ArrowLeft } from 'lucide-react';
 import { Link } from '@/lib/router';
 
@@ -43,7 +44,13 @@ export function EVNovatedLease() {
         <span className="text-foreground">EV Novated Lease vs Cash vs Car Loan</span>
       </div>
 
-      <EVNovatedLeaseCalc />
+      <section data-print-section>
+        <EVNovatedLeaseCalc />
+      </section>
+
+      <div className="flex justify-end">
+        <PrintResultButton />
+      </div>
 
       <div className="max-w-5xl mx-auto space-y-6">
         <TopicGuideAccordion

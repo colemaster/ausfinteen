@@ -9,40 +9,55 @@ interface ShortcutGroup {
   items: { key: string; description: string; action?: () => void }[];
 }
 
+const QUICK_JUMP_ROUTES: Record<string, string> = {
+  '1': '/hecs-payoff',
+  '2': '/super-drawdown',
+  '3': '/ev-novated-lease',
+  '4': '/cgt-engine',
+  '5': '/financial-stress-test',
+};
+
 export function KeyboardShortcutsModal() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const isMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform);
   const modKey = isMac ? '⌘' : 'Ctrl+';
 
+  // Open/close is driven by custom events (dispatched by the global keydown
+  // listener in AppShell). The modal itself only keeps its calculator quick
+  // jumps (modKey + 1..5) local — 'g h', 'g p', '?', '/' and Esc are global.
+  useEffect(() => {
+    const handleToggle = () => setOpen(o => !o);
+    const handleClose = () => setOpen(false);
+
+    document.addEventListener('toggle-shortcuts-modal', handleToggle);
+    document.addEventListener('close-shortcuts-modal', handleClose);
+    return () => {
+      document.removeEventListener('toggle-shortcuts-modal', handleToggle);
+      document.removeEventListener('close-shortcuts-modal', handleClose);
+    };
+  }, []);
+
+  // Calculator quick jumps (Alt/Cmd + 1..5) — unchanged legacy behaviour
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Don't trigger if user is inside an input/textarea
-      const target = e.target as HTMLElement;
+      const target = e.target as HTMLElement | null;
       if (target && ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName)) return;
 
-      if (e.key === '?' || (e.shiftKey && e.key === '/')) {
-        e.preventDefault();
-        sound.playClick();
-        setOpen(o => !o);
-      }
-      if (e.key === 'Escape' && open) {
-        setOpen(false);
-      }
-
-      // Quick jumps
       if (e.altKey || e.metaKey) {
-        if (e.key === '1') { e.preventDefault(); sound.playClick(); navigate('/hecs-payoff'); }
-        if (e.key === '2') { e.preventDefault(); sound.playClick(); navigate('/super-drawdown'); }
-        if (e.key === '3') { e.preventDefault(); sound.playClick(); navigate('/ev-novated-lease'); }
-        if (e.key === '4') { e.preventDefault(); sound.playClick(); navigate('/cgt-engine'); }
-        if (e.key === '5') { e.preventDefault(); sound.playClick(); navigate('/financial-stress-test'); }
+        const route = QUICK_JUMP_ROUTES[e.key];
+        if (route) {
+          e.preventDefault();
+          sound.playClick();
+          navigate(route);
+        }
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [open, navigate]);
+  }, [navigate]);
 
   const groups: ShortcutGroup[] = [
     {
@@ -50,6 +65,9 @@ export function KeyboardShortcutsModal() {
       items: [
         { key: `${modKey}K`, description: 'Open Command Palette & Math Calculator' },
         { key: '?', description: 'Show / hide this Keyboard Shortcuts Cheat Sheet' },
+        { key: '/', description: 'Focus the site search bar' },
+        { key: 'g then h', description: 'Go to the Landing page' },
+        { key: 'g then p', description: 'Go to My Profile' },
         { key: 'Esc', description: 'Close modals, drawers, or command palette' },
         { key: `${modKey}P`, description: 'Print or export 1-page PDF financial plan' },
       ],
@@ -125,7 +143,7 @@ export function KeyboardShortcutsModal() {
                         className="flex items-center justify-between p-2.5 rounded-xl bg-muted/40 border border-border/60 text-xs"
                       >
                         <span className="text-foreground font-medium">{item.description}</span>
-                        <kbd className="px-2 py-1 rounded-lg bg-card border border-border font-mono text-[11px] font-bold text-primary shadow-xs">
+                        <kbd className="px-2 py-1 rounded-lg bg-card border border-border font-mono text-[11px] font-bold text-primary shadow-xs whitespace-nowrap">
                           {item.key}
                         </kbd>
                       </div>

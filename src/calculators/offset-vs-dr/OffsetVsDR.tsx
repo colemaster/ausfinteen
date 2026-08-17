@@ -12,9 +12,10 @@ import { offsetVsDRConfig } from '@/lib/chart-configs';
 import { Assumptions } from '../../components/shared/Assumptions';
 import { Disclaimer } from '../../components/shared/Disclaimer';
 import { AboutCalc } from '../../components/shared/AboutCalc';
-import { runOffset, runDebtRecycling, monthlyRepayment } from './engine';
+import { runOffset, runDebtRecycling, runExtraRepayment, splitComparison, monthlyRepayment } from './engine';
 import { formatCurrency, formatCompact, formatDiff } from '../../utils/formatters';
 import { usePortfolio } from '../../context/PortfolioContext';
+import { ScenarioSplitterWidget } from '../../components/ui/ScenarioSplitterWidget';
 
 const DEFAULTS = {
   loan: 500000,
@@ -25,16 +26,22 @@ const DEFAULTS = {
   margTax: 34.5,
   cgtDiscount: 50,
   amountsStr: '50000,100000,150000,200000',
+  extraMonthly: 1000,
+  surplusMonthly: 1500,
+  splitFraction: 0.5,
+  splitYears: 10,
 };
 
 const ASSUMPTIONS = [
   'Home loan: P&I repayments, monthly compounding, fixed rate for the full term.',
+  'Offset account rate = home loan rate (both are the same interest rate; offset interest is tax-free).',
   'Investment loan (IO mode): Interest-only; balance stays constant at the invested amount throughout.',
   'Investment loan (P&I mode): Principal & interest repayments; loan balance reduces to $0 at end of term.',
   'ETF returns: Smooth annual return, dividends reinvested each month. No franking credits modelled.',
   'Tax deductions: Investment interest deducted at your marginal rate each month.',
   'CGT discount: 50% discount applied to unrealised gains (assets held >12 months).',
   'Offset net wealth = cash retained in offset (no growth on offset funds assumed).',
+  'Split strategy: surplus repays the home loan while an equal amount is borrowed and invested (debt recycling); tax refunds on investment interest are credited to the offset.',
   'Not modelled: franking credits, ongoing contributions after initial amount, inflation, transaction costs, rate changes.',
 ];
 
@@ -49,6 +56,10 @@ export function OffsetVsDR() {
     margTax: portfolio.margTax > 0 ? portfolio.margTax : DEFAULTS.margTax,
     cgtDiscount: DEFAULTS.cgtDiscount,
     amountsStr: DEFAULTS.amountsStr,
+    extraMonthly: DEFAULTS.extraMonthly,
+    surplusMonthly: DEFAULTS.surplusMonthly,
+    splitFraction: DEFAULTS.splitFraction,
+    splitYears: DEFAULTS.splitYears,
   });
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
@@ -99,6 +110,33 @@ export function OffsetVsDR() {
 
   const sel = results.find(r => r.amount === selectedAmount) ?? results[0] ?? null;
 
+  const mPmt = useMemo(
+    () => monthlyRepayment(effectiveLoan, effectiveRate, effectiveYears),
+    [effectiveLoan, effectiveRate, effectiveYears],
+  );
+
+  // Extra-repayment scenario (monthly extra on top of the scheduled payment)
+  const extraScenario = useMemo(
+    () => runExtraRepayment(effectiveLoan, effectiveRate, effectiveYears, params.extraMonthly),
+    [effectiveLoan, effectiveRate, effectiveYears, params.extraMonthly],
+  );
+
+  // Split strategy: surplus split between offset and debt recycling
+  const split = useMemo(
+    () => splitComparison(
+      effectiveLoan,
+      effectiveRate,
+      params.splitYears,
+      params.surplusMonthly,
+      params.splitFraction,
+      effectiveEtfReturn,
+      params.divYield,
+      effectiveMargTax,
+      params.cgtDiscount,
+    ),
+    [effectiveLoan, effectiveRate, params.splitYears, params.surplusMonthly, params.splitFraction, effectiveEtfReturn, params.divYield, effectiveMargTax, params.cgtDiscount],
+  );
+
   const yearlyComp = useMemo(() => {
     if (!sel) return [];
     return sel.offset.yearly
@@ -109,15 +147,17 @@ export function OffsetVsDR() {
           year: `Yr ${oy.year}`,
           Offset: oy.netWealth,
           'Debt Recycling': dy.netWealthAfterCGT,
+          'Extra Repayment': extraScenario.yearly[i]?.netWealth ?? 0,
           _oNW: oy.netWealth,
           _dNW: dy.netWealthAfterCGT,
+          _eNW: extraScenario.yearly[i]?.netWealth ?? 0,
           _dPortfolio: dy.portfolioValue,
           _dTax: dy.taxDeductions,
           _yr: oy.year,
         };
       })
       .filter((r): r is NonNullable<typeof r> => r !== null);
-  }, [sel]);
+  }, [sel, extraScenario]);
 
   const deferredYearlyComp = useDeferredValue(yearlyComp);
 
@@ -128,11 +168,6 @@ export function OffsetVsDR() {
       yearlyComp[yearlyComp.length - 1]
     );
   }, [yearlyComp, viewYear]);
-
-  const mPmt = useMemo(
-    () => monthlyRepayment(effectiveLoan, effectiveRate, effectiveYears),
-    [effectiveLoan, effectiveRate, effectiveYears],
-  );
 
   const afterTaxDRCost = (effectiveRate * (1 - effectiveMargTax / 100)).toFixed(2);
 
@@ -403,6 +438,38 @@ export function OffsetVsDR() {
         </div>
       )}
 
+      {/* Extra Repayment Scenario */}
+      <motion.div variants={fadeInUp} initial="hidden" animate="visible" className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-5 space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div>
+            <h3 className="text-sm font-bold text-[var(--foreground)]">
+              Extra Repayment Scenario
+            </h3>
+            <p className="text-xs text-[var(--muted-foreground)] mt-0.5">
+              Making extra principal repayments each month — no offset account, no investment structure.
+            </p>
+          </div>
+          <div className="w-full sm:w-64">
+            <SliderControl
+              label="Extra Repayment"
+              value={params.extraMonthly}
+              onChange={v => setParams({ extraMonthly: v })}
+              min={0}
+              max={5000}
+              step={100}
+              prefix="$"
+              suffix="/mo"
+            />
+          </div>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <StatCard label="Interest Saved" value={formatCurrency(extraScenario.interestSaved)} color="green" subtext={`vs no extra repayment`} />
+          <StatCard label="Payoff Time" value={`${extraScenario.yearsToPayoff} yrs`} color="blue" subtext={`vs ${effectiveYears} yr scheduled`} />
+          <StatCard label="Total Extra Paid" value={formatCurrency(extraScenario.totalExtraPaid)} color="purple" subtext={`${formatCurrency(params.extraMonthly)}/mo`} />
+          <StatCard label="Total Interest" value={formatCurrency(extraScenario.totalInterest)} color="amber" subtext={`over ${extraScenario.yearsToPayoff} yrs`} />
+        </div>
+      </motion.div>
+
       {/* Detail Cards */}
       {sel && (
         <motion.div variants={fadeInUp} initial="hidden" animate="visible" className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -503,6 +570,12 @@ export function OffsetVsDR() {
                 value={formatDiff(snapYearData._dNW - snapYearData._oNW)}
                 color={snapYearData._dNW >= snapYearData._oNW ? 'green' : 'red'}
               />
+              <StatCard
+                label="Extra Repayment Net Wealth"
+                value={formatCompact(snapYearData._eNW)}
+                color="amber"
+                subtext={`${formatCurrency(params.extraMonthly)}/mo extra`}
+              />
             </div>
           )}
 
@@ -516,11 +589,47 @@ export function OffsetVsDR() {
               <ChartLegend content={<ChartLegendContent />} />
               <Bar dataKey="Offset" fill="var(--color-offset)" radius={[4, 4, 0, 0]} animationDuration={1200} animationEasing="ease-in-out" />
               <Bar dataKey="Debt Recycling" fill="var(--color-dr)" radius={[4, 4, 0, 0]} animationDuration={1200} animationEasing="ease-in-out" />
+              <Bar dataKey="Extra Repayment" fill="#f59e0b" radius={[4, 4, 0, 0]} animationDuration={1200} animationEasing="ease-in-out" />
             </BarChart>
           </ChartContainer>
         </div>
         </motion.div>
       )}
+
+      {/* Split Strategy */}
+      <motion.div variants={fadeInUp} initial="hidden" animate="visible" className="space-y-6">
+        <div className="border-t border-[var(--border)] pt-6">
+          <h3 className="text-sm font-bold text-[var(--foreground)] mb-1">
+            Split Strategy — Surplus to Offset vs Debt Recycling
+          </h3>
+          <p className="text-xs text-[var(--muted-foreground)] mb-4">
+            Your monthly surplus is split between the offset account (earning the loan rate tax-free) and debt recycling (repaying the home loan while an equal amount is borrowed and invested). Tax refunds on the investment interest are credited back to the offset.
+          </p>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-4">
+            <SliderControl label="Monthly Surplus" value={params.surplusMonthly} onChange={v => setParams({ surplusMonthly: v })} min={0} max={10000} step={100} prefix="$" />
+            <SliderControl label="Fraction to Offset" value={params.splitFraction} onChange={v => setParams({ splitFraction: v })} min={0} max={1} step={0.05} />
+            <SliderControl label="Horizon" value={params.splitYears} onChange={v => setParams({ splitYears: Math.round(v) })} min={1} max={30} step={1} suffix=" yrs" />
+          </div>
+
+          <ScenarioSplitterWidget
+            leftTitle={`All Offset — ${formatCurrency(params.surplusMonthly)}/mo`}
+            leftValue={formatCompact(split.allOffset.netWealthAfterCGT)}
+            leftSubtitle={`Net wealth after ${params.splitYears} yrs (${formatCurrency(split.allOffset.offsetBalance)} cash)`}
+            leftBgGradient="from-slate-900 via-slate-800 to-slate-950"
+            rightTitle={`All Debt Recycling — ${formatCurrency(params.surplusMonthly)}/mo`}
+            rightValue={formatCompact(split.allDR.netWealthAfterCGT)}
+            rightSubtitle={`Net wealth after ${params.splitYears} yrs (portfolio ${formatCurrency(split.allDR.portfolioValue)})`}
+            rightBgGradient="from-emerald-950 via-primary/30 to-violet-950"
+          />
+
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4">
+            <StatCard label="Split Net Wealth (post-CGT)" value={formatCompact(split.split.netWealthAfterCGT)} color="blue" subtext={`${Math.round(params.splitFraction * 100)}% offset / ${100 - Math.round(params.splitFraction * 100)}% DR`} />
+            <StatCard label="All Offset" value={formatCompact(split.allOffset.netWealthAfterCGT)} color="green" />
+            <StatCard label="All Debt Recycling" value={formatCompact(split.allDR.netWealthAfterCGT)} color="purple" />
+            <StatCard label="Best Strategy" value={split.bestStrategy} color={split.bestStrategy === 'Split' ? 'blue' : split.bestStrategy === 'All Debt Recycling' ? 'purple' : 'green'} subtext={`Best outcome ${formatCompact(split.bestNetWealthAfterCGT)}`} />
+          </div>
+        </div>
+      </motion.div>
 
       <Assumptions items={ASSUMPTIONS} />
       <Disclaimer calculatorName="Offset vs Debt Recycling calculator" />

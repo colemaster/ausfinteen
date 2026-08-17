@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { runFinancialStressTest } from './engine';
+import { runFinancialStressTest, maxSurvivableRate, applyCumulativeScenarios } from './engine';
 import { sound } from '@/lib/sound-synthesizer';
 import { exportToCSV, encodePlanToHash, generateSimpleQRCodeSVG } from '@/lib/share-state';
 import {
@@ -10,8 +10,22 @@ import {
   AlertTriangle,
   CheckCircle2,
   X,
+  Gauge,
+  Layers,
 } from 'lucide-react';
 import { toast } from 'sonner';
+
+const SCENARIO_PRESETS = [
+  { id: 'none', label: 'No shocks', rateRisePct: 0, jobLossMonths: 0, expenseShockPct: 0 },
+  { id: 'rate2', label: 'Rate +2%', rateRisePct: 2, jobLossMonths: 0, expenseShockPct: 0 },
+  { id: 'job3', label: 'Job loss 3mo', rateRisePct: 0, jobLossMonths: 3, expenseShockPct: 0 },
+  { id: 'expense10', label: 'Expenses +10%', rateRisePct: 0, jobLossMonths: 0, expenseShockPct: 10 },
+  { id: 'triple', label: 'Triple whammy', rateRisePct: 2, jobLossMonths: 3, expenseShockPct: 10 },
+] as const;
+
+function formatMoney(n: number): string {
+  return `$${Math.round(n).toLocaleString('en-AU')}`;
+}
 
 export function FinancialStressTestCalc() {
   const grossSalary = 115000;
@@ -28,6 +42,8 @@ export function FinancialStressTestCalc() {
   const relationshipStatus = 'single' as const;
   const [showShareModal, setShowShareModal] = useState<boolean>(false);
   const [shareUrl, setShareUrl] = useState<string>('');
+  const [bufferPct, setBufferPct] = useState<number>(3);
+  const [presetId, setPresetId] = useState<string>('none');
 
   const result = useMemo(() => {
     return runFinancialStressTest({
@@ -59,6 +75,39 @@ export function FinancialStressTestCalc() {
     hasIncomeProtection,
     relationshipStatus,
   ]);
+
+  const preset = SCENARIO_PRESETS.find(p => p.id === presetId) ?? SCENARIO_PRESETS[0];
+
+  // Reverse stress test: max survivable rate given monthly income vs expenses
+  const reverse = useMemo(
+    () => maxSurvivableRate(
+      monthlyNetIncome,
+      essentialExpenses + discretionaryExpenses,
+      Math.max(0, mortgageDebt - offsetBalance),
+      mortgageRate,
+      30,
+      bufferPct,
+    ),
+    [monthlyNetIncome, essentialExpenses, discretionaryExpenses, mortgageDebt, offsetBalance, mortgageRate, bufferPct],
+  );
+
+  // Cumulative scenario presets applied to current cashflow
+  const cumulative = useMemo(
+    () => applyCumulativeScenarios({
+      monthlyNetIncome,
+      monthlyEssentialExpenses: essentialExpenses,
+      monthlyDiscretionaryExpenses: discretionaryExpenses,
+      mortgageDebtBalance: mortgageDebt,
+      mortgageOffsetBalance: offsetBalance,
+      currentMortgageInterestRate: mortgageRate / 100,
+      liquidCashSavings: cashSavings,
+      rateRisePct: preset.rateRisePct,
+      jobLossMonths: preset.jobLossMonths,
+      expenseShockPct: preset.expenseShockPct,
+      bufferPct,
+    }),
+    [monthlyNetIncome, essentialExpenses, discretionaryExpenses, mortgageDebt, offsetBalance, mortgageRate, cashSavings, preset, bufferPct],
+  );
 
   const handleExportCSV = () => {
     sound.playClick();
@@ -223,6 +272,119 @@ export function FinancialStressTestCalc() {
               </p>
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* Reverse Stress Test */}
+      <div className="p-5 rounded-2xl bg-card border border-border space-y-4">
+        <div className="flex items-center gap-1.5">
+          <Gauge className="w-4 h-4 text-cyan-500" />
+          <h3 className="text-xs font-bold text-foreground uppercase tracking-wider">
+            Reverse Stress Test
+          </h3>
+        </div>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          <div className="p-3 rounded-xl bg-muted/50 border border-border">
+            <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider block">Max Surviv</span>
+            <div className="text-xl font-extrabold font-mono text-foreground mt-0.5">
+              {reverse.maxRate.toFixed(1)}%
+            </div>
+            <span className="text-[10px] text-muted-foreground">
+              +{reverse.maxRateIncreasePts.toFixed(1)} pts above {mortgageRate}%
+            </span>
+          </div>
+          <div className="p-3 rounded-xl bg-muted/50 border border-border">
+            <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider block">Repayment at Max</span>
+            <div className="text-xl font-extrabold font-mono text-foreground mt-0.5">
+              ${reverse.monthlyRepaymentAtMax.toLocaleString()}/mo
+            </div>
+          </div>
+          <div className="p-3 rounded-xl bg-muted/50 border border-border">
+            <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider block">Surplus at Max</span>
+            <div className={`text-xl font-extrabold font-mono mt-0.5 ${reverse.surplusAtMax >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-danger'}`}>
+              {reverse.surplusAtMax >= 0 ? '+' : '-'}${Math.abs(reverse.surplusAtMax).toLocaleString()}/mo
+            </div>
+          </div>
+          <div className="p-3 rounded-xl bg-muted/50 border border-border flex flex-col justify-center">
+            <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Verdict</span>
+            <span className={`text-sm font-bold mt-0.5 ${reverse.survivesAnyRise ? 'text-emerald-600 dark:text-emerald-400' : 'text-danger'}`}>
+              {reverse.capped
+                ? 'Survives every rise'
+                : reverse.survivesAnyRise
+                  ? 'Survives up to ceiling'
+                  : 'Already underwater'}
+            </span>
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <span className="text-xs font-semibold text-muted-foreground shrink-0">Repayment Buffer</span>
+          <input
+            type="range"
+            min={0}
+            max={5}
+            step={0.5}
+            value={bufferPct}
+            onChange={e => { sound.playTick(); setBufferPct(Number(e.target.value)); }}
+            className="flex-1 accent-primary cursor-pointer"
+          />
+          <span className="font-mono text-xs text-foreground w-10 text-right">{bufferPct}%</span>
+        </div>
+        <p className="text-[11px] text-muted-foreground leading-relaxed">
+          Highest rate the borrower survives given {formatMoney(monthlyNetIncome)}/mo income, {formatMoney(essentialExpenses + discretionaryExpenses)}/mo expenses and a {formatMoney(Math.max(0, mortgageDebt - offsetBalance))} net mortgage (P&amp;I over 30 yrs, buffer on the repayment).
+        </p>
+      </div>
+
+      {/* Cumulative Scenario Presets */}
+      <div className="p-5 rounded-2xl bg-card border border-border space-y-3">
+        <div className="flex items-center gap-1.5">
+          <Layers className="w-4 h-4 text-violet-500" />
+          <h3 className="text-xs font-bold text-foreground uppercase tracking-wider">
+            Cumulative Scenario Presets
+          </h3>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {SCENARIO_PRESETS.map(p => (
+            <button
+              key={p.id}
+              onClick={() => { sound.playClick(); setPresetId(p.id); }}
+              className={`px-3 py-1.5 text-xs font-semibold rounded-xl border transition-all ${presetId === p.id ? 'bg-primary text-white border-primary' : 'bg-muted text-muted-foreground border-border hover:border-primary/50'}`}
+            >
+              {p.label}
+            </button>
+          ))}
+        </div>
+        <div className={`p-4 rounded-xl border space-y-2 ${cumulative.isFatal ? 'bg-rose-500/10 border-rose-500/30' : 'bg-muted/40 border-border'}`}>
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-bold text-foreground">Combined Impact</span>
+            {cumulative.isFatal ? (
+              <AlertTriangle className="w-4 h-4 text-rose-500" />
+            ) : (
+              <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+            )}
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div>
+              <span className="text-[10px] text-muted-foreground uppercase tracking-wider block">Monthly Surplus</span>
+              <span className={`text-lg font-bold font-mono ${cumulative.monthlySurplusAfterShocks >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-danger'}`}>
+                {cumulative.monthlySurplusAfterShocks >= 0 ? '+' : '-'}${Math.abs(cumulative.monthlySurplusAfterShocks).toLocaleString()}/mo
+              </span>
+            </div>
+            <div>
+              <span className="text-[10px] text-muted-foreground uppercase tracking-wider block">Extra Interest</span>
+              <span className="text-lg font-bold font-mono text-foreground">${cumulative.extraMonthlyInterest.toLocaleString()}/mo</span>
+            </div>
+            <div>
+              <span className="text-[10px] text-muted-foreground uppercase tracking-wider block">Expense Shock</span>
+              <span className="text-lg font-bold font-mono text-foreground">${cumulative.expenseShockMonthly.toLocaleString()}/mo</span>
+            </div>
+            <div>
+              <span className="text-[10px] text-muted-foreground uppercase tracking-wider block">Runway</span>
+              <span className="text-lg font-bold font-mono text-foreground">
+                {cumulative.survivingMonths === 99 ? '∞' : `${cumulative.survivingMonths} mo`}
+              </span>
+            </div>
+          </div>
+          <p className="text-[11px] text-muted-foreground leading-relaxed">{cumulative.notes}</p>
         </div>
       </div>
 

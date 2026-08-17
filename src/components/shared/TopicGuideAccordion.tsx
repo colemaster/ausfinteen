@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams } from '@/lib/router';
 import { Card } from '@/components/ui/Card';
 import { TopicGuide } from '@/data/mandy-topics';
 import { WebReferenceLink } from '@/components/shared/WebReferenceLink';

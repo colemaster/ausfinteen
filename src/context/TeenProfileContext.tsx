@@ -69,19 +69,23 @@ const TeenProfileContext = createContext<TeenProfileContextType | undefined>(und
 
 export function TeenProfileProvider({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState<TeenProfile>(() => {
-    const saved = localStorage.getItem('aus_teen_profile');
-    if (saved) {
-      try {
-        return { ...DEFAULT_PROFILE, ...JSON.parse(saved) };
-      } catch {
-        return DEFAULT_PROFILE;
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('aus_teen_profile');
+      if (saved) {
+        try {
+          return { ...DEFAULT_PROFILE, ...JSON.parse(saved) };
+        } catch {
+          return DEFAULT_PROFILE;
+        }
       }
     }
     return DEFAULT_PROFILE;
   });
 
   useEffect(() => {
-    localStorage.setItem('aus_teen_profile', JSON.stringify(profile));
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('aus_teen_profile', JSON.stringify(profile));
+    }
   }, [profile]);
 
   const updateProfile = (updates: Partial<TeenProfile>) => {
@@ -147,10 +151,23 @@ export function TeenProfileProvider({ children }: { children: React.ReactNode })
   );
 }
 
+const DEFAULT_CONTEXT_VALUE: TeenProfileContextType = {
+  profile: DEFAULT_PROFILE,
+  updateProfile: () => {},
+  applyAgePreset: () => {},
+  resetProfile: () => {},
+  weeklyGrossIncome: DEFAULT_PROFILE.hourlyRate * DEFAULT_PROFILE.hoursPerWeek,
+  annualGrossIncome: DEFAULT_PROFILE.hourlyRate * DEFAULT_PROFILE.hoursPerWeek * 52,
+  estimatedTaxWithheldWeekly: 0,
+  weeklyNetPay: DEFAULT_PROFILE.hourlyRate * DEFAULT_PROFILE.hoursPerWeek,
+  superEligible: false,
+  weeklySuperContribution: 0,
+};
+
 export function useTeenProfile() {
   const context = useContext(TeenProfileContext);
   if (!context) {
-    throw new Error('useTeenProfile must be used within a TeenProfileProvider');
+    return DEFAULT_CONTEXT_VALUE;
   }
   return context;
 }

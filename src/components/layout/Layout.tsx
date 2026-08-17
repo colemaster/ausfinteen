@@ -1,11 +1,13 @@
-import { lazy, Suspense, useEffect, useRef } from 'react';
-import { Outlet, useLocation, useNavigationType } from 'react-router-dom';
+import { lazy, Suspense, useEffect, useRef, type ReactNode } from 'react';
+import { Outlet } from 'react-router-dom';
+import { useLocation, useNavigationType } from '@/lib/router';
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
 
-const CommandPalette = lazy(() => import('@/components/ui/CommandPalette').then(m => ({ default: m.CommandPalette })));
+const CommandPalette = lazy(() => import('@/components/CommandPalette').then(m => ({ default: m.CommandPalette })));
+const KeyboardShortcutsModal = lazy(() => import('@/components/KeyboardShortcutsModal').then(m => ({ default: m.KeyboardShortcutsModal })));
 
-export function Layout() {
+export function Layout({ children }: { children?: ReactNode }) {
   const progressRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
   const navigationType = useNavigationType();
@@ -75,12 +77,13 @@ export function Layout() {
           <div className="aura-orb-2" />
         </div>
         <main id="main-content" tabIndex={-1} className="relative z-10 focus:outline-none">
-          <Outlet />
+          {children ?? <Outlet />}
         </main>
       </div>
       <Footer />
       <Suspense fallback={null}>
         <CommandPalette />
+        <KeyboardShortcutsModal />
       </Suspense>
     </div>
   );

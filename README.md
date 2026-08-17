@@ -37,14 +37,17 @@ Most open-source finance tools are US-centric. This tool uses:
 
 ---
 
-## Tech Stack
+## Tech Stack (2030 Architecture)
 
-- **Framework:** Vite 7 + React 19 + TypeScript (strict mode)
-- **Styling:** Tailwind CSS v4 (utility classes, dark/light mode)
-- **Routing:** React Router v7 (client-side SPA, lazy-loaded routes)
-- **Charts:** Recharts 3
-- **Testing:** Vitest 4 (73 engine tests)
-- **Hosting:** GitHub Pages (via GitHub Actions)
+- **Framework:** [Astro 7](https://astro.build) (Static Site Generation + React 19 Islands Architecture + View Transitions)
+- **UI & Components:** React 19 + TypeScript (Strict Mode) + Motion + Lucide React
+- **Styling:** Tailwind CSS v4 (`@tailwindcss/vite` inline tokens, OKLCH high-gamut color space, Glassmorphism, Container Queries)
+- **Routing & Navigation:** Astro Client Router (`<ClientRouter />`) with seamless View Transitions & Speculation Rules instant prefetching
+- **Charts & Data Viz:** Recharts 3 (Adaptive dark/light theme curves & statutory band overlays)
+- **Sound Design:** Zero-dependency Procedural Web Audio UI Synthesizer
+- **Search:** Fuzzy Search (Fuse.js) + Command Palette (Cmd+K)
+- **Testing:** Vitest 4 (111 financial engine & statutory rule unit tests)
+- **Hosting:** Static Edge Hosting (GitHub Pages / Vercel / Cloudflare Pages) with automatic sitemap generation (`@astrojs/sitemap`)
 
 ---
 
@@ -54,14 +57,17 @@ Most open-source finance tools are US-centric. This tool uses:
 # Install dependencies
 npm install
 
-# Start dev server (http://localhost:5173)
+# Start Astro development server (http://localhost:4321)
 npm run dev
 
-# Run tests
+# Run Vitest test suite (111 unit tests)
 npm test
 
-# Production build
+# Production build (Static Site Generation)
 npm run build
+
+# Preview static production build locally
+npm run preview
 ```
 
 **Requirements:** Node 20+

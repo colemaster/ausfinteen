@@ -38,6 +38,26 @@
 | v5.0.0  | 2030 SDK & Perf| Latest SDKs (lucide-react 1.30, vite 8.2.1, tw-animate-css), MagneticButton + TickerMarquee widgets, latin-only fonts, AVIF/WebP imagery, PWA precache -43%, View Transition theme toggle, zero-render scroll progress | Local (push blocked) |
 | v4.5.0  | Banking & Finance Deep Audit | Comprehensive audit and expansion of banking, high-interest savings accounts (HISA 5.0%+), APRA $250k deposit guarantee, PayID/Osko fast payments, PayTo direct debits, Open Banking (CDR) ACCC security, TFN withholding tax (47%), Comprehensive Credit Reporting (Equifax/Experian/Illion), and National Debt Helpline (1800 007 007) | Local |
 | v5.1.0  | Frontend E2E UX Flow Review | Full end-to-end UX audit and enhancement. Fixed: scroll-to-top on route change, dead scroll-fade-in CSS, site-search dropdown clipping (overflow-hidden moved to decorative layers), `?topic=` deep-links landing on the wrong careers tab. Added: URL-shareable tabs (Careers/CarDriving/BrisbaneQLD), 404 page, per-page document titles, ModulePrevNext 11-module pager on every page, Command Palette ⌘K search button in Navbar, skip-link a11y + aria-expanded/aria-current, profile next-steps, Footer rebranded to AusTeen Money. Corrected stale 12.5% → 12.0% SG rate (matches v4.3.0 audit + data/super-rules.ts) across context, calculator, widgets and module copy | Local |
+| v5.2.0  | 2030 SDK + Frontend Enhancement | Session task (17 Aug 2026): update all SDKs/deps/libs to latest, fix WIP migration TS errors, commit uncommitted Astro migration, then 10 parallel subagents enhance frontend: (1) perf/SDK/PWA, (2) Landing, (3) Nav/Search/⌘K, (4) theme options, (5) shared UI user options, (6) core calculators (FIRE/savings/invest/super-drawdown/HECS), (7) mortgage calculators, (8) tax calculators, (9) teen/EV calculators, (10) SEO/Footer/share/print. All engines pure + tested, strict TS, light+dark, URL params, 2030 perf (View Transitions, content-visibility, es2025 target) | In progress |
+
+---
+
+## v5.2.0 — 2030 SDK & FRONTEND ENHANCEMENT (17 Aug 2026 session)
+
+### Instructions (from user)
+- Update all SDKs + deps + libs + codebase to the latest versions.
+- Enhance the frontend with new features + user options.
+- Use the latest versions for best 2030 performance optimisations.
+- Use 10 subagents in parallel.
+
+### Plan
+1. Record instructions in recall.md (done).
+2. Fix 10 pre-existing strict-TS errors from the in-progress Astro migration (router.tsx setSearchParams updater-fn typing + unused imports).
+3. Update remaining outdated dep (rollup-plugin-visualizer 7.0.1 → 7.1.1); `npm outdated` shows everything else current.
+4. Commit WIP migration state as checkpoint (build green, 111 tests green).
+5. Launch 10 subagents (disjoint file ownership) for feature/user-option/perf work.
+6. Integrate: tsc --noEmit clean + vitest green + astro build green.
+7. Version bump package.json, update recall.md, commit, push.
 
 ---
 

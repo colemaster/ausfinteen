@@ -1,12 +1,9 @@
-import { fileURLToPath } from 'node:url'
 import { defineConfig } from 'vite'
 import react, { reactCompilerPreset } from '@vitejs/plugin-react'
 import babel from '@rolldown/plugin-babel'
 import tailwindcss from '@tailwindcss/vite'
 import { VitePWA } from 'vite-plugin-pwa'
 import { visualizer } from 'rollup-plugin-visualizer'
-
-const __dirname = fileURLToPath(new URL('.', import.meta.url))
 
 export default defineConfig({
   base: process.env.VITE_BASE ?? '/',
@@ -18,28 +15,56 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.svg'],
+      includeAssets: ['favicon.svg', 'robots.txt'],
       manifest: {
-        name: 'AusTeen Money — Australian Teen Finance Guide',
-        short_name: 'AusTeen Money',
+        name: 'AusFinance Suite — Australian Personal Finance Toolkit',
+        short_name: 'AusFinance',
         description:
-          'Free, privacy-first Australian personal finance guides, calculators and Q&A for young Aussies. Everything runs in your browser.',
-        theme_color: '#1c1c1c',
+          'Free, privacy-first Australian personal finance guides, calculators and statutory Q&A. 100% browser-based with zero tracking.',
+        theme_color: '#0a0a0a',
         background_color: '#0a0a0a',
         display: 'standalone',
+        orientation: 'portrait-primary',
         start_url: '/',
         icons: [
           {
             src: '/favicon.svg',
             sizes: 'any',
             type: 'image/svg+xml',
-            purpose: 'any',
+            purpose: 'any maskable',
           },
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,svg,woff2}'],
+        globPatterns: ['**/*.{js,css,html,svg,woff2,png,jpg,webp}'],
         globIgnores: ['**/report.html', '**/sw.js', '**/workbox-*.js'],
+        runtimeCaching: [
+          {
+            urlPattern: /^https:\/\/fonts\.(?:googleapis|gstatic)\.com\/.*/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'google-fonts-cache',
+              expiration: {
+                maxEntries: 20,
+                maxAgeSeconds: 60 * 60 * 24 * 365, // 1 year
+              },
+              cacheableResponse: {
+                statuses: [0, 200],
+              },
+            },
+          },
+          {
+            urlPattern: /\.(?:png|jpg|jpeg|svg|webp)$/i,
+            handler: 'StaleWhileRevalidate',
+            options: {
+              cacheName: 'images-cache',
+              expiration: {
+                maxEntries: 50,
+                maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
+              },
+            },
+          },
+        ],
       },
     }),
     visualizer({
@@ -47,14 +72,16 @@ export default defineConfig({
       gzipSize: true,
       brotliSize: true,
       template: 'treemap',
+      open: false,
     }),
   ],
   build: {
     target: 'es2025',
     cssTarget: 'es2025',
     cssMinify: 'lightningcss',
+    assetsInlineLimit: 4096,
     reportCompressedSize: true,
-    chunkSizeWarningLimit: 600,
+    chunkSizeWarningLimit: 650,
     rolldownOptions: {
       output: {
         codeSplitting: {
@@ -106,11 +133,11 @@ export default defineConfig({
   },
   server: {
     host: '0.0.0.0',
-    port: 45985,
+    port: 31500,
   },
   preview: {
     host: '0.0.0.0',
-    port: 45986,
+    port: 31501,
   },
   resolve: {
     tsconfigPaths: true,

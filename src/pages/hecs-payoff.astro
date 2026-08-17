@@ -1,0 +1,11 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import { HECSPayoff } from '@/views/HECSPayoff';
+---
+
+<Layout
+  title="HECS-HELP Debt Payoff Calculator & Indexation Engine | AusFinance Suite"
+  description="Calculate your HECS/HELP debt repayment timeline under Australian statutory repayment thresholds, CPI/WPI indexation caps, and voluntary repayment trade-offs."
+>
+  <HECSPayoff client:load />
+</Layout>

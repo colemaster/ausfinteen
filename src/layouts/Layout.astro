@@ -1,0 +1,179 @@
+---
+import { ClientRouter } from 'astro:transitions';
+import '@/fonts.css';
+import '@fontsource/jetbrains-mono/400.css';
+import '@fontsource/jetbrains-mono/500.css';
+import '@fontsource/jetbrains-mono/600.css';
+import '@/index.css';
+import { Navbar } from '@/components/layout/Navbar';
+import { Footer } from '@/components/layout/Footer';
+import { Toaster } from '@/components/ui/Toaster';
+
+interface Props {
+  title?: string;
+  description?: string;
+  keywords?: string;
+  ogType?: string;
+  canonicalUrl?: string;
+}
+
+const {
+  title = 'AusFinance Suite — Australian Personal Finance Toolkit & Real-World Guides',
+  description = 'Free, open-source, privacy-first Australian finance guides & calculators for young Aussies and investors. 100% browser-based with zero tracking.',
+  keywords = 'teen finance Australia, first job pay, tax calculator Australia, superannuation, penalty rates, HECS, QLD licence, Brisbane budget, ASX ETFs, money guide, capital gains tax, novated lease',
+  ogType = 'website',
+  canonicalUrl = Astro.url.href,
+} = Astro.props;
+
+const siteTitle = title.includes('AusFinance') ? title : `${title} | AusFinance Suite`;
+---
+
+<!doctype html>
+<html lang="en-AU" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href={canonicalUrl} />
+    <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="color-scheme" content="light dark" />
+
+    <!-- SEO Meta Tags -->
+    <title>{siteTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="keywords" content={keywords} />
+    <meta name="author" content="AusFinance Suite Open Source Community" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content={ogType} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:title" content={siteTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:site_name" content="AusFinance Suite" />
+    <meta property="og:locale" content="en_AU" />
+    <meta property="og:image" content="/favicon.svg" />
+
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={siteTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content="/favicon.svg" />
+
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="/manifest.webmanifest" />
+
+    <!-- Schema.org JSON-LD Structured Data -->
+    <script type="application/ld+json" is:inline>
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "AusFinance Suite",
+        "url": "https://ausfintools.com",
+        "description": "Free, privacy-first Australian personal finance guides, calculators and statutory Q&A. 100% browser-based with zero tracking.",
+        "applicationCategory": "FinanceApplication",
+        "operatingSystem": "Any",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "AUD"
+        }
+      }
+    </script>
+
+    <!-- Speculation Rules API for sub-50ms instant page loads -->
+    <script type="speculationrules" is:inline>
+      {
+        "prefetch": [
+          { "where": { "href_matches": "/*" }, "eagerness": "moderate" }
+        ],
+        "prerender": [
+          { "where": { "href_matches": "/*" }, "eagerness": "conservative" }
+        ]
+      }
+    </script>
+
+    <!-- Inline script to prevent theme flashing on load -->
+    <script is:inline>
+      (function() {
+        try {
+          const urlTheme = new URLSearchParams(window.location.search).get('theme');
+          const stored = localStorage.getItem('theme');
+          const isDark = (urlTheme === 'dark' || (!urlTheme && stored === 'dark') || (!urlTheme && !stored && window.matchMedia('(prefers-color-scheme: dark)').matches));
+          if (isDark) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        } catch (e) {}
+      })();
+    </script>
+
+    <!-- Astro View Transitions with ClientRouter -->
+    <ClientRouter />
+  </head>
+  <body class="min-h-screen flex flex-col bg-background text-foreground transition-colors duration-200 selection:bg-primary/20 selection:text-primary">
+    <!-- Accessible skip link -->
+    <a
+      href="#main-content"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[60] focus:px-4 focus:py-2 focus:rounded-xl focus:bg-primary focus:text-primary-foreground focus:font-bold focus:text-xs"
+    >
+      Skip to main content
+    </a>
+
+    <!-- Top scroll progress indicator -->
+    <div
+      id="scroll-progress-bar"
+      class="fixed top-0 left-0 z-50 h-[3px] bg-gradient-to-r from-primary via-violet-500 to-amber-400 transition-[width] duration-150 ease-out"
+      style="width: 0%"
+      aria-hidden="true"
+    ></div>
+
+    <!-- Navigation Bar Island -->
+    <Navbar client:load />
+
+    <!-- Page Content Container with Ambient Chromatic Aura -->
+    <div class="relative flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 py-6">
+      <div class="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+        <div class="aura-orb-1"></div>
+        <div class="aura-orb-2"></div>
+      </div>
+      <main id="main-content" tabindex="-1" class="relative z-10 focus:outline-none">
+        <slot />
+      </main>
+    </div>
+
+    <!-- Footer -->
+    <Footer client:idle />
+
+    <!-- Toast Notifications -->
+    <Toaster client:idle />
+
+    <script is:inline>
+      (function() {
+        function initScrollProgress() {
+          const bar = document.getElementById('scroll-progress-bar');
+          if (!bar || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+          let ticking = false;
+          function update() {
+            const doc = document.documentElement;
+            const scrollTop = window.scrollY || doc.scrollTop;
+            const height = doc.scrollHeight - doc.clientHeight;
+            bar.style.width = (height > 0 ? Math.min(1, scrollTop / height) * 100 : 0) + '%';
+            ticking = false;
+          }
+          window.addEventListener('scroll', function() {
+            if (!ticking) {
+              ticking = true;
+              requestAnimationFrame(update);
+            }
+          }, { passive: true });
+          window.addEventListener('resize', update, { passive: true });
+          update();
+        }
+        document.addEventListener('astro:page-load', initScrollProgress);
+        initScrollProgress();
+      })();
+    </script>
+  </body>
+</html>

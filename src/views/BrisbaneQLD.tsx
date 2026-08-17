@@ -7,7 +7,7 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Tabs } from '@/components/ui/Tabs';
 import { MapPin, Home, Landmark, ExternalLink } from 'lucide-react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams } from '@/lib/router';
 import {
   HECS_BANDS_2026,
   BRISBANE_SUBURBS,

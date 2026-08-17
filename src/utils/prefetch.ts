@@ -6,19 +6,19 @@
 const prefetchedRoutes = new Set<string>();
 
 const ROUTE_IMPORTS: Record<string, () => Promise<unknown>> = {
-  '/': () => import('../pages/Landing'),
-  '/profile': () => import('../pages/TeenProfile'),
-  '/money-and-you': () => import('../pages/MoneyAndYou'),
-  '/careers-employment': () => import('../pages/CareersEmployment'),
-  '/super-retirement': () => import('../pages/SuperRetirement'),
-  '/tax-guide': () => import('../pages/TaxGuide'),
-  '/teen-budgeting': () => import('../pages/TeenBudgeting'),
-  '/spending-saving': () => import('../pages/SpendingSavingRealWorld'),
-  '/investing-shares': () => import('../pages/InvestingShares'),
-  '/interest-products': () => import('../pages/InterestFinancialProducts'),
-  '/dealing-with-debt': () => import('../pages/DealingWithDebt'),
-  '/car-driving': () => import('../pages/CarDriving'),
-  '/brisbane-qld': () => import('../pages/BrisbaneQLD'),
+  '/': () => import('../views/Landing'),
+  '/profile': () => import('../views/TeenProfile'),
+  '/money-and-you': () => import('../views/MoneyAndYou'),
+  '/careers-employment': () => import('../views/CareersEmployment'),
+  '/super-retirement': () => import('../views/SuperRetirement'),
+  '/tax-guide': () => import('../views/TaxGuide'),
+  '/teen-budgeting': () => import('../views/TeenBudgeting'),
+  '/spending-saving': () => import('../views/SpendingSavingRealWorld'),
+  '/investing-shares': () => import('../views/InvestingShares'),
+  '/interest-products': () => import('../views/InterestFinancialProducts'),
+  '/dealing-with-debt': () => import('../views/DealingWithDebt'),
+  '/car-driving': () => import('../views/CarDriving'),
+  '/brisbane-qld': () => import('../views/BrisbaneQLD'),
 };
 
 export function prefetchRoute(path: string): void {

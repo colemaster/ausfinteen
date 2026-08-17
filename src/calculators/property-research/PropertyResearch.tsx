@@ -2,7 +2,10 @@ import { useState, useMemo } from 'react';
 import { motion } from 'motion/react';
 import { scaleIn } from '@/lib/animations';
 import { CRITERIA, LAYERS, type Layer } from './criteria';
-import { calculateScore, getRecommendationColor, getRecommendationBg } from './scoring';
+import { calculateScore, getRecommendationColor, getRecommendationBg, type WeightConfig } from './scoring';
+import { suburbYieldSummary } from './suburb-metrics';
+import { SliderControl } from '../../components/ui/SliderControl';
+import { NumberInput } from '../../components/ui/NumberInput';
 import { Disclaimer } from '../../components/shared/Disclaimer';
 import { Assumptions } from '../../components/shared/Assumptions';
 import { AboutCalc } from '../../components/shared/AboutCalc';
@@ -133,8 +136,20 @@ export function PropertyResearch() {
   );
   const [openLayers, setOpenLayers] = useState<Set<Layer>>(new Set<Layer>(['suburb']));
   const [address, setAddress] = useState('');
+  const [weights, setWeights] = useState<WeightConfig>({ suburb: 1, intrasuburb: 1, property: 1 });
+  const [yieldInputs, setYieldInputs] = useState({ medianPrice: 650000, weeklyRent: 500, holdingCosts: 2500, mgmtFee: 7, vacancy: 3 });
 
-  const result = useMemo(() => calculateScore(scores, dealbreakers), [scores, dealbreakers]);
+  const result = useMemo(() => calculateScore(scores, dealbreakers, weights), [scores, dealbreakers, weights]);
+  const yieldSummary = useMemo(
+    () => suburbYieldSummary({
+      medianPrice: yieldInputs.medianPrice,
+      weeklyRent: yieldInputs.weeklyRent,
+      annualHoldingCosts: yieldInputs.holdingCosts,
+      managementFeePct: yieldInputs.mgmtFee,
+      vacancyPct: yieldInputs.vacancy,
+    }),
+    [yieldInputs],
+  );
 
   const toggleLayer = (layer: Layer) =>
     setOpenLayers(prev => {
@@ -232,6 +247,9 @@ export function PropertyResearch() {
                 <div className="h-full bg-[var(--primary)] rounded-full transition-all duration-300"
                   style={{ width: `${result.percentage}%` }} />
               </div>
+              <div className="mt-1.5 text-[10px] text-[var(--muted-foreground)] font-mono">
+                Weighted: {result.weightedScore} / {result.weightedMax} ({result.weightedPercentage}%)
+              </div>
             </div>
 
             <div className={`text-center text-xl font-bold mb-4 ${getRecommendationColor(result.recommendation)}`}>
@@ -250,7 +268,25 @@ export function PropertyResearch() {
             )}
 
             <div className="space-y-2">
-              {LAYERS.map(layer => (
+{/* Layer weights */}
+          <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
+                Layer Weights
+              </div>
+              <span className="text-[10px] text-[var(--muted-foreground)] font-mono">
+                {result.weightShare.suburb}% / {result.weightShare.intrasuburb}% / {result.weightShare.property}%
+              </span>
+            </div>
+            <SliderControl label="Suburb (location & demand)" value={weights.suburb} onChange={v => setWeights(p => ({ ...p, suburb: v }))} min={0} max={3} step={0.5} />
+            <SliderControl label="Intra-Suburb (site & street)" value={weights.intrasuburb} onChange={v => setWeights(p => ({ ...p, intrasuburb: v }))} min={0} max={3} step={0.5} />
+            <SliderControl label="Property (condition & layout)" value={weights.property} onChange={v => setWeights(p => ({ ...p, property: v }))} min={0} max={3} step={0.5} />
+            <p className="text-[10px] text-[var(--muted-foreground)] leading-relaxed">
+              Weights re-normalise to 100% (share shown above). Weighted score {result.weightedScore}/{result.weightedMax} ({result.weightedPercentage}%) drives the recommendation; equal weights match the standard 120-point scale.
+            </p>
+          </div>
+
+          {LAYERS.map(layer => (
                 <div key={layer.id} className="flex justify-between items-center">
                   <span className="text-xs text-[var(--muted-foreground)]">
                     {layer.label.split('\u2014 ')[1]}
@@ -290,6 +326,31 @@ export function PropertyResearch() {
                   <span className="ml-1">&mdash; {s.url}</span>
                 </div>
               ))}
+            </div>
+          </div>
+
+          {/* Suburb yield summary */}
+          <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-4 space-y-3">
+            <div className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
+              Suburb Yield Summary
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <NumberInput label="Median Price" value={yieldInputs.medianPrice} onChange={v => setYieldInputs(p => ({ ...p, medianPrice: v }))} min={0} max={10000000} step={10000} prefix="$" />
+              <NumberInput label="Weekly Rent" value={yieldInputs.weeklyRent} onChange={v => setYieldInputs(p => ({ ...p, weeklyRent: v }))} min={0} max={5000} step={10} prefix="$" suffix="/wk" />
+              <NumberInput label="Holding Costs / yr" value={yieldInputs.holdingCosts} onChange={v => setYieldInputs(p => ({ ...p, holdingCosts: v }))} min={0} max={50000} step={250} prefix="$" />
+              <NumberInput label="Mgmt Fee %" value={yieldInputs.mgmtFee} onChange={v => setYieldInputs(p => ({ ...p, mgmtFee: v }))} min={0} max={15} step={0.5} suffix="%" />
+            </div>
+            <div className="overflow-hidden rounded-lg border border-[var(--border)]">
+              <table className="w-full text-xs border-collapse">
+                <tbody>
+                  {yieldSummary.rows.map(row => (
+                    <tr key={row.metric} className="border-b border-slate-100 last:border-0">
+                      <td className="px-3 py-1.5 text-[var(--muted-foreground)]">{row.metric}</td>
+                      <td className="px-3 py-1.5 text-right font-mono font-semibold text-[var(--foreground)]">{row.value}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
         </motion.div>

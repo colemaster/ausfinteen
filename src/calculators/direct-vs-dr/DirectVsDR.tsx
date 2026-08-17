@@ -13,6 +13,7 @@ import {
   runDirectInvest,
   runDebtRecyclingStandalone,
   findBreakevenReturn,
+  cgtAfterSell,
 } from './engine';
 import { formatCurrency, formatCompact, formatPct } from '../../utils/formatters';
 import {
@@ -35,6 +36,8 @@ const DEFAULTS = {
   margTax: 34.5,
   cgtDiscount: 50,
   years: 20,
+  recycleFraction: 1,
+  chartMode: 'afterTax',
 };
 
 const ASSUMPTIONS = [
@@ -57,6 +60,8 @@ export function DirectVsDR() {
     margTax: portfolio.margTax > 0 ? portfolio.margTax : DEFAULTS.margTax,
     cgtDiscount: DEFAULTS.cgtDiscount,
     years: DEFAULTS.years,
+    recycleFraction: DEFAULTS.recycleFraction,
+    chartMode: DEFAULTS.chartMode,
   });
 
   const cgtDiscountDecimal = params.cgtDiscount / 100;
@@ -96,17 +101,29 @@ export function DirectVsDR() {
         effectiveMargTaxDecimal,
         cgtDiscountDecimal,
         params.years,
+        params.recycleFraction,
       ),
-    [effectiveAmount, effectiveEtfReturn, params.divYield, effectiveMortgageRate, effectiveMargTaxDecimal, cgtDiscountDecimal, params.years],
+    [effectiveAmount, effectiveEtfReturn, params.divYield, effectiveMortgageRate, effectiveMargTaxDecimal, cgtDiscountDecimal, params.years, params.recycleFraction],
   );
 
+  const cgtBreakdown = useMemo(
+    () => cgtAfterSell(direct.finalValue, effectiveAmount, params.years, effectiveMargTaxDecimal, cgtDiscountDecimal),
+    [direct.finalValue, effectiveAmount, params.years, effectiveMargTaxDecimal, cgtDiscountDecimal],
+  );
+
+  const atSale = params.chartMode === 'afterTax';
   const chartData = useMemo(() => {
-    return direct.yearly.map((d, i) => ({
-      year: `Yr ${d.year}`,
-      'Direct Invest': d.netWealth,
-      'Debt Recycling': dr.yearly[i]?.netWealth ?? 0,
-    }));
-  }, [direct, dr]);
+    return direct.yearly.map((d, i) => {
+      const drRow = dr.yearly[i];
+      return {
+        year: `Yr ${d.year}`,
+        'Direct Invest': atSale ? d.netWealth : d.portfolioValue,
+        'Debt Recycling': atSale
+          ? (drRow?.netWealth ?? 0)
+          : ((drRow?.portfolioValue ?? 0) - effectiveAmount),
+      };
+    });
+  }, [direct, dr, atSale, effectiveAmount]);
 
   const drWins = dr.netWealthAfterCGT > direct.netWealthAfterCGT;
   const etfAboveBreakeven = effectiveEtfReturn > breakeven;
@@ -194,6 +211,40 @@ export function DirectVsDR() {
             suffix=" yrs"
           />
         </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+          <SliderControl
+            label="Recycle Fraction / yr (cycle speed)"
+            value={params.recycleFraction}
+            onChange={v => setParams({ recycleFraction: v })}
+            min={0.1}
+            max={1}
+            step={0.05}
+            suffix=""
+          />
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs uppercase tracking-wide text-[var(--muted-foreground)] font-medium">
+              Chart Value
+            </label>
+            <div className="flex gap-2">
+              {([['afterTax', 'After-Tax Proceeds'], ['gross', 'Gross Portfolio']] as const).map(([mode, label]) => (
+                <button key={mode} onClick={() => setParams({ chartMode: mode })}
+                  className={`px-3 py-1.5 text-xs font-semibold rounded-md border transition-all ${atSale === (mode === 'afterTax') ? 'bg-[var(--primary)] text-[var(--background)] border-[var(--primary)]' : 'bg-[var(--background)] text-[var(--muted-foreground)] border-[var(--border)] hover:border-blue-400'}`}>
+                  {label}
+                </button>
+              ))}
+            </div>
+            <span className="text-[10px] text-[var(--muted-foreground)]">
+              {atSale
+                ? 'Year X shows net proceeds if sold at that year (after CGT, loan repaid).'
+                : 'Year X shows portfolio value before tax (DR net of outstanding loan).'}
+            </span>
+          </div>
+          <div className="flex items-end">
+            <p className="text-[10px] text-[var(--muted-foreground)] leading-relaxed">
+              Recycle fraction = share of the lump sum converted into the DR structure each year. 1 = fully recycled immediately.
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* Breakeven Callout */}
@@ -255,6 +306,20 @@ export function DirectVsDR() {
           color="cyan"
           subtext={`Direct CGT: ${formatCompact(direct.cgtIfSold)}`}
         />
+      </div>
+
+      {/* CGT breakdown */}
+      <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-5">
+        <h3 className="text-sm font-bold text-[var(--foreground)] mb-3">CGT on Disposal — Direct Investment</h3>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <StatCard label="Sale Value" value={formatCompact(direct.finalValue)} color="blue" />
+          <StatCard label="Cost Base" value={formatCompact(effectiveAmount)} color="amber" />
+          <StatCard label="Taxable Gain" value={formatCompact(cgtBreakdown.taxableGain)} color="purple" subtext={`Discount: ${formatCompact(cgtBreakdown.discountAmount)}`} />
+          <StatCard label="CGT Payable" value={formatCompact(cgtBreakdown.cgtPayable)} color="red" subtext={`Proceeds: ${formatCompact(cgtBreakdown.proceedsAfterCgt)}`} />
+        </div>
+        <p className="text-[10px] text-[var(--muted-foreground)] mt-2">
+          Gain {(direct.finalValue - effectiveAmount).toLocaleString('en-AU')} × (1 − {params.cgtDiscount}% discount) × {formatPct(effectiveMargTax)} marginal rate, holding ≥ 12 months.
+        </p>
       </div>
 
       {/* Wealth Trajectory Chart */}

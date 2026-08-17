@@ -11,7 +11,7 @@ import { BarCompare } from '../../components/ui/BarCompare';
 import { Assumptions } from '../../components/shared/Assumptions';
 import { Disclaimer } from '../../components/shared/Disclaimer';
 import { AboutCalc } from '../../components/shared/AboutCalc';
-import { calculateAffordability, type AustralianState } from './engine';
+import { calculateAffordability, rateScenarioTable, monthlyBufferCheck, monthsToDeposit, type AustralianState } from './engine';
 import { formatCurrency, formatPercent, formatPct } from '../../utils/formatters';
 import { usePortfolio } from '../../context/PortfolioContext';
 
@@ -52,6 +52,9 @@ export function HouseAffordability() {
     isNewHome: DEFAULTS.isNewHome,
     rate: portfolio.mortgageRate > 0 ? portfolio.mortgageRate : DEFAULTS.rate,
     loanTerm: portfolio.mortgageYearsRemaining > 0 ? portfolio.mortgageYearsRemaining : DEFAULTS.loanTerm,
+    bufferPct: 10,
+    monthlySaving: 2000,
+    depositReturn: 5,
   });
 
   // Effective values: portfolio wins over URL params when set
@@ -80,6 +83,36 @@ export function HouseAffordability() {
     : result.affordabilityRatio <= 0.35
     ? 'amber'
     : 'red';
+
+  // Rate-sensitivity matrix around the current rate
+  const sensitivityRates = useMemo(() => {
+    const base = [effectiveRate - 1, effectiveRate - 0.5, effectiveRate, effectiveRate + 0.5, effectiveRate + 1];
+    return [...new Set(base.map(r => Math.max(2, Math.round(r * 10) / 10)))].sort((a, b) => a - b);
+  }, [effectiveRate]);
+  const rateMatrix = useMemo(
+    () => rateScenarioTable(effectivePropertyPrice, effectiveDeposit, effectiveLoanTerm, sensitivityRates),
+    [effectivePropertyPrice, effectiveDeposit, effectiveLoanTerm, sensitivityRates],
+  );
+
+  // Monthly buffer affordability check
+  const bufferCheck = useMemo(
+    () => monthlyBufferCheck(
+      effectivePropertyPrice,
+      effectiveDeposit,
+      effectiveLoanTerm,
+      effectiveRate,
+      effectiveGrossIncome,
+      params.partnerIncome,
+      params.bufferPct,
+    ),
+    [effectivePropertyPrice, effectiveDeposit, effectiveLoanTerm, effectiveRate, effectiveGrossIncome, params.partnerIncome, params.bufferPct],
+  );
+
+  // Deposit timeline
+  const depositMonths = useMemo(
+    () => monthsToDeposit(effectiveDeposit, params.monthlySaving, params.depositReturn),
+    [effectiveDeposit, params.monthlySaving, params.depositReturn],
+  );
 
   const breakdownChartData = [
     {
@@ -235,6 +268,97 @@ export function HouseAffordability() {
               ))}
             </tbody>
           </table>
+        </div>
+      </div>
+
+      {/* Rate Sensitivity Matrix */}
+      <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-5">
+        <h3 className="text-sm font-bold text-[var(--foreground)] mb-3">
+          Rate Sensitivity Matrix
+        </h3>
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs border-collapse">
+            <thead>
+              <tr className="bg-[var(--background)]">
+                {['Rate', 'Monthly Repayment', 'Total Interest (full term)', 'Interest vs Today'].map(h => (
+                  <th key={h} className="px-4 py-2.5 text-right text-[10px] uppercase tracking-wide text-[var(--muted-foreground)] font-medium border-b border-[var(--border)] first:text-left">{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {rateMatrix.map(row => {
+                const isToday = Math.abs(row.rate - effectiveRate) < 0.001;
+                const baseInterest = rateMatrix.find(r => Math.abs(r.rate - effectiveRate) < 0.001)?.totalInterest ?? row.totalInterest;
+                const diff = row.totalInterest - baseInterest;
+                return (
+                  <tr key={row.rate} className={`border-b border-slate-100 last:border-0 ${isToday ? 'bg-[var(--primary)]/10 ' : ''}`}>
+                    <td className="px-4 py-2 text-[var(--muted-foreground)] font-mono">
+                      {formatPct(row.rate)}{isToday && <span className="text-[var(--primary)]"> (today)</span>}
+                    </td>
+                    <td className="px-4 py-2 text-right font-mono font-semibold text-[var(--foreground)]">{formatCurrency(row.monthlyRepayment)}</td>
+                    <td className="px-4 py-2 text-right font-mono text-[var(--muted-foreground)]">{formatCurrency(row.totalInterest)}</td>
+                    <td className={`px-4 py-2 text-right font-mono ${diff > 0 ? 'text-[var(--danger)]' : diff < 0 ? 'text-[var(--success)]' : 'text-[var(--muted-foreground)]'}`}>
+                      {diff > 0 ? `+${formatCurrency(diff)}` : diff < 0 ? `-${formatCurrency(Math.abs(diff))}` : '—'}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+        <p className="text-[10px] text-[var(--muted-foreground)] mt-2">
+          Total interest assumes repayments continue for the full term at each rate (monthly compounding P&I).
+        </p>
+      </div>
+
+      {/* Monthly Buffer Check + Deposit Timeline */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-5 space-y-4">
+          <h3 className="text-sm font-bold text-[var(--foreground)]">
+            Monthly Buffer Affordability
+          </h3>
+          <SliderControl
+            label="Buffer on Monthly Cost"
+            value={params.bufferPct}
+            onChange={v => setParams({ bufferPct: v })}
+            min={0}
+            max={25}
+            step={1}
+            suffix="%"
+          />
+          <div className={`rounded-lg px-4 py-3 border text-xs ${bufferCheck.affordableWithBuffer ? 'bg-green-50 border-green-200 text-green-700 ' : 'bg-[var(--danger)]/10 border-red-200 text-[var(--danger)] '}`}>
+            <p className="font-semibold">
+              {bufferCheck.affordableWithBuffer
+                ? `Monthly income covers the buffered cost with ${formatCurrency(bufferCheck.surplus)} to spare.`
+                : `Shortfall of ${formatCurrency(Math.abs(bufferCheck.surplus))}/mo vs the buffered requirement.`}
+            </p>
+            <p className="mt-1 text-[var(--muted-foreground)]">
+              Costs {formatCurrency(bufferCheck.totalMonthlyCost)}/mo (loan {formatCurrency(bufferCheck.monthlyMortgage)} + rates/water/insurance {formatCurrency(bufferCheck.monthlyHoldingCosts)}) + {formatPct(params.bufferPct)} buffer = {formatCurrency(bufferCheck.requiredIncome)} required vs {formatCurrency(bufferCheck.monthlyIncome)} income.
+            </p>
+          </div>
+        </div>
+
+        <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-5 space-y-4">
+          <h3 className="text-sm font-bold text-[var(--foreground)]">
+            Deposit Timeline
+          </h3>
+          <div className="grid grid-cols-2 gap-4">
+            <NumberInput label="Monthly Saving" value={params.monthlySaving} onChange={v => setParams({ monthlySaving: v })} min={0} max={20000} step={100} prefix="$" suffix="/mo" />
+            <SliderControl label="Investment Return" value={params.depositReturn} onChange={v => setParams({ depositReturn: v })} min={0} max={12} step={0.5} suffix="%" />
+          </div>
+          <div className="rounded-lg bg-[var(--background)] border border-[var(--border)] px-4 py-3 flex items-center justify-between">
+            <span className="text-xs text-[var(--muted-foreground)]">
+              Saving {formatCurrency(params.monthlySaving)}/mo at {formatPct(params.depositReturn)} to reach {formatCurrency(effectiveDeposit)}
+            </span>
+            <span className="text-sm font-bold font-mono text-[var(--primary)]">
+              {depositMonths >= 600 ? '60+ yrs' : depositMonths < 12 ? `${depositMonths} mo` : `${depositMonths} mo (~${(depositMonths / 12).toFixed(1)} yr)`}
+            </span>
+          </div>
+          {depositMonths >= 600 && (
+            <p className="text-[10px] text-[var(--danger)]">
+              Target not reached within 50 years — increase monthly saving or lower the target.
+            </p>
+          )}
         </div>
       </div>
 

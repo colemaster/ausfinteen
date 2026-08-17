@@ -559,3 +559,54 @@ All 12 phases delivered + v1.1.0 and v1.2.0 UX polish. 9 views (Portfolio + 8 ca
 ### Also added
 - `docs/PersonaFlowAnalysis.md` — market research document with real ATO/APRA/ABS/BetaShares data, 7 persona definitions, tool relevance matrix, recommended nav order rationale
 
+
+---
+
+## Agent 8 Session (2026-08-17) — tax-savings / cgt-engine / teen-tax / data
+
+### New engine functions (all tested, 83 tests green across 5 files)
+
+**src/calculators/tax-savings/engine.ts**
+- `taxWithHELP(taxableIncome, helpDebt)` — income tax + Medicare 2% + HELP repayment (0–10% by 2026-27 ATO thresholds); returns helpRate, marginalRateWithHELP.
+- `div293Exposure(income, concessionalContribs, threshold=250000)` — extra 15% Div 293 tax (lesser of excess and contribs) + plain-English message.
+- `marginalRateBrackets(income, includeHELP)` — per-bracket tax rows + Medicare + optional HELP + grand total (kind: bracket|medicare|help|total).
+- `calculateSuperSacrifice` extended: optional `includeHELP`/`helpDebt` params + `helpWithSacrifice`/`helpWithoutSacrifice` result fields (backwards compatible).
+
+**src/calculators/cgt-engine/engine.ts**
+- `cgtOnDisposal(acquired, disposed, costs, losses?)` — workflow-model CGT: 6-year rule (100% exempt ≤72 rented months; partial `(rented−72)/totalMonths` beyond), Div 43 s 110-45 clawback, s 102-5 loss ordering BEFORE Div 115 50% discount, `atoReferences[]` output. `SIX_YEAR_RULE_MONTHS` const exported.
+- `carryForwardLosses(currentYearGains, currentYearLosses, carriedForward)` — netting with remaining carried-forward + net loss carry-forward.
+
+**src/calculators/teen-tax/engine.ts (NEW FILE)**
+- `afterSchoolJobTax(weeklyHours, hourlyRate, opts?)` — weekly→annual with $18.2k threshold (brackets), Medicare shade-in, optional HELP 0–10%.
+- `tfnWithholding(annualIncome, claimExemption)` — 47% no-TFN rate vs 0% exemption (valid ≤$18,200), refund/owing at lodgement.
+- `payslipBreakdown(weeklyHours, hourlyRate, opts?)` — payslip rows (gross/PAYG/super 12%/net), TFN-toggle aware.
+
+**src/data/constants.ts (additive only)**
+- `calcHELPRate()`, `getHELPBracket()`, `TAX_FREE_THRESHOLD=18200`, `TFN_WITHHOLDING_RATE=0.47`, `WEEKS_PER_YEAR=52`. Existing exports untouched; data tests still pass.
+
+### UI features
+- **TaxBracketVis**: marginal-rate breakdown table (brackets+medicare+HELP+cumulative), Div 293 risk banner (income + employer SG > $250k).
+- **SuperSalarySacrifice**: HELP/HECS toggle + debt input wired into comparison table; Div 293 pre-sacrifice warning via `div293Exposure`.
+- **CGTEngineCalc**: 4-step workflow stepper (Buy → Improve → Rent → Sell) with scroll-to-step; sections regrouped with month sliders; ATO section references panel at bottom.
+- **TeenTaxCalculator**: after-school job section (hours × rate inputs prefilled from profile), TFN exemption toggle (0% vs 47%), HELP toggle, StatCards (weekly net, annual tax, super, take-home), new `PaySlipPreview` component (payslip-style rows).
+
+### Verification
+- `npx vitest run src/calculators/tax-savings src/calculators/cgt-engine src/calculators/teen-tax src/data` → 83 passed.
+- `npx tsc --noEmit` → zero errors in owned files (remaining repo errors are pre-existing / other agents' in-flight work: teen-budget, fire, etc.).
+
+### Notes
+- Rebased UI conventions on the Astro+motion/`var(--...)` token system used by current components.
+- NOT committed/pushed — awaiting coordinator merge of parallel agent work (branch ahead 14 commits).
+
+### Agent 7 workstream COMPLETE — v5.2.1 (2 local commits: a7204c4 engines, 1ca4b3c UI; push blocked — no creds, same as prior sessions)
+
+**Engines (all tested, 84 tests across the 5 zones):**
+- house-affordability/engine.ts: `rateScenarioTable`, `monthlyBufferCheck`, `monthsToDeposit`
+- offset-vs-dr/engine.ts: `runExtraRepayment` (ExtraRepaymentResult), `splitComparison` (SplitOutcome/SplitComparisonResult; tax refunds on invest interest credited to offset; offset rate = loan rate assumption)
+- direct-vs-dr/engine.ts: `cgtAfterSell` (50% discount, holdingYears >= 1 gate, default from data/constants CGT_DISCOUNT_INDIVIDUAL); `runDebtRecyclingStandalone` gained optional 8th param `recycleFraction` (default 1 = identical behaviour; annual chunks, cost base tracks invested)
+- property-research/scoring.ts: `normaliseWeights` + weighted scoring (weightedScore/weightedMax/weightedPercentage/weightShare renormalised to 100; equal weights preserve legacy thresholds via % bands 84/67/50/34); new suburb-metrics.ts (`suburbYieldSummary`); new scoring.test.ts + suburb-metrics.test.ts
+- financial-stress-test/engine.ts: `maxSurvivableRate` (binary search, bufferPct, ceilingPct, capped flag) + `applyCumulativeScenarios` (rate rise + job loss + expense shock + buffer; expenses include current mortgage per existing engine semantics — only incremental interest added)
+
+**UI:** rate-sensitivity matrix table, monthly-buffer panel + slider, deposit timeline (saving input + return slider); offset extra-repayment panel + chart bar + snap stat, split-strategy section with ScenarioSplitterWidget + fraction/surplus/horizon sliders + best-strategy card, offset-rate=loan-rate assumption note; DR recycleFraction slider + chart-mode toggle (after-tax proceeds vs gross) + CGT breakdown card; property layer-weight sliders (renorm to 100, live recompute) + suburb yield summary table; reverse stress test cards + buffer slider (0–5%) + 5 cumulative preset buttons.
+
+**Note:** parallel agents share this working tree and reverted my first engine pass — mitigated by committing early. Remaining repo tsc errors are in other agents' zones (cgt-engine/fire/teen-tax/investment-compare at various times), never in my zone. Full suite: 359 tests pass.

@@ -1,14 +1,14 @@
 /**
- * Australian superannuation rules for 2026-27.
+ * Australian superannuation rules for 2024-2027.
  * Source: ATO — ato.gov.au/individuals-and-families/super-for-individuals-and-families/
- * Note: SG rate stays at 12.0% for FY 2025-26 through FY 2027-28 (statutory).
+ * Note: SG rate is 12.0% statutory rate for FY 2025-26 and FY 2026-27.
  */
 
 export const SUPER_RULES = {
   /** Superannuation Guarantee rate (12.0% statutory rate for FY 2025-26 & FY 2026-27) */
   sgRate: 0.12,
 
-  /** Annual concessional (pre-tax) contribution cap ($30,000 in FY25-26 / FY26-27) */
+  /** Annual concessional (pre-tax) contribution cap ($30,000 in FY24-25 / FY25-26 / FY26-27) */
   concessionalCap: 30000,
 
   /** Annual non-concessional (post-tax) contribution cap ($120,000) */
@@ -29,11 +29,16 @@ export const SUPER_RULES = {
   /** Division 293 extra tax rate */
   division293Rate: 0.15,
 
-  /** Preservation age for those born after 1 July 1964 */
+  /** Preservation age for individuals born after 1 July 1964 */
   preservationAge: 60,
 
-  /** Transfer Balance Cap 2026-27 */
-  transferBalanceCap: 1900000,
+  /** Centrelink Age Pension Age (Statutory: 67 years) */
+  agePensionAge: 67,
+
+  /** Transfer Balance Cap indexations */
+  transferBalanceCap: 1900000,       // $1.9M general TBC (indexed to $2.0M / $2.1M)
+  transferBalanceCap2026: 2000000,
+  transferBalanceCap2027: 2100000,
 
   /**
    * Unused concessional cap carry-forward:
@@ -44,9 +49,16 @@ export const SUPER_RULES = {
   carryForwardBalanceThreshold: 500000,
 
   /** Total super balance threshold for non-concessional contributions (bring-forward) */
-  totalSuperBalanceNCCThreshold: 1680000, // FY26-27
+  totalSuperBalanceNCCThreshold: 1900000,
 
-  /** Minimum drawdown rates by age bracket (for pension phase) */
+  /** Under-18 Super Guarantee threshold rule: >30 hours per calendar week */
+  under18WeeklyHoursThreshold: 30,
+
+  /** Super low balance fee cap (max 3% p.a. on balances under $6,000) */
+  lowBalanceFeeCap: 0.03,
+  lowBalanceThreshold: 6000,
+
+  /** Minimum annual drawdown rates by age bracket (Schedule 7 SISR for Account-Based Pensions) */
   minimumDrawdown: [
     { minAge: 55, maxAge: 64, rate: 0.04 },
     { minAge: 65, maxAge: 74, rate: 0.05 },
@@ -64,7 +76,7 @@ export const SUPER_RULES = {
  * @param sgRate - Employer SG rate (decimal)
  * @returns Maximum additional concessional contribution
  */
-export function maxAdditionalSacrifice(grossSalary: number, sgRate: number): number {
+export function maxAdditionalSacrifice(grossSalary: number, sgRate: number = SUPER_RULES.sgRate): number {
   const employerSG = grossSalary * sgRate;
   const remaining = SUPER_RULES.concessionalCap - employerSG;
   return Math.max(0, remaining);
@@ -77,4 +89,28 @@ export function maxAdditionalSacrifice(grossSalary: number, sgRate: number): num
  */
 export function isDivision293(income: number, concessionalContribs: number): boolean {
   return income + concessionalContribs > SUPER_RULES.division293Threshold;
+}
+
+/**
+ * Check if Division 293 tax applies and calculate the extra tax amount.
+ * @param income - Taxable income + reportable fringe benefits + total net investment loss
+ * @param concessionalContribs - Total concessional contributions
+ */
+export function calcDivision293Tax(income: number, concessionalContribs: number): { applies: boolean; taxPayable: number } {
+  const total = income + concessionalContribs;
+  if (total <= SUPER_RULES.division293Threshold) {
+    return { applies: false, taxPayable: 0 };
+  }
+  const excess = total - SUPER_RULES.division293Threshold;
+  const taxableContributions = Math.min(excess, concessionalContribs);
+  const taxPayable = taxableContributions * SUPER_RULES.division293Rate;
+  return { applies: true, taxPayable };
+}
+
+/**
+ * Get statutory minimum annual drawdown rate for an account-based pension by age.
+ */
+export function getMinimumDrawdownRate(age: number): number {
+  const tier = SUPER_RULES.minimumDrawdown.find(t => age >= t.minAge && age <= t.maxAge);
+  return tier ? tier.rate : 0.04;
 }

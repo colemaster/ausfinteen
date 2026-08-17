@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link } from '@/lib/router';
 import { MANDY_MODULES } from '@/data/mandy-topics';
 import { usePageTitle } from '@/hooks/usePageTitle';
 import { Compass, Home, Search } from 'lucide-react';

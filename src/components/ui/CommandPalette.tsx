@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Command } from 'cmdk';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '@/lib/router';
 import { MANDY_MODULES } from '@/data/mandy-topics';
 import { Calculator, User, FileText, ShieldAlert, MessageSquare, Award } from 'lucide-react';
 

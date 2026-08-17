@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Zap } from 'lucide-react';
 import { PerformanceModal } from '@/components/shared/PerformanceModal';
+import { WebVitalsBadge } from '@/components/WebVitalsBadge';
 
 const GITHUB_URL = 'https://github.com/ravisha22/PersonalFinanceToolkit';
 
@@ -28,6 +29,7 @@ export function Footer() {
           <div className="flex flex-col items-start md:items-end gap-2 text-xs">
             <div className="flex items-center gap-3">
               <span>© {new Date().getFullYear()} · MIT Licence</span>
+              <WebVitalsBadge />
               <button
                 type="button"
                 onClick={() => setPerfOpen(true)}

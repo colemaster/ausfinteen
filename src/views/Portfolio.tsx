@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink } from '@/lib/router';
 import { NumberInput } from '../components/ui/NumberInput';
 import { SliderControl } from '../components/ui/SliderControl';
 import { Disclaimer } from '../components/shared/Disclaimer';

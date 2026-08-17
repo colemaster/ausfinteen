@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '@/lib/router';
 import { Search, Sparkles, ExternalLink, ArrowRight, X, Calculator, FileText, LayoutGrid } from 'lucide-react';
 import { motion, useReducedMotion } from 'motion/react';
 import { searchSite, POPULAR_SEARCHES, type SearchHit, type SearchResultType } from '@/lib/site-search';

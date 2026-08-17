@@ -34,7 +34,15 @@ interface ToolEntry {
   route: string;
 }
 
-const TEEN_TOOLS: ToolEntry[] = [
+const ALL_TOOLS: ToolEntry[] = [
+  // 5 High-Demand Next-Gen Australian Calculators
+  { name: 'HECS-HELP Payoff vs Investing Simulator', description: '2025-2027 marginal HELP system ($67k threshold), min(CPI, WPI) indexation cap, offset & ASX ETF wealth arbitrage, APRA borrowing capacity impact.', route: '/hecs-payoff' },
+  { name: 'Super Drawdown & Age Pension Optimizer', description: 'Schedule 7 SISR minimum drawdowns, 0% ECPI tax rate, deeming rates (1.25%/3.25%), and Centrelink Age Pension Means Test.', route: '/super-drawdown' },
+  { name: 'EV Novated Lease vs Cash vs Car Loan', description: 'FBTAA s 8A 100% FBT exemption, Fuel-Efficient LCT cap ($91,387), $6,334 max GST credit, ATO PCG 2024/2 home charging, 5-year TCO.', route: '/ev-novated-lease' },
+  { name: 'Capital Gains Tax & 6-Year Rule Engine', description: 'Division 115 50% discount, Section 102-5 loss ordering, Section 118-145 6-year main residence exemption, and Division 43 clawback.', route: '/cgt-engine' },
+  { name: 'Emergency Runway & Stress Tester', description: 'HISA vs Offset pre-tax yield arbitrage, JobSeeker LAWP 13-week wait, APRA +300 bps rate shock, and 100-point Financial Health Score.', route: '/financial-stress-test' },
+
+  // Teen & Youth Financial Tools
   { name: 'Money Mindset Quiz', description: 'Discover your money personality — Barefoot Builder, Broke Millennial Strategist or Mandy Money Planner.', route: '/money-and-you' },
   { name: 'Teen Tax Calculator', description: 'Estimate PAYG tax, net pay and refund for junior award rates on the $18,200 tax-free threshold.', route: '/tax-guide' },
   { name: 'Teen Super Calculator', description: 'See how 12% super and compound growth grow into millions by retirement.', route: '/super-retirement' },
@@ -82,12 +90,12 @@ const docs: SearchDoc[] = [
     route: m.route,
   })),
   ...MANDY_MODULES.flatMap(m => m.topics.map(topicToDoc)),
-  ...TEEN_TOOLS.map<SearchDoc>(t => ({
+  ...ALL_TOOLS.map<SearchDoc>(t => ({
     type: 'tool',
     id: `tool-${t.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`,
     title: t.name,
     subtitle: t.description,
-    keywords: 'calculator tool interactive banking HISA'.toLowerCase(),
+    keywords: 'calculator tool interactive banking HISA HECS CGT Super EV Novated Lease Stress Test'.toLowerCase(),
     route: t.route,
   })),
   ...Object.entries(OFFICIAL_WEB_LINKS).map<SearchDoc>(([key, link]) => ({
@@ -114,10 +122,10 @@ const fuse = new Fuse<SearchDoc>(docs, {
   minMatchCharLength: 2,
 });
 
-const GROUP_ORDER: SearchResultType[] = ['topic', 'tool', 'module', 'weblink'];
+const GROUP_ORDER: SearchResultType[] = ['tool', 'topic', 'module', 'weblink'];
 const GROUP_LABELS: Record<SearchResultType, string> = {
+  tool: 'Calculators & Financial Engines',
   topic: 'Q&A Guides',
-  tool: 'Calculators & Tools',
   module: 'Modules',
   weblink: 'Official Web Resources',
 };
@@ -177,6 +185,10 @@ export function autocomplete(query: string, limit = 5): string[] {
 /** Popular search starters shown before the user types. */
 export const POPULAR_SEARCHES = [
   'HECS',
+  'EV Novated Lease',
+  'Super Drawdown',
+  'CGT 6-Year Rule',
+  'Emergency Stress Test',
   'HISA 5.0%',
   'APRA $250k',
   'PayID',

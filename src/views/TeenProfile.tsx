@@ -9,7 +9,7 @@ import { SpotlightCard } from '@/components/ui/SpotlightCard';
 import { AGE_PRESETS } from '@/data/teen-finance-data';
 import { usePageTitle } from '@/hooks/usePageTitle';
 import { User, Briefcase, Target, RefreshCw, Zap, MapPin, ArrowRight, Compass } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link } from '@/lib/router';
 import { MANDY_MODULES } from '@/data/mandy-topics';
 
 export function TeenProfile() {

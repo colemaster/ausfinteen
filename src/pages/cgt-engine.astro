@@ -1,0 +1,11 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import { CGTEngine } from '@/views/CGTEngine';
+---
+
+<Layout
+  title="Capital Gains Tax (CGT) & 6-Year Main Residence Rule Engine | AusFinance Suite"
+  description="Calculate Australian capital gains tax with the 50% CGT discount for assets held >12 months, and model the ITAA 1997 Section 118-145 6-Year Main Residence Exemption."
+>
+  <CGTEngine client:load />
+</Layout>

@@ -1,0 +1,22 @@
+{
+	"pid": 306545,
+	"port": 31500,
+	"url": "http://localhost:31500",
+	"urls": {
+		"local": [
+			"http://localhost:31500/"
+		],
+		"network": [
+			"http://10.255.255.254:31500/",
+			"http://192.168.50.23:31500/",
+			"http://172.18.0.1:31500/"
+		],
+		"networkInterfaceNames": [
+			"lo",
+			"eth1",
+			"br-d4b23dffcb4f"
+		]
+	},
+	"background": true,
+	"startedAt": "2026-08-16T07:52:02.329Z"
+}

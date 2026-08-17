@@ -1,12 +1,23 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from '@/lib/router';
 import { MANDY_MODULES } from '@/data/mandy-topics';
 import { Badge } from '@/components/ui/Badge';
 import { BorderBeam } from '@/components/ui/BorderBeam';
 import { InteractiveGridPattern } from '@/components/ui/InteractiveGridPattern';
 import { HolographicTiltCard } from '@/components/ui/HolographicTiltCard';
 import { ScenarioSplitterWidget } from '@/components/ui/ScenarioSplitterWidget';
-import { Sparkles, ArrowRight, Zap, ChevronDown, Check } from 'lucide-react';
+import {
+  Sparkles,
+  ArrowRight,
+  Zap,
+  ChevronDown,
+  Check,
+  GraduationCap,
+  Coins,
+  FileText,
+  ShieldAlert,
+  Calculator,
+} from 'lucide-react';
 import { motion } from 'motion/react';
 import { fadeInUp, staggerContainer } from '@/lib/animations';
 import { useTeenProfile } from '@/context/TeenProfileContext';
@@ -15,6 +26,7 @@ import { SmartImage } from '@/components/ui/SmartImage';
 import { MagneticButton } from '@/components/ui/MagneticButton';
 import { TickerMarquee, type TickerItem } from '@/components/ui/TickerMarquee';
 import { usePageTitle } from '@/hooks/usePageTitle';
+import { sound } from '@/lib/sound-synthesizer';
 
 function ModuleSelector({ value, onChange }: { value: string; onChange: (id: string) => void }) {
   const [open, setOpen] = useState(false);
@@ -119,33 +131,29 @@ function ModuleSelector({ value, onChange }: { value: string; onChange: (id: str
 }
 
 export function Landing() {
-  usePageTitle('Free Teen Finance Guide & 11 Real-World Modules');
+  usePageTitle('AusFinance Suite — 2030 Australian Personal Finance Intelligence & Calculators');
   const { applyAgePreset, profile } = useTeenProfile();
   const [selectedModuleId, setSelectedModuleId] = useState<string>('careers-employment');
   const selectedModule = MANDY_MODULES.find(m => m.id === selectedModuleId) || MANDY_MODULES[1];
 
   const tickerItems: TickerItem[] = [
-    { label: 'Tax-Free Threshold', value: '$18,200' },
+    { label: 'HELP 2025 Cap', value: '$67,000' },
     { label: 'Super Guarantee', value: '12.0%' },
-    { label: '16yo Casual Rate', value: '$25.50/hr' },
-    { label: 'HISA Bonus Rate', value: '5.0%+ p.a.' },
-    { label: 'Concessional Cap', value: '$30,750' },
-    { label: 'APRA Deposit Guarantee', value: '$250k' },
+    { label: 'Tax-Free Threshold', value: '$18,200' },
+    { label: 'EV FBT Exemption', value: '100% Pre-Tax' },
+    { label: 'HISA Top Rates', value: '5.0%+ p.a.' },
+    { label: 'APRA Guarantee', value: '$250k FCS' },
     { label: 'Translink Flat Fare', value: '50c' },
-    { label: 'HELP Threshold', value: '$67,000' },
-    { label: 'First-Home Grant (VIC)', value: '$10,000' },
-    { label: 'ASX 200 Average Return', value: '~9% p.a.' },
+    { label: 'First-Home Grant (QLD)', value: '$30,000' },
+    { label: 'ASX 200 Return', value: '~9% p.a.' },
   ];
 
   return (
     <div className="space-y-12 animate-fade-in pb-12">
       {/* Hero Section */}
       <section className="relative rounded-3xl border border-primary/30 bg-gradient-to-br from-primary/25 via-purple-500/15 to-amber-500/25 p-8 sm:p-14 text-center sm:text-left shadow-2xl">
-        {/* Decorative layer kept clipped so the search dropdown can overflow the section */}
         <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-3xl" aria-hidden="true">
           <InteractiveGridPattern glowSize={500} glowColor="oklch(0.65 0.18 250 / 0.25)" />
-
-          {/* Radial glows + sheen */}
           <div className="absolute inset-0">
             <div className="absolute -top-28 -right-28 w-80 h-80 rounded-full bg-primary/30 blur-3xl" />
             <div className="absolute -bottom-32 -left-20 w-72 h-72 rounded-full bg-amber-500/25 blur-3xl" />
@@ -159,33 +167,33 @@ export function Landing() {
           <div className="lg:col-span-7 space-y-4">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold">
               <Sparkles className="w-3.5 h-3.5" />
-              <span>The Real-World Money Guide for Young Aussies 🤠</span>
+              <span>Next-Gen Australian Personal Finance & Tax Suite (2030 Edition) 🇦🇺</span>
             </div>
 
             <h1 className="text-4xl sm:text-6xl font-black text-foreground tracking-tight leading-none">
-              In the know about your <span className="text-primary bg-gradient-to-r from-primary via-violet-500 to-amber-500 bg-clip-text text-transparent">dough</span>.
+              Master your <span className="text-primary bg-gradient-to-r from-primary via-violet-500 to-amber-500 bg-clip-text text-transparent">wealth & taxes</span>.
             </h1>
 
             <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
-              Everything you need to know about your money before you tackle the real world—from your first job payslip, $18,200 tax-free threshold, 12% super guarantee, and car costs to budgeting your first paycheck and living in Brisbane.
+              Statutory-accurate Australian calculators and real-world guides — from the 2025 Universities Accord HECS reforms and EV novated leasing to Super drawdowns, Age Pension deeming, and property CGT.
             </p>
 
             {/* Site-wide search */}
             <div className="pt-3 flex flex-col items-center sm:items-start gap-2">
               <SiteSearchBar />
               <span className="text-[11px] text-muted-foreground/80">
-                🔍 Search every module, Q&A guide, calculator and official resource — fuzzy & typo-tolerant.
+                🔍 Instant fuzzy search across all 20+ calculators, 160+ guide topics, and official ATO resources (Press ⌘K).
               </span>
             </div>
 
             <div className="pt-3 flex flex-wrap items-center justify-center sm:justify-start gap-3">
               <MagneticButton
                 strength={0.25}
-                ariaLabel="Explore First Job Pay"
+                ariaLabel="Explore All Calculators"
                 className="px-6 py-3.5 rounded-2xl bg-gradient-to-r from-primary via-violet-500 to-purple-500 text-primary-foreground font-bold text-sm hover:opacity-90 hover:shadow-xl hover:shadow-primary/25 transition-shadow shadow-md gap-2 cursor-pointer"
               >
-                <Link to="/careers-employment" className="inline-flex items-center gap-2">
-                  <span>Explore First Job Pay</span>
+                <Link to="/calculators" onClick={() => sound.playClick()} className="inline-flex items-center gap-2">
+                  <span>⚡️ Explore All 20+ Calculators</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               </MagneticButton>
@@ -195,8 +203,8 @@ export function Landing() {
                 ariaLabel="Set Up My Profile"
                 className="px-6 py-3.5 rounded-2xl bg-card/80 border border-border text-foreground font-bold text-sm hover:bg-card hover:border-primary/40 transition-all backdrop-blur cursor-pointer"
               >
-                <Link to="/profile" className="inline-flex items-center gap-2">
-                  Set Up My Profile ({profile.age}yo)
+                <Link to="/profile" onClick={() => sound.playClick()} className="inline-flex items-center gap-2">
+                  My Profile ({profile.age}yo)
                 </Link>
               </MagneticButton>
             </div>
@@ -205,13 +213,16 @@ export function Landing() {
             <div className="pt-3 flex flex-wrap items-center justify-center sm:justify-start gap-2">
               <span className="text-xs font-semibold text-muted-foreground flex items-center gap-1">
                 <Zap className="w-3.5 h-3.5 text-amber-500" />
-                Instant Persona Presets:
+                Persona Presets:
               </span>
               {[15, 16, 17, 18].map(a => (
                 <button
                   key={a}
                   type="button"
-                  onClick={() => applyAgePreset(a)}
+                  onClick={() => {
+                    sound.playClick();
+                    applyAgePreset(a);
+                  }}
                   className={`px-3 py-1 rounded-full text-xs font-bold transition-all border ${
                     profile.age === a
                       ? 'bg-primary text-primary-foreground border-primary shadow-xs'
@@ -229,7 +240,7 @@ export function Landing() {
             <HolographicTiltCard showBeam={false} className="border-primary/30">
               <SmartImage
                 src="/assets/aus_teen_hero.jpg"
-                alt="AusTeen Money 2030 Graphic Illustration"
+                alt="AusTeen Money Graphic Illustration"
                 className="w-full h-auto object-cover rounded-2xl"
                 loading="eager"
                 width={1376}
@@ -239,12 +250,120 @@ export function Landing() {
               <div className="mt-3 flex items-center justify-between text-xs font-bold text-foreground">
                 <span className="flex items-center gap-1.5">
                   <Sparkles className="w-4 h-4 text-amber-400" />
-                  2030 Interactive Edition
+                  2026-2027 Australian Edition
                 </span>
-                <span className="text-primary">Australia-First 🇦🇺</span>
+                <span className="text-primary font-bold">100% Free & Privacy-First 🛡️</span>
               </div>
             </HolographicTiltCard>
           </div>
+        </div>
+      </section>
+
+      {/* 2026 Top Calculators Bento Showcase */}
+      <section className="space-y-6 calculator-section">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+          <div className="space-y-1 text-center sm:text-left">
+            <Badge variant="default">
+              Next-Gen Financial Engines
+            </Badge>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
+              High-Demand Australian Modeling Tools
+            </h2>
+            <p className="text-xs sm:text-sm text-muted-foreground">
+              Statutory-accurate simulations incorporating Universities Accord, Stage 3 tax cuts, and FBT exemptions.
+            </p>
+          </div>
+
+          <Link
+            to="/calculators"
+            onClick={() => sound.playClick()}
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline shrink-0"
+          >
+            <span>View All 20+ Calculators</span>
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {[
+            {
+              title: 'HECS-HELP vs Investing',
+              route: '/hecs-payoff',
+              emoji: '🎓',
+              icon: GraduationCap,
+              badge: '2025 Accord $67k',
+              desc: 'Simulate voluntary payoff vs Mortgage Offset vs ASX ETFs with min(CPI, WPI) indexation cap.',
+            },
+            {
+              title: 'Super Drawdown & Pension',
+              route: '/super-drawdown',
+              emoji: '⭐️',
+              icon: Coins,
+              badge: 'Schedule 7 SISR',
+              desc: 'Model 0% ECPI tax-free pension drawdowns, deeming rates, and Centrelink Age Pension means tests.',
+            },
+            {
+              title: 'EV Novated Lease vs Loan',
+              route: '/ev-novated-lease',
+              emoji: '⚡️',
+              icon: Zap,
+              badge: '100% FBT Exemption',
+              desc: 'FBTAA s 8A exemption, $6,334 max GST credit, ATO PCG 2024/2 home charging, and 5-year TCO.',
+            },
+            {
+              title: 'CGT & 6-Year Exemption',
+              route: '/cgt-engine',
+              emoji: '🏡',
+              icon: FileText,
+              badge: 'ITAA 1997 s 118-145',
+              desc: '50% discount for assets held >12 mos, s 102-5 loss ordering, and Div 43 capital works clawback.',
+            },
+            {
+              title: 'Emergency Runway & Stress',
+              route: '/financial-stress-test',
+              emoji: '🛡️',
+              icon: ShieldAlert,
+              badge: 'APRA +300 bps Shock',
+              desc: 'HISA vs Offset pre-tax yield arbitrage, JobSeeker LAWP 13-week wait, and 100-point Health Score.',
+            },
+            {
+              title: 'Browse Full Toolkit',
+              route: '/calculators',
+              emoji: '🧮',
+              icon: Calculator,
+              badge: 'All Tools Hub',
+              desc: 'Access all tax, super, stamp duty tables for all 8 states, and budgeting tools in one dashboard.',
+            },
+          ].map(tool => (
+            <Link
+              key={tool.route}
+              to={tool.route}
+              onClick={() => sound.playClick()}
+              className="group p-5 rounded-3xl bg-card border border-border hover:border-primary/40 hover:shadow-xl transition-all duration-300 flex flex-col justify-between space-y-3 hover:-translate-y-1"
+            >
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="p-2.5 rounded-2xl bg-primary/10 text-primary group-hover:scale-110 transition-transform">
+                    <tool.icon className="w-5 h-5" />
+                  </div>
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-muted text-foreground border border-border">
+                    {tool.badge}
+                  </span>
+                </div>
+                <h3 className="text-base font-bold text-foreground group-hover:text-primary transition-colors">
+                  {tool.emoji} {tool.title}
+                </h3>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  {tool.desc}
+                </p>
+              </div>
+
+              <div className="pt-2 border-t border-border/60 flex items-center justify-between text-xs font-bold text-primary group-hover:translate-x-1 transition-transform">
+                <span>Launch Calculator</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </div>
+            </Link>
+          ))}
         </div>
       </section>
 
@@ -270,7 +389,7 @@ export function Landing() {
       <section className="space-y-6 calculator-section">
         <div className="text-center sm:text-left space-y-1">
           <Badge variant="warning">
-            11 Real-World Modules
+            11 Real-World Learning Modules
           </Badge>
           <h2 className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
             160+ Money Questions Answered
@@ -291,6 +410,7 @@ export function Landing() {
             <motion.div key={module.id} variants={fadeInUp}>
               <Link
                 to={module.route}
+                onClick={() => sound.playClick()}
                 className="block group rounded-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2"
               >
                 <HolographicTiltCard showBeam={false} className="h-full space-y-3 rounded-3xl">
@@ -360,6 +480,7 @@ export function Landing() {
         <div className="pt-2 text-center">
           <Link
             to={selectedModule.route}
+            onClick={() => sound.playClick()}
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground font-bold text-xs hover:opacity-90 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-0.5 transition-all"
           >
             <span>Open Full {selectedModule.title} Module</span>

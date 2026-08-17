@@ -15,7 +15,7 @@ import {
   GraduationCap,
   PiggyBank,
 } from 'lucide-react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams } from '@/lib/router';
 import {
   QLD_LICENCE_PATH,
   QLD_LICENCE_FEES,

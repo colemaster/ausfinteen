@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams } from '@/lib/router';
 
 type Primitive = string | number | boolean;
 type ParamDefaults = Record<string, Primitive>;

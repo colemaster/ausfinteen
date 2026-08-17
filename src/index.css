@@ -382,3 +382,43 @@ p {
   animation: aura-float 18s ease-in-out infinite reverse;
 }
 
+/* Print & PDF Export Stylesheet */
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-size: 10pt;
+  }
+
+  header,
+  nav,
+  footer,
+  .glass-nav,
+  .aura-orb-1,
+  .aura-orb-2,
+  button,
+  [role="dialog"] {
+    display: none !important;
+  }
+
+  .card-responsive,
+  .rounded-3xl,
+  .rounded-2xl {
+    box-shadow: none !important;
+    border: 1px solid #cccccc !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+  }
+
+  th, td {
+    border: 1px solid #dddddd !important;
+    padding: 4px 8px !important;
+    color: #000000 !important;
+  }
+}
+

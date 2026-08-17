@@ -1,0 +1,11 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import { TeenProfile } from '@/views/TeenProfile';
+---
+
+<Layout
+  title="My Financial Profile & Health Score | AusFinance Suite"
+  description="Your personalised Australian personal finance dashboard. Track income, calculate statutory super eligibility, simulate savings goals, and check your Financial Health Score."
+>
+  <TeenProfile client:load />
+</Layout>

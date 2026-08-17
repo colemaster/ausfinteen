@@ -3,6 +3,89 @@
  * Serializes arbitrary financial plans to URL hash `#plan=...` using CompressionStream / Base64URL.
  * Includes a zero-dependency SVG QR Code generator for mobile scan & transfer.
  */
+import { toast } from 'sonner';
+
+/**
+ * Copy the current page URL (including any `#plan=` / query state) to the
+ * clipboard and show a "Link copied" toast via the sonner Toaster.
+ * @returns The copied URL.
+ */
+export async function copyShareLink(): Promise<string> {
+  const url = window.location.href;
+
+  let ok = false;
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(url);
+      ok = true;
+    }
+  } catch {
+    ok = false;
+  }
+
+  if (!ok) ok = legacyCopyToClipboard(url);
+
+  if (ok) {
+    toast.success('Link copied to clipboard');
+  } else {
+    toast.error('Could not copy link — copy it from the address bar');
+  }
+  return url;
+}
+
+/** Fallback clipboard write for non-secure contexts / older browsers. */
+function legacyCopyToClipboard(text: string): boolean {
+  try {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.setAttribute('readonly', '');
+    textarea.style.position = 'fixed';
+    textarea.style.opacity = '0';
+    document.body.appendChild(textarea);
+    textarea.select();
+    const ok = document.execCommand('copy');
+    document.body.removeChild(textarea);
+    return ok;
+  } catch {
+    return false;
+  }
+}
+
+export interface ShareNativeOptions {
+  title?: string;
+  text?: string;
+}
+
+/**
+ * Share the current URL via the native Web Share API (navigator.share)
+ * when available on a secure context. Falls back to `copyShareLink()`
+ * otherwise. Returns the action taken.
+ */
+export async function shareNative(
+  options: ShareNativeOptions = {}
+): Promise<'shared' | 'copied' | 'unsupported'> {
+  const url = window.location.href;
+
+  if (typeof navigator !== 'undefined' && typeof navigator.share === 'function') {
+    try {
+      await navigator.share({
+        title: options.title ?? (typeof document !== 'undefined' ? document.title : undefined),
+        text: options.text,
+        url,
+      });
+      return 'shared';
+    } catch (err) {
+      const name = err instanceof Error ? err.name : '';
+      if (name === 'AbortError') return 'shared'; // user cancelled the sheet
+      // Real share failure — fall back to copy.
+      await copyShareLink();
+      return 'copied';
+    }
+  }
+
+  await copyShareLink();
+  return 'copied';
+}
 
 /**
  * Losslessly compress an object to a URL-safe Base64URL string.

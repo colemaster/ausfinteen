@@ -17,9 +17,21 @@ import {
   FileText,
   ShieldAlert,
   Calculator,
+  LayoutGrid,
+  Filter,
 } from 'lucide-react';
-import { motion } from 'motion/react';
-import { fadeInUp, staggerContainer } from '@/lib/animations';
+import { motion, useReducedMotion, LayoutGroup } from 'motion/react';
+import { fadeInUp, staggerContainer, fastStagger } from '@/lib/animations';
+import { cn } from '@/lib/utils';
+import { useUrlParams } from '@/hooks/useUrlParams';
+import { OdometerCounter } from '@/components/shared/OdometerCounter';
+import { SpotlightCard } from '@/components/ui/SpotlightCard';
+import { AnimatedNumber } from '@/components/ui/AnimatedNumber';
+import { formatCurrency } from '@/utils/formatters';
+import { TAX_BRACKETS_2026_27, getCombinedMarginalRate } from '@/data/tax-brackets';
+import { SUPER_RULES } from '@/data/super-rules';
+import { QLD_STAMP_DUTY } from '@/data/stamp-duty-tables';
+import { HELP_REPAYMENT_THRESHOLDS_2026_27 } from '@/data/constants';
 import { useTeenProfile } from '@/context/TeenProfileContext';
 import { SiteSearchBar } from '@/components/search/SiteSearchBar';
 import { SmartImage } from '@/components/ui/SmartImage';
@@ -27,6 +39,178 @@ import { MagneticButton } from '@/components/ui/MagneticButton';
 import { TickerMarquee, type TickerItem } from '@/components/ui/TickerMarquee';
 import { usePageTitle } from '@/hooks/usePageTitle';
 import { sound } from '@/lib/sound-synthesizer';
+
+// ─── Landing enhancements: module categories, fast paths, featured calculators ───
+
+type ModuleCategory = 'money-basics' | 'jobs-tax' | 'cars' | 'investing' | 'super' | 'calculators';
+
+const MODULE_CATEGORIES: Record<string, ModuleCategory[]> = {
+  'money-and-you': ['money-basics'],
+  'careers-employment': ['jobs-tax', 'calculators'],
+  'super-retirement': ['super', 'calculators'],
+  'tax-guide': ['jobs-tax', 'calculators'],
+  'teen-budgeting': ['money-basics', 'calculators'],
+  'spending-saving': ['money-basics'],
+  'investing-shares': ['investing', 'calculators'],
+  'interest-products': ['money-basics', 'calculators'],
+  'dealing-with-debt': ['money-basics', 'calculators'],
+  'car-driving': ['cars', 'calculators'],
+  'brisbane-qld': ['money-basics', 'calculators'],
+};
+
+const CATEGORY_FILTERS: ReadonlyArray<{ id: ModuleCategory | 'all'; label: string }> = [
+  { id: 'all', label: '✨ All' },
+  { id: 'money-basics', label: '💰 Money Basics' },
+  { id: 'jobs-tax', label: '🧾 Jobs & Tax' },
+  { id: 'cars', label: '🚗 Cars' },
+  { id: 'investing', label: '📈 Investing' },
+  { id: 'super', label: '⭐️ Super' },
+  { id: 'calculators', label: '🧮 Calculators' },
+];
+
+const FAST_PATHS: ReadonlyArray<{
+  id: string;
+  emoji: string;
+  title: string;
+  desc: string;
+  route: string;
+  tag: string;
+}> = [
+  {
+    id: 'first-paycheck',
+    emoji: '💵',
+    title: 'First Paycheck',
+    desc: 'Split your first pay with the 50/30/20 rule and Barefoot\'s 3 buckets.',
+    route: '/teen-budgeting?topic=tb-1',
+    tag: 'Budgeting',
+  },
+  {
+    id: 'buying-car',
+    emoji: '🚗',
+    title: 'Buying a Car',
+    desc: 'QLD licence path from Ls to Opens, plus the $2 PPSR check.',
+    route: '/car-driving?tab=licence',
+    tag: 'Cars',
+  },
+  {
+    id: 'etf-starter',
+    emoji: '📈',
+    title: 'ETF Starter',
+    desc: 'How ETFs work, why low MERs matter, and compounding basics.',
+    route: '/investing-shares?topic=is-1',
+    tag: 'Investing',
+  },
+  {
+    id: 'fire-plan',
+    emoji: '🏖️',
+    title: 'FIRE Plan',
+    desc: 'Why 12% employer super from age 16 is your first FIRE engine.',
+    route: '/super-retirement?topic=sr-1',
+    tag: 'Super',
+  },
+];
+
+const FEATURED_CALCULATORS: ReadonlyArray<{
+  id: string;
+  emoji: string;
+  title: string;
+  route: string;
+  statValue: number;
+  statFormat: 'currency' | 'percent' | 'number';
+  statLabel: string;
+  subtext: string;
+}> = [
+  {
+    id: 'tax-savings',
+    emoji: '🧾',
+    title: 'Tax Savings',
+    route: '/tax-guide',
+    statValue: Math.round(getCombinedMarginalRate(45001) * 100),
+    statFormat: 'percent',
+    statLabel: 'Combined marginal rate',
+    subtext: `${formatCurrency(TAX_BRACKETS_2026_27[2].min)}+: 30¢ bracket + 2% Medicare levy`,
+  },
+  {
+    id: 'offset-vs-dr',
+    emoji: '🏠',
+    title: 'Offset vs Debt Recycling',
+    route: '/careers-employment',
+    statValue: Math.round(SUPER_RULES.sgRate * 100),
+    statFormat: 'percent',
+    statLabel: 'Super Guarantee',
+    subtext: 'Salary-sacrifice vs offset tax arbitrage',
+  },
+  {
+    id: 'house-affordability',
+    emoji: '🔑',
+    title: 'House Affordability',
+    route: '/car-driving',
+    statValue: QLD_STAMP_DUTY.firstHomeBuyer.grantAmount ?? 0,
+    statFormat: 'currency',
+    statLabel: 'QLD First Home Grant',
+    subtext: `FHOG on new homes under ${formatCurrency(QLD_STAMP_DUTY.firstHomeBuyer.grantPriceCapNew)}`,
+  },
+  {
+    id: 'savings-rate',
+    emoji: '💰',
+    title: 'Savings Rate',
+    route: '/teen-budgeting',
+    statValue: TAX_BRACKETS_2026_27[0].max,
+    statFormat: 'currency',
+    statLabel: 'Tax-free threshold',
+    subtext: 'First $18,200 earned each year is 100% tax-free',
+  },
+];
+
+const LIVE_FIGURES: ReadonlyArray<{
+  value: number;
+  prefix: string;
+  suffix: string;
+  decimals: number;
+  label: string;
+  caption: string;
+}> = [
+  {
+    value: Math.round(SUPER_RULES.sgRate * 100),
+    prefix: '',
+    suffix: '%',
+    decimals: 0,
+    label: 'Super Guarantee',
+    caption: 'Compulsory employer super (2026-27)',
+  },
+  {
+    value: TAX_BRACKETS_2026_27[0].max,
+    prefix: '$',
+    suffix: '',
+    decimals: 0,
+    label: 'Tax-Free Threshold',
+    caption: 'First dollars earned are tax-free',
+  },
+  {
+    value: HELP_REPAYMENT_THRESHOLDS_2026_27[0].max,
+    prefix: '$',
+    suffix: '',
+    decimals: 0,
+    label: 'HELP Threshold',
+    caption: 'Compulsory HECS repayments start here',
+  },
+  {
+    value: Math.round(TAX_BRACKETS_2026_27[2].rate * 100),
+    prefix: '',
+    suffix: '%',
+    decimals: 0,
+    label: '30¢ Bracket',
+    caption: `From ${formatCurrency(TAX_BRACKETS_2026_27[2].min)} (2026-27)`,
+  },
+  {
+    value: QLD_STAMP_DUTY.firstHomeBuyer.grantAmount ?? 0,
+    prefix: '$',
+    suffix: '',
+    decimals: 0,
+    label: 'QLD First Home Grant',
+    caption: `New homes under ${formatCurrency(QLD_STAMP_DUTY.firstHomeBuyer.grantPriceCapNew)}`,
+  },
+];
 
 function ModuleSelector({ value, onChange }: { value: string; onChange: (id: string) => void }) {
   const [open, setOpen] = useState(false);
@@ -130,11 +314,135 @@ function ModuleSelector({ value, onChange }: { value: string; onChange: (id: str
   );
 }
 
+function HeroLiveFigure({ reduceMotion }: { reduceMotion: boolean | null }) {
+  const [idx, setIdx] = useState(0);
+
+  useEffect(() => {
+    if (reduceMotion) return;
+    const id = setInterval(() => {
+      if (document.hidden) return;
+      setIdx(i => (i + 1) % LIVE_FIGURES.length);
+    }, 2600);
+    return () => clearInterval(id);
+  }, [reduceMotion]);
+
+  const fig = LIVE_FIGURES[idx];
+
+  return (
+    <div className="flex items-center gap-3.5 rounded-2xl border border-primary/25 bg-card/70 backdrop-blur-md px-4 py-3 shadow-lg shadow-primary/5">
+      <span className="relative flex h-2.5 w-2.5 shrink-0" aria-hidden="true">
+        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary/60" />
+        <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-primary" />
+      </span>
+      <div className="flex-1 min-w-0">
+        <span className="block text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+          Live Money Pulse · 2026-27
+        </span>
+        <div className="flex items-baseline gap-2">
+          <OdometerCounter
+            value={fig.value}
+            prefix={fig.prefix}
+            suffix={fig.suffix}
+            decimals={fig.decimals}
+            durationMs={900}
+            className="text-2xl text-primary"
+          />
+          <span className="text-xs font-bold text-foreground truncate">{fig.label}</span>
+        </div>
+        <p className="text-[10px] text-muted-foreground truncate">{fig.caption}</p>
+      </div>
+    </div>
+  );
+}
+
+function CategoryChips({ value, onChange }: { value: string; onChange: (id: string) => void }) {
+  return (
+    <LayoutGroup id="landing-category-chips">
+      <div
+        className="flex gap-1.5 overflow-x-auto pb-1 -mx-1 px-1 sm:flex-wrap sm:overflow-visible"
+        role="tablist"
+        aria-label="Filter modules by category"
+      >
+        {CATEGORY_FILTERS.map(filter => {
+          const active = filter.id === value;
+          return (
+            <button
+              key={filter.id}
+              type="button"
+              role="tab"
+              aria-selected={active}
+              onClick={() => {
+                sound.playClick();
+                onChange(filter.id);
+              }}
+              className={cn(
+                'relative shrink-0 px-3 py-1.5 rounded-full text-xs font-bold border transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60',
+                active
+                  ? 'border-primary/50 text-primary'
+                  : 'border-border text-muted-foreground hover:text-foreground hover:border-primary/30'
+              )}
+            >
+              {active && (
+                <motion.span
+                  layoutId="category-pill"
+                  className="absolute inset-0 rounded-full bg-primary/10"
+                  transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                />
+              )}
+              <span className="relative z-10">{filter.label}</span>
+            </button>
+          );
+        })}
+      </div>
+    </LayoutGroup>
+  );
+}
+
+function CompactToggle({ compact, onChange }: { compact: boolean; onChange: (v: boolean) => void }) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={compact}
+      aria-label="Compact view"
+      title="Compact view — fewer, tighter cards (shareable via ?compact=1)"
+      onClick={() => {
+        sound.playClick();
+        onChange(!compact);
+      }}
+      className="inline-flex items-center gap-2 text-[11px] font-bold text-muted-foreground hover:text-foreground transition-colors cursor-pointer shrink-0"
+    >
+      <LayoutGrid className="w-3.5 h-3.5" />
+      <span>Compact view</span>
+      <span
+        className={cn(
+          'relative inline-flex h-4 w-7 items-center rounded-full p-0.5 transition-colors',
+          compact ? 'bg-primary' : 'bg-muted border border-border'
+        )}
+      >
+        <span
+          className={cn(
+            'inline-block h-3 w-3 rounded-full bg-white shadow-sm transition-transform duration-200',
+            compact ? 'translate-x-3' : 'translate-x-0'
+          )}
+        />
+      </span>
+    </button>
+  );
+}
+
 export function Landing() {
   usePageTitle('AusFinance Suite — 2030 Australian Personal Finance Intelligence & Calculators');
   const { applyAgePreset, profile } = useTeenProfile();
+  const reduceMotion = useReducedMotion();
+  const [{ cat, compact }, setParams] = useUrlParams<{ cat: string; compact: boolean }>({ cat: 'all', compact: false });
   const [selectedModuleId, setSelectedModuleId] = useState<string>('careers-employment');
   const selectedModule = MANDY_MODULES.find(m => m.id === selectedModuleId) || MANDY_MODULES[1];
+
+  const filteredModules =
+    cat === 'all'
+      ? MANDY_MODULES
+      : MANDY_MODULES.filter(m => MODULE_CATEGORIES[m.id]?.includes(cat as ModuleCategory) ?? false);
 
   const tickerItems: TickerItem[] = [
     { label: 'HELP 2025 Cap', value: '$67,000' },
@@ -233,6 +541,11 @@ export function Landing() {
                 </button>
               ))}
             </div>
+
+            {/* Hero Live Money Pulse (odometer-style) */}
+            <div className="pt-4 max-w-md mx-auto sm:mx-0">
+              <HeroLiveFigure reduceMotion={reduceMotion} />
+            </div>
           </div>
 
           {/* Hero 3D Graphic Asset Card */}
@@ -257,6 +570,116 @@ export function Landing() {
             </HolographicTiltCard>
           </div>
         </div>
+      </section>
+
+      {/* Quick-Start Fast Paths */}
+      <section className="space-y-5 calculator-section">
+        <div className="text-center sm:text-left space-y-1">
+          <Badge variant="info">Quick-Start Fast Paths</Badge>
+          <h2 className="text-xl sm:text-2xl font-extrabold text-foreground tracking-tight">
+            Start Your Money Journey in 4 Clicks
+          </h2>
+          <p className="text-xs sm:text-sm text-muted-foreground">
+            Curated journeys that deep-link straight into the right calculator or guide.
+          </p>
+        </div>
+
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-40px' }}
+          className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4"
+        >
+          {FAST_PATHS.map(fp => (
+            <motion.div key={fp.id} variants={fadeInUp}>
+              <Link
+                to={fp.route}
+                onClick={() => sound.playClick()}
+                className="group block h-full p-4 rounded-2xl border border-border bg-card hover:border-primary/40 hover:shadow-xl hover:shadow-primary/10 hover:-translate-y-0.5 transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <span className="text-2xl">{fp.emoji}</span>
+                  <span className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground bg-muted px-2 py-0.5 rounded-full border border-border group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+                    {fp.tag}
+                  </span>
+                </div>
+                <h3 className="mt-2 text-sm font-bold text-foreground group-hover:text-primary transition-colors">
+                  {fp.title}
+                </h3>
+                <p className="mt-1 text-[11px] text-muted-foreground leading-relaxed">{fp.desc}</p>
+                <span className="mt-2 inline-flex items-center gap-1 text-[11px] font-bold text-primary opacity-80 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all">
+                  Start now
+                  <ArrowRight className="w-3 h-3" />
+                </span>
+              </Link>
+            </motion.div>
+          ))}
+        </motion.div>
+      </section>
+
+      {/* Featured Calculators Grid */}
+      <section className="space-y-5 calculator-section">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+          <div className="space-y-1 text-center sm:text-left">
+            <Badge variant="success">Most Popular Calculators</Badge>
+            <h2 className="text-xl sm:text-2xl font-extrabold text-foreground tracking-tight">
+              Quick Wins, Pre-Checked
+            </h2>
+            <p className="text-xs sm:text-sm text-muted-foreground">
+              Live stats pulled straight from our 2026-27 ATO data engine.
+            </p>
+          </div>
+          <Link
+            to="/calculators"
+            onClick={() => sound.playClick()}
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline shrink-0 justify-center"
+          >
+            <span>All Calculators</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+
+        <motion.div
+          variants={fastStagger}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-40px' }}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
+        >
+          {FEATURED_CALCULATORS.map(calc => (
+            <motion.div key={calc.id} variants={fadeInUp} className="h-full">
+              <Link
+                to={calc.route}
+                onClick={() => sound.playClick()}
+                className="block h-full rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+              >
+                <SpotlightCard className="h-full p-5 flex flex-col gap-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-2xl">{calc.emoji}</span>
+                    <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                  </div>
+                  <div className="space-y-0.5">
+                    <h3 className="font-bold text-sm text-foreground group-hover:text-primary transition-colors">
+                      {calc.title}
+                    </h3>
+                    <p className="text-[11px] text-muted-foreground leading-relaxed">{calc.subtext}</p>
+                  </div>
+                  <div className="mt-auto pt-3 border-t border-border/60">
+                    <span className="block text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                      {calc.statLabel}
+                    </span>
+                    <AnimatedNumber
+                      value={calc.statValue}
+                      format={calc.statFormat}
+                      className="text-2xl font-mono font-bold text-primary tabular-nums"
+                    />
+                  </div>
+                </SpotlightCard>
+              </Link>
+            </motion.div>
+          ))}
+        </motion.div>
       </section>
 
       {/* 2026 Top Calculators Bento Showcase */}
@@ -284,7 +707,12 @@ export function Landing() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div
+          className={cn(
+            'grid grid-cols-1 gap-4',
+            compact ? 'sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4' : 'sm:grid-cols-2 lg:grid-cols-3'
+          )}
+        >
           {[
             {
               title: 'HECS-HELP vs Investing',
@@ -387,46 +815,74 @@ export function Landing() {
 
       {/* 11 Mandy Money Modules Grid */}
       <section className="space-y-6 calculator-section">
-        <div className="text-center sm:text-left space-y-1">
-          <Badge variant="warning">
-            11 Real-World Learning Modules
-          </Badge>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
-            160+ Money Questions Answered
-          </h2>
-          <p className="text-xs sm:text-sm text-muted-foreground">
-            Click any module to dive into interactive calculators, step-by-step guides, and official Australian web resources.
+        <div className="flex items-start justify-between gap-4">
+          <div className="text-center sm:text-left space-y-1">
+            <Badge variant="warning">
+              11 Real-World Learning Modules
+            </Badge>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
+              160+ Money Questions Answered
+            </h2>
+            <p className="text-xs sm:text-sm text-muted-foreground">
+              Click any module to dive into interactive calculators, step-by-step guides, and official Australian web resources.
+            </p>
+          </div>
+
+          <CompactToggle compact={compact} onChange={v => setParams({ compact: v })} />
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-2">
+            <Filter className="w-3.5 h-3.5 text-muted-foreground shrink-0 hidden sm:block" aria-hidden="true" />
+            <CategoryChips value={cat} onChange={id => setParams({ cat: id })} />
+          </div>
+          <p className="text-[11px] text-muted-foreground text-center sm:text-left" aria-live="polite">
+            Showing {filteredModules.length} of {MANDY_MODULES.length} modules
+            {cat !== 'all' && ' — filtered by category'} · filter is shareable via ?cat= URL param
           </p>
         </div>
 
         <motion.div
+          key={cat}
           variants={staggerContainer}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: '-50px' }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+          className={cn(
+            'grid grid-cols-1 gap-4',
+            compact ? 'sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4' : 'sm:grid-cols-2 lg:grid-cols-3'
+          )}
         >
-          {MANDY_MODULES.map(module => (
+          {filteredModules.map(module => (
             <motion.div key={module.id} variants={fadeInUp}>
               <Link
                 to={module.route}
                 onClick={() => sound.playClick()}
                 className="block group rounded-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2"
               >
-                <HolographicTiltCard showBeam={false} className="h-full space-y-3 rounded-3xl">
+                <HolographicTiltCard
+                  showBeam={false}
+                  className={cn('h-full rounded-3xl', compact ? 'space-y-2 p-4' : 'space-y-3')}
+                >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       {module.graphicUrl ? (
                         <SmartImage
                           src={module.graphicUrl}
                           alt={module.title}
-                          className="w-12 h-12 rounded-2xl object-cover border border-primary/20 shadow-md group-hover:scale-110 transition-transform duration-300"
+                          className={cn(
+                            'rounded-2xl object-cover border border-primary/20 shadow-md group-hover:scale-110 transition-transform duration-300',
+                            compact ? 'w-9 h-9' : 'w-12 h-12'
+                          )}
                           loading="lazy"
                           width={48}
                           height={48}
                         />
                       ) : (
-                        <span className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/15 via-purple-500/10 to-amber-500/20 border border-primary/10 flex items-center justify-center text-2xl group-hover:scale-105 group-hover:border-primary/30 transition-all shadow-inner">
+                        <span className={cn(
+                          'rounded-2xl bg-gradient-to-br from-primary/15 via-purple-500/10 to-amber-500/20 border border-primary/10 flex items-center justify-center group-hover:scale-105 group-hover:border-primary/30 transition-all shadow-inner',
+                          compact ? 'w-9 h-9 text-xl' : 'w-12 h-12 text-2xl'
+                        )}>
                           {module.emoji}
                         </span>
                       )}
@@ -435,10 +891,10 @@ export function Landing() {
                       {module.topics.length} topics
                     </span>
                   </div>
-                  <h3 className="font-bold text-lg text-foreground group-hover:text-primary transition-colors">
+                  <h3 className={cn('font-bold text-foreground group-hover:text-primary transition-colors', compact ? 'text-base' : 'text-lg')}>
                     {module.title}
                   </h3>
-                  <p className="text-xs text-muted-foreground leading-relaxed">
+                  <p className={cn('text-xs text-muted-foreground leading-relaxed', compact && 'line-clamp-2')}>
                     {module.description}
                   </p>
                   <div className="pt-2 flex items-center gap-1.5 text-xs font-bold text-primary group-hover:translate-x-1 transition-transform">
@@ -468,7 +924,7 @@ export function Landing() {
           <ModuleSelector value={selectedModuleId} onChange={setSelectedModuleId} />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div className={cn('grid grid-cols-1 gap-3', compact ? 'md:grid-cols-3' : 'md:grid-cols-2')}>
           {selectedModule.topics.map(t => (
             <div key={t.id} className="p-3.5 rounded-xl bg-muted/50 border border-border/60 text-xs space-y-1">
               <span className="font-bold text-foreground block">{t.question}</span>

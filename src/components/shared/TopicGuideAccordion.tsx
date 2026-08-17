@@ -4,25 +4,35 @@ import { Card } from '@/components/ui/Card';
 import { TopicGuide } from '@/data/mandy-topics';
 import { WebReferenceLink } from '@/components/shared/WebReferenceLink';
 import { ActionStepBadge } from '@/components/shared/ActionStepBadge';
-import { ChevronDown, Sparkles } from 'lucide-react';
+import { ChevronDown, ChevronUp, Sparkles } from 'lucide-react';
 
 interface TopicGuideAccordionProps {
   topics: TopicGuide[];
   title?: string;
+  /**
+   * Show an "Expand all / Collapse all" toggle button in the header.
+   * Enables multi-open mode (several topics expanded at once).
+   */
+  collapsibleAll?: boolean;
 }
 
-export function TopicGuideAccordion({ topics, title = 'Topic Q&A Guide' }: TopicGuideAccordionProps) {
+export function TopicGuideAccordion({
+  topics,
+  title = 'Topic Q&A Guide',
+  collapsibleAll = false,
+}: TopicGuideAccordionProps) {
   const [searchParams] = useSearchParams();
   const deepLinkTopic = searchParams.get('topic');
-  const [openTopicId, setOpenTopicId] = useState<string | null>(() => {
-    if (deepLinkTopic && topics.some(t => t.id === deepLinkTopic)) return deepLinkTopic;
-    return topics[0]?.id || null;
+  const [openIds, setOpenIds] = useState<Set<string>>(() => {
+    if (deepLinkTopic && topics.some(t => t.id === deepLinkTopic)) return new Set([deepLinkTopic]);
+    const first = topics[0]?.id;
+    return first ? new Set([first]) : new Set();
   });
 
   // When a deep link (?topic=<id>) arrives after mount, open + scroll to it
   useEffect(() => {
     if (deepLinkTopic && topics.some(t => t.id === deepLinkTopic)) {
-      setOpenTopicId(deepLinkTopic);
+      setOpenIds(new Set([deepLinkTopic]));
       const t = setTimeout(() => {
         document.getElementById(`topic-${deepLinkTopic}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }, 100);
@@ -30,16 +40,53 @@ export function TopicGuideAccordion({ topics, title = 'Topic Q&A Guide' }: Topic
     }
   }, [deepLinkTopic, topics]);
 
+  const toggleTopic = (id: string) => {
+    setOpenIds(prev => {
+      if (collapsibleAll) {
+        const next = new Set(prev);
+        if (next.has(id)) {
+          next.delete(id);
+        } else {
+          next.add(id);
+        }
+        return next;
+      }
+      // Single-open mode (legacy behaviour): clicking the open topic
+      // closes it; clicking another topic opens only that one.
+      if (prev.has(id) && prev.size === 1) return new Set();
+      return new Set([id]);
+    });
+  };
+
+  const allOpen = topics.length > 0 && openIds.size === topics.length;
+  const handleToggleAll = () => {
+    setOpenIds(allOpen ? new Set() : new Set(topics.map(t => t.id)));
+  };
+
   return (
     <Card variant="glass" className="p-6 space-y-5">
-      <div className="flex items-center gap-2 border-b border-border pb-3">
-        <Sparkles className="w-5 h-5 text-amber-500" />
-        <h2 className="text-xl font-bold text-foreground">{title}</h2>
+      <div className="flex items-center justify-between gap-2 border-b border-border pb-3">
+        <div className="flex items-center gap-2">
+          <Sparkles className="w-5 h-5 text-amber-500" />
+          <h2 className="text-xl font-bold text-foreground">{title}</h2>
+        </div>
+
+        {collapsibleAll && topics.length > 0 && (
+          <button
+            type="button"
+            onClick={handleToggleAll}
+            aria-expanded={allOpen}
+            className="shrink-0 inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border border-border bg-muted/50 text-[11px] font-bold text-muted-foreground hover:text-foreground hover:border-primary/40 transition-all"
+          >
+            {allOpen ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+            {allOpen ? 'Collapse all' : 'Expand all'}
+          </button>
+        )}
       </div>
 
       <div className="space-y-3">
         {topics.map(t => {
-          const isOpen = openTopicId === t.id;
+          const isOpen = openIds.has(t.id);
           return (
             <div
               key={t.id}
@@ -48,7 +95,7 @@ export function TopicGuideAccordion({ topics, title = 'Topic Q&A Guide' }: Topic
             >
               <button
                 type="button"
-                onClick={() => setOpenTopicId(isOpen ? null : t.id)}
+                onClick={() => toggleTopic(t.id)}
                 aria-expanded={isOpen}
                 aria-controls={`topic-panel-${t.id}`}
                 className="w-full p-4 text-left flex items-center justify-between gap-3 focus:outline-none"

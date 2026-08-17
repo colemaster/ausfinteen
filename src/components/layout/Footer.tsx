@@ -1,9 +1,18 @@
 import { useState } from 'react';
 import { Zap } from 'lucide-react';
+import { Link } from '@/lib/router';
 import { PerformanceModal } from '@/components/shared/PerformanceModal';
 import { WebVitalsBadge } from '@/components/WebVitalsBadge';
+import pkg from '../../../package.json';
 
 const GITHUB_URL = 'https://github.com/ravisha22/PersonalFinanceToolkit';
+const LAST_UPDATED = 'Aug 2026';
+
+const TOOLS_LINKS = [
+  { to: '/', label: 'Home' },
+  { to: '/calculators', label: 'All Calculators' },
+  { to: '/profile', label: 'My Profile' },
+];
 
 function GithubIcon({ className }: { className?: string }) {
   return (
@@ -19,17 +28,31 @@ export function Footer() {
   return (
     <footer className="relative bg-background border-t border-border/70 mt-auto transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
-        <div className="flex flex-col md:flex-row justify-between gap-6 text-sm text-muted-foreground">
+        <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_auto] gap-6 text-sm text-muted-foreground">
           <div className="max-w-xl leading-relaxed">
             <strong className="text-foreground font-semibold">Not financial advice.</strong>{' '}
             AusTeen Money is a free educational tool made for young Aussies. All calculations are illustrative only
             and should not be relied upon for financial decisions. Always consult a licensed
             Australian financial adviser (AFS licence holder) before acting.
           </div>
+
+          <nav aria-label="Tools" className="flex flex-col gap-1.5 text-xs">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-foreground">Tools</span>
+            {TOOLS_LINKS.map(link => (
+              <Link
+                key={link.to}
+                to={link.to}
+                className="text-muted-foreground hover:text-foreground transition-colors"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </nav>
+
           <div className="flex flex-col items-start md:items-end gap-2 text-xs">
             <div className="flex items-center gap-3">
               <span>© {new Date().getFullYear()} · MIT Licence</span>
-              <WebVitalsBadge />
+              <WebVitalsBadge compact />
               <button
                 type="button"
                 onClick={() => setPerfOpen(true)}
@@ -48,6 +71,9 @@ export function Footer() {
               <GithubIcon className="w-3.5 h-3.5" />
               <span>View source on GitHub</span>
             </a>
+            <span className="text-[11px] text-muted-foreground/80">
+              v{pkg.version} · Last updated: {LAST_UPDATED}
+            </span>
           </div>
         </div>
 

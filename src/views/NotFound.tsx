@@ -1,10 +1,14 @@
 import { Link } from '@/lib/router';
 import { MANDY_MODULES } from '@/data/mandy-topics';
 import { usePageTitle } from '@/hooks/usePageTitle';
-import { Compass, Home, Search } from 'lucide-react';
+import { Compass, Home, Search, Calculator } from 'lucide-react';
 
 export function NotFound() {
   usePageTitle('Page Not Found');
+
+  const openCommandPalette = () => {
+    document.dispatchEvent(new CustomEvent('open-command-palette'));
+  };
 
   return (
     <div className="space-y-8 py-12 max-w-3xl mx-auto text-center">
@@ -35,6 +39,42 @@ export function NotFound() {
             Open My Profile
           </Link>
         </div>
+      </div>
+
+      <div className="pt-4">
+        <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+          Try one of these
+        </span>
+        <div className="mt-2 flex flex-wrap items-center justify-center gap-2">
+          <Link
+            to="/"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-card border border-border text-foreground text-xs font-bold hover:border-primary/40 transition-all"
+          >
+            <Home className="w-3.5 h-3.5 text-primary" />
+            Landing page
+          </Link>
+          <Link
+            to="/calculators"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-card border border-border text-foreground text-xs font-bold hover:border-primary/40 transition-all"
+          >
+            <Calculator className="w-3.5 h-3.5 text-primary" />
+            All Calculators
+          </Link>
+          <button
+            type="button"
+            onClick={openCommandPalette}
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-card border border-border text-foreground text-xs font-bold hover:border-primary/40 transition-all"
+          >
+            <Search className="w-3.5 h-3.5 text-primary" />
+            Search the site
+            <kbd className="font-mono text-[9px] px-1 py-0.5 rounded bg-muted border border-border">Ctrl K</kbd>
+          </button>
+        </div>
+        <p className="mt-3 text-[11px] text-muted-foreground">
+          Tip: press{' '}
+          <kbd className="font-mono px-1.5 py-0.5 rounded bg-muted border border-border text-foreground">Ctrl K</kbd>{' '}
+          anywhere to jump straight to a page or calculator.
+        </p>
       </div>
 
       <div className="pt-6 grid grid-cols-1 sm:grid-cols-2 gap-3 text-left">

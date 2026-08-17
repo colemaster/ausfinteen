@@ -2,7 +2,15 @@ import { useState, useEffect } from 'react';
 import { initWebVitals, getPerformanceMetrics, type PerformanceMetrics } from '@/lib/web-vitals';
 import { Activity, Zap, CheckCircle2, ShieldCheck } from 'lucide-react';
 
-export function WebVitalsBadge() {
+export interface WebVitalsBadgeProps {
+  /**
+   * Compact mode: render the pill without the expandable telemetry
+   * panel. Ideal for tight spaces like the footer.
+   */
+  compact?: boolean;
+}
+
+export function WebVitalsBadge({ compact = false }: WebVitalsBadgeProps) {
   const [metrics, setMetrics] = useState<PerformanceMetrics>(() => getPerformanceMetrics());
   const [expanded, setExpanded] = useState(false);
 
@@ -16,6 +24,18 @@ export function WebVitalsBadge() {
 
   const clsScore = metrics.cls < 0.1 ? 'Good (0.00)' : `${metrics.cls.toFixed(3)}`;
   const ttfbDisplay = metrics.ttfb !== null ? `${metrics.ttfb}ms` : '<10ms';
+
+  if (compact) {
+    return (
+      <span
+        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-mono font-bold border border-emerald-500/30 text-[11px]"
+        title="Client-Side Telemetry: 100% Privacy-Preserved"
+      >
+        <Zap className="w-3 h-3" />
+        <span>CLS {clsScore} • TTFB {ttfbDisplay}</span>
+      </span>
+    );
+  }
 
   return (
     <div className="relative inline-block text-[11px]">

@@ -5,21 +5,51 @@ import { ArrowRight, ArrowLeft, Sparkles } from 'lucide-react';
 interface ModulePrevNextProps {
   /** The current module's MANDY_MODULES id (or 'brisbane-qld' for the location module). */
   currentId: string;
+  /** Render a Home / Module / Sub-tab breadcrumb trail above the pager. Default true. */
+  showBreadcrumbs?: boolean;
+  /** Optional third crumb label (e.g. the currently active sub-tab). */
+  subTabLabel?: string;
 }
 
 /**
  * "Keep learning" pager linking the previous + next module, so the guide
  * flows module 1 → 2 → ... → 11 instead of dead-ending at each page.
  */
-export function ModulePrevNext({ currentId }: ModulePrevNextProps) {
+export function ModulePrevNext({ currentId, showBreadcrumbs = true, subTabLabel }: ModulePrevNextProps) {
   const idx = MANDY_MODULES.findIndex(m => m.id === currentId);
   if (idx === -1) return null;
 
+  const current = MANDY_MODULES[idx];
   const prev = MANDY_MODULES[idx === 0 ? MANDY_MODULES.length - 1 : idx - 1];
   const next = MANDY_MODULES[idx === MANDY_MODULES.length - 1 ? 0 : idx + 1];
 
   return (
     <nav aria-label="Continue your money journey" className="calculator-section">
+      {showBreadcrumbs && (
+        <div aria-label="Breadcrumb" className="mb-3 text-xs">
+          <ol className="flex flex-wrap items-center gap-1.5 text-muted-foreground">
+            <li>
+              <Link to="/" className="hover:text-foreground transition-colors">
+                Home
+              </Link>
+            </li>
+            <li aria-hidden="true" className="text-muted-foreground/50">/</li>
+            <li>
+              <Link to={current.route} className="hover:text-foreground transition-colors">
+                {current.title}
+              </Link>
+            </li>
+            {subTabLabel && (
+              <>
+                <li aria-hidden="true" className="text-muted-foreground/50">/</li>
+                <li aria-current="page" className="font-bold text-foreground">
+                  {subTabLabel}
+                </li>
+              </>
+            )}
+          </ol>
+        </div>
+      )}
       <div className="rounded-2xl border border-border bg-card/60 backdrop-blur-sm p-4">
         <div className="flex items-center justify-between gap-3">
           {prev ? (

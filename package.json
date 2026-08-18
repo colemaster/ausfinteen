@@ -1,7 +1,7 @@
 {
   "name": "au-personal-finance-tools",
   "private": true,
-  "version": "5.2.0",
+  "version": "5.3.0",
   "description": "Free, open-source, privacy-first suite of Australian personal finance calculators",
   "homepage": "https://github.com/ravisha22/PersonalFinanceToolkit",
   "type": "module",

@@ -277,14 +277,14 @@ export function Navbar() {
               href="https://github.com/ravisha22/PersonalFinanceToolkit/releases"
               target="_blank"
               rel="noreferrer"
-              title="What's new in v5.2.0 — changelog"
-              aria-label="What's new in v5.2.0 — changelog"
+              title="What's new in v5.3.0 — changelog"
+              aria-label="What's new in v5.3.0 — changelog"
               className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border border-border bg-muted/40 text-muted-foreground hover:text-primary hover:border-primary/40 transition-all text-[10px] font-bold"
             >
               <span className="relative flex h-2 w-2" aria-hidden="true">
                 <span className="inline-flex rounded-full h-2 w-2 bg-emerald-500" />
               </span>
-              v5.2.0
+              v5.3.0
             </a>
 
             {/* Quick Search */}

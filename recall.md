@@ -40,6 +40,62 @@
 | v5.1.0  | Frontend E2E UX Flow Review | Full end-to-end UX audit and enhancement. Fixed: scroll-to-top on route change, dead scroll-fade-in CSS, site-search dropdown clipping (overflow-hidden moved to decorative layers), `?topic=` deep-links landing on the wrong careers tab. Added: URL-shareable tabs (Careers/CarDriving/BrisbaneQLD), 404 page, per-page document titles, ModulePrevNext 11-module pager on every page, Command Palette ⌘K search button in Navbar, skip-link a11y + aria-expanded/aria-current, profile next-steps, Footer rebranded to AusTeen Money. Corrected stale 12.5% → 12.0% SG rate (matches v4.3.0 audit + data/super-rules.ts) across context, calculator, widgets and module copy | Local |
 | v5.2.0  | 2030 SDK + Frontend Enhancement | Session task (17 Aug 2026): update all SDKs/deps/libs to latest, fix WIP migration TS errors, commit uncommitted Astro migration, then 10 parallel subagents enhance frontend: (1) perf/SDK/PWA, (2) Landing, (3) Nav/Search/⌘K, (4) theme options, (5) shared UI user options, (6) core calculators (FIRE/savings/invest/super-drawdown/HECS), (7) mortgage calculators, (8) tax calculators, (9) teen/EV calculators, (10) SEO/Footer/share/print. All engines pure + tested, strict TS, light+dark, URL params, 2030 perf (View Transitions, content-visibility, es2025 target) | Pushed |
 | v5.3.0  | SDK & Deps Update + React Compiler | Full SDK/deps/libs refresh to latest releases (Astro 7.2.2, React 19.2.8, Motion 13.1.0, Recharts 3.10.1, Vite 8.2.1, Tailwind 4.3.3), React 19 Compiler enabled in @astrojs/react, Latin font subsetting, manual chunk splitting (charts, motion, icons, search) | Local |
+| v5.4.0  | 2026–27 Regulatory Audit & Verification | Audit of all tax brackets, modern awards, and 2026-27 superannuation rates | Local |
+| v5.5.0  | Comprehensive 15yo Australian Content & 2026–27 Overhaul | Major teen content expansion for 15-year-olds in Australia: 15yo Independence Roadmap (TFN via AusPost, 5.0%+ HISA, Medicare Card at 15 via Form MS004, 3-hour minimum shifts, state school-term hour limits, break entitlements, 100-point ID, 15yo job resume presets, word-for-word scripts, and 15yo Q&A topics across all 11 modules) | Local |
+
+---
+
+## v5.5.0 — COMPREHENSIVE 15-YEAR-OLD AUSTRALIAN CONTENT & 2026–27 OVERHAUL (18 Aug 2026)
+
+### Summary
+Major content expansion specifically tailored for a 15-year-old Australian teenager navigating their first job, high-interest banking, independent Medicare access, tax requirements, and road rule prep for their 16th birthday. Added interactive tools, datasets, guides, resume presets, workplace scripts, and comprehensive Q&A topics across all 11 Mandy Money modules.
+
+### Key Upgrades & Content Additions:
+1. **Interactive 15-Year-Old Independence Roadmap (`FifteenYearOldRoadmap.tsx`)**:
+   - 6 core independence milestones with persistent localStorage tracking, progress bar, badges, and official links:
+     1. Free Tax File Number (TFN) application via Australia Post / ATO.
+     2. Zero-Fee 5.0%+ Youth High-Interest Savings Account (HISA).
+     3. Independent green Medicare Card from age 15 (Services Australia Form MS004).
+     4. First Casual Job & Award Pay Rates (Fast Food / Retail awards, 25% casual loading, $18,200 tax-free threshold).
+     5. PrepL / DKT road rules practice for L-plates at 16.
+     6. Australian High School Student Concessions (50c Translink fares, Student Edge, UNiDAYS, scam defense).
+   - Embedded into both **Money & You** (`/money-and-you`) and **Careers & Employment** (`/careers-employment`).
+
+2. **Official Australian Data Layer Expansion (`src/data/teen-finance-data.ts`)**:
+   - `AU_STATE_WORKING_HOURS_RULES`: Working age, school term caps (e.g. 12 hrs/wk in QLD/VIC), daily limits, holiday hours, and night work restrictions across QLD, NSW, VIC, WA, SA, TAS, ACT, NT.
+   - `MINIMUM_SHIFT_LENGTHS`: 3-hour minimum shift protections under Fast Food, Retail, Restaurant, Hospitality, and Community Pharmacy awards.
+   - `MEAL_AND_REST_BREAKS`: 10-minute paid rest pauses (4+ hr shifts) vs 30-60 min unpaid meal breaks (5+ hr shifts).
+   - `TEEN_ID_CHECKLIST_15YO`: 100-point ID checklist (Birth Certificate, School Photo ID, Medicare, Bank Debit Card).
+   - `TOP_TEEN_EMPLOYERS_AU`: Hiring portals, minimum ages, roles, and insider tips for Woolworths, Coles, McDonald's, Hungry Jack's, Kmart, and Junior Sports Refereeing ($20–$35/game).
+   - Added verified official links: Services Australia Medicare at 15, Australia Post TFN, Scamwatch Youth Scams, Student Edge, UNiDAYS, Fair Work Minimum Shifts & Breaks, and NSW/VIC learner test practice.
+
+3. **Workplace Rights & Form Vault Upgrades (`WorkplaceRightsGuide.tsx` & `GovernmentFormsVault.tsx`)**:
+   - Added 3-Hour Minimum Shift Rule card and Meal/Rest Breaks comparison table.
+   - Added State Child Employment & Working Hours Rules breakdown.
+   - Added step-by-step 15yo TFN application at Australia Post guide and Services Australia Medicare Form MS004 guide.
+
+4. **15yo Job Resume Presets & Scripts (`TeenResumeBuilder.tsx` & `WorkplaceScriptGenerator.tsx`)**:
+   - Quick-load 15yo role templates for Supermarket (Woolies/Coles), Fast Food (Maccas), Local Cafe/Bakery, and Sports Refereeing.
+   - One-click popular skill chips (`+ Punctual & 100% Reliable`, `+ POS Cash & Card Handling`, etc.).
+   - Added 15yo workplace scripts: In-person resume drop-off, calling in sick with proper notice, swapping shifts with a coworker, and requesting exam study leave.
+   - One-click "Copy Resume Text" to clipboard and print support.
+
+5. **20+ New 15yo Q&A Topics Across All 11 Mandy Modules (`src/data/mandy-topics.ts`)**:
+   - *Money & You*: 15yo Independence Checklist, Money Muling & Scam Defense, Apple Pay/Google Wallet at 15.
+   - *Careers & Employment*: Top teen employers, 3-hour minimum shift rule, meal & rest break entitlements, first shift packing guide, sports refereeing income ($20–$35/game).
+   - *Super & Retirement*: What happens to super at 18 (30-hr rule drops), PMIF youth insurance fee protection.
+   - *Tax Guide*: Australia Post free TFN application step-by-step, PAYG withholding refund explanation.
+   - *Teen Budgeting*: 15yo casual paycheck gameplan ($80–$150/wk split), 24-hour & 7-day impulse spending rule.
+   - *Spending & Saving*: High school student discounts (Student Edge / UNiDAYS / 50c fares), budget prepaid SIM plans ($15–$25/mo).
+   - *Investing & Shares*: Paper trading & minor trust portfolios before 18, 45-year compound growth math ($25/wk from 15 vs 25).
+   - *Interest & Products*: Independent youth banking at 15, debit cards vs predatory credit cards.
+   - *Dealing with Debt*: Why you should never borrow BNPL accounts, resolving money owed to friends/family.
+   - *Cars & Driving*: Prep for Ls at 15, 100–120 learner logbook hours strategy (3-for-1 instructor lessons).
+   - *Brisbane / QLD*: 50c permanent flat public transport fares, Fee-Free TAFE Queensland & School-Based Apprenticeships (SATs).
+
+6. **Verification & Build**:
+   - Vitest: 370 tests passing across 26 test suites (100% green).
+   - Astro Build: 30 static pages compiled with zero errors.
 
 ---
 
@@ -732,3 +788,4 @@ All 12 phases delivered + v1.1.0 and v1.2.0 UX polish. 9 views (Portfolio + 8 ca
 ### Verification
 - `npx vitest run` → 370 passed (26 files). `npx tsc --noEmit` → clean. `npm run build` → 30 pages, no errors.
 - Committed as v5.4.0. Push attempted (repo was 23 commits ahead of origin — same push-blocked situation as prior sessions if creds absent).
+- POST-SCRIPT: commit 5097072 created locally (v5.4.0). `git push` failed — "could not read Username for 'https://github.com'" (no creds, same as prior sessions). Branch now ahead of origin/main by 24 commits. Push when creds available.

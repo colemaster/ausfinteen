@@ -162,8 +162,27 @@ export function TeenSavingsAccountFinder() {
         })}
       </div>
 
-      <div className="pt-2">
-        <WebReferenceLink link={OFFICIAL_WEB_LINKS.moneysmart_budget} />
+      {/* APRA FCS & TFN Notice Card */}
+      <div className="p-4 rounded-2xl bg-muted/60 border border-border space-y-2 text-xs">
+        <div className="flex items-center justify-between">
+          <span className="font-bold text-foreground flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block" />
+            Australian Government $250,000 Deposit Guarantee (APRA FCS)
+          </span>
+          <Badge variant="success" className="text-[10px]">100% Protected</Badge>
+        </div>
+        <p className="text-muted-foreground leading-relaxed">
+          Under the Banking Act 1959, your deposits in any APRA-regulated Australian bank or credit union are legally guaranteed by the Federal Government up to $250,000 AUD per depositor.
+        </p>
+        <p className="text-amber-800 dark:text-amber-300 font-medium text-[11px] pt-1 border-t border-border/50">
+          ⚠️ Important: Always provide your Tax File Number (TFN) to the bank! Under Section 202D, banks are required to withhold 47% tax on savings interest if no TFN is attached.
+        </p>
+      </div>
+
+      <div className="pt-2 flex flex-wrap gap-2">
+        <WebReferenceLink link={OFFICIAL_WEB_LINKS.apra_fcs} />
+        <WebReferenceLink link={OFFICIAL_WEB_LINKS.ato_tfn_bank} />
+        <WebReferenceLink link={OFFICIAL_WEB_LINKS.moneysmart_banking} />
       </div>
     </Card>
   );

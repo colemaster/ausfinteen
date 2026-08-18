@@ -14,16 +14,18 @@ export interface FirstJobChecklistItem {
 }
 
 const FIRST_JOB_CHECKLIST: FirstJobChecklistItem[] = [
-  { id: 'tfn', title: 'Apply for a Tax File Number (TFN)', detail: 'Free via myGov/ATO — you can\'t start work without it.' },
-  { id: 'super', title: 'Choose your super fund & complete NAT 13080', detail: 'Give your employer the Super Standard Choice form so 12% SG lands in your fund.' },
-  { id: 'threshold', title: 'Claim the $18,200 tax-free threshold (NAT 3092)', detail: 'Complete your TFN declaration on day one so tax isn\'t withheld on your first $350/wk.' },
-  { id: 'bank', title: 'Open a bank account with your TFN', detail: 'Providing your TFN stops 47% withholding on savings interest.' },
+  { id: 'tfn', title: 'Apply for a Tax File Number (TFN)', detail: 'Free via Australia Post / ATO online — bring your Birth Certificate + Student ID.' },
+  { id: 'bank', title: 'Open a fee-free 5.0%+ youth bank account', detail: 'Providing your TFN to the bank stops 47% withholding tax on your savings interest.' },
+  { id: 'medicare', title: 'Claim your own green Medicare card (Age 15+)', detail: 'Submit Services Australia Form MS004 for independent doctor visits and bulk billing.' },
+  { id: 'super', title: 'Choose your super fund & complete NAT 13080', detail: 'Staple your super fund so 12.0% SG lands in one account (mandatory when working >30h/wk under 18).' },
+  { id: 'threshold', title: 'Claim the $18,200 tax-free threshold (NAT 3092)', detail: 'Select YES to Question 8 on day one so zero tax is withheld on your first $350/week.' },
   { id: 'payslip', title: 'Check your first payslip carefully', detail: 'Gross pay, tax withheld, super and award rate must all appear as legal line items.' },
-  { id: 'award', title: 'Verify your junior award rate on Fair Work PACT', detail: 'Your age determines your % of the adult rate — don\'t accept less than the award.' },
-  { id: 'shifts', title: 'Learn your penalty rates', detail: 'Saturday, Sunday, public holiday and night shifts pay more — know your weekend rates.' },
-  { id: 'hours', title: 'Check your rosters & work hours limits', detail: 'Under-18s can\'t work during school hours; overtime rules differ for teens.' },
-  { id: 'ceis', title: 'Confirm your casual loading', detail: 'Casuals are entitled to a 25% loading and a Casual Employment Information Statement.' },
-  { id: 'budget', title: 'Set up auto-transfers on payday', detail: 'Move your Mojo emergency fund and Grow bucket before you spend a dollar.' },
+  { id: 'award', title: 'Verify your junior award rate on Fair Work PACT', detail: 'At 15 you earn 40% of adult base ($11.12/hr) + 25% casual loading = $13.90/hr.' },
+  { id: 'min_shift', title: 'Enforce the 3-hour minimum shift rule', detail: 'Under Fast Food and Retail Awards, employers MUST pay at least 3 hours per casual shift.' },
+  { id: 'breaks', title: 'Take your mandatory paid 10-min rest breaks', detail: 'Shifts 4–5 hrs get 1 paid 10-min pause; shifts 5+ hrs get paid pause + 30-min meal break.' },
+  { id: 'shifts', title: 'Learn your penalty rates', detail: 'Saturday (+25% to +50%), Sunday (+50% to +100%), and public holidays (2.25x) pay higher rates.' },
+  { id: 'hours', title: 'Check your rosters & school hours limits', detail: 'Max 12 hours per week during school terms in QLD and VIC; work during school hours is illegal.' },
+  { id: 'budget', title: 'Set up auto-transfers on payday', detail: 'Move your Mojo emergency buffer ($500+) and Save goal before you spend a single dollar.' },
 ];
 
 function parseDone(raw: string): number[] {

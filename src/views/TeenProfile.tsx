@@ -5,6 +5,7 @@ import { StatCard } from '@/components/ui/StatCard';
 import { Badge } from '@/components/ui/Badge';
 import { FinancialHealthScore } from '@/components/ui/FinancialHealthScore';
 import { PaycheckSplitterWidget } from '@/components/teen-profile/PaycheckSplitterWidget';
+import { FifteenYearOldRoadmap } from '@/components/teen/FifteenYearOldRoadmap';
 import { SpotlightCard } from '@/components/ui/SpotlightCard';
 import { AGE_PRESETS } from '@/data/teen-finance-data';
 import { usePageTitle } from '@/hooks/usePageTitle';
@@ -285,6 +286,9 @@ export function TeenProfile() {
           subtext={superEligible ? 'Paid to super fund' : 'Requires >30h/wk for under 18s'}
         />
       </div>
+
+      {/* 15-Year-Old Australian Independence Roadmap */}
+      <FifteenYearOldRoadmap />
 
       {/* Personalised Next Steps — guides the teen to their next module */}
       <section className="p-6 sm:p-8 rounded-3xl bg-card border border-border space-y-5" aria-labelledby="next-steps-heading">

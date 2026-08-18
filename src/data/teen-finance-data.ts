@@ -427,17 +427,41 @@ export const OFFICIAL_WEB_LINKS: Record<string, WebLink> = {
     source: 'University',
     description: 'Griffith University Nathan, South Bank and Gold Coast programs, fees and entry pathways.',
   },
+  unisc_study: {
+    title: 'UniSC: Moreton Bay & Sunshine Coast Degrees',
+    url: 'https://www.usc.edu.au/study',
+    source: 'University',
+    description: 'UniSC Petrie rail hub and Sippy Downs campus degrees, #1 student experience ranking, and early offers.',
+  },
+  unisq_study: {
+    title: 'UniSQ: Springfield, Ipswich & Toowoomba Courses',
+    url: 'https://www.unisq.edu.au/study',
+    source: 'University',
+    description: 'University of Southern Queensland #1 graduate starting salaries ($78.2k), aviation flight sims, and nursing.',
+  },
+  acu_study: {
+    title: 'ACU: Australian Catholic University Banyo Study',
+    url: 'https://www.acu.edu.au/study',
+    source: 'University',
+    description: 'ACU Banyo North Brisbane campus: top nursing, paramedicine, physiotherapy, and education specialist degrees.',
+  },
   qtac: {
     title: 'QTAC: Queensland Tertiary Admissions Centre',
     url: 'https://www.qtac.edu.au',
     source: 'University',
-    description: 'Official QLD application hub for school leavers — preferences, ATAR offers and scholarships.',
+    description: 'Official QLD application hub for Year 12 leavers — preferences, ATAR offers, EAS access schemes, and scholarships.',
+  },
+  qilt_survey: {
+    title: 'QILT: Quality Indicators for Learning and Teaching',
+    url: 'https://www.qilt.edu.au',
+    source: 'Australian Government',
+    description: 'Official federal government survey data on Australian university graduate employment rates, median starting salaries, and student satisfaction.',
   },
   tafe_qld: {
     title: 'TAFE Queensland: Courses & Apprenticeships',
     url: 'https://tafeqld.edu.au',
     source: 'QLD Government',
-    description: 'Practical diploma and apprenticeship pathways across Queensland — often cheaper than uni.',
+    description: 'Practical diploma and apprenticeship pathways across Queensland — Fee-Free TAFE and direct guaranteed uni articulation.',
   },
   qld_licence_fees: {
     title: 'QLD Government: Driver Licence & Test Fees',

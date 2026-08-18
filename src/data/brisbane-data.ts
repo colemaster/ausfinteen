@@ -45,6 +45,9 @@ export interface UniCourse {
   cspBandFee: number;
   careerOutcome: string;
   medianGraduateSalary: number;
+  qtacCode?: string;
+  studyMode?: string;
+  prerequisites?: string;
 }
 
 export interface DetailedBrisbaneUni {
@@ -72,6 +75,14 @@ export interface DetailedBrisbaneUni {
     adjustmentFactors: string;
     offerRounds: string;
   };
+  earlyOfferScheme: {
+    name: string;
+    criteria: string;
+    deadline: string;
+    guaranteedRanks: string;
+  };
+  specialistStrengths: string[];
+  olympicRole2032: string;
   feesAndFinancials: {
     avgCSPAnnual: number;
     ssafAnnual: number;
@@ -212,6 +223,19 @@ export const DETAILED_BRISBANE_UNIS: DetailedBrisbaneUni[] = [
       adjustmentFactors: 'Up to +5 rank points via Subject Bonus (Maths Methods, Specialist, Physics, LOTE), Educational Access Scheme (EAS), and Rural Access Scheme.',
       offerRounds: 'Major QTAC December & January rounds; direct early offer pathways available.',
     },
+    earlyOfferScheme: {
+      name: 'UQ Guaranteed ATAR & Subject Incentive',
+      criteria: 'Meet published ATAR threshold on first QTAC round + up to +5 subject bonus points.',
+      deadline: 'December QTAC Major Offer Round',
+      guaranteedRanks: 'Guaranteed place in 85%+ of undergraduate degrees when threshold met.',
+    },
+    specialistStrengths: [
+      'Go8 Medical School, Dentistry & Pharmacy (Herston Health Precinct)',
+      'World Top 5 Mineral & Mining Engineering (QS World Rankings)',
+      'Advanced Finance & Economics with Bloomberg Trading Suites',
+      'Veterinary Science & Agriscience at Gatton Campus',
+    ],
+    olympicRole2032: 'Official Olympic & Paralympic Training Hub — $120M Sports Science Institute at St Lucia',
     feesAndFinancials: {
       avgCSPAnnual: 9850,
       ssafAnnual: 351,
@@ -280,6 +304,19 @@ export const DETAILED_BRISBANE_UNIS: DetailedBrisbaneUni[] = [
       adjustmentFactors: 'QUT Year 12 Bonus Scheme gives up to +5 rank points for Specialist Maths, Physics, Chemistry, LOTE, and QUT START extension study.',
       offerRounds: 'QUT Year 12 Offer Guarantee: hit the published threshold rank for early QTAC placement.',
     },
+    earlyOfferScheme: {
+      name: 'QUT Year 12 Offer Guarantee & START QUT',
+      criteria: 'Hit published guaranteed ATAR threshold + up to +5 rank bonus points.',
+      deadline: 'November / December QTAC Rounds',
+      guaranteedRanks: 'Guaranteed place in Business, IT, Creative Industries, Science, Engineering.',
+    },
+    specialistStrengths: [
+      'Centre for Robotics & Autonomous Systems (World-leading research)',
+      'Hollywood-Grade Virtual Production LED Stage at Kelvin Grove',
+      'Clinical Nursing, Paramedicine & Medical Imaging suites',
+      'Triple-Crown Accredited Business School (Top 1% globally)',
+    ],
+    olympicRole2032: 'Digital Broadcast Media & Sports Technology Partner — Virtual Arenas & Analytics',
     feesAndFinancials: {
       avgCSPAnnual: 9550,
       ssafAnnual: 351,
@@ -349,6 +386,19 @@ export const DETAILED_BRISBANE_UNIS: DetailedBrisbaneUni[] = [
       adjustmentFactors: 'Up to +6 rank points via Griffith Bonus Scheme (Subject bonuses, Educational Access, Regional preference).',
       offerRounds: 'Griffith Guaranteed Admission scheme for Year 12 leavers hitting published threshold ranks.',
     },
+    earlyOfferScheme: {
+      name: 'Griffith Guaranteed Admission & Early Offer',
+      criteria: 'Achieve guaranteed threshold ATAR or complete Griffith Head Start subjects (+2 rank points).',
+      deadline: 'Mid-November QTAC Early Offer Round',
+      guaranteedRanks: 'Guaranteed admission across 100+ high-demand undergraduate degrees.',
+    },
+    specialistStrengths: [
+      'Queensland Conservatorium of Music (South Bank Cultural Precinct)',
+      'Griffith Film School (Top creative & animation hub in Australia)',
+      'Gold Coast Health & Knowledge Precinct (Allied health & pharmacy)',
+      'Marine Biology, Coastal Ecology & Reef Conservation',
+    ],
+    olympicRole2032: 'Aquatic High Performance Centre & Climate-Positive Village Operations Partner',
     feesAndFinancials: {
       avgCSPAnnual: 9200,
       ssafAnnual: 351,
@@ -417,6 +467,19 @@ export const DETAILED_BRISBANE_UNIS: DetailedBrisbaneUni[] = [
       adjustmentFactors: 'Up to +6 rank points via UniSC Access Scheme, Regional preference, and Subject bonuses.',
       offerRounds: 'Early offer pathway available in September/October via school recommendation.',
     },
+    earlyOfferScheme: {
+      name: 'UniSC Early Offer Guarantee',
+      criteria: 'Principal recommendation based on Year 12 Term 3 results before final ATARs release.',
+      deadline: 'October Early Offer Round',
+      guaranteedRanks: 'Early unconditional offers across Moreton Bay & Sunshine Coast degrees.',
+    },
+    specialistStrengths: [
+      'Direct Petrie Train Station Transit Hub (Zero-commute campus access)',
+      '#1 in QLD for Student Experience & Teaching Quality (QILT Survey)',
+      'Advanced $100M Bio-Engineering, Paramedicine & Nursing Super-Labs',
+      'Dedicated Cyber Security Operations & Data Intelligence Centre',
+    ],
+    olympicRole2032: 'Sunshine Coast Olympic Basketball, Cycling & Athlete Recovery Centre Partnerships',
     feesAndFinancials: {
       avgCSPAnnual: 8900,
       ssafAnnual: 351,
@@ -484,6 +547,19 @@ export const DETAILED_BRISBANE_UNIS: DetailedBrisbaneUni[] = [
       adjustmentFactors: 'Up to +6 rank points via UniSQ Access & Regional School bonus scheme.',
       offerRounds: 'Early offer scheme via school principal recommendation in September.',
     },
+    earlyOfferScheme: {
+      name: 'UniSQ Accelerated Early Offer & Principal Recommendation',
+      criteria: 'Year 12 school recommendation + subject achievement in English and Maths.',
+      deadline: 'September / October Early Offer Round',
+      guaranteedRanks: 'Unconditional early offers for aviation, engineering, nursing and business.',
+    },
+    specialistStrengths: [
+      '#1 in Australia for Graduate Starting Salaries ($78,200 QILT Median)',
+      'Commercial-grade Boeing 737 Flight Simulators at Springfield',
+      'Aerospace, Space Propulsion & Rocketry Research Hub',
+      'High-Fidelity Simulated Hospital Wards replicating real ambulance intakes',
+    ],
+    olympicRole2032: 'Aviation Transport, Regional Logistics & Athlete Travel Coordinator',
     feesAndFinancials: {
       avgCSPAnnual: 8950,
       ssafAnnual: 351,
@@ -550,6 +626,19 @@ export const DETAILED_BRISBANE_UNIS: DetailedBrisbaneUni[] = [
       adjustmentFactors: 'Up to +5 rank points via ACU Guarantee scheme, Access ACU, and Subject bonus points.',
       offerRounds: 'ACU Guarantee early offers released in September before final Year 12 exams.',
     },
+    earlyOfferScheme: {
+      name: 'ACU Guarantee Scheme',
+      criteria: 'Assessed on Year 11 results + personal statement / community service experience.',
+      deadline: 'September Early Offer Round (prior to Year 12 exams)',
+      guaranteedRanks: 'Early conditional/unconditional offers for Nursing, Paramedicine, Physio, Teaching.',
+    },
+    specialistStrengths: [
+      '#1 Nationally for Employer Satisfaction in QILT Survey',
+      'Top 80 in World for Nursing & Education (QS Subject Rankings)',
+      'Clinical Paramedic Response & Acute Care simulation suites',
+      '100% Renewable Solar-Powered Banyo Campus Operation',
+    ],
+    olympicRole2032: 'High Performance Sport Science & Athlete Physiotherapy Rehabilitation Provider',
     feesAndFinancials: {
       avgCSPAnnual: 8750,
       ssafAnnual: 351,
@@ -618,6 +707,19 @@ export const DETAILED_BRISBANE_UNIS: DetailedBrisbaneUni[] = [
       adjustmentFactors: 'No ATAR required! Completion of Year 12, Certificate III/IV or work experience guarantees admission.',
       offerRounds: 'Rolling intakes in February, July, and October.',
     },
+    earlyOfferScheme: {
+      name: 'TAFE Direct Guaranteed Admission & Uni Articulation',
+      criteria: 'Zero ATAR required. Direct online enrollment via TAFE QLD or QTAC.',
+      deadline: 'Rolling semester intakes (Feb / July / Oct)',
+      guaranteedRanks: '100% Guaranteed admission to Diploma + 1 year credit transfer to UQ, QUT, Griffith.',
+    },
+    specialistStrengths: [
+      'Fee-Free TAFE Queensland for Under-25s in Priority Skills Shortages',
+      'Direct guaranteed articulation pathways into 2nd year of university',
+      'Advanced Acacia Ridge Trades & Electrotechnology Complex',
+      'South Bank Digital Design, Film & eSports Studio Labs',
+    ],
+    olympicRole2032: 'Official Trades, Construction & Hospitality Workforce Training Pipeline for 2032 Games',
     feesAndFinancials: {
       avgCSPAnnual: 3200,
       ssafAnnual: 0,

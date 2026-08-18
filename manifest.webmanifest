@@ -1,0 +1,54 @@
+{
+  "id": "/",
+  "name": "AusFinance Suite — Australian Personal Finance Toolkit",
+  "short_name": "AusFinance",
+  "description": "Free, privacy-first Australian personal finance guides, calculators and statutory Q&A. 100% browser-based with zero tracking.",
+  "lang": "en-AU",
+  "dir": "ltr",
+  "theme_color": "#0a0a0a",
+  "background_color": "#0a0a0a",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone"],
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "start_url": "/",
+  "categories": ["finance", "productivity", "utilities"],
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "House Affordability",
+      "short_name": "House",
+      "description": "Work out how much you can borrow and afford.",
+      "url": "/house-affordability",
+      "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "Tax Savings",
+      "short_name": "Tax",
+      "description": "Super salary sacrifice, debt recycling and negative gearing.",
+      "url": "/tax-savings",
+      "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "FIRE",
+      "short_name": "FIRE",
+      "description": "Classic, Coast, Barista and Lean vs Fat FIRE planning.",
+      "url": "/fire",
+      "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "Investment Compare",
+      "short_name": "Invest",
+      "description": "Compare investment strategies side by side.",
+      "url": "/investment-compare",
+      "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
+    }
+  ]
+}

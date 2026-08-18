@@ -1,0 +1,1 @@
+function e(e){if(e==null)return`—`;let t=Math.abs(e),n=e<0?`-`:``;return t>=1e6?`${n}$${(t/1e6).toFixed(2)}M`:t>=1e3?`${n}$${(t/1e3).toFixed(0)}k`:`${n}$${Math.round(t).toLocaleString(`en-AU`)}`}function t(e){return e==null?`—`:`${e<0?`-`:``}$${Math.abs(Math.round(e)).toLocaleString(`en-AU`)}`}export{t as n,e as t};

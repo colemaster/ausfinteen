@@ -42,6 +42,45 @@
 | v5.3.0  | SDK & Deps Update + React Compiler | Full SDK/deps/libs refresh to latest releases (Astro 7.2.2, React 19.2.8, Motion 13.1.0, Recharts 3.10.1, Vite 8.2.1, Tailwind 4.3.3), React 19 Compiler enabled in @astrojs/react, Latin font subsetting, manual chunk splitting (charts, motion, icons, search) | Local |
 | v5.4.0  | 2026–27 Regulatory Audit & Verification | Audit of all tax brackets, modern awards, and 2026-27 superannuation rates | Local |
 | v5.5.0  | Comprehensive 15yo Australian Content & 2026–27 Overhaul | Major teen content expansion for 15-year-olds in Australia: 15yo Independence Roadmap (TFN via AusPost, 5.0%+ HISA, Medicare Card at 15 via Form MS004, 3-hour minimum shifts, state school-term hour limits, break entitlements, 100-point ID, 15yo job resume presets, word-for-word scripts, and 15yo Q&A topics across all 11 modules) | Local |
+| v5.6.0  | Tertiary & Uni Section Clean Up & Metric Overhaul | Clean up and enrichment of Brisbane & SEQ Tertiary Institutions Explorer: verified 2026/27 metrics across all 7 institutions (UQ, QUT, Griffith, UniSC, UniSQ, ACU, TAFE QLD), fixed QTAC application and study portal links, added early offer & guaranteed entry pathways table, dynamic QILT metric visualizer (Salary/Employment/Satisfaction/First-in-Family), degree cost & sorting table, and Brisbane 2032 Olympic talent hubs | Local |
+
+---
+
+## v5.6.0 — BRISBANE & SEQ TERTIARY INSTITUTIONS EXPLORER OVERHAUL & METRIC CLEANUP (18 Aug 2026)
+
+### Summary
+Comprehensive cleanup, link fix, and feature enrichment for the Brisbane & SEQ Tertiary Institutions Explorer (`BrisbaneUniExplorer.tsx` and `src/data/brisbane-data.ts`). Corrected all university links, added interactive QILT multi-metric visualizers, degree cost & sorting tables, guaranteed early offer schemes, and 2032 Olympic innovation hubs.
+
+### Key Upgrades:
+1. **Link Verification & Actionable CTAs**:
+   - Fixed broken/misleading links in course listings and ATAR matcher.
+   - Provided distinct, dedicated buttons for **"Official Study Portal"** (`uni.url`), **"Apply on QTAC"** (`https://www.qtac.edu.au`), and **"QILT Survey Performance"** (`https://www.qilt.edu.au`).
+   - Added all 7 tertiary institutions (`uq_study`, `qut_study`, `griffith_study`, `unisc_study`, `unisq_study`, `acu_study`, `tafe_qld`) and government survey links (`qilt_survey`, `studyassist_hecs`) to `OFFICIAL_WEB_LINKS`.
+
+2. **Early Offer & Guaranteed Entry Pathways Tab (`pathways`)**:
+   - Added dedicated comparison breakdown of guaranteed admission schemes for Queensland Year 12 leavers:
+     - **UQ Guaranteed ATAR & Subject Incentive Scheme** (+2 to +5 rank points).
+     - **QUT Year 12 Offer Guarantee & START QUT extension studies**.
+     - **Griffith Guaranteed Admission & Head Start scheme**.
+     - **UniSC Early Offer Guarantee (Principal Recommendation)**.
+     - **UniSQ Accelerated Early Offer (#1 starting salary degrees)**.
+     - **ACU Guarantee Scheme (Year 11 results + community service)**.
+     - **TAFE QLD Direct Guaranteed Admission & 1-Year Uni Credit Transfer**.
+
+3. **Dynamic QILT Outcome Visualizer (`qilt-charts`)**:
+   - Added interactive metric switcher to toggle between:
+     - 💵 **Median Starting Salary ($)**: UniSQ ($78,200), UQ ($76,500), ACU ($76,000).
+     - 📈 **Full-Time Employment Rate (%)**: TAFE QLD (88.5%), UniSQ (87.9%), ACU (86.8%).
+     - ✨ **Overall Student Satisfaction (%)**: UniSC (88.7% — #1 in QLD), ACU (86.2%), Griffith (85.1%).
+     - 👥 **First-in-Family Share (%)**: TAFE QLD (52%), UniSC (46%), UniSQ (42%).
+
+4. **Sortable Top 70 Degree & Fee Table (`courses`)**:
+   - Added multi-column interactive sorting by **Minimum ATAR**, **Graduate Starting Salary**, **Annual CSP Fee**, and **Degree Name**.
+   - Integrated field filtering across Engineering, Health, IT, Law, Creative Arts, Business, Education, and Science.
+
+5. **2032 Olympic Innovation & Campus Transit Highlights**:
+   - Highlighted Brisbane 2032 Olympic facilities (UQ Sports Science Institute, QUT Virtual LED Media, Griffith Aquatic Hub, UniSC Athlete Recovery, UniSQ Aviation Logistics, TAFE 2032 Construction Pipeline).
+   - Embedded 50c Translink weekly travel cap ($5.00/wk) across all campuses.
 
 ---
 

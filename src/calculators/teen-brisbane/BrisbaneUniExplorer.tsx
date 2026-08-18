@@ -12,9 +12,13 @@ import {
   ExternalLink,
   TrendingUp,
   MapPin,
-  Newspaper,
   Building,
   Sparkles,
+  Award,
+  ArrowUpDown,
+  DollarSign,
+  Medal,
+  Compass,
 } from 'lucide-react';
 import {
   ResponsiveContainer,
@@ -39,11 +43,16 @@ const FIELD_COLORS: Record<string, string> = {
   Education: '#84cc16',
 };
 
+type SortKey = 'atarMin' | 'medianGraduateSalary' | 'cspBandFee' | 'title';
+
 export function BrisbaneUniExplorer() {
   const [selectedUniCode, setSelectedUniCode] = useState<string>('ALL');
   const [activeTab, setActiveTab] = useState<string>('overview');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedFieldFilter, setSelectedFieldFilter] = useState<string>('ALL');
+  const [sortField, setSortField] = useState<SortKey>('atarMin');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
+  const [qiltMetric, setQiltMetric] = useState<'salary' | 'employment' | 'satisfaction' | 'firstInFamily'>('salary');
 
   // ATAR Matcher State
   const [rawATAR, setRawATAR] = useState<number>(78.0);
@@ -68,7 +77,7 @@ export function BrisbaneUniExplorer() {
     return list;
   }, []);
 
-  // Filtered Courses for Top 10 Table
+  // Filtered & Sorted Courses for Table
   const displayCourses = useMemo(() => {
     let source = selectedUniCode === 'ALL' ? allCoursesWithUni : selectedUni.top10Courses.map(c => ({ uni: selectedUni, course: c }));
 
@@ -83,12 +92,21 @@ export function BrisbaneUniExplorer() {
           item.course.title.toLowerCase().includes(q) ||
           item.course.code.toLowerCase().includes(q) ||
           item.course.careerOutcome.toLowerCase().includes(q) ||
-          item.uni.name.toLowerCase().includes(q)
+          item.uni.name.toLowerCase().includes(q) ||
+          item.uni.code.toLowerCase().includes(q)
       );
     }
 
-    return source;
-  }, [selectedUniCode, selectedUni, selectedFieldFilter, searchQuery, allCoursesWithUni]);
+    return [...source].sort((a, b) => {
+      const valA = a.course[sortField];
+      const valB = b.course[sortField];
+
+      if (typeof valA === 'string' && typeof valB === 'string') {
+        return sortDirection === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
+      }
+      return sortDirection === 'asc' ? (valA as number) - (valB as number) : (valB as number) - (valA as number);
+    });
+  }, [selectedUniCode, selectedUni, selectedFieldFilter, searchQuery, allCoursesWithUni, sortField, sortDirection]);
 
   // ATAR Matching Courses
   const matchingCourses = useMemo(() => {
@@ -97,16 +115,41 @@ export function BrisbaneUniExplorer() {
       .sort((a, b) => b.course.atarMin - a.course.atarMin);
   }, [allCoursesWithUni, effectiveATAR]);
 
-  // Chart Data: Graduate Salary Comparison Across Unis
-  const salaryChartData = useMemo(() => {
-    return DETAILED_BRISBANE_UNIS.map(u => ({
-      name: u.code,
-      fullName: u.name,
-      salary: u.qiltMetrics.medianGraduateSalary,
-      empRate: u.qiltMetrics.fullTimeEmpPct,
-      satisfaction: u.qiltMetrics.overallSatisfactionPct,
-    }));
-  }, []);
+  // Dynamic QILT Chart Data
+  const dynamicQiltChartData = useMemo(() => {
+    return DETAILED_BRISBANE_UNIS.map(u => {
+      let value = u.qiltMetrics.medianGraduateSalary;
+      let label = `$${(u.qiltMetrics.medianGraduateSalary / 1000).toFixed(1)}k`;
+
+      if (qiltMetric === 'employment') {
+        value = u.qiltMetrics.fullTimeEmpPct;
+        label = `${u.qiltMetrics.fullTimeEmpPct}%`;
+      } else if (qiltMetric === 'satisfaction') {
+        value = u.qiltMetrics.overallSatisfactionPct;
+        label = `${u.qiltMetrics.overallSatisfactionPct}%`;
+      } else if (qiltMetric === 'firstInFamily') {
+        value = u.enrollments.firstInFamilyPct;
+        label = `${u.enrollments.firstInFamilyPct}%`;
+      }
+
+      return {
+        name: u.code,
+        fullName: u.name,
+        value,
+        label,
+        color: u.code === 'UniSQ' ? '#10b981' : u.code === 'UQ' ? '#8b5cf6' : u.code === 'QUT' ? '#3b82f6' : u.code === 'TAFE' ? '#f59e0b' : '#06b6d4',
+      };
+    }).sort((a, b) => b.value - a.value);
+  }, [qiltMetric]);
+
+  const toggleSort = (field: SortKey) => {
+    if (sortField === field) {
+      setSortDirection(prev => (prev === 'asc' ? 'desc' : 'asc'));
+    } else {
+      setSortField(field);
+      setSortDirection('desc');
+    }
+  };
 
   return (
     <Card variant="glass" className="p-6 space-y-6">
@@ -120,7 +163,7 @@ export function BrisbaneUniExplorer() {
             </h2>
           </div>
           <p className="text-xs sm:text-sm text-muted-foreground">
-            Full metrics, enrollments, ATAR thresholds, HECS fee bands, QILT graduate outcome salaries, and news across UQ, QUT, Griffith, UniSC, UniSQ, ACU, and TAFE QLD.
+            Official metrics, rankings, enrollments, ATAR selection thresholds, HECS fee bands, QILT graduate outcomes, early offer schemes, and 50c public transport across 7 SEQ tertiary leaders.
           </p>
         </div>
         <Badge variant="success" className="shrink-0 font-bold">
@@ -170,18 +213,19 @@ export function BrisbaneUniExplorer() {
       {/* Main Sub-Tabs */}
       <Tabs
         tabs={[
-          { id: 'overview', label: '📊 Uni Profiles & Enrollments' },
-          { id: 'courses', label: '🎓 Top 10 Courses & ATARs' },
-          { id: 'atar-matcher', label: '🎯 Interactive ATAR Matcher' },
-          { id: 'qilt-charts', label: '📈 QILT Salaries & Graphics' },
-          { id: 'housing-transit', label: '🏡 Housing & 50c Translink' },
-          { id: 'news', label: '📰 News & 2032 Olympics Hubs' },
+          { id: 'overview', label: '📊 Uni Profiles & Transit' },
+          { id: 'courses', label: '🎓 Top 70 Degrees & Fees' },
+          { id: 'atar-matcher', label: '🎯 QTAC ATAR Matcher' },
+          { id: 'pathways', label: '🚀 Guaranteed Early Offers' },
+          { id: 'qilt-charts', label: '📈 QILT Salaries & Outcomes' },
+          { id: 'housing-transit', label: '🏡 Housing & 50c Travel' },
+          { id: 'news', label: '🥇 2032 Olympics & News' },
         ]}
         activeTab={activeTab}
         onChange={setActiveTab}
       />
 
-      {/* TAB 1: OVERVIEW & ENROLLMENTS */}
+      {/* TAB 1: OVERVIEW & PROFILES */}
       {activeTab === 'overview' && (
         <div className="space-y-6">
           {selectedUniCode === 'ALL' ? (
@@ -208,36 +252,62 @@ export function BrisbaneUniExplorer() {
 
                     <div className="grid grid-cols-2 gap-2 pt-2 border-t border-border/60 text-xs">
                       <div>
-                        <div className="text-[10px] text-muted-foreground">Total Students</div>
+                        <div className="text-[10px] text-muted-foreground font-medium">Total Students</div>
                         <div className="font-bold font-mono text-foreground">{uni.enrollments.total.toLocaleString()}</div>
                       </div>
                       <div>
-                        <div className="text-[10px] text-muted-foreground">Undergrad Share</div>
+                        <div className="text-[10px] text-muted-foreground font-medium">Undergrad Share</div>
                         <div className="font-bold font-mono text-foreground">{uni.enrollments.undergrad.toLocaleString()}</div>
                       </div>
                       <div>
-                        <div className="text-[10px] text-muted-foreground">Domestic / Intl</div>
+                        <div className="text-[10px] text-muted-foreground font-medium">Domestic / Intl</div>
                         <div className="font-bold font-mono text-foreground">
                           {uni.enrollments.domesticPct}% / {uni.enrollments.internationalPct}%
                         </div>
                       </div>
                       <div>
-                        <div className="text-[10px] text-muted-foreground">Graduate Salary</div>
+                        <div className="text-[10px] text-muted-foreground font-medium">Graduate Salary</div>
                         <div className="font-bold font-mono text-emerald-600 dark:text-emerald-400">
                           ${uni.qiltMetrics.medianGraduateSalary.toLocaleString()}
                         </div>
                       </div>
                     </div>
+
+                    {/* Specialist Strengths Chips */}
+                    <div className="pt-2 border-t border-border/60">
+                      <div className="text-[10px] text-muted-foreground font-semibold mb-1.5 flex items-center gap-1">
+                        <Sparkles className="w-3 h-3 text-amber-500" />
+                        <span>Key Strengths:</span>
+                      </div>
+                      <div className="flex flex-wrap gap-1">
+                        {uni.specialistStrengths.slice(0, 2).map((s, i) => (
+                          <span key={i} className="px-2 py-0.5 rounded-md bg-muted text-[10px] text-muted-foreground font-medium truncate max-w-full">
+                            {s}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
                   </div>
 
-                  <button
-                    type="button"
-                    onClick={() => setSelectedUniCode(uni.code)}
-                    className="w-full mt-3 py-2 rounded-xl bg-muted hover:bg-primary/10 hover:text-primary text-foreground text-xs font-bold transition-colors flex items-center justify-center gap-1.5"
-                  >
-                    <span>Inspect Full Metrics</span>
-                    <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                  </button>
+                  <div className="pt-3 border-t border-border/60 space-y-2">
+                    <button
+                      type="button"
+                      onClick={() => setSelectedUniCode(uni.code)}
+                      className="w-full py-2 rounded-xl bg-primary/10 hover:bg-primary text-primary hover:text-primary-foreground text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-2xs"
+                    >
+                      <span>Inspect Full Metrics & Degrees</span>
+                      <Sparkles className="w-3.5 h-3.5" />
+                    </button>
+                    <a
+                      href={uni.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full py-1.5 rounded-xl border border-border hover:bg-muted text-muted-foreground hover:text-foreground text-xs font-medium transition-colors flex items-center justify-center gap-1"
+                    >
+                      <span>Official Study Portal</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  </div>
                 </SpotlightCard>
               ))}
             </div>
@@ -259,15 +329,26 @@ export function BrisbaneUniExplorer() {
                       <p className="text-sm text-muted-foreground">{selectedUni.tagline}</p>
                     </div>
                   </div>
-                  <a
-                    href={selectedUni.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-4 py-2 rounded-xl bg-primary text-primary-foreground text-xs font-bold flex items-center gap-1.5 hover:opacity-90 transition-opacity self-start sm:self-center"
-                  >
-                    <span>Visit Official Study Portal</span>
-                    <ExternalLink className="w-3.5 h-3.5" />
-                  </a>
+                  <div className="flex flex-wrap gap-2 self-start sm:self-center">
+                    <a
+                      href={selectedUni.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-3.5 py-2 rounded-xl bg-primary text-primary-foreground text-xs font-bold flex items-center gap-1.5 hover:opacity-90 transition-opacity shadow-xs"
+                    >
+                      <span>Official Study Portal</span>
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    </a>
+                    <a
+                      href="https://www.qtac.edu.au"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-3.5 py-2 rounded-xl bg-card border border-border text-foreground text-xs font-bold flex items-center gap-1.5 hover:bg-muted transition-colors shadow-xs"
+                    >
+                      <span>Apply on QTAC</span>
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    </a>
+                  </div>
                 </div>
 
                 {/* Key Metrics Row */}
@@ -339,6 +420,19 @@ export function BrisbaneUniExplorer() {
                         <p className="text-[10px] text-muted-foreground mt-0.5">From regional Queensland</p>
                       </div>
                     </div>
+
+                    {/* Specialist Strengths */}
+                    <div className="pt-2 border-t border-border/60">
+                      <div className="text-xs font-bold text-foreground mb-1.5">Specialist Academic & Industry Strengths</div>
+                      <div className="space-y-1">
+                        {selectedUni.specialistStrengths.map((s, idx) => (
+                          <div key={idx} className="flex items-center gap-1.5 text-muted-foreground">
+                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                            <span>{s}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 </Card>
 
@@ -361,6 +455,16 @@ export function BrisbaneUniExplorer() {
                         </div>
                       </div>
                     ))}
+
+                    <div className="rounded-xl border border-sky-500/30 bg-sky-500/5 p-3 space-y-1">
+                      <div className="font-bold text-foreground text-xs flex items-center gap-1.5">
+                        <Compass className="w-4 h-4 text-sky-500" />
+                        <span>Brisbane 2032 Olympic Role</span>
+                      </div>
+                      <p className="text-muted-foreground text-[11px] leading-relaxed">
+                        {selectedUni.olympicRole2032}
+                      </p>
+                    </div>
                   </div>
                 </Card>
               </div>
@@ -369,16 +473,16 @@ export function BrisbaneUniExplorer() {
         </div>
       )}
 
-      {/* TAB 2: TOP 10 COURSES & ATARS */}
+      {/* TAB 2: TOP 70 COURSES & FEES */}
       {activeTab === 'courses' && (
         <div className="space-y-5">
-          {/* Controls: Search & Field Filter */}
+          {/* Controls: Search, Field Filter, and Sort Controls */}
           <div className="flex flex-col sm:flex-row gap-3 items-center justify-between">
-            <div className="relative w-full sm:w-72">
+            <div className="relative w-full sm:w-80">
               <Search className="w-4 h-4 text-muted-foreground absolute left-3 top-2.5" />
               <input
                 type="text"
-                placeholder="Search courses, ATAR, degrees..."
+                placeholder="Search degrees, ATAR, career, uni..."
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 className="w-full pl-9 pr-3 py-1.5 rounded-xl border border-border bg-background text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
@@ -409,13 +513,45 @@ export function BrisbaneUniExplorer() {
             <table className="w-full text-left text-xs border-collapse">
               <thead>
                 <tr className="border-b border-border bg-muted/40">
-                  <th className="py-3 px-3 font-bold text-foreground">Degree Title</th>
+                  <th
+                    onClick={() => toggleSort('title')}
+                    className="py-3 px-3 font-bold text-foreground cursor-pointer hover:text-primary transition-colors"
+                  >
+                    <div className="flex items-center gap-1">
+                      <span>Degree Title</span>
+                      <ArrowUpDown className="w-3 h-3 text-muted-foreground" />
+                    </div>
+                  </th>
                   <th className="py-3 px-3 font-bold text-foreground">Uni</th>
                   <th className="py-3 px-3 font-bold text-foreground">Field</th>
-                  <th className="py-3 px-3 font-bold text-foreground font-mono text-center">Min ATAR</th>
-                  <th className="py-3 px-3 font-bold text-foreground font-mono text-center">Median ATAR</th>
-                  <th className="py-3 px-3 font-bold text-foreground font-mono">CSP Fee / yr</th>
-                  <th className="py-3 px-3 font-bold text-foreground">Career & Median Salary</th>
+                  <th
+                    onClick={() => toggleSort('atarMin')}
+                    className="py-3 px-3 font-bold text-foreground font-mono text-center cursor-pointer hover:text-primary transition-colors"
+                  >
+                    <div className="flex items-center justify-center gap-1">
+                      <span>Min ATAR</span>
+                      <ArrowUpDown className="w-3 h-3 text-muted-foreground" />
+                    </div>
+                  </th>
+                  <th
+                    onClick={() => toggleSort('cspBandFee')}
+                    className="py-3 px-3 font-bold text-foreground font-mono cursor-pointer hover:text-primary transition-colors"
+                  >
+                    <div className="flex items-center gap-1">
+                      <span>CSP Fee / yr</span>
+                      <ArrowUpDown className="w-3 h-3 text-muted-foreground" />
+                    </div>
+                  </th>
+                  <th
+                    onClick={() => toggleSort('medianGraduateSalary')}
+                    className="py-3 px-3 font-bold text-foreground cursor-pointer hover:text-primary transition-colors"
+                  >
+                    <div className="flex items-center gap-1">
+                      <span>Graduate Career & Salary</span>
+                      <ArrowUpDown className="w-3 h-3 text-muted-foreground" />
+                    </div>
+                  </th>
+                  <th className="py-3 px-3 font-bold text-foreground text-right">Apply</th>
                 </tr>
               </thead>
               <tbody>
@@ -435,13 +571,19 @@ export function BrisbaneUniExplorer() {
                         </div>
                       </td>
                       <td className="py-3 px-3 align-top whitespace-nowrap">
-                        <Badge variant="default" className="font-mono text-[10px]">
-                          {uni.code}
-                        </Badge>
+                        <button
+                          type="button"
+                          onClick={() => setSelectedUniCode(uni.code)}
+                          className="hover:opacity-80 transition-opacity"
+                        >
+                          <Badge variant="default" className="font-mono text-[10px]">
+                            {uni.code}
+                          </Badge>
+                        </button>
                       </td>
                       <td className="py-3 px-3 align-top whitespace-nowrap">
                         <span
-                          className="px-2 py-0.5 rounded-md text-[10px] font-bold text-white"
+                          className="px-2 py-0.5 rounded-md text-[10px] font-bold text-white shadow-2xs"
                           style={{ backgroundColor: FIELD_COLORS[course.field] || '#6b7280' }}
                         >
                           {course.field}
@@ -449,9 +591,6 @@ export function BrisbaneUniExplorer() {
                       </td>
                       <td className="py-3 px-3 align-top font-mono font-extrabold text-center text-foreground whitespace-nowrap">
                         {course.atarMin === 0 ? 'No ATAR (VET)' : course.atarMin.toFixed(2)}
-                      </td>
-                      <td className="py-3 px-3 align-top font-mono text-center text-muted-foreground whitespace-nowrap">
-                        {course.atarMedian === 0 ? 'N/A' : course.atarMedian.toFixed(2)}
                       </td>
                       <td className="py-3 px-3 align-top font-mono font-semibold text-emerald-600 dark:text-emerald-400 whitespace-nowrap">
                         ${course.cspBandFee.toLocaleString()}/yr
@@ -461,6 +600,17 @@ export function BrisbaneUniExplorer() {
                         <div className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold font-mono">
                           Median Starting Salary: ${course.medianGraduateSalary.toLocaleString()}
                         </div>
+                      </td>
+                      <td className="py-3 px-3 align-top text-right whitespace-nowrap">
+                        <a
+                          href={uni.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-primary/10 hover:bg-primary text-primary hover:text-primary-foreground font-bold text-[11px] transition-colors"
+                        >
+                          <span>Portal</span>
+                          <ExternalLink className="w-3 h-3" />
+                        </a>
                       </td>
                     </tr>
                   ))
@@ -582,20 +732,31 @@ export function BrisbaneUniExplorer() {
                       </div>
                     </div>
 
-                    <div className="pt-1 flex items-center justify-between text-[11px]">
+                    <div className="pt-2 border-t border-border/60 flex items-center justify-between text-[11px] gap-2">
                       <span className="text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1">
                         <CheckCircle2 className="w-3.5 h-3.5" />
-                        <span>Eligible (+{margin.toFixed(2)} pts buffer)</span>
+                        <span>Eligible (+{margin.toFixed(2)} buffer)</span>
                       </span>
-                      <a
-                        href={uni.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-primary font-semibold hover:underline flex items-center gap-1"
-                      >
-                        <span>Apply QTAC</span>
-                        <ExternalLink className="w-3 h-3" />
-                      </a>
+                      <div className="flex items-center gap-1.5">
+                        <a
+                          href={uni.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="px-2 py-1 rounded-lg border border-border hover:bg-muted text-foreground text-[11px] font-semibold flex items-center gap-1 transition-colors"
+                        >
+                          <span>Uni Site</span>
+                          <ExternalLink className="w-3 h-3" />
+                        </a>
+                        <a
+                          href="https://www.qtac.edu.au"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="px-2 py-1 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white text-[11px] font-bold flex items-center gap-1 transition-colors"
+                        >
+                          <span>Apply QTAC</span>
+                          <ExternalLink className="w-3 h-3" />
+                        </a>
+                      </div>
                     </div>
                   </SpotlightCard>
                 );
@@ -605,64 +766,200 @@ export function BrisbaneUniExplorer() {
         </div>
       )}
 
-      {/* TAB 4: QILT SALARIES & GRAPHICS */}
-      {activeTab === 'qilt-charts' && (
+      {/* TAB 4: GUARANTEED EARLY OFFERS */}
+      {activeTab === 'pathways' && (
         <div className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            <Card variant="glass" className="p-5 space-y-4">
-              <div className="flex items-center gap-2 border-b border-border pb-2">
-                <TrendingUp className="w-5 h-5 text-emerald-500" />
-                <h3 className="font-bold text-foreground text-sm">Median Graduate Starting Salary (QILT 2026)</h3>
+          <Card variant="glass" className="p-5 space-y-4 border-primary/30 bg-primary/5">
+            <div className="flex items-center gap-2 border-b border-border pb-3">
+              <Award className="w-5 h-5 text-primary" />
+              <div>
+                <h3 className="font-extrabold text-foreground text-base">Queensland Early Offer & Guaranteed Entry Pathways (2026/2027)</h3>
+                <p className="text-xs text-muted-foreground">
+                  Lock in your university placement before final Year 12 exams via official Queensland institution guarantee schemes.
+                </p>
               </div>
-              <div className="h-64 w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={salaryChartData} margin={{ top: 10, right: 10, left: 10, bottom: 25 }}>
-                    <XAxis dataKey="name" stroke="#888888" fontSize={11} />
-                    <YAxis domain={[50000, 90000]} stroke="#888888" fontSize={10} tickFormatter={v => `$${v / 1000}k`} />
-                    <Tooltip
-                      formatter={(val: any) => [`$${Number(val).toLocaleString()}`, 'Median Salary']}
-                      contentStyle={{ backgroundColor: '#18181b', border: '1px solid #3f3f46', borderRadius: '12px', color: '#fff' }}
-                    />
-                    <Bar dataKey="salary" radius={[8, 8, 0, 0]}>
-                      {salaryChartData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.name === 'UniSQ' ? '#10b981' : entry.name === 'UQ' ? '#8b5cf6' : '#3b82f6'} />
-                      ))}
-                    </Bar>
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-              <p className="text-[11px] text-muted-foreground leading-relaxed">
-                QILT national graduate survey data shows UniSQ leading Australia with a median starting salary of $78,200, followed by UQ ($76,500) and ACU ($76,000).
-              </p>
-            </Card>
+            </div>
 
-            <Card variant="glass" className="p-5 space-y-4">
-              <div className="flex items-center gap-2 border-b border-border pb-2">
-                <Users className="w-5 h-5 text-blue-500" />
-                <h3 className="font-bold text-foreground text-sm">Full-Time Employment Rate (%) Within 4 Months</h3>
-              </div>
-              <div className="h-64 w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={salaryChartData} margin={{ top: 10, right: 10, left: 10, bottom: 25 }}>
-                    <XAxis dataKey="name" stroke="#888888" fontSize={11} />
-                    <YAxis domain={[75, 95]} stroke="#888888" fontSize={10} tickFormatter={v => `${v}%`} />
-                    <Tooltip
-                      formatter={(val: any) => [`${val}%`, 'FT Employment']}
-                      contentStyle={{ backgroundColor: '#18181b', border: '1px solid #3f3f46', borderRadius: '12px', color: '#fff' }}
-                    />
-                    <Bar dataKey="empRate" fill="#3b82f6" radius={[8, 8, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-              <p className="text-[11px] text-muted-foreground leading-relaxed">
-                TAFE Queensland (88.5%), UniSQ (87.9%), and ACU (86.8%) achieve top employment outcomes due to clinical placements and trade apprenticeships.
-              </p>
-            </Card>
-          </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {DETAILED_BRISBANE_UNIS.map(uni => (
+                <div key={uni.code} className="rounded-2xl border border-border bg-card p-4 space-y-3 flex flex-col justify-between">
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="text-2xl">{uni.logoEmoji}</span>
+                        <span className="font-bold text-foreground text-sm">{uni.code}</span>
+                      </div>
+                      <Badge variant="default" className="text-[10px] font-mono">
+                        {uni.earlyOfferScheme.deadline}
+                      </Badge>
+                    </div>
+
+                    <h4 className="font-extrabold text-foreground text-sm">{uni.earlyOfferScheme.name}</h4>
+                    <p className="text-xs text-muted-foreground leading-relaxed">{uni.earlyOfferScheme.criteria}</p>
+
+                    <div className="p-2.5 rounded-xl bg-background/60 border border-border/80 text-[11px] space-y-1">
+                      <div className="font-semibold text-emerald-600 dark:text-emerald-400">Guaranteed Scope:</div>
+                      <div className="text-muted-foreground">{uni.earlyOfferScheme.guaranteedRanks}</div>
+                    </div>
+                  </div>
+
+                  <a
+                    href={uni.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full mt-2 py-1.5 rounded-xl bg-muted hover:bg-primary/10 text-foreground hover:text-primary text-xs font-bold transition-colors flex items-center justify-center gap-1.5"
+                  >
+                    <span>Check Early Entry Requirements</span>
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
+                </div>
+              ))}
+            </div>
+          </Card>
         </div>
       )}
 
-      {/* TAB 5: HOUSING & TRANSIT */}
+      {/* TAB 5: QILT SALARIES & GRAPHICS */}
+      {activeTab === 'qilt-charts' && (
+        <div className="space-y-6">
+          {/* Metric Selector Tabs */}
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={() => setQiltMetric('salary')}
+              className={cn(
+                'px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1.5',
+                qiltMetric === 'salary'
+                  ? 'bg-emerald-500 text-white shadow-md'
+                  : 'bg-card border border-border text-muted-foreground hover:text-foreground'
+              )}
+            >
+              <DollarSign className="w-3.5 h-3.5" />
+              <span>Median Graduate Salary ($)</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setQiltMetric('employment')}
+              className={cn(
+                'px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1.5',
+                qiltMetric === 'employment'
+                  ? 'bg-blue-500 text-white shadow-md'
+                  : 'bg-card border border-border text-muted-foreground hover:text-foreground'
+              )}
+            >
+              <TrendingUp className="w-3.5 h-3.5" />
+              <span>Full-Time Employment Rate (%)</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setQiltMetric('satisfaction')}
+              className={cn(
+                'px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1.5',
+                qiltMetric === 'satisfaction'
+                  ? 'bg-purple-500 text-white shadow-md'
+                  : 'bg-card border border-border text-muted-foreground hover:text-foreground'
+              )}
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Overall Student Satisfaction (%)</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setQiltMetric('firstInFamily')}
+              className={cn(
+                'px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1.5',
+                qiltMetric === 'firstInFamily'
+                  ? 'bg-amber-500 text-white shadow-md'
+                  : 'bg-card border border-border text-muted-foreground hover:text-foreground'
+              )}
+            >
+              <Users className="w-3.5 h-3.5" />
+              <span>First-in-Family Share (%)</span>
+            </button>
+          </div>
+
+          <Card variant="glass" className="p-5 space-y-4">
+            <div className="flex items-center justify-between border-b border-border pb-2">
+              <div className="flex items-center gap-2">
+                <TrendingUp className="w-5 h-5 text-emerald-500" />
+                <h3 className="font-bold text-foreground text-sm">
+                  {qiltMetric === 'salary' && 'Median Graduate Starting Salary (QILT 2026/2027 Survey)'}
+                  {qiltMetric === 'employment' && 'Full-Time Employment Rate within 4 Months (%)'}
+                  {qiltMetric === 'satisfaction' && 'Overall Student Satisfaction Rate (%)'}
+                  {qiltMetric === 'firstInFamily' && 'First-in-Family Undergraduate Percentage (%)'}
+                </h3>
+              </div>
+              <a
+                href="https://www.qilt.edu.au"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs text-primary font-semibold hover:underline flex items-center gap-1"
+              >
+                <span>QILT Official Portal</span>
+                <ExternalLink className="w-3 h-3" />
+              </a>
+            </div>
+
+            <div className="h-72 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={dynamicQiltChartData} margin={{ top: 15, right: 15, left: 10, bottom: 25 }}>
+                  <XAxis dataKey="name" stroke="#888888" fontSize={12} />
+                  <YAxis
+                    stroke="#888888"
+                    fontSize={11}
+                    tickFormatter={v => (qiltMetric === 'salary' ? `$${v / 1000}k` : `${v}%`)}
+                    domain={qiltMetric === 'salary' ? [50000, 90000] : qiltMetric === 'firstInFamily' ? [0, 60] : [70, 95]}
+                  />
+                  <Tooltip
+                    formatter={(val: any) => [
+                      qiltMetric === 'salary' ? `$${Number(val).toLocaleString()}` : `${val}%`,
+                      qiltMetric === 'salary'
+                        ? 'Median Starting Salary'
+                        : qiltMetric === 'employment'
+                        ? 'FT Employment Rate'
+                        : qiltMetric === 'satisfaction'
+                        ? 'Satisfaction Rate'
+                        : 'First-in-Family Share',
+                    ]}
+                    contentStyle={{ backgroundColor: '#18181b', border: '1px solid #3f3f46', borderRadius: '12px', color: '#fff' }}
+                  />
+                  <Bar dataKey="value" radius={[8, 8, 0, 0]}>
+                    {dynamicQiltChartData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 text-xs">
+              <div className="p-3 rounded-xl bg-card border border-border">
+                <div className="font-bold text-foreground">Top Salary Leader</div>
+                <div className="text-base font-extrabold font-mono text-emerald-600 dark:text-emerald-400 mt-0.5">
+                  UniSQ ($78,200)
+                </div>
+                <p className="text-[10px] text-muted-foreground mt-0.5">Driven by aviation, engineering & spatial surveying.</p>
+              </div>
+              <div className="p-3 rounded-xl bg-card border border-border">
+                <div className="font-bold text-foreground">Top Employment Rate</div>
+                <div className="text-base font-extrabold font-mono text-blue-600 dark:text-blue-400 mt-0.5">
+                  TAFE QLD (88.5%)
+                </div>
+                <p className="text-[10px] text-muted-foreground mt-0.5">Driven by high trade apprenticeships and enrolled nursing.</p>
+              </div>
+              <div className="p-3 rounded-xl bg-card border border-border">
+                <div className="font-bold text-foreground">Top Student Experience</div>
+                <div className="text-base font-extrabold font-mono text-purple-600 dark:text-purple-400 mt-0.5">
+                  UniSC (88.7%)
+                </div>
+                <p className="text-[10px] text-muted-foreground mt-0.5">#1 in Queensland for 4 consecutive years in QILT ratings.</p>
+              </div>
+            </div>
+          </Card>
+        </div>
+      )}
+
+      {/* TAB 6: HOUSING & TRANSIT */}
       {activeTab === 'housing-transit' && (
         <div className="space-y-6">
           <Card variant="glass" className="p-5 space-y-4 border-sky-500/30 bg-sky-500/5">
@@ -680,17 +977,17 @@ export function BrisbaneUniExplorer() {
               <div className="rounded-xl border border-border bg-card p-3.5">
                 <div className="text-[10px] text-muted-foreground uppercase font-semibold">Single Trip Fare</div>
                 <div className="text-2xl font-bold font-mono text-emerald-600 dark:text-emerald-400">$0.50</div>
-                <p className="text-[10px] text-muted-foreground mt-0.5">Any zone in SEQ</p>
+                <p className="text-[10px] text-muted-foreground mt-0.5">Any zone across SEQ</p>
               </div>
               <div className="rounded-xl border border-border bg-card p-3.5">
                 <div className="text-[10px] text-muted-foreground uppercase font-semibold">Daily Commute (Return)</div>
                 <div className="text-2xl font-bold font-mono text-foreground">$1.00</div>
-                <p className="text-[10px] text-muted-foreground mt-0.5">2 × 50c fares</p>
+                <p className="text-[10px] text-muted-foreground mt-0.5">2 × 50c fares daily</p>
               </div>
               <div className="rounded-xl border border-border bg-card p-3.5">
                 <div className="text-[10px] text-muted-foreground uppercase font-semibold">Weekly Transport Cap</div>
                 <div className="text-2xl font-bold font-mono text-emerald-600 dark:text-emerald-400">$5.00</div>
-                <p className="text-[10px] text-muted-foreground mt-0.5">5 days uni travel</p>
+                <p className="text-[10px] text-muted-foreground mt-0.5">5 days weekly travel</p>
               </div>
             </div>
           </Card>
@@ -730,12 +1027,12 @@ export function BrisbaneUniExplorer() {
         </div>
       )}
 
-      {/* TAB 6: NEWS & INNOVATION HUBS */}
+      {/* TAB 7: NEWS & 2032 OLYMPICS */}
       {activeTab === 'news' && (
         <div className="space-y-4">
           <div className="flex items-center gap-2 border-b border-border pb-2">
-            <Newspaper className="w-5 h-5 text-amber-500" />
-            <h3 className="font-extrabold text-foreground text-sm">2026/2027 Brisbane Tertiary News & Olympic Innovation Hubs</h3>
+            <Medal className="w-5 h-5 text-amber-500" />
+            <h3 className="font-extrabold text-foreground text-sm">Brisbane 2032 Olympic Innovation Hubs & 2026/2027 News</h3>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -743,9 +1040,12 @@ export function BrisbaneUniExplorer() {
               u.recentNews.map((n, idx) => (
                 <SpotlightCard key={`${u.code}-news-${idx}`} className="p-4 space-y-2 rounded-2xl">
                   <div className="flex items-center justify-between">
-                    <Badge variant="default" className="font-mono text-[10px]">
-                      {u.code}
-                    </Badge>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-base">{u.logoEmoji}</span>
+                      <Badge variant="default" className="font-mono text-[10px]">
+                        {u.code}
+                      </Badge>
+                    </div>
                     <span className="text-[10px] font-bold text-muted-foreground font-mono">{n.year}</span>
                   </div>
                   <h4 className="font-bold text-foreground text-sm leading-snug">{n.headline}</h4>

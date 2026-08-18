@@ -6,7 +6,7 @@
 export interface WebLink {
   title: string;
   url: string;
-  source: 'ATO' | 'Fair Work' | 'Moneysmart' | 'Services Australia' | 'PPSR' | 'Reserve Bank' | 'Scamwatch' | 'ACCC' | 'APRA' | 'SafeWork' | 'ASX' | 'Moomoo' | 'ETF Provider' | 'Media' | 'Research' | 'QLD Government' | 'Brisbane City Council' | 'Federal Government' | 'University';
+  source: 'ATO' | 'Fair Work' | 'Moneysmart' | 'Services Australia' | 'PPSR' | 'Reserve Bank' | 'Scamwatch' | 'ACCC' | 'APRA' | 'SafeWork' | 'ASX' | 'Moomoo' | 'ETF Provider' | 'Media' | 'Research' | 'QLD Government' | 'Brisbane City Council' | 'Federal Government' | 'University' | 'Australia Post' | 'Transport' | 'Student Discount';
   description: string;
   formCode?: string;
 }
@@ -511,6 +511,61 @@ export const OFFICIAL_WEB_LINKS: Record<string, WebLink> = {
     source: 'Research',
     description: 'Australian Institute of Petroleum weekly average retail petrol & diesel prices for Queensland.',
   },
+  services_australia_medicare_15: {
+    title: 'Services Australia: Getting Your Own Medicare Card at 15',
+    url: 'https://www.servicesaustralia.gov.au/how-to-get-your-own-medicare-card-or-number',
+    source: 'Services Australia',
+    formCode: 'MS004',
+    description: 'From age 15 in Australia, you can get your own green Medicare card for free to visit bulk-billing doctors independently and manage your own health records.',
+  },
+  auspost_tfn: {
+    title: 'Australia Post: TFN Application for Australian Residents & Students',
+    url: 'https://auspost.com.au/id-and-document-services/apply-for-a-tax-file-number',
+    source: 'Australia Post',
+    description: 'Free TFN application at Australia Post: fill out online form, book a free appointment, and present Australian Birth Certificate + Student ID.',
+  },
+  scamwatch_youth_scams: {
+    title: 'Scamwatch: Spotting Job, Task & Money Muling Scams',
+    url: 'https://www.scamwatch.gov.au/types-of-scams/jobs-and-employment-scams',
+    source: 'Scamwatch',
+    description: 'ACCC Scamwatch guide on fake TikTok/Instagram remote jobs, task scams, and the legal dangers of "money muling" through your bank account.',
+  },
+  student_edge: {
+    title: 'Student Edge: Free Australian Student Discounts & Perks',
+    url: 'https://studentedge.org/au',
+    source: 'Student Discount',
+    description: 'Free student membership offering discounts on tech, food, cinema tickets, fashion, and retail for Australian high school students.',
+  },
+  unidays_au: {
+    title: 'UNiDAYS Australia: High School & Student Discounts',
+    url: 'https://www.myunidays.com/AU/en-AU',
+    source: 'Student Discount',
+    description: 'Official verified student discount portal for Apple Education, Samsung, ASOS, Nike, and tech savings.',
+  },
+  fairwork_minimum_shifts: {
+    title: 'Fair Work Ombudsman: Minimum Hours per Shift Rules',
+    url: 'https://www.fairwork.gov.au/starting-employment/types-of-employees/casual-employees',
+    source: 'Fair Work',
+    description: 'By law under Fast Food and Retail Awards, employers must provide a minimum of 3 hours per shift for casual workers.',
+  },
+  fairwork_breaks: {
+    title: 'Fair Work Ombudsman: Rest Pauses & Meal Break Entitlements',
+    url: 'https://www.fairwork.gov.au/employment-conditions/hours-of-work-breaks-and-rosters/breaks',
+    source: 'Fair Work',
+    description: 'Official award break rules: 10-minute paid rest pause for 4+ hour shifts; 30-60 minute unpaid meal break for 5+ hour shifts.',
+  },
+  nsw_dkt_practice: {
+    title: 'Transport for NSW: Practice Driver Knowledge Test (DKT)',
+    url: 'https://www.nsw.gov.au/driving-boating-and-transport/driver-and-rider-licences/driver-licences/learner-driver-licence/driver-knowledge-test',
+    source: 'Transport',
+    description: 'Official NSW practice test tool for 15-year-olds preparing to get their Learner licence on their 16th birthday.',
+  },
+  vic_learner_practice: {
+    title: 'VicRoads: Learner Permit Practice Test Online',
+    url: 'https://www.vicroads.vic.gov.au/licences/your-ls/get-your-ls/prepare-for-the-learner-permit-test',
+    source: 'Transport',
+    description: 'Official Victoria practice road rules knowledge test to study before sitting the Learner Permit test at 16.',
+  },
 };
 
 /**
@@ -657,3 +712,203 @@ export const TEEN_SAVINGS_ACCOUNTS = [
     maxAge: 17,
   },
 ];
+
+/**
+ * Australian State & Territory Working Age & School Hours Rules for 15-Year-Olds.
+ * Sources: Fair Work Ombudsman, State Child Employment Acts.
+ */
+export interface StateWorkingHoursRule {
+  state: string;
+  minAgeGeneral: string;
+  schoolTermMaxHours: string;
+  schoolDayMaxHours: string;
+  holidayMaxHours: string;
+  nightWorkRestrictions: string;
+  keyRule: string;
+}
+
+export const AU_STATE_WORKING_HOURS_RULES: StateWorkingHoursRule[] = [
+  {
+    state: 'Queensland (QLD)',
+    minAgeGeneral: '13 years (11 for paper delivery)',
+    schoolTermMaxHours: 'Max 12 hours per week during school terms',
+    schoolDayMaxHours: 'Max 4 hours on a school day',
+    holidayMaxHours: 'Max 38 hours per week in school holidays (max 8 hrs/day)',
+    nightWorkRestrictions: 'No work between 10:00pm and 6:00am',
+    keyRule: 'School attendance is compulsory; employers cannot roster students during school hours.',
+  },
+  {
+    state: 'New South Wales (NSW)',
+    minAgeGeneral: 'No set minimum age for general retail/fast food',
+    schoolTermMaxHours: 'No strict statutory hour cap, but compulsory schooling until 17',
+    schoolDayMaxHours: 'Cannot work during official school hours (typically 8:30am–3:30pm)',
+    holidayMaxHours: 'Standard award full-time limits apply (max 38 hrs/week)',
+    nightWorkRestrictions: 'Must have safe travel home arrangements; late night work restricted',
+    keyRule: 'Work must not interfere with education or health. Parental consent required for younger teens.',
+  },
+  {
+    state: 'Victoria (VIC)',
+    minAgeGeneral: '15 years for retail & food without permit (13–14 requires light work licence)',
+    schoolTermMaxHours: 'Max 12 hours per week during school terms',
+    schoolDayMaxHours: 'Max 3 hours on a school day',
+    holidayMaxHours: 'Max 30 hours per week in school holidays (max 6 hrs/day)',
+    nightWorkRestrictions: 'Cannot work after 9:00pm or before 6:00am',
+    keyRule: 'Under Child Employment Act 2003, at 15 you can work in retail or hospitality without an employer permit.',
+  },
+  {
+    state: 'Western Australia (WA)',
+    minAgeGeneral: '15 years for general retail & food; 13–14 for light work with parental consent',
+    schoolTermMaxHours: 'No work during school hours; max 12–16 hrs/week recommended',
+    schoolDayMaxHours: 'Outside school hours only (after 3:30pm)',
+    holidayMaxHours: 'Standard award limits apply',
+    nightWorkRestrictions: 'No work between 10:00pm and 6:00am for under-15s',
+    keyRule: 'Parental permission form required for 13-14 year olds; 15 year olds can work retail/hospitality freely.',
+  },
+  {
+    state: 'South Australia (SA)',
+    minAgeGeneral: 'No statutory minimum age, but compulsory education/training until 17',
+    schoolTermMaxHours: 'Cannot work during school hours',
+    schoolDayMaxHours: 'After school only',
+    holidayMaxHours: 'Standard award limits apply',
+    nightWorkRestrictions: 'No work that endangers safety or education',
+    keyRule: 'Compulsory education law strictly prohibits employment during school hours without an exemption.',
+  },
+  {
+    state: 'Tasmania / ACT / NT',
+    minAgeGeneral: '15 years (or light work with parent consent)',
+    schoolTermMaxHours: 'Work must not conflict with school attendance',
+    schoolDayMaxHours: 'Outside school hours only',
+    holidayMaxHours: 'Standard award limits apply',
+    nightWorkRestrictions: 'Standard youth curfew protections apply',
+    keyRule: 'Employers must comply with National Employment Standards and ensure shifts end with safe transport home.',
+  },
+];
+
+/** Minimum Shift Lengths Under Australian Modern Awards */
+export const MINIMUM_SHIFT_LENGTHS = [
+  { award: 'Fast Food Industry Award [MA000003]', casualMin: '3 Hours', partTimeMin: '3 Hours', note: 'If sent home early, employer must still pay the full 3 hours.' },
+  { award: 'General Retail Industry Award [MA000004]', casualMin: '3 Hours', partTimeMin: '3 Hours', note: 'Applies to supermarkets, department stores, fashion & hardware.' },
+  { award: 'Restaurant Industry Award [MA000119]', casualMin: '2 Hours', partTimeMin: '3 Hours', note: 'Applies to cafes, restaurants and takeaway outlets.' },
+  { award: 'Hospitality Industry Award [MA000009]', casualMin: '2 Hours', partTimeMin: '3 Hours', note: 'Applies to hotels, resorts, event catering and function centres.' },
+  { award: 'Community Pharmacy Award [MA000012]', casualMin: '3 Hours', partTimeMin: '3 Hours', note: 'Applies to pharmacy assistants and shop floor crew.' },
+];
+
+/** Legal Meal & Rest Break Entitlements Under Modern Awards */
+export const MEAL_AND_REST_BREAKS = [
+  { shiftLength: 'Under 4 Hours', restPause: 'None required', mealBreak: 'None', isPaid: 'N/A' },
+  { shiftLength: '4 to 5 Hours', restPause: '1 × 10-minute rest break', mealBreak: 'None', isPaid: '10-min break is 100% PAID by employer' },
+  { shiftLength: '5 to 7 Hours', restPause: '1 × 10-minute rest break', mealBreak: '1 × 30-to-60 minute meal break', isPaid: 'Rest break is PAID; meal break is UNPAID' },
+  { shiftLength: '7 to 10 Hours', restPause: '2 × 10-minute rest breaks', mealBreak: '1 × 30-to-60 minute meal break', isPaid: 'Both 10-min breaks are PAID; meal break is UNPAID' },
+];
+
+/** 100-Point Identification Checklist for 15-Year-Olds (Bank Accounts, TFN & Medicare) */
+export const TEEN_ID_CHECKLIST_15YO = [
+  { type: 'Primary ID (70 Points)', examples: 'Australian Birth Certificate, Australian Passport, Australian Citizenship Certificate', note: 'Most important document for 15yos' },
+  { type: 'Secondary Photo ID (40 Points)', examples: 'Current High School Student ID Card (with photo), Proof of Age Card', note: 'Must have your photo and full legal name' },
+  { type: 'Supporting Documents (25 Points each)', examples: 'Medicare Card (as a dependant or own card), Bank Debit Card, Letter from School Principal, Youth Transport Concession Card', note: 'Shows your current address or relationship' },
+];
+
+/** Top Australian Employers for 15-Year-Old First Job Seekers */
+export const TOP_TEEN_EMPLOYERS_AU = [
+  {
+    company: 'Woolworths Supermarkets',
+    minAge: '15 Years',
+    award: 'Retail Award / EBA',
+    roles: 'Service Cashier, Online Personal Shopper, Grocery Replenishment',
+    howToApply: 'Woolworths Careers website (online application + short video/game assessment)',
+    tip: 'Apply in August–October for big Christmas casual hiring intakes!',
+  },
+  {
+    company: 'Coles Supermarkets',
+    minAge: '15 Years',
+    award: 'Retail Award / EBA',
+    roles: 'Customer Service, Click & Collect Shopper, Night Fill Team',
+    howToApply: 'Coles Careers online portal — set up job alerts for local stores',
+    tip: 'Highlight teamwork and availability for weekend shifts.',
+  },
+  {
+    company: "McDonald's Australia",
+    minAge: '14–15 Years (State dependent)',
+    award: 'Fast Food Award / EBA',
+    roles: 'Front Counter Crew, Drive-Thru Team, Kitchen & Grill',
+    howToApply: "Maccas Careers / 'Olivia' AI chat assistant on mcdonalds.com.au",
+    tip: 'Australia’s #1 youth employer — amazing training & recognized resume credential.',
+  },
+  {
+    company: "Hungry Jack's",
+    minAge: '14–15 Years',
+    award: 'Fast Food Award',
+    roles: 'Front Counter, Drive-Thru, Burger Crew',
+    howToApply: "Hungry Jack's Careers website or hand resume in-store during quiet hours (2–4pm)",
+    tip: 'Great weekend hours and structured shift training.',
+  },
+  {
+    company: 'Kmart Australia',
+    minAge: '15 Years',
+    award: 'Retail Award / EBA',
+    roles: 'Store Team Member, Checkout, Fitting Room, Stocking',
+    howToApply: 'Kmart Careers online application portal',
+    tip: 'Massive hiring pushes before holiday periods; friendly customer service attitude is key.',
+  },
+  {
+    company: 'Local Sports Associations (Refereeing / Umpiring)',
+    minAge: '13–15 Years',
+    award: 'Sports Officiating Rate ($20–$35 per game)',
+    roles: 'Soccer Referee, Basketball Referee, Netball Umpire, Touch Football Referee',
+    howToApply: 'Contact your local junior sports club or complete a Level 1 Junior Referee course',
+    tip: 'Highest hourly pay for 15yos (cash or bank transfer, $25–$35/game), active, weekend morning shifts.',
+  },
+];
+
+/** 15-Year-Old Independence Roadmap Milestones */
+export const FIFTEEN_YO_ROADMAP_MILESTONES = [
+  {
+    step: 1,
+    title: 'Apply for Your Free Tax File Number (TFN)',
+    badge: 'Step 1 • Legal Prerequisite',
+    summary: 'Apply online through Australia Post or myGov. It is 100% free (never pay a third-party fee!).',
+    action: 'Book a free identity appointment at Australia Post with your Birth Certificate & Student ID.',
+    linkKey: 'auspost_tfn',
+  },
+  {
+    step: 2,
+    title: 'Open a Zero-Fee 5.0%+ Youth Bank Account',
+    badge: 'Step 2 • Banking & Savings',
+    summary: 'Open a fee-free youth transaction account with Visa/Mastercard Debit and Apple Pay / Google Wallet. Provide your TFN to stop 47% tax on savings interest!',
+    action: 'Compare Great Southern Bank (5.50%), Newcastle Permanent (5.75%), or Westpac Bump (5.00%).',
+    linkKey: 'moneysmart_banking',
+  },
+  {
+    step: 3,
+    title: 'Claim Your Own Green Medicare Card',
+    badge: 'Step 3 • Healthcare Independence',
+    summary: 'From age 15 in Australia, Services Australia allows you to get your own separate green Medicare card to visit bulk-billing doctors independently and manage your own health records.',
+    action: 'Submit Services Australia Form MS004 online or at a service centre.',
+    linkKey: 'services_australia_medicare_15',
+  },
+  {
+    step: 4,
+    title: 'Land Your First Casual Job & Master Junior Pay',
+    badge: 'Step 4 • First Paycheck',
+    summary: 'Understand your junior rate ($11.12–$15.64/hr + 25% casual loading), claim the $18,200 tax-free threshold on Form NAT 3092, and enforce the 3-hour minimum shift rule.',
+    action: 'Use our Teen Resume Builder and submit applications to Woolies, Coles, Maccas, or sports refereeing.',
+    linkKey: 'fairwork_awards',
+  },
+  {
+    step: 5,
+    title: 'Practice PrepL / DKT for Your Ls at 16',
+    badge: 'Step 5 • Driving Prep',
+    summary: 'At 15 you can study and practice the road rules tests online (PrepL in QLD, DKT in NSW, Learner test in VIC) so you are ready to get your Ls on the exact day you turn 16!',
+    action: 'Run free practice road rules quizzes on your state transport portal.',
+    linkKey: 'qld_prepl',
+  },
+  {
+    step: 6,
+    title: 'Unlock Student Concessions & Scam Protection',
+    badge: 'Step 6 • Real World Savings',
+    summary: 'Get 50c public transport fares (QLD) or Concession Opal (NSW), join Student Edge / UNiDAYS for tech discounts, and protect against money muling and task scams.',
+    action: 'Download Student Edge and verify your high school status for student discounts.',
+    linkKey: 'student_edge',
+  },
+];
+

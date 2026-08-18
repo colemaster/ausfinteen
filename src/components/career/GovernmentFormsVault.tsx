@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
-import { OFFICIAL_WEB_LINKS } from '@/data/teen-finance-data';
+import { OFFICIAL_WEB_LINKS, TEEN_ID_CHECKLIST_15YO } from '@/data/teen-finance-data';
 import { WebReferenceLink } from '@/components/shared/WebReferenceLink';
-import { FileText, CheckCircle2, ChevronDown } from 'lucide-react';
+import { FileText, CheckCircle2, ChevronDown, Award, HeartPulse, IdCard } from 'lucide-react';
 
 export function GovernmentFormsVault() {
   const [openFormId, setOpenFormId] = useState<string>('nat3092');
@@ -14,14 +14,14 @@ export function GovernmentFormsVault() {
         <div>
           <div className="flex items-center gap-2 mb-1">
             <FileText className="w-5 h-5 text-emerald-500" />
-            <h2 className="text-xl font-bold text-foreground">Official Government Forms & First-Job Vault</h2>
+            <h2 className="text-xl font-bold text-foreground">Official Government Forms & 15yo Independence Vault</h2>
           </div>
           <p className="text-xs text-muted-foreground">
-            Step-by-step instructions for completing mandatory ATO tax declarations, super choice forms, and Fair Work statements.
+            Step-by-step instructions for TFN applications, Medicare cards at 15, ATO tax declarations, super choice forms, and Fair Work statements.
           </p>
         </div>
         <Badge variant="success">
-          Official ATO & Fair Work Forms
+          ATO, Services Australia & Fair Work
         </Badge>
       </div>
 
@@ -50,13 +50,97 @@ export function GovernmentFormsVault() {
           </div>
           <div className="p-3 rounded-xl bg-card border border-border flex items-start gap-2">
             <span className="font-bold text-emerald-500">5.</span>
-            <span>Photo ID (Driver License, Student ID, Passport)</span>
+            <span>Photo ID (Student ID, Passport, Birth Certificate)</span>
           </div>
         </div>
       </Card>
 
       {/* Interactive Form Walkthroughs */}
       <div className="space-y-3">
+        {/* Form 0A: Free TFN Application via Australia Post */}
+        <div className="rounded-2xl border border-border bg-card overflow-hidden transition-all shadow-xs">
+          <button
+            type="button"
+            onClick={() => setOpenFormId(openFormId === 'tfn_auspost' ? '' : 'tfn_auspost')}
+            className="w-full p-4 text-left flex items-center justify-between gap-3 focus:outline-none"
+          >
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-xl bg-red-500/10 text-red-500 font-bold text-xs font-mono flex items-center gap-1">
+                <IdCard className="w-4 h-4" />
+                <span>AusPost TFN</span>
+              </div>
+              <div>
+                <h4 className="font-bold text-sm text-foreground">How a 15yo Applies for a Free Tax File Number (TFN)</h4>
+                <p className="text-xs text-muted-foreground">100% Free Australia Post identity appointment</p>
+              </div>
+            </div>
+            <ChevronDown className={`w-4 h-4 transition-transform ${openFormId === 'tfn_auspost' ? 'rotate-180 text-primary' : 'text-muted-foreground'}`} />
+          </button>
+
+          {openFormId === 'tfn_auspost' && (
+            <div className="p-4 border-t border-border/50 text-xs space-y-3 leading-relaxed animate-fade-in">
+              <p className="text-muted-foreground">
+                Never pay a private website for a TFN! Applying for your TFN at 15 is completely free through Australia Post & the ATO:
+              </p>
+              <div className="p-3 rounded-xl bg-muted/60 space-y-2">
+                <span className="font-bold text-foreground block">4 Simple Steps:</span>
+                <ol className="list-decimal list-inside space-y-1 text-muted-foreground">
+                  <li><strong>Fill online form:</strong> Visit the ATO TFN application portal and complete the online application for Australian residents.</li>
+                  <li><strong>Print Summary Barcode:</strong> At the end, print or save the application summary barcode on your phone.</li>
+                  <li><strong>Book Free AusPost Appointment:</strong> Book a 5-minute identity appointment at your local Australia Post shop.</li>
+                  <li><strong>Bring 2 ID Documents:</strong> Present your Australian Birth Certificate (or Passport) + Student ID Card. Your TFN arrives in the mail within 28 days!</li>
+                </ol>
+              </div>
+              <div className="flex flex-wrap gap-2 pt-1">
+                <WebReferenceLink link={OFFICIAL_WEB_LINKS.auspost_tfn} />
+                <WebReferenceLink link={OFFICIAL_WEB_LINKS.ato_tfn} />
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Form 0B: Services Australia Medicare Card at 15 */}
+        <div className="rounded-2xl border border-border bg-card overflow-hidden transition-all shadow-xs">
+          <button
+            type="button"
+            onClick={() => setOpenFormId(openFormId === 'medicare_ms004' ? '' : 'medicare_ms004')}
+            className="w-full p-4 text-left flex items-center justify-between gap-3 focus:outline-none"
+          >
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-500 font-bold text-xs font-mono flex items-center gap-1">
+                <HeartPulse className="w-4 h-4" />
+                <span>Form MS004</span>
+              </div>
+              <div>
+                <h4 className="font-bold text-sm text-foreground">Services Australia: Getting Your Own Medicare Card at 15</h4>
+                <p className="text-xs text-muted-foreground">Independent doctor appointments & private bulk billing</p>
+              </div>
+            </div>
+            <ChevronDown className={`w-4 h-4 transition-transform ${openFormId === 'medicare_ms004' ? 'rotate-180 text-primary' : 'text-muted-foreground'}`} />
+          </button>
+
+          {openFormId === 'medicare_ms004' && (
+            <div className="p-4 border-t border-border/50 text-xs space-y-3 leading-relaxed animate-fade-in">
+              <p className="text-muted-foreground">
+                In Australia, once you turn 15 you are legally entitled to your own green Medicare card. You can choose to get your own card while staying on your parents’ card (a "copy") or move onto your own card entirely (a "transfer").
+              </p>
+              <div className="p-3 rounded-xl bg-muted/60 space-y-2">
+                <span className="font-bold text-foreground block">How to Claim Your Card:</span>
+                <ul className="list-disc list-inside space-y-1 text-muted-foreground">
+                  <li><strong>Form:</strong> Complete Services Australia Form MS004 (Application to copy or transfer from one Medicare card to another).</li>
+                  <li><strong>Identification:</strong> Provide 2 identity documents (Birth Certificate + School ID or Passport).</li>
+                  <li><strong>Submit:</strong> Upload via myGov linked to Medicare, post it, or take it to any Services Australia service centre.</li>
+                  <li><strong>Digital Card:</strong> You will get instant access to your digital Medicare card inside the Express Plus Medicare mobile app!</li>
+                </ul>
+              </div>
+              <div className="flex flex-wrap gap-2 pt-1">
+                <WebReferenceLink link={OFFICIAL_WEB_LINKS.services_australia_medicare_15} />
+                <WebReferenceLink link={OFFICIAL_WEB_LINKS.services_australia_youth} />
+              </div>
+            </div>
+          )}
+        </div>
+
         {/* Form 1: NAT 3092 TFN Declaration */}
         <div className="rounded-2xl border border-border bg-card overflow-hidden transition-all shadow-xs">
           <button
@@ -200,6 +284,26 @@ export function GovernmentFormsVault() {
           )}
         </div>
       </div>
+
+      {/* 100-Point ID Verification Guide */}
+      <Card variant="glass" className="p-5 space-y-3">
+        <div className="flex items-center gap-2">
+          <Award className="w-4 h-4 text-primary" />
+          <h3 className="font-bold text-sm text-foreground">100-Point Identification Quick Guide for 15-Year-Olds</h3>
+        </div>
+        <p className="text-xs text-muted-foreground">
+          When opening a bank account, applying for your TFN at Australia Post, or setting up Medicare, you need 100 points of ID:
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+          {TEEN_ID_CHECKLIST_15YO.map(item => (
+            <div key={item.type} className="p-3 rounded-xl bg-card border border-border space-y-1">
+              <span className="font-bold text-primary block">{item.type}</span>
+              <p className="text-foreground">{item.examples}</p>
+              <span className="text-[10px] text-muted-foreground block">{item.note}</span>
+            </div>
+          ))}
+        </div>
+      </Card>
     </div>
   );
 }

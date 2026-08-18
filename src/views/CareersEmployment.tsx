@@ -9,12 +9,14 @@ import { WorkplaceRightsGuide } from '@/components/career/WorkplaceRightsGuide';
 import { WorkplaceScriptGenerator } from '@/components/career/WorkplaceScriptGenerator';
 import { TeenResumeBuilder } from '@/components/career/TeenResumeBuilder';
 import { ModulePrevNext } from '@/components/shared/ModulePrevNext';
-import { Briefcase, FileText, ShieldAlert, MessageSquare, Award, BookOpen, Clock } from 'lucide-react';
+import { FifteenYearOldRoadmap } from '@/components/teen/FifteenYearOldRoadmap';
+import { Briefcase, FileText, ShieldAlert, MessageSquare, Award, BookOpen, Clock, Compass } from 'lucide-react';
 import { Badge } from '@/components/ui/Badge';
 import { SmartImage } from '@/components/ui/SmartImage';
 import { usePageTitle } from '@/hooks/usePageTitle';
 
 const TABS = [
+  { id: 'roadmap', label: '15yo Roadmap', icon: Compass },
   { id: 'calc', label: 'Payslip & Junior Pay', icon: Briefcase },
   { id: 'penalty', label: 'Penalty Rate Simulator', icon: Clock },
   { id: 'forms', label: 'Official Forms Vault', icon: FileText },
@@ -136,6 +138,7 @@ export function CareersEmployment() {
           transition={{ duration: 0.2 }}
           className="space-y-6"
         >
+          {activeTab === 'roadmap' && <FifteenYearOldRoadmap />}
           {activeTab === 'calc' && <PayslipAnalyzer />}
           {activeTab === 'penalty' && <PenaltyShiftCalculatorWidget />}
           {activeTab === 'forms' && <GovernmentFormsVault />}

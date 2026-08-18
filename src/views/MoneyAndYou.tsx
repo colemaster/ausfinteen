@@ -1,5 +1,6 @@
 import { MANDY_MODULES } from '@/data/mandy-topics';
 import { TopicGuideAccordion } from '@/components/shared/TopicGuideAccordion';
+import { FifteenYearOldRoadmap } from '@/components/teen/FifteenYearOldRoadmap';
 import { MoneyMindsetQuiz } from '@/components/shared/MoneyMindsetQuiz';
 import { ModulePrevNext } from '@/components/shared/ModulePrevNext';
 import { Badge } from '@/components/ui/Badge';
@@ -41,6 +42,9 @@ export function MoneyAndYou() {
           </div>
         </div>
       </div>
+
+      {/* 15-Year-Old Australian Independence Roadmap */}
+      <FifteenYearOldRoadmap />
 
       {/* Interactive Money Mindset Quiz */}
       <MoneyMindsetQuiz />

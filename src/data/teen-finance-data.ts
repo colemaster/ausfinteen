@@ -912,3 +912,97 @@ export const FIFTEEN_YO_ROADMAP_MILESTONES = [
   },
 ];
 
+export interface StudentDiscountItem {
+  id: string;
+  category: 'Transport' | 'Phone & Internet' | 'Tech & Hardware' | 'Music & Streaming' | 'Cinema & Entertainment' | 'Food & Retail';
+  title: string;
+  provider: string;
+  discount: string;
+  estimatedYearlySavings: number;
+  howToGet: string;
+  linkKey: string;
+}
+
+export const STUDENT_DISCOUNTS_AU: StudentDiscountItem[] = [
+  {
+    id: 'translink_50c',
+    category: 'Transport',
+    title: '50c Flat Public Transport Fares (QLD)',
+    provider: 'Translink (Buses, Trains, Ferries, Light Rail)',
+    discount: '50c per trip across all zones',
+    estimatedYearlySavings: 1100,
+    howToGet: 'Tap on/off with standard go card or contactless bank card / smartphone across South East Queensland.',
+    linkKey: 'translink_50c_fares',
+  },
+  {
+    id: 'nsw_opal_concession',
+    category: 'Transport',
+    title: '50% Concession Opal Fares (NSW)',
+    provider: 'Transport for NSW',
+    discount: '50% off adult standard peak/off-peak fares',
+    estimatedYearlySavings: 650,
+    howToGet: 'Order a Child/Youth Opal card or present Secondary Student Concession Card.',
+    linkKey: 'moneysmart_budget',
+  },
+  {
+    id: 'sim_only_mvno',
+    category: 'Phone & Internet',
+    title: 'Prepaid / SIM-Only MVNO Mobile Plan',
+    provider: 'Moose Mobile / Boost Mobile / ALDI Mobile / Circles.Life',
+    discount: '$15–$25/mo vs $65/mo lock-in Telstra/Optus contract',
+    estimatedYearlySavings: 480,
+    howToGet: 'Bring your own handset and purchase a 30-day SIM-only plan on the Telstra or Optus wholesale network.',
+    linkKey: 'student_edge',
+  },
+  {
+    id: 'spotify_student',
+    category: 'Music & Streaming',
+    title: 'Spotify Premium Student Plan',
+    provider: 'Spotify Australia',
+    discount: '$6.99/mo (50% off standard $13.99/mo)',
+    estimatedYearlySavings: 84,
+    howToGet: 'Verify high school / tertiary enrollment via SheerID inside the Spotify app.',
+    linkKey: 'unidays_au',
+  },
+  {
+    id: 'apple_music_student',
+    category: 'Music & Streaming',
+    title: 'Apple Music Student + Free Apple TV+',
+    provider: 'Apple',
+    discount: '$6.99/mo + complimentary Apple TV+ access',
+    estimatedYearlySavings: 190,
+    howToGet: 'Verify student status with UNiDAYS in the Apple Music subscription settings.',
+    linkKey: 'unidays_au',
+  },
+  {
+    id: 'apple_education_tech',
+    category: 'Tech & Hardware',
+    title: 'Apple Education Store Hardware Discount',
+    provider: 'Apple Australia',
+    discount: 'Up to $250 off Mac / iPad + 20% off AppleCare+',
+    estimatedYearlySavings: 200,
+    howToGet: 'Shop online via Apple Australia Education Store or present student ID at Apple Store.',
+    linkKey: 'unidays_au',
+  },
+  {
+    id: 'event_cinemas_student',
+    category: 'Cinema & Entertainment',
+    title: 'Student Cinebuzz $10 Monday Movies',
+    provider: 'Event Cinemas',
+    discount: '$10 standard movie tickets on Mondays + free popcorn refills',
+    estimatedYearlySavings: 120,
+    howToGet: 'Join Cinebuzz Rewards for free and link your student ID card.',
+    linkKey: 'student_edge',
+  },
+  {
+    id: 'student_edge_retail',
+    category: 'Food & Retail',
+    title: 'Student Edge 10–15% Retail & Dining Deals',
+    provider: 'Student Edge (Boost Juice, McDonald’s, ASOS, JD Sports)',
+    discount: '10% off Boost Juice, $5 meal deals, 15% off shoes & fashion',
+    estimatedYearlySavings: 160,
+    howToGet: 'Download the free Student Edge app and show digital membership card at checkout.',
+    linkKey: 'student_edge',
+  },
+];
+

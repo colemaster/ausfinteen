@@ -1,6 +1,7 @@
 import { MANDY_MODULES } from '@/data/mandy-topics';
 import { TopicGuideAccordion } from '@/components/shared/TopicGuideAccordion';
 import { ModulePrevNext } from '@/components/shared/ModulePrevNext';
+import { StudentDiscountOptimizer } from '@/components/teen/StudentDiscountOptimizer';
 import { Smartphone, ShieldCheck, ShoppingBag } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
@@ -27,6 +28,9 @@ export function SpendingSavingRealWorld() {
           {moduleData.description}
         </p>
       </div>
+
+      {/* Interactive Student Discount & Subscription Optimizer */}
+      <StudentDiscountOptimizer />
 
       {/* Highlights Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

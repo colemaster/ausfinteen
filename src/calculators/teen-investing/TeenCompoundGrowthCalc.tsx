@@ -154,12 +154,33 @@ export function TeenCompoundGrowthCalc() {
         />
       </div>
 
-      <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-xs flex items-start gap-2.5">
-        <Sparkles className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
-        <div>
-          <span className="font-bold block mb-0.5">Micro-Investing Magic:</span>
-          Investing <strong>${weeklyInvestment}/week</strong> in an index ETF starting at age {startAge} gives you an extra <strong>${Math.round(fvEtf30 - fvBank30).toLocaleString()}</strong> compared to leaving it in a bank account!
+      <div className="p-4 rounded-2xl bg-gradient-to-br from-purple-500/10 via-primary/10 to-emerald-500/10 border border-primary/30 space-y-3">
+        <div className="flex items-center gap-2">
+          <Sparkles className="w-4 h-4 text-purple-500" />
+          <h3 className="text-sm font-bold text-foreground">The 10-Year Head Start (Age 15 vs Age 25)</h3>
         </div>
+        <p className="text-xs text-muted-foreground leading-relaxed">
+          If you invest just <strong>${weeklyInvestment}/week</strong> from age 15 to 60 (45 years) at {etfReturnRate}% p.a.:
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+          <div className="p-3 rounded-xl bg-card border border-emerald-500/30">
+            <span className="font-bold text-emerald-600 dark:text-emerald-400 block mb-1">⭐ Started at Age 15 (45 Years)</span>
+            <div className="font-mono text-base font-extrabold text-foreground">
+              ${Math.round((weeklyInvestment * 52 / 12) * ((Math.pow(1 + monthlyEtfRate, 45 * 12) - 1) / monthlyEtfRate)).toLocaleString()}
+            </div>
+            <span className="text-[10px] text-muted-foreground">Total cash put in: ${(weeklyInvestment * 52 * 45).toLocaleString()}</span>
+          </div>
+          <div className="p-3 rounded-xl bg-card border border-border">
+            <span className="font-bold text-muted-foreground block mb-1">Started at Age 25 (35 Years)</span>
+            <div className="font-mono text-base font-extrabold text-foreground">
+              ${Math.round((weeklyInvestment * 52 / 12) * ((Math.pow(1 + monthlyEtfRate, 35 * 12) - 1) / monthlyEtfRate)).toLocaleString()}
+            </div>
+            <span className="text-[10px] text-muted-foreground">Total cash put in: ${(weeklyInvestment * 52 * 35).toLocaleString()}</span>
+          </div>
+        </div>
+        <p className="text-[11px] text-foreground font-medium">
+          🚀 By starting at 15 instead of 25, an extra ${(weeklyInvestment * 52 * 10).toLocaleString()} of deposits snowballs into an extra <strong className="text-emerald-500 font-mono">+${Math.round(((weeklyInvestment * 52 / 12) * ((Math.pow(1 + monthlyEtfRate, 45 * 12) - 1) / monthlyEtfRate)) - ((weeklyInvestment * 52 / 12) * ((Math.pow(1 + monthlyEtfRate, 35 * 12) - 1) / monthlyEtfRate))).toLocaleString()}</strong> at retirement!
+        </p>
       </div>
     </Card>
   );

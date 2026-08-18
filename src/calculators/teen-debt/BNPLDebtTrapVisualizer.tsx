@@ -216,7 +216,8 @@ export function BNPLDebtTrapVisualizer() {
         </div>
       </div>
 
-      <div className="pt-2">
+      <div className="pt-2 flex flex-wrap gap-2.5">
+        <WebReferenceLink link={OFFICIAL_WEB_LINKS.moneysmart_debt} />
         <WebReferenceLink link={OFFICIAL_WEB_LINKS.moneysmart_budget} />
       </div>
     </Card>

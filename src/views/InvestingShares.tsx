@@ -140,7 +140,7 @@ export function InvestingShares() {
           ))}
         </div>
         <p className="text-[11px] text-muted-foreground leading-relaxed">
-          Based on 2025-26 data. This module is for education only and is not financial advice — do your own research
+          Based on 2026-27 data. This module is for education only and is not financial advice — do your own research
           before investing.
         </p>
       </Card>

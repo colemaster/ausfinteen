@@ -30,7 +30,7 @@ function formatMoney(n: number): string {
 export function FinancialStressTestCalc() {
   const grossSalary = 115000;
   const mortgageRate = 6.2;
-  const hisaRate = 5.25;
+  const hisaRate = 5.5;
   const [monthlyNetIncome, setMonthlyNetIncome] = useState<number>(7200);
   const [essentialExpenses, setEssentialExpenses] = useState<number>(3900);
   const [discretionaryExpenses, setDiscretionaryExpenses] = useState<number>(1400);
@@ -465,7 +465,7 @@ export function FinancialStressTestCalc() {
           {/* Cash Savings */}
           <div className="space-y-1.5">
             <div className="flex justify-between text-xs font-semibold">
-              <label htmlFor="stress-cash" className="text-muted-foreground">HISA Bank Savings (5.25% p.a.)</label>
+              <label htmlFor="stress-cash" className="text-muted-foreground">HISA Bank Savings (5.50% p.a.)</label>
               <span className="font-mono text-foreground">${cashSavings.toLocaleString()}</span>
             </div>
             <input

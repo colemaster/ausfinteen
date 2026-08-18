@@ -6,7 +6,7 @@ export interface TeenProfile {
   age: number; // 15, 16, 17, 18
   location: string; // e.g. "Brisbane, QLD"
   jobType: 'casual_retail' | 'casual_fast_food' | 'casual_hospitality' | 'part_time' | 'apprentice' | 'none';
-  hourlyRate: number; // e.g. 16.50 for 15yo, 19.50 for 16yo
+  hourlyRate: number; // effective junior rate: $11.12 for 15yo, $13.91 for 16yo (2026-27 Fast Food/Retail L1)
   hoursPerWeek: number; // e.g. 8 for 15yo, 12 for 16yo
   claimsTaxFreeThreshold: boolean; // default true
   hasSuperFund: boolean;
@@ -42,7 +42,7 @@ const DEFAULT_PROFILE: TeenProfile = {
   age: 15,
   location: DEFAULT_LOCATION,
   jobType: 'casual_retail',
-  hourlyRate: 17.20,
+  hourlyRate: 11.12, // 15yo 2026-27 junior rate (40% x $27.81 adult base)
   hoursPerWeek: 8,
   claimsTaxFreeThreshold: true,
   hasSuperFund: true,

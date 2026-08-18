@@ -38,7 +38,31 @@
 | v5.0.0  | 2030 SDK & Perf| Latest SDKs (lucide-react 1.30, vite 8.2.1, tw-animate-css), MagneticButton + TickerMarquee widgets, latin-only fonts, AVIF/WebP imagery, PWA precache -43%, View Transition theme toggle, zero-render scroll progress | Local (push blocked) |
 | v4.5.0  | Banking & Finance Deep Audit | Comprehensive audit and expansion of banking, high-interest savings accounts (HISA 5.0%+), APRA $250k deposit guarantee, PayID/Osko fast payments, PayTo direct debits, Open Banking (CDR) ACCC security, TFN withholding tax (47%), Comprehensive Credit Reporting (Equifax/Experian/Illion), and National Debt Helpline (1800 007 007) | Local |
 | v5.1.0  | Frontend E2E UX Flow Review | Full end-to-end UX audit and enhancement. Fixed: scroll-to-top on route change, dead scroll-fade-in CSS, site-search dropdown clipping (overflow-hidden moved to decorative layers), `?topic=` deep-links landing on the wrong careers tab. Added: URL-shareable tabs (Careers/CarDriving/BrisbaneQLD), 404 page, per-page document titles, ModulePrevNext 11-module pager on every page, Command Palette ⌘K search button in Navbar, skip-link a11y + aria-expanded/aria-current, profile next-steps, Footer rebranded to AusTeen Money. Corrected stale 12.5% → 12.0% SG rate (matches v4.3.0 audit + data/super-rules.ts) across context, calculator, widgets and module copy | Local |
-| v5.2.0  | 2030 SDK + Frontend Enhancement | Session task (17 Aug 2026): update all SDKs/deps/libs to latest, fix WIP migration TS errors, commit uncommitted Astro migration, then 10 parallel subagents enhance frontend: (1) perf/SDK/PWA, (2) Landing, (3) Nav/Search/⌘K, (4) theme options, (5) shared UI user options, (6) core calculators (FIRE/savings/invest/super-drawdown/HECS), (7) mortgage calculators, (8) tax calculators, (9) teen/EV calculators, (10) SEO/Footer/share/print. All engines pure + tested, strict TS, light+dark, URL params, 2030 perf (View Transitions, content-visibility, es2025 target) | Local (push blocked) |
+| v5.2.0  | 2030 SDK + Frontend Enhancement | Session task (17 Aug 2026): update all SDKs/deps/libs to latest, fix WIP migration TS errors, commit uncommitted Astro migration, then 10 parallel subagents enhance frontend: (1) perf/SDK/PWA, (2) Landing, (3) Nav/Search/⌘K, (4) theme options, (5) shared UI user options, (6) core calculators (FIRE/savings/invest/super-drawdown/HECS), (7) mortgage calculators, (8) tax calculators, (9) teen/EV calculators, (10) SEO/Footer/share/print. All engines pure + tested, strict TS, light+dark, URL params, 2030 perf (View Transitions, content-visibility, es2025 target) | Pushed |
+| v5.3.0  | SDK & Deps Update + React Compiler | Full SDK/deps/libs refresh to latest releases (Astro 7.2.2, React 19.2.8, Motion 13.1.0, Recharts 3.10.1, Vite 8.2.1, Tailwind 4.3.3), React 19 Compiler enabled in @astrojs/react, Latin font subsetting, manual chunk splitting (charts, motion, icons, search) | Local |
+
+---
+
+## v5.3.0 — SDK, DEPS & CODEBASE LATEST UPGRADE (18 Aug 2026)
+
+### Summary
+All SDKs, dependencies, and libraries updated to latest package versions. React Compiler activated in `@astrojs/react` for automatic component memoization and optimal runtime performance. Bundle chunk splitting configured in Astro/Vite for `charts`, `motion`, `icons`, and `search`. JetBrains Mono font loading streamlined to latin-only subsets. 370 tests pass across 26 test files; 30 static pages build cleanly.
+
+### Key Upgrades & Features Enabled
+1. **SDK & Dependencies Refresh**:
+   - `astro` 7.2.2, `@astrojs/react` 6.0.2, `react` 19.2.8, `react-dom` 19.2.8, `motion` 13.1.0, `recharts` 3.10.1, `lucide-react` 1.31.0, `tailwindcss` 4.3.3, `@tailwindcss/vite` 4.3.3, `vite` 8.2.1, `typescript` 7.0.2, `vitest` 4.1.10, `tw-animate-css` 1.4.0, `rollup-plugin-visualizer` 7.1.1.
+   - Run `npm update` and audited dependencies (0 vulnerabilities).
+2. **React Compiler Enabled in Astro**:
+   - Integrated `babel-plugin-react-compiler` (target 19) into `@astrojs/react` integration in `astro.config.mjs`.
+   - Automatic compiler-level memoization across all calculator UI components and widgets without manual overhead.
+3. **Optimized Rollup Chunk Splitting**:
+   - Configured `rollupOptions.output.manualChunks` in `astro.config.mjs` for `charts` (`recharts` + `d3`), `motion`, `icons` (`lucide-react`), and `search` (`fuse.js`).
+4. **Font Asset Optimization**:
+   - Switched `@fontsource/jetbrains-mono` in `src/layouts/Layout.astro` to latin-only imports (`latin-400.css`, `latin-500.css`, `latin-600.css`), eliminating ~20 unused international font files from client bundle.
+5. **Verification**:
+   - `vitest run` → 26 test files / 370 tests passed (100% green).
+   - `astro build` → 30 static routes generated successfully in static output mode.
+
 
 ---
 

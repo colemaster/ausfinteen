@@ -16,7 +16,14 @@ export default defineConfig({
   experimental: {
     clientPrerender: true,
   },
-  integrations: [react(), sitemap()],
+  integrations: [
+    react({
+      babel: {
+        plugins: [['babel-plugin-react-compiler', { target: '19' }]],
+      },
+    }),
+    sitemap(),
+  ],
   server: {
     host: '0.0.0.0',
     port: 31500,
@@ -31,6 +38,24 @@ export default defineConfig({
     build: {
       target: 'es2025',
       cssTarget: 'es2025',
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (id.includes('node_modules/recharts') || id.includes('node_modules/d3-')) {
+              return 'charts';
+            }
+            if (id.includes('node_modules/motion')) {
+              return 'motion';
+            }
+            if (id.includes('node_modules/lucide-react')) {
+              return 'icons';
+            }
+            if (id.includes('node_modules/fuse.js')) {
+              return 'search';
+            }
+          },
+        },
+      },
     },
   },
 });

@@ -39,21 +39,21 @@ export const AU_LOCATIONS: string[] = [
 
 const DEFAULT_PROFILE: TeenProfile = {
   name: 'Issy',
-  age: 16,
+  age: 15,
   location: DEFAULT_LOCATION,
   jobType: 'casual_retail',
-  hourlyRate: 19.50,
-  hoursPerWeek: 12,
+  hourlyRate: 17.20,
+  hoursPerWeek: 8,
   claimsTaxFreeThreshold: true,
   hasSuperFund: true,
   superFundName: 'AustralianSuper (Default MySuper)',
-  savingsGoalName: 'First Car & Emergency Buffer',
-  savingsGoalTarget: 4000,
-  currentSavings: 850,
+  savingsGoalName: 'First Phone & Savings',
+  savingsGoalTarget: 1200,
+  currentSavings: 350,
   weeklyBoardPaid: 0,
   phoneContractMonthly: 35,
   hasPartTimeJob: true,
-  weeklyHours: 12,
+  weeklyHours: 8,
 };
 
 interface TeenProfileContextType {
@@ -97,7 +97,7 @@ export function TeenProfileProvider({ children }: { children: React.ReactNode })
   };
 
   const applyAgePreset = (targetAge: number) => {
-    const preset = AGE_PRESETS[targetAge] || AGE_PRESETS[16];
+    const preset = AGE_PRESETS[targetAge] || AGE_PRESETS[15];
     setProfile(prev => ({
       ...prev,
       age: preset.age,

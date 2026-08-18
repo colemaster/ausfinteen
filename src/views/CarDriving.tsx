@@ -196,12 +196,14 @@ export function CarDriving() {
               </div>
               <p className="text-[11px] text-muted-foreground leading-relaxed">
                 Add driving lessons at ${QLD_DRIVING_LESSON_RANGE.min}–${QLD_DRIVING_LESSON_RANGE.max}/hr in
-                South East Queensland — most learners book around 10 lessons before their practical test. Fees are as
-                published by the QLD Government as at 1 July 2026.
+                South East Queensland — most learners book around 10 lessons before their practical test. 💡 Pro-tip: In QLD & NSW, 1 hour with a qualified driving instructor counts as 3 logbook hours (up to 10 hours = 30 logbook hours!).
               </p>
             </div>
 
             <div className="flex flex-wrap gap-2.5">
+              <WebReferenceLink link={OFFICIAL_WEB_LINKS.qld_prepl} />
+              <WebReferenceLink link={OFFICIAL_WEB_LINKS.nsw_dkt_practice} />
+              <WebReferenceLink link={OFFICIAL_WEB_LINKS.vic_learner_practice} />
               <WebReferenceLink link={OFFICIAL_WEB_LINKS.qld_licence_steps} />
               <WebReferenceLink link={OFFICIAL_WEB_LINKS.qld_licence_fees} />
               <WebReferenceLink link={OFFICIAL_WEB_LINKS.qld_hpt} />

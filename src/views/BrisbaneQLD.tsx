@@ -29,16 +29,18 @@ function readBneTab(searchParams: URLSearchParams): BneTab {
 }
 
 const BRISBANE_WEB_SOURCES = [
+  OFFICIAL_WEB_LINKS.translink_50c_fares,
+  OFFICIAL_WEB_LINKS.translink_gocard,
+  OFFICIAL_WEB_LINKS.qld_school_based,
+  OFFICIAL_WEB_LINKS.tafe_qld,
   OFFICIAL_WEB_LINKS.qld_rta,
   OFFICIAL_WEB_LINKS.qld_fhog,
   OFFICIAL_WEB_LINKS.qld_boost_to_buy,
-  OFFICIAL_WEB_LINKS.translink_gocard,
   OFFICIAL_WEB_LINKS.qld_rego,
   OFFICIAL_WEB_LINKS.uq_study,
   OFFICIAL_WEB_LINKS.qut_study,
   OFFICIAL_WEB_LINKS.griffith_study,
   OFFICIAL_WEB_LINKS.qtac,
-  OFFICIAL_WEB_LINKS.tafe_qld,
 ];
 
 export function BrisbaneQLD() {

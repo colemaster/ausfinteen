@@ -128,6 +128,39 @@ export function FirstPaycheckSplitter() {
             step={10}
             prefix="$"
           />
+          <div className="space-y-1.5">
+            <span className="text-[11px] font-semibold text-muted-foreground block">15yo Quick Shift Amounts:</span>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+              <button
+                type="button"
+                onClick={() => { setPaycheckAmount(56); setPeriod('weekly'); }}
+                className="px-2 py-1 rounded-lg bg-card border border-border text-[11px] font-medium text-foreground hover:border-primary/50 transition-colors"
+              >
+                4h Shift ($56)
+              </button>
+              <button
+                type="button"
+                onClick={() => { setPaycheckAmount(111); setPeriod('weekly'); }}
+                className="px-2 py-1 rounded-lg bg-card border border-border text-[11px] font-medium text-foreground hover:border-primary/50 transition-colors"
+              >
+                8h Wknd ($111)
+              </button>
+              <button
+                type="button"
+                onClick={() => { setPaycheckAmount(167); setPeriod('weekly'); }}
+                className="px-2 py-1 rounded-lg bg-card border border-border text-[11px] font-medium text-foreground hover:border-primary/50 transition-colors"
+              >
+                12h Term ($167)
+              </button>
+              <button
+                type="button"
+                onClick={() => { setPaycheckAmount(278); setPeriod('weekly'); }}
+                className="px-2 py-1 rounded-lg bg-card border border-border text-[11px] font-medium text-foreground hover:border-primary/50 transition-colors"
+              >
+                20h Hols ($278)
+              </button>
+            </div>
+          </div>
           {period !== 'weekly' && (
             <p className="text-[11px] text-muted-foreground">
               That's <strong className="font-mono">${weeklyEquivalent.toFixed(2)}/wk</strong> — the chart shows your

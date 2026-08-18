@@ -23,12 +23,20 @@ export interface AgePreset {
   currentSavings: number;
 }
 
+/**
+ * Age presets use the 2026-27 effective junior award rate for the worker's
+ * age band (Fast Food / Retail Level 1 adult base $27.81/hr from 1 July 2026,
+ * junior % applied: under 16 = 40%, 16 = 50%, 17 = 60%, 18 = 70%).
+ * Note: from 1 December 2026 the FWC ([2026] FWCFB 75) phases 18-20s up to
+ * the full adult rate after 6 months with the same employer (Retail, Fast
+ * Food & Pharmacy awards). Under-18 rates are unchanged.
+ */
 export const AGE_PRESETS: Record<number, AgePreset> = {
   15: {
     age: 15,
     label: '15yo First Job',
-    jobTitle: 'Casual Fast Food / Retail Crew',
-    hourlyRate: 17.20,
+    jobTitle: 'Fast Food / Retail Crew (40% junior rate)',
+    hourlyRate: 11.12,
     hoursPerWeek: 8,
     claimsTaxFreeThreshold: true,
     savingsGoalName: 'First Phone & Savings',
@@ -38,8 +46,8 @@ export const AGE_PRESETS: Record<number, AgePreset> = {
   16: {
     age: 16,
     label: '16yo High School',
-    jobTitle: 'Casual Supermarket / Cafe Worker',
-    hourlyRate: 20.40,
+    jobTitle: 'Supermarket / Cafe Worker (50% junior rate)',
+    hourlyRate: 13.91,
     hoursPerWeek: 12,
     claimsTaxFreeThreshold: true,
     savingsGoalName: 'First Car & Emergency Buffer',
@@ -49,8 +57,8 @@ export const AGE_PRESETS: Record<number, AgePreset> = {
   17: {
     age: 17,
     label: '17yo Senior Teen',
-    jobTitle: 'Casual Senior Retail Crew',
-    hourlyRate: 23.10,
+    jobTitle: 'Senior Retail Crew (60% junior rate)',
+    hourlyRate: 16.69,
     hoursPerWeek: 16,
     claimsTaxFreeThreshold: true,
     savingsGoalName: 'Car Deposit & Travel Fund',
@@ -60,8 +68,8 @@ export const AGE_PRESETS: Record<number, AgePreset> = {
   18: {
     age: 18,
     label: '18yo Young Adult',
-    jobTitle: 'Casual / Part-Time Team Member',
-    hourlyRate: 27.80,
+    jobTitle: 'Part-Time Team Member (70% junior rate)',
+    hourlyRate: 19.47,
     hoursPerWeek: 22,
     claimsTaxFreeThreshold: true,
     savingsGoalName: 'Moving Out & Emergency Fund',
@@ -226,6 +234,24 @@ export const OFFICIAL_WEB_LINKS: Record<string, WebLink> = {
     url: 'https://calculate.fairwork.gov.au/',
     source: 'Fair Work',
     description: 'Official PACT calculator for base pay rates, junior percentages, penalty rates, and allowances.',
+  },
+  fairwork_min_age: {
+    title: 'Fair Work Ombudsman: Minimum Working Age Rules',
+    url: 'https://www.fairwork.gov.au/starting-employment/young-workers-and-students/minimum-working-age',
+    source: 'Fair Work',
+    description: 'Official rules on the minimum age for work in each state and territory, including school attendance protections.',
+  },
+  qld_school_based: {
+    title: 'QLD: School-Based Apprenticeships & Traineeships (SATs)',
+    url: 'https://desbt.qld.gov.au/training/apprentices/school-based',
+    source: 'QLD Government',
+    description: 'Start an apprenticeship or traineeship in Years 10-12: combine paid work, TAFE training and school to earn a national qualification.',
+  },
+  ato_lost_super: {
+    title: 'ATO: Find & Consolidate Lost Super',
+    url: 'https://www.ato.gov.au/individuals-and-families/super-for-individuals-and-families/super/find-and-consolidate-your-super',
+    source: 'ATO',
+    description: 'Use myGov to find lost super accounts, check balances and roll everything into one stapled fund to stop fee drain.',
   },
   moneysmart_super: {
     title: 'Moneysmart: Superannuation & How It Works',
@@ -487,11 +513,20 @@ export const OFFICIAL_WEB_LINKS: Record<string, WebLink> = {
   },
 };
 
-/** Junior Award Percentage Rates under Modern Awards */
+/**
+ * Junior Award Percentage Rates under Modern Awards.
+ * Adult base rates are 2026-27 (4.75% increase from the first full pay period
+ * on or after 1 July 2026 per the FWC Annual Wage Review).
+ * IMPORTANT: From 1 December 2026 the FWC ([2026] FWCFB 75) phases out junior
+ * rates for 18-20 year olds under the Retail, Fast Food and Pharmacy awards —
+ * they move to the full adult rate after 6 months with the same employer.
+ * Under-18 percentages below are unchanged.
+ */
 export const JUNIOR_AWARD_RATES = {
   fast_food: {
     code: 'MA000003',
     name: 'Fast Food Industry Award 2020 [MA000003]',
+    adultBaseRate: 27.81, // Level 1, 2026-27
     rates: [
       { age: 'Under 16', pct: 0.40, label: '40% of Adult Rate' },
       { age: '16 years', pct: 0.50, label: '50% of Adult Rate' },
@@ -505,6 +540,7 @@ export const JUNIOR_AWARD_RATES = {
   retail: {
     code: 'MA000004',
     name: 'General Retail Industry Award 2020 [MA000004]',
+    adultBaseRate: 27.81, // Level 1, 2026-27
     rates: [
       { age: 'Under 16', pct: 0.45, label: '45% of Adult Rate' },
       { age: '16 years', pct: 0.50, label: '50% of Adult Rate' },
@@ -518,6 +554,7 @@ export const JUNIOR_AWARD_RATES = {
   hospitality: {
     code: 'MA000009',
     name: 'Restaurant & Hospitality Award [MA000009]',
+    adultBaseRate: 26.44, // National minimum wage, 2026-27 (Restaurant award base)
     rates: [
       { age: 'Under 17', pct: 0.50, label: '50% of Adult Rate' },
       { age: '17 years', pct: 0.60, label: '60% of Adult Rate' },
@@ -530,6 +567,7 @@ export const JUNIOR_AWARD_RATES = {
   pharmacy: {
     code: 'MA000012',
     name: 'Community Pharmacy Award 2020 [MA000012]',
+    adultBaseRate: 27.81, // 2026-27
     rates: [
       { age: 'Under 16', pct: 0.45, label: '45% of Adult Rate' },
       { age: '16 years', pct: 0.50, label: '50% of Adult Rate' },
@@ -543,6 +581,7 @@ export const JUNIOR_AWARD_RATES = {
   fitness: {
     code: 'MA000094',
     name: 'Fitness Industry Award 2020 [MA000094]',
+    adultBaseRate: 27.81, // Level 1, 2026-27
     rates: [
       { age: 'Under 17', pct: 0.55, label: '55% of Adult Rate' },
       { age: '17 years', pct: 0.65, label: '65% of Adult Rate' },
@@ -568,44 +607,51 @@ export const WORKPLACE_ALLOWANCES = {
   uniformAllowancePerShift: 1.50,
 };
 
-/** Car Cost Defaults for 16-20yo Drivers */
+/** Car Cost Defaults for 16-20yo Drivers (QLD 2026-27, source: qld.gov.au) */
 export const TEEN_CAR_COST_DEFAULTS = {
   averagePurchasePrice: 4500,
   ppsrCheckFee: 2,
-  regoAnnual: 820,
-  ctpGreenSlipAnnual: 650,
+  regoAnnual: 453,          // QLD 4-cyl: registration $385.45 + traffic improvement fee $67.25 (1 Jul 2026)
+  ctpGreenSlipAnnual: 418,  // QLD CTP class 1 average ($411.80-$424.80, 2026)
   comprehensiveInsuranceUnder25: 1650,
   fuelWeekly: 45,
   servicingAnnual: 450,
   tiresAndRepairsAnnual: 350,
 };
 
-/** High Yield Teen Savings Account Comparison (2025-26) */
+/** High Yield Teen Savings Account Comparison (Aug 2026 — rates as at 18 Aug 2026) */
 export const TEEN_SAVINGS_ACCOUNTS = [
   {
-    bank: 'Great Southern Bank Youth Saver',
-    maxRate: 5.25,
-    baseRate: 0.05,
-    conditions: 'Deposit $10/month & make 0 withdrawals',
+    bank: 'Great Southern Bank Youth eSaver',
+    maxRate: 5.50,
+    baseRate: 5.50,
+    conditions: 'No conditions — flat rate on balances up to $5,000',
     maxAge: 17,
+  },
+  {
+    bank: 'Newcastle Permanent Smart Saver (Under 25s)',
+    maxRate: 5.75,
+    baseRate: 0.05,
+    conditions: 'Meet monthly bonus conditions (deposit & no withdrawals)',
+    maxAge: 25,
   },
   {
     bank: 'Westpac Bump Savings',
     maxRate: 5.00,
     baseRate: 0.40,
     conditions: 'Grow balance each month (deposit > $0)',
-    maxAge: 30,
+    maxAge: 29,
   },
   {
     bank: 'ING Savings Maximiser',
-    maxRate: 4.80,
+    maxRate: 5.50,
     baseRate: 0.55,
     conditions: 'Deposit $1,000, make 5 card purchases in month',
     maxAge: 99,
   },
   {
     bank: 'CommBank Youthsaver',
-    maxRate: 4.50,
+    maxRate: 5.00,
     baseRate: 0.35,
     conditions: 'Deposit at least $1 per month & make 0 withdrawals',
     maxAge: 17,

@@ -67,7 +67,7 @@ export function NextBigEtfs() {
       <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-muted-foreground bg-background/60 border border-border rounded-xl px-4 py-3">
         <span className="inline-flex items-center gap-1.5">
           <ArrowUpRight className="w-3.5 h-3.5 text-muted-foreground" />
-          Based on 2025-26 issuer commentary, ASX ETF market flows and Morningstar/etfinfo reporting.
+          Based on 2026-27 issuer commentary, ASX ETF market flows and Morningstar/etfinfo reporting.
         </span>
         <span>Thematic ETFs are concentrated and volatile — usually keep them to a small "satellite" slice of your portfolio.</span>
       </div>

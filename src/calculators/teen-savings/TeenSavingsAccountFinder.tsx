@@ -13,15 +13,17 @@ export function TeenSavingsAccountFinder() {
   const [meetsConditions, setMeetsConditions] = useState<boolean>(true);
   const [monthlyCompounding, setMonthlyCompounding] = useState<boolean>(true);
 
-  // Best bonus rate across the featured accounts (default: GSB Youth Saver 5.25%)
+  // Best bonus rate across the featured accounts (Aug 2026: Newcastle Permanent Under 25s 5.75%)
   const bestBonusRate = Math.max(...TEEN_SAVINGS_ACCOUNTS.map(a => a.maxRate));
+  const bestBaseRate = Math.max(...TEEN_SAVINGS_ACCOUNTS.map(a => a.baseRate));
+  const projectionRate = meetsConditions ? bestBonusRate : bestBaseRate;
 
   const projection = useMemo(() => {
     const months = 12;
     return monthlyCompounding
-      ? savingsWithMonthlyCompound(savingsBalance, bestBonusRate, months, monthlyDeposit)
-      : savingsWithSimpleInterest(savingsBalance, bestBonusRate, months, monthlyDeposit);
-  }, [savingsBalance, monthlyDeposit, monthlyCompounding, bestBonusRate]);
+      ? savingsWithMonthlyCompound(savingsBalance, projectionRate, months, monthlyDeposit)
+      : savingsWithSimpleInterest(savingsBalance, projectionRate, months, monthlyDeposit);
+  }, [savingsBalance, monthlyDeposit, monthlyCompounding, projectionRate]);
 
   return (
     <Card variant="glass" className="p-6 space-y-6">
@@ -36,7 +38,7 @@ export function TeenSavingsAccountFinder() {
           </p>
         </div>
         <Badge variant="success">
-          2025-26 AU Bank Rates
+          2026-27 AU Bank Rates
         </Badge>
       </div>
 
@@ -76,7 +78,7 @@ export function TeenSavingsAccountFinder() {
                 : 'bg-rose-500 text-white border-rose-500 shadow-xs'
             }`}
           >
-            {meetsConditions ? 'YES (Bonus 5.25% Unlocked!)' : 'NO (Base 0.05% Rate Only)'}
+            {meetsConditions ? `YES (Bonus ${bestBonusRate.toFixed(2)}% Unlocked!)` : 'NO (Base Rate Only)'}
           </button>
         </div>
       </div>
@@ -86,7 +88,7 @@ export function TeenSavingsAccountFinder() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400">
             <TrendingUp className="w-4 h-4" />
-            <h3 className="text-sm font-bold text-foreground">12-Month Projection at {bestBonusRate.toFixed(2)}% p.a.</h3>
+            <h3 className="text-sm font-bold text-foreground">12-Month Projection at {projectionRate.toFixed(2)}% p.a.</h3>
           </div>
           <button
             type="button"
@@ -122,7 +124,7 @@ export function TeenSavingsAccountFinder() {
           <div className="rounded-xl border border-border bg-card p-3 text-center">
             <div className="text-[10px] uppercase tracking-wide text-muted-foreground font-semibold">Compounding Bonus</div>
             <div className="text-lg font-bold font-mono text-foreground">
-              +${(projection.interestEarned - savingsWithSimpleInterest(savingsBalance, bestBonusRate, 12, monthlyDeposit).interestEarned).toLocaleString('en-AU', { maximumFractionDigits: 0 })}
+              +${(projection.interestEarned - savingsWithSimpleInterest(savingsBalance, projectionRate, 12, monthlyDeposit).interestEarned).toLocaleString('en-AU', { maximumFractionDigits: 0 })}
             </div>
           </div>
         </div>

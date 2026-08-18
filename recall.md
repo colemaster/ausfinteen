@@ -703,3 +703,32 @@ All 12 phases delivered + v1.1.0 and v1.2.0 UX polish. 9 views (Portfolio + 8 ca
 - HECSPayoffCalc: indexation (CPI) scenario slider + 3-rate comparison table; pay-down-vs-invest chart + 4 stat cards; compulsory vs voluntary vs indexation stacked split bar chart
 
 **Verification (final):** zone tsc clean (0 errors; repo-wide errors remain only in other agents' zones: offset-vs-dr engine.ts unused var, teen-investing unused imports); vitest zone suite 111/111 pass. NOT committed (awaiting coordinator).
+
+---
+
+## Session 2026-08-18 — v5.4.0 Content Refresh: 2026-27 rates + 15-year-old content pass
+
+### What changed (all data sources verified via web research on 18 Aug 2026)
+
+**src/data/teen-finance-data.ts (data → 2026-27 latest):**
+- `AGE_PRESETS`: hourly rates now the real 2026-27 effective junior award rates — 15yo $11.12 (40%), 16yo $13.91 (50%), 17yo $16.69 (60%), 18yo $19.47 (70%) — derived from the Fast Food/Retail Level 1 adult base $27.81/hr (4.75% FWC Annual Wage Review increase from 1 July 2026). Job titles now name the junior band. Preset semantics documented: presets store the teen's EFFECTIVE rate; the PayslipAnalyzer converts back to the adult base via getJuniorRatePct.
+- `JUNIOR_AWARD_RATES`: added `adultBaseRate` per award (fast_food/retail/pharmacy/fitness $27.81, hospitality $26.44 NMW 2026-27) + header note on FWC [2026] FWCFB 75 (from 1 Dec 2026, 18-20yo in Retail/Fast Food/Pharmacy move to full adult rate after 6 months with same employer; under-18 percentages unchanged).
+- `TEEN_SAVINGS_ACCOUNTS`: refreshed to Aug 2026 rates — GSB Youth eSaver 5.50% (flat, no conditions), NEW Newcastle Permanent Smart Saver Under 25s 5.75% (max teen rate), Westpac Bump 5.00%, ING Savings Maximiser 5.50%, CommBank Youthsaver 5.00%. Comment updated 2025-26 → 2026-27.
+- `TEEN_CAR_COST_DEFAULTS`: QLD 2026-27 — regoAnnual $453 (registration $385.45 + traffic improvement fee $67.25, qld.gov.au as at 1 Jul 2026), ctpGreenSlipAnnual $418 (class 1 average $411.80–$424.80).
+- `OFFICIAL_WEB_LINKS`: added `fairwork_min_age`, `qld_school_based`, `ato_lost_super`.
+
+**src/data/mandy-topics.ts (content → latest + 15yo-focused):**
+- Updated: ce-6 junior rates (2026-27 $ amounts + Dec 2026 FWCFB 75 change), ce-2/bq-3 HECS ($67,000 2026-27 @1%), ss-3 HISA (5.00–5.75% + current accounts), ip-1 HISA refresh, cd-5 first-car costs (QLD rego+CTP).
+- NEW 15-year-old topics (10): my-9 open bank account at 15, my-10 money conversations with parents, ce-21 minimum working age (13+ light work QLD, no school-hours rostering, 18 to serve alcohol), ce-22 school-term work hours (no QLD cap, school first, 8-12h/wk guide, super >30h rule), ce-23 school-based apprenticeships/traineeships (SAT from Year 10), sr-6 find/consolidate lost super at 15, tg-5 do I need to lodge a tax return at 15, tb-3 pocket money vs part-time job, ip-2 why compound interest is powerful at 15 (worked example $1k + $40/mo @5%).
+
+**UI fixes (semantics + stale labels):**
+- PayslipAnalyzer (teen-job): presets now convert effective rate → adult base via getJuniorRatePct (15yo preset → base $27.80 → 40% → $11.12); NumberInput stores the EFFECTIVE rate back into the shared profile (previously stored the base rate, inflating TeenTax/TeenProfile defaults); badge + copy → 2026-27; added FWCFB 75 note under preset selector.
+- TeenSavingsAccountFinder: `meetsConditions` toggle now actually drives the projection rate (bonus max 5.75% vs best base rate) — previously cosmetic; badge → 2026-27; dynamic "Bonus X% Unlocked!" label.
+- TeenProfileContext: DEFAULT_PROFILE.hourlyRate 17.20 → 11.12 (real 15yo 2026-27 rate); comment updated.
+- Stale labels: InterestFinancialProducts 5.25% → 5.50% GSB Youth eSaver; FinancialStressTestCalc hisaRate 5.25 → 5.50 (2 spots); InvestingShares "2025-26 data" → 2026-27; NextBigEtfs "2025-26" → 2026-27.
+
+**Not touched (already current):** ASXETFExplorer YEAR_END=2025 (matches annualReturns data keys), tax brackets/super/HELP data files (already 2026-27), QLD licence fees (already July 2026).
+
+### Verification
+- `npx vitest run` → 370 passed (26 files). `npx tsc --noEmit` → clean. `npm run build` → 30 pages, no errors.
+- Committed as v5.4.0. Push attempted (repo was 23 commits ahead of origin — same push-blocked situation as prior sessions if creds absent).

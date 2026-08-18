@@ -50,7 +50,7 @@ export function InterestFinancialProducts() {
           </div>
           <h3 className="font-bold text-foreground">5%+ High Yield Accounts</h3>
           <p className="text-xs text-muted-foreground leading-relaxed">
-            Aussies under 18 get access to top bonus rates (e.g. Great Southern Bank Youth Saver 5.25%).
+            Aussies under 18 get access to top bonus rates (e.g. Great Southern Bank Youth eSaver 5.50%).
           </p>
         </Card>
 

@@ -8,7 +8,7 @@ import { OFFICIAL_WEB_LINKS, AGE_PRESETS, JUNIOR_AWARD_RATES, PENALTY_RATES, WOR
 import { WebReferenceLink } from '@/components/shared/WebReferenceLink';
 import { Calculator, Info } from 'lucide-react';
 import { useTeenProfile } from '@/context/TeenProfileContext';
-import { netPayWithAllowances, penaltyRateBreakdown, type AwardName } from './engine';
+import { netPayWithAllowances, penaltyRateBreakdown, getJuniorRatePct, type AwardName } from './engine';
 import { FirstJobChecklist } from './FirstJobChecklist';
 
 export function PayslipAnalyzer() {
@@ -26,7 +26,11 @@ export function PayslipAnalyzer() {
   const handleAgeChange = (targetAge: number) => {
     setAge(targetAge);
     const preset = AGE_PRESETS[targetAge] || AGE_PRESETS[16];
-    setHourlyRate(preset.hourlyRate);
+    // Presets store the teen's effective junior rate; convert back to the
+    // adult award base rate so the engine's junior % math stays accurate.
+    const juniorPct = getJuniorRatePct(targetAge, 'fast_food').pct;
+    const baseRate = Math.round((preset.hourlyRate / juniorPct) * 100) / 100;
+    setHourlyRate(baseRate);
     setHoursPerWeek(preset.hoursPerWeek);
     applyAgePreset(targetAge);
   };
@@ -55,11 +59,11 @@ export function PayslipAnalyzer() {
             <h2 className="text-xl font-bold text-foreground">Interactive Payslip & Penalty Rate Calculator</h2>
           </div>
           <p className="text-xs text-muted-foreground">
-            Calculate your exact gross pay, Saturday/Sunday penalty rates, meal allowances, tax withheld, and super!
+            Calculate your exact gross pay, Saturday/Sunday penalty rates, meal allowances, tax withheld, and super! Rates updated for 2026-27 (4.75% increase from 1 July 2026).
           </p>
         </div>
         <Badge variant="success" className="w-fit">
-          2025-26 ATO & Fair Work PACT
+          2026-27 ATO & Fair Work PACT
         </Badge>
       </div>
 
@@ -82,6 +86,9 @@ export function PayslipAnalyzer() {
             </button>
           ))}
         </div>
+        <p className="text-[11px] text-muted-foreground">
+          Preset pay = your effective junior rate (2026-27 Fast Food/Retail Level 1, $27.81/hr adult base). From 1 December 2026, 18-20yo workers move to the full adult rate after 6 months with the same employer (FWC [2026] FWCFB 75).
+        </p>
       </div>
 
       {/* Inputs Grid */}
@@ -104,11 +111,13 @@ export function PayslipAnalyzer() {
           </div>
 
           <NumberInput
-            label="Base Hourly Pay Rate ($)"
+            label="Adult Award Base Rate ($)"
             value={hourlyRate}
             onChange={v => {
               setHourlyRate(v);
-              updateProfile({ hourlyRate: v });
+              const juniorPct = getJuniorRatePct(age, selectedAward).pct;
+              const effective = Math.round(v * juniorPct * 100) / 100;
+              updateProfile({ hourlyRate: effective });
             }}
             min={10}
             max={60}

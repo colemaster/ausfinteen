@@ -2,6 +2,7 @@ import { motion } from 'motion/react';
 import { MANDY_MODULES } from '@/data/mandy-topics';
 import { TopicGuideAccordion } from '@/components/shared/TopicGuideAccordion';
 import { TeenTaxCalculator } from '@/calculators/teen-tax/TeenTaxCalculator';
+import { FirstTaxReturnGuide } from '@/components/teen/FirstTaxReturnGuide';
 import { ModulePrevNext } from '@/components/shared/ModulePrevNext';
 import { DollarSign, ShieldCheck, FileCheck } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
@@ -54,6 +55,9 @@ export function TaxGuide() {
 
       {/* Interactive Tool */}
       <TeenTaxCalculator />
+
+      {/* 15yo First Tax Return Walkthrough */}
+      <FirstTaxReturnGuide />
 
       {/* Highlights Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

@@ -1,0 +1,1 @@
+var e=[{min:0,max:69528,rate:0},{min:69529,max:129717,rate:.15},{min:129718,max:186050,rate:.17},{min:186051,max:1/0,rate:.1}];function t(t){return t<=e[0].max?0:t<=129717?(t-69528)*.15:t<=186050?9028.35+(t-129717)*.17:t*.1}function n(t){for(let n of e)if(t<=n.max)return n.rate;return 0}var r=18200,i=.47,a=.5,o=`2026-27`;export{i as a,r as i,o as n,n as o,e as r,t as s,a as t};

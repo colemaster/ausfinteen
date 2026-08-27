@@ -168,7 +168,7 @@ export const MANDY_MODULES: MandyModule[] = [
         moduleId: 'careers-employment',
         moduleTitle: 'Careers & Employment 🎓',
         question: '2. How Do Study Loans (HECS-HELP & VET) Work?',
-        answer: 'HECS-HELP loans cover your university tuition fees upfront. You don\'t repay a single cent until your income reaches the compulsory repayment threshold ($67,000 in 2026-27, at a 1% rate under Australia\'s marginal HELP repayment system!).',
+        answer: 'HECS-HELP loans cover your university tuition fees upfront. You don\'t repay a single cent until your income reaches the compulsory repayment threshold ($69,528 in 2026-27, at a marginal rate starting at 15% under Australia\'s HELP repayment system!).',
         actionStep: 'Check the compulsory repayment threshold table on StudyAssist before starting uni or TAFE.',
         webLink: OFFICIAL_WEB_LINKS.studyassist_hecs,
       },
@@ -489,7 +489,7 @@ export const MANDY_MODULES: MandyModule[] = [
     title: 'Tax & Tax Returns',
     emoji: '💰',
     graphicUrl: '/assets/graphics/popmart_tax.jpg',
-    description: 'Understand the $18,200 Tax-Free Threshold, 16% Stage 3 rates, work deductions (uniforms, courses), and lodging tax returns.',
+    description: 'Understand the $18,200 Tax-Free Threshold, 15% 2026-27 rates, work deductions (uniforms, courses), and lodging tax returns.',
     route: '/tax-guide',
     topics: [
       {
@@ -1041,7 +1041,7 @@ export const MANDY_MODULES: MandyModule[] = [
         moduleId: 'brisbane-qld',
         moduleTitle: 'Brisbane, QLD 🏙️',
         question: '3. How Do HECS-HELP Loans Work For Brisbane Uni?',
-        answer: 'As a domestic student on a Commonwealth Supported Place, you only pay the "student contribution" (~$4,627–$16,992/yr by fee band). HECS-HELP loans this amount interest-free — you repay nothing until you earn above the compulsory HELP repayment threshold ($67,000 in 2026-27, at a 1% rate under the marginal HELP repayment system).',
+        answer: 'As a domestic student on a Commonwealth Supported Place, you only pay the "student contribution" (~$4,738–$17,399/yr by 2026 fee band). HECS-HELP loans this amount interest-free — you repay nothing until you earn above the compulsory HELP repayment threshold ($69,528 in 2026-27, at a marginal rate starting at 15% under the HELP repayment system).',
         actionStep: 'Check current HELP repayment thresholds on StudyAssist before choosing a degree.',
         webLink: OFFICIAL_WEB_LINKS.qut_study,
       },

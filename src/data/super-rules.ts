@@ -2,20 +2,22 @@
  * Australian superannuation rules for 2024-2027.
  * Source: ATO — ato.gov.au/individuals-and-families/super-for-individuals-and-families/
  * Note: SG rate is 12.0% statutory rate for FY 2025-26 and FY 2026-27.
+ * From 1 July 2026: concessional cap $32,500, non-concessional cap $130,000,
+ * bring-forward cap $390,000, transfer balance cap $2.1M.
  */
 
 export const SUPER_RULES = {
   /** Superannuation Guarantee rate (12.0% statutory rate for FY 2025-26 & FY 2026-27) */
   sgRate: 0.12,
 
-  /** Annual concessional (pre-tax) contribution cap ($30,000 in FY24-25 / FY25-26 / FY26-27) */
-  concessionalCap: 30000,
+  /** Annual concessional (pre-tax) contribution cap ($32,500 in FY 2026-27) */
+  concessionalCap: 32500,
 
-  /** Annual non-concessional (post-tax) contribution cap ($120,000) */
-  nonConcessionalCap: 120000,
+  /** Annual non-concessional (post-tax) contribution cap ($130,000 in FY 2026-27) */
+  nonConcessionalCap: 130000,
 
-  /** Non-concessional 3-year bring-forward cap ($360,000) */
-  bringForwardCap: 360000,
+  /** Non-concessional 3-year bring-forward cap ($390,000 in FY 2026-27) */
+  bringForwardCap: 390000,
 
   /** Tax rate on concessional contributions inside super */
   taxRateInSuper: 0.15,

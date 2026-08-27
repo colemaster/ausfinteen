@@ -1,7 +1,11 @@
 /**
  * HECS-HELP Loan Payoff vs Investing vs Offset Financial Engine
- * Implements 2024-25 19-tier system and 2025-27 4-tier marginal system ($67k threshold),
- * min(CPI, WPI) indexation cap, voluntary payoff comparison, and APRA borrowing capacity impact.
+ * Implements the 2024-25 19-tier legacy system and the 2026-27 3-tier
+ * marginal system ($69,528 threshold), min(CPI, WPI) indexation cap,
+ * voluntary payoff comparison, and APRA borrowing capacity impact.
+ *
+ * Compulsory marginal rates are sourced from HELP_REPAYMENT_THRESHOLDS_2026_27
+ * in src/data/constants.ts (the single source of truth) — never hardcoded.
  */
 
 export interface HECSYearRow {
@@ -26,7 +30,7 @@ export interface HECSPayoffParams {
   monthlyVoluntaryPayment: number;
   mortgageRate: number;          // e.g. 0.062 for 6.2%
   etfExpectedReturn: number;     // e.g. 0.08 for 8.0%
-  useMarginal2025System: boolean; // 2025+ marginal system vs 2024 tier system
+  useMarginal2025System: boolean; // 2026-27 marginal system vs 2024 tier system
   projectionYears?: number;
 }
 
@@ -47,23 +51,34 @@ export interface HECSPayoffResult {
   schedule: HECSYearRow[];
 }
 
+import { HELP_REPAYMENT_THRESHOLDS_2026_27 } from '../../data/constants';
+
+interface HelpBand {
+  min: number;
+  max: number;
+  rate: number;
+}
+
 /**
- * Calculate compulsory HECS repayment under the 2025-26+ 4-tier marginal system ($67,000 threshold).
+ * Sum the marginal HELP repayment across tiered bands for a given income.
+ * Each band taxes only the slice of income that falls within it.
+ */
+function calcBandRepayment(income: number, bands: HelpBand[]): number {
+  let total = 0;
+  for (const band of bands) {
+    if (income <= band.min) break;
+    const taxable = Math.min(income, band.max) - band.min;
+    if (taxable > 0) total += taxable * band.rate;
+  }
+  return total;
+}
+
+/**
+ * Calculate compulsory HELP repayment under the 2026-27 3-tier marginal system
+ * ($69,528 threshold). Bands are sourced from HELP_REPAYMENT_THRESHOLDS_2026_27.
  */
 export function calcMarginalHECSRepayment(repaymentIncome: number): number {
-  if (repaymentIncome <= 67000) return 0;
-  if (repaymentIncome <= 125000) {
-    return (repaymentIncome - 67000) * 0.15;
-  }
-  if (repaymentIncome <= 180000) {
-    const tier1 = (125000 - 67000) * 0.15; // 8,700
-    const tier2 = (repaymentIncome - 125000) * 0.20;
-    return tier1 + tier2;
-  }
-  const tier1 = (125000 - 67000) * 0.15; // 8,700
-  const tier2 = (180000 - 125000) * 0.20; // 11,000
-  const tier3 = (repaymentIncome - 180000) * 0.25;
-  return tier1 + tier2 + tier3;
+  return calcBandRepayment(repaymentIncome, HELP_REPAYMENT_THRESHOLDS_2026_27);
 }
 
 /**
@@ -360,7 +375,7 @@ export interface RepaymentSplitRow {
  * compulsory-vs-voluntary split visual.
  *
  * Assumptions:
- * - Compulsory repayments use the 2025+ marginal system at the (growing)
+ * - Compulsory repayments use the 2026-27 marginal system at the (growing)
  *   income each year.
  * - Voluntary payments are made monthly (annualised); both are capped by the
  *   remaining balance; indexation applies to the balance after repayments.
@@ -429,7 +444,7 @@ export interface IndexationScenarioRow {
  * each rate while keeping repayments identical.
  *
  * Assumptions:
- * - Compulsory repayments use the 2025+ marginal system.
+ * - Compulsory repayments use the 2026-27 marginal system.
  * - Income grows at `incomeGrowthRate`; the voluntary payment is fixed.
  *
  * @param currentDebt - Starting HELP debt ($)

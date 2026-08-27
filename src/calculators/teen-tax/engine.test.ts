@@ -16,17 +16,17 @@ describe('afterSchoolJobTax', () => {
   it('known answer: 20 hrs/wk at $22/hr → $22,880/yr taxed above threshold', () => {
     const result = afterSchoolJobTax(20, 22);
     expect(result.annualGross).toBe(22880);
-    // Income tax = (22880 − 18200) × 16% = 748.80 → 749
-    expect(result.incomeTax).toBe(749);
-    // Medicare: below $27,222 low-income threshold → $0 levy
+    // Income tax = (22880 − 18200) × 15% = 702
+    expect(result.incomeTax).toBe(702);
+    // Medicare: below $28,011 low-income threshold → $0 levy
     expect(result.medicareLevy).toBe(0);
   });
 
-  it('medicare levy shade-in applies between $27,222 and $34,027', () => {
+  it('medicare levy shade-in applies between $28,011 and $35,013', () => {
     const result = afterSchoolJobTax(25, 25);
-    // $32,500/yr → shade-in: min(32500×2%, (32500−27222)×10%) = min(650, 527.8)
+    // $32,500/yr → shade-in: min(32500×2%, (32500−28011)×10%) = min(650, 448.9)
     expect(result.annualGross).toBe(32500);
-    expect(result.medicareLevy).toBe(528);
+    expect(result.medicareLevy).toBe(449);
   });
 
   it('income tax + medicare + HELP = total tax', () => {
@@ -45,11 +45,11 @@ describe('afterSchoolJobTax', () => {
     expect(withHelp.helpRate).toBe(0);
   });
 
-  it('HELP rate 2% at $75k+ annual income', () => {
+  it('HELP rate 15% at $75k+ annual income (2026-27) — marginal band', () => {
     const result = afterSchoolJobTax(40, 38, { includeHELP: true });
-    // 40 × 38 × 52 = $79,040 → $75,001–$80,000 bracket = 2%
-    expect(result.helpRate).toBe(0.02);
-    expect(result.helpRepayment).toBeCloseTo(79040 * 0.02, 0);
+    // 40 × 38 × 52 = $79,040 → marginal: ($79,040 − $69,528) × 15% = $1,426.8
+    expect(result.helpRate).toBe(0.15);
+    expect(result.helpRepayment).toBeCloseTo((79040 - 69528) * 0.15, 0);
   });
 
   it('medicare can be excluded', () => {

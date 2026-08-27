@@ -98,6 +98,32 @@ export const SIDE_HUSTLE_RULES = {
   hobbyVsBusinessRule: 'If casual or irregular without intention of profit, it is a hobby. If regular & commercial, an ABN is required.',
 };
 
+/** Youth Allowance (2026-27 rates, effective 1 Jan 2026 for under-22) */
+export const YOUTH_ALLOWANCE_2026_27 = {
+  /** Fortnightly base rate — under 18, living at home (Services Australia, 1 Jan 2026) */
+  under18AtHome: 418.90,
+  /** Fortnightly base rate — 18+, living at home */
+  over18AtHome: 482.40,
+  /** Fortnightly base rate — living away from home (under 22 & apprentices) */
+  awayFromHome: 677.20,
+  /** Income-free area for students/apprentices (fortnightly) — $539 pf (from 1 Jan 2026), accrual via Income Bank up to $13,500 */
+  incomeFreeAreaStudent: 539,
+  /** Income-free area for other recipients (fortnightly) — $528 pf (DSS 4.2.2) */
+  incomeFreeAreaOther: 528,
+  /** Second taper threshold: $539–$646 at 50c/$1, then 60c/$1 above $646 (plus $53.50 fixed adjustment) */
+  taperThreshold2: 646,
+  taperRateLow: 0.50,
+  taperRateHigh: 0.60,
+  /** Student Start-up Loan (one-off per loan period, max 2/yr, HECS-indexed) */
+  studentStartUpLoan: 1349,
+  /** ABSTUDY Living Allowance (away from home, under 22 — same as YA away) */
+  abstudyAwayFromHome: 677.20,
+  /** ABSTUDY 22+ away from home / Energy supplement variants: $799.70 (22+), $3.90–$7.00 energy supplement */
+  abstudyAway22Plus: 799.70,
+  incomeBankCap: 13500,
+  parentalIncomeFree: 66722,
+} as const;
+
 export const OFFICIAL_WEB_LINKS: Record<string, WebLink> = {
   moneysmart_banking: {
     title: 'Moneysmart: Bank Accounts & High-Interest Savings',
@@ -287,7 +313,7 @@ export const OFFICIAL_WEB_LINKS: Record<string, WebLink> = {
     title: 'Services Australia: Youth Allowance & Student Start-up Loan',
     url: 'https://www.servicesaustralia.gov.au/youth-allowance',
     source: 'Services Australia',
-    description: 'Centrelink independence test, fortnightly income-free area ($539), and student start-up loans.',
+    description: 'Centrelink independence test, fortnightly income-free area ($559 for students in 2026-27), and student start-up loans.',
   },
   scamwatch_au: {
     title: 'Scamwatch: Spotting & Reporting Financial Scams',
@@ -451,10 +477,22 @@ export const OFFICIAL_WEB_LINKS: Record<string, WebLink> = {
     source: 'University',
     description: 'Official QLD application hub for Year 12 leavers — preferences, ATAR offers, EAS access schemes, and scholarships.',
   },
+  qcaa: {
+    title: 'QCAA: Queensland Curriculum & Assessment Authority',
+    url: 'https://www.qcaa.qld.edu.au',
+    source: 'QLD Government',
+    description: 'Official authority for the QCE, ATAR, senior subject syllabuses, and Year 12 assessment in Queensland.',
+  },
+  qce_atar: {
+    title: 'QTAC: How ATAR is Calculated in Queensland',
+    url: 'https://www.qtac.edu.au/atar',
+    source: 'University',
+    description: 'Official explanation of how the Australian Tertiary Admission Rank is derived from QCE results.',
+  },
   qilt_survey: {
     title: 'QILT: Quality Indicators for Learning and Teaching',
     url: 'https://www.qilt.edu.au',
-    source: 'Australian Government',
+    source: 'Federal Government',
     description: 'Official federal government survey data on Australian university graduate employment rates, median starting salaries, and student satisfaction.',
   },
   tafe_qld: {
@@ -607,28 +645,31 @@ export const JUNIOR_AWARD_RATES = {
     name: 'Fast Food Industry Award 2020 [MA000003]',
     adultBaseRate: 27.81, // Level 1, 2026-27
     rates: [
-      { age: 'Under 16', pct: 0.40, label: '40% of Adult Rate' },
-      { age: '16 years', pct: 0.50, label: '50% of Adult Rate' },
-      { age: '17 years', pct: 0.60, label: '60% of Adult Rate' },
-      { age: '18 years', pct: 0.70, label: '70% of Adult Rate' },
-      { age: '19 years', pct: 0.80, label: '80% of Adult Rate' },
-      { age: '20 years', pct: 0.90, label: '90% of Adult Rate' },
-      { age: '21+ years', pct: 1.00, label: '100% (Adult Rate)' },
+      { age: 'Under 16', pct: 0.40, label: '40% of Adult Rate — $11.12/hr' },
+      { age: '16 years', pct: 0.50, label: '50% of Adult Rate — $13.91/hr' },
+      { age: '17 years', pct: 0.60, label: '60% of Adult Rate — $16.69/hr' },
+      { age: '18 years', pct: 0.70, label: '70% of Adult Rate — $19.47/hr' },
+      { age: '19 years', pct: 0.80, label: '80% of Adult Rate — $22.25/hr' },
+      { age: '20 years (≤6 months)', pct: 0.90, label: '90% — $25.03/hr (≤6 months)' },
+      { age: '20 years (>6 months)', pct: 1.00, label: '100% — $27.81/hr (>6 months; from 1 Dec 2026)' },
+      { age: '21+ years', pct: 1.00, label: '100% (Adult Rate) — $27.81/hr' },
     ],
   },
   retail: {
     code: 'MA000004',
     name: 'General Retail Industry Award 2020 [MA000004]',
-    adultBaseRate: 27.81, // Level 1, 2026-27
+    adultBaseRate: 27.81, // Level 1, $1,056.80/wk 2026-27
     rates: [
-      { age: 'Under 16', pct: 0.45, label: '45% of Adult Rate' },
-      { age: '16 years', pct: 0.50, label: '50% of Adult Rate' },
-      { age: '17 years', pct: 0.60, label: '60% of Adult Rate' },
-      { age: '18 years', pct: 0.70, label: '70% of Adult Rate' },
-      { age: '19 years', pct: 0.80, label: '80% of Adult Rate' },
-      { age: '20 years', pct: 0.90, label: '90% of Adult Rate' },
-      { age: '21+ years', pct: 1.00, label: '100% (Adult Rate)' },
+      { age: 'Under 16', pct: 0.45, label: '45% of Adult Rate — $12.51/hr' },
+      { age: '16 years', pct: 0.50, label: '50% of Adult Rate — $13.91/hr' },
+      { age: '17 years', pct: 0.60, label: '60% of Adult Rate — $16.69/hr' },
+      { age: '18 years', pct: 0.70, label: '70% of Adult Rate — $19.47/hr' },
+      { age: '19 years', pct: 0.80, label: '80% of Adult Rate — $22.25/hr' },
+      { age: '20 years (≤6 months)', pct: 0.90, label: '90% — $25.03/hr (≤6 months with employer)' },
+      { age: '20 years (>6 months)', pct: 1.00, label: '100% — $27.81/hr (>6 months; from 1 Dec 2026 [2026] FWCFB 75)' },
+      { age: '21+ years', pct: 1.00, label: '100% (Adult Rate) — $27.81/hr' },
     ],
+    note: 'Junior rates apply to Levels 1–3 only; Levels 4+ always adult rate. From 1 Dec 2026 FWCFB 75: 18–20 move to 100% after 6 months with same employer, phased to 1 July 2029.',
   },
   hospitality: {
     code: 'MA000009',
@@ -646,14 +687,15 @@ export const JUNIOR_AWARD_RATES = {
   pharmacy: {
     code: 'MA000012',
     name: 'Community Pharmacy Award 2020 [MA000012]',
-    adultBaseRate: 27.81, // 2026-27
+    adultBaseRate: 27.81, // 2026-27 Levels 1–2 only
     rates: [
-      { age: 'Under 16', pct: 0.45, label: '45% of Adult Rate' },
-      { age: '16 years', pct: 0.50, label: '50% of Adult Rate' },
-      { age: '17 years', pct: 0.60, label: '60% of Adult Rate' },
-      { age: '18 years', pct: 0.70, label: '70% of Adult Rate' },
-      { age: '19 years', pct: 0.80, label: '80% of Adult Rate' },
-      { age: '20 years', pct: 0.90, label: '90% of Adult Rate' },
+      { age: 'Under 16', pct: 0.45, label: '45% of Adult Rate — $12.51/hr' },
+      { age: '16 years', pct: 0.50, label: '50% of Adult Rate — $13.91/hr' },
+      { age: '17 years', pct: 0.60, label: '60% of Adult Rate — $16.69/hr' },
+      { age: '18 years', pct: 0.70, label: '70% of Adult Rate — $19.47/hr' },
+      { age: '19 years', pct: 0.80, label: '80% of Adult Rate — $22.25/hr' },
+      { age: '20 years (≤6 months)', pct: 0.90, label: '90% — $25.03/hr' },
+      { age: '20 years (>6 months)', pct: 1.00, label: '100% — $27.81/hr (from 1 Dec 2026)' },
       { age: '21+ years', pct: 1.00, label: '100% (Adult Rate)' },
     ],
   },
@@ -671,19 +713,21 @@ export const JUNIOR_AWARD_RATES = {
   },
 };
 
-/** Penalty Rate Multipliers under Australian Awards */
+/** Penalty Rate Multipliers under Australian Awards (illustrative — check PACT for exact award) */
 export const PENALTY_RATES = {
   ordinary: { label: 'Ordinary Weekday Shift', multiplier: 1.00, icon: '📅' },
-  saturday: { label: 'Saturday Shift (+25% to +50%)', multiplier: 1.25, icon: '⚡️' },
-  sunday: { label: 'Sunday Shift (+50% to +100%)', multiplier: 1.50, icon: '🔥' },
-  public_holiday: { label: 'Public Holiday (+125% to +150%)', multiplier: 2.25, icon: '🎉' },
-  night_shift: { label: 'Night Shift Loading (+15%)', multiplier: 1.15, icon: '🌙' },
+  saturday: { label: 'Saturday Shift (+25%)', multiplier: 1.25, icon: '⚡️' },
+  sunday: { label: 'Sunday Shift (+50%)', multiplier: 1.50, icon: '🔥' },
+  public_holiday_perm: { label: 'Public Holiday (permanent, 250% total)', multiplier: 2.50, icon: '🎉' },
+  public_holiday_casual: { label: 'Public Holiday (casual, 275% incl. loading)', multiplier: 2.75, icon: '🎉' },
+  night_shift: { label: 'Night / Evening Loading (+15%)', multiplier: 1.15, icon: '🌙' },
 };
 
-/** Allowances */
+/** Allowances (indexed 1 July 2026 — award-specific, check PACT) */
 export const WORKPLACE_ALLOWANCES = {
-  mealAllowance: 15.50,
-  uniformAllowancePerShift: 1.50,
+  mealAllowance: 18.15,
+  uniformAllowancePerShift: 1.85,
+  travelAllowancePerKm: 0.98,
 };
 
 /** Car Cost Defaults for 16-20yo Drivers (QLD 2026-27, source: qld.gov.au) */
@@ -698,42 +742,49 @@ export const TEEN_CAR_COST_DEFAULTS = {
   tiresAndRepairsAnnual: 350,
 };
 
-/** High Yield Teen Savings Account Comparison (Aug 2026 — rates as at 18 Aug 2026) */
+/** High Yield Teen Savings Account Comparison (as at 15 Aug 2026 — rates variable, verify provider) */
 export const TEEN_SAVINGS_ACCOUNTS = [
   {
     bank: 'Great Southern Bank Youth eSaver',
     maxRate: 5.50,
     baseRate: 5.50,
-    conditions: 'No conditions — flat rate on balances up to $5,000',
+    conditions: 'No conditions — flat 5.50% to $5k (from 1 Jul 2026), then 1.00% excess; no monthly deposit required',
     maxAge: 17,
   },
   {
     bank: 'Newcastle Permanent Smart Saver (Under 25s)',
     maxRate: 5.75,
     baseRate: 0.05,
-    conditions: 'Meet monthly bonus conditions (deposit & no withdrawals)',
+    conditions: 'Grow balance by any amount + ≤2 withdrawals per month (4.95% bonus)',
     maxAge: 25,
   },
   {
     bank: 'Westpac Bump Savings',
-    maxRate: 5.00,
-    baseRate: 0.40,
-    conditions: 'Grow balance each month (deposit > $0)',
+    maxRate: 5.05,
+    baseRate: 1.75,
+    conditions: 'Grow balance each month + 1 deposit, balance >$0 (3.30% bonus)',
     maxAge: 29,
   },
   {
-    bank: 'ING Savings Maximiser',
+    bank: 'ING Savings Maximiser (with Orange Everyday)',
     maxRate: 5.50,
-    baseRate: 0.55,
-    conditions: 'Deposit $1,000, make 5 card purchases in month',
+    baseRate: 0.01,
+    conditions: 'Deposit $1,000 + 5 settled card purchases + grow balance; 1 acct ≤$100k (0.10% above)',
     maxAge: 99,
   },
   {
     bank: 'CommBank Youthsaver',
-    maxRate: 5.00,
-    baseRate: 0.35,
-    conditions: 'Deposit at least $1 per month & make 0 withdrawals',
+    maxRate: 5.05,
+    baseRate: 2.15,
+    conditions: 'Grow balance each month (≤$50k at bonus rate; then 0.35%)',
     maxAge: 17,
+  },
+  {
+    bank: 'AMP Bank GO Save — no-conditions benchmark',
+    maxRate: 5.10,
+    baseRate: 5.10,
+    conditions: 'No deposit/withdrawal conditions — best ongoing no-conditions comparison',
+    maxAge: 99,
   },
 ];
 

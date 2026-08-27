@@ -202,7 +202,7 @@ export function PayslipAnalyzer() {
             <p className="text-[11px] text-muted-foreground">
               {claimsThreshold
                 ? 'Under $350/wk ($18,200/yr), $0 tax is withheld from your paycheck!'
-                : 'Warning: 16% tax will be withheld from your first dollar earned.'}
+                : 'Warning: 15% tax will be withheld from your first dollar earned.'}
             </p>
           </div>
         </div>

@@ -32,14 +32,27 @@ export function getJuniorRatePct(age: number, awardName: AwardName): JuniorRateL
   if (age < 16) return { pct: first.pct, label: first.label };
   if (age >= 21) return { pct: last.pct, label: last.label };
 
-  const match = bands.find(b => /^(\d+) years?$/.test(b.age) && Number(b.age.match(/^(\d+)/)?.[1]) === age);
+  const match = bands.find(b => {
+    const m = b.age.match(/^(\d+) years?/);
+    return m ? Number(m[1]) === age : false;
+  });
   if (match) return { pct: match.pct, label: match.label };
 
-  // Fallback: highest band whose age is at or below the worker's age.
+  // Fallback: highest band whose age is at or below the worker's age (handles “20 years (≤6 months)” variants)
+  // For duplicate age entries (e.g. two 20-year bands for ≤6mo vs >6mo), return the first (lowest tenure) rate.
+  let fallback: JuniorRateLookup | null = null;
+  let fallbackAge = -1;
   for (const band of bands) {
-    const num = band.age.match(/^(\d+) years?$/)?.[1];
-    if (num && Number(num) <= age) return { pct: band.pct, label: band.label };
+    if (/^Under/i.test(band.age)) continue; // handled by early return for <16
+    const m = band.age.match(/^(\d+) years?/);
+    if (!m) continue;
+    const num = Number(m[1]);
+    if (num <= age && num > fallbackAge) {
+      fallback = { pct: band.pct, label: band.label };
+      fallbackAge = num;
+    }
   }
+  if (fallback) return fallback;
   return { pct: first.pct, label: first.label };
 }
 
@@ -93,9 +106,9 @@ export function netPayWithAllowances(
 
   let taxWithheldWeekly = 0;
   if (!claimsTaxFreeThreshold) {
-    taxWithheldWeekly = grossWeekly * 0.16;
+    taxWithheldWeekly = grossWeekly * 0.15;
   } else if (grossWeekly > 350) {
-    taxWithheldWeekly = (grossWeekly - 350) * 0.16;
+    taxWithheldWeekly = (grossWeekly - 350) * 0.15;
   }
   const netWeekly = Math.max(0, grossWeekly - taxWithheldWeekly);
 

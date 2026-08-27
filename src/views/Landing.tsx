@@ -461,7 +461,7 @@ export function Landing() {
       : MANDY_MODULES.filter(m => MODULE_CATEGORIES[m.id]?.includes(cat as ModuleCategory) ?? false);
 
   const tickerItems: TickerItem[] = [
-    { label: 'HELP 2025 Cap', value: '$67,000' },
+    { label: 'HELP 2026-27 Threshold', value: '$69,528' },
     { label: 'Super Guarantee', value: '12.0%' },
     { label: 'Tax-Free Threshold', value: '$18,200' },
     { label: 'EV FBT Exemption', value: '100% Pre-Tax' },

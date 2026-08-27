@@ -160,9 +160,9 @@ describe('takeHomeBreakdown', () => {
 
   it('with HELP debt -> ATO 2026-27 repayment applied', () => {
     const b = takeHomeBreakdown(80000, 0.32, true);
-    // 2026-27: $75,001–$80,000 tier = 2.0% -> 80000 * 0.02 = 1600
-    expect(b.helpRepayment).toBe(1600);
-    expect(b.netTakeHome).toBe(80000 - 25600 - 1600);
+    // 2026-27: $69,529–$129,717 band = 15% marginal -> (80000 − 69528) × 15% = 1570.80
+    expect(b.helpRepayment).toBeCloseTo((80000 - 69528) * 0.15, 0);
+    expect(b.netTakeHome).toBeCloseTo(80000 - 25600 - (80000 - 69528) * 0.15, 0);
   });
 
   it('takeHomeRate is net/gross', () => {

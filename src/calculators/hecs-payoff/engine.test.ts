@@ -10,19 +10,19 @@ import {
 } from './engine';
 
 describe('HECS-HELP Calculation Engine', () => {
-  it('correctly applies 2025-26 marginal repayment thresholds', () => {
-    // Under $67,000 threshold -> 0%
+  it('correctly applies 2026-27 marginal repayment thresholds', () => {
+    // Under $69,528 threshold -> 0%
     expect(calcMarginalHECSRepayment(60000)).toBe(0);
-    expect(calcMarginalHECSRepayment(67000)).toBe(0);
+    expect(calcMarginalHECSRepayment(69528)).toBe(0);
 
-    // $80,000 income -> ($80,000 - $67,000) * 15% = $1,950
-    expect(calcMarginalHECSRepayment(80000)).toBeCloseTo(1950, 1);
+    // $80,000 income -> ($80,000 - $69,529) * 15% = $1,570.65
+    expect(calcMarginalHECSRepayment(80000)).toBeCloseTo(1570.65, 1);
 
-    // $135,000 income -> Tier 1 (8,700) + ($135,000 - $125,000) * 20% = 8,700 + 2,000 = 10,700
-    expect(calcMarginalHECSRepayment(135000)).toBeCloseTo(10700, 1);
+    // $135,000 income -> Band 1 (9,028.20) + ($135,000 - $129,718) * 17% = 9,028.20 + 897.94 = 9,926.14
+    expect(calcMarginalHECSRepayment(135000)).toBeCloseTo(9926.14, 1);
 
-    // $200,000 income -> Tier 1 (8,700) + Tier 2 (11,000) + ($200,000 - $180,000) * 25% = 19,700 + 5,000 = 24,700
-    expect(calcMarginalHECSRepayment(200000)).toBeCloseTo(24700, 1);
+    // $200,000 income -> Band 1 (9,028.20) + Band 2 (9,576.44) + ($200,000 - $186,051) * 10% = 18,604.64 + 1,394.90 = 19,999.54
+    expect(calcMarginalHECSRepayment(200000)).toBeCloseTo(19999.54, 1);
   });
 
   it('correctly calculates legacy 2024-25 tiered repayments', () => {

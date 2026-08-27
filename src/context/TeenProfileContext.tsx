@@ -123,10 +123,10 @@ export function TeenProfileProvider({ children }: { children: React.ReactNode })
 
   let estimatedTaxWithheldWeekly = 0;
   if (!profile.claimsTaxFreeThreshold) {
-    estimatedTaxWithheldWeekly = weeklyGrossIncome * 0.16;
+    estimatedTaxWithheldWeekly = weeklyGrossIncome * 0.15;
   } else if (weeklyGrossIncome > 350) {
     const taxableWeeklyExcess = weeklyGrossIncome - 350;
-    estimatedTaxWithheldWeekly = taxableWeeklyExcess * 0.16;
+    estimatedTaxWithheldWeekly = taxableWeeklyExcess * 0.15;
   }
 
   const weeklyNetPay = Math.max(0, weeklyGrossIncome - estimatedTaxWithheldWeekly);

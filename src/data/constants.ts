@@ -11,46 +11,39 @@ export interface HELPThreshold {
   rate: number;
 }
 
+/** 2026-27 HELP/HECS marginal repayment thresholds (effective 1 July 2026) */
 export const HELP_REPAYMENT_THRESHOLDS_2026_27: HELPThreshold[] = [
-  { min: 0,       max: 67000,   rate: 0 },
-  { min: 67001,   max: 75000,   rate: 0.01 },
-  { min: 75001,   max: 80000,   rate: 0.02 },
-  { min: 80001,   max: 85000,   rate: 0.025 },
-  { min: 85001,   max: 90000,   rate: 0.03 },
-  { min: 90001,   max: 95000,   rate: 0.035 },
-  { min: 95001,   max: 100000,  rate: 0.04 },
-  { min: 100001,  max: 105000,  rate: 0.045 },
-  { min: 105001,  max: 110000,  rate: 0.05 },
-  { min: 110001,  max: 115000,  rate: 0.055 },
-  { min: 115001,  max: 120000,  rate: 0.06 },
-  { min: 120001,  max: 125000,  rate: 0.065 },
-  { min: 125001,  max: 130000,  rate: 0.07 },
-  { min: 130001,  max: 135000,  rate: 0.075 },
-  { min: 135001,  max: 140000,  rate: 0.08 },
-  { min: 140001,  max: 145000,  rate: 0.085 },
-  { min: 145001,  max: 150000,  rate: 0.09 },
-  { min: 150001,  max: 160000,  rate: 0.095 },
-  { min: 160001,  max: Infinity, rate: 0.10 },
+  { min: 0,       max: 69528,   rate: 0 },
+  { min: 69529,   max: 129717,  rate: 0.15 },
+  { min: 129718,  max: 186050,  rate: 0.17 },
+  { min: 186051,  max: Infinity, rate: 0.10 },
 ];
 
 /** @deprecated Use HELP_REPAYMENT_THRESHOLDS_2026_27 instead */
 export const HELP_REPAYMENT_THRESHOLDS_2024_25 = HELP_REPAYMENT_THRESHOLDS_2026_27;
 
 /**
- * Calculate HELP/HECS repayment for a given repayment income.
+ * Calculate HELP/HECS compulsory repayment for a given repayment income
+ * using the 2026-27 marginal band system (15% above $69,528, 17% above
+ * $129,717, then 10% of total income above $186,051).
+ * Uses HELP_REPAYMENT_THRESHOLDS_2026_27 as the single source of truth.
  */
 export function calcHELPRepayment(repaymentIncome: number): number {
-  for (const t of HELP_REPAYMENT_THRESHOLDS_2026_27) {
-    if (repaymentIncome <= t.max) {
-      return repaymentIncome * t.rate;
-    }
+  if (repaymentIncome <= HELP_REPAYMENT_THRESHOLDS_2026_27[0].max) return 0;
+  if (repaymentIncome <= 129717) {
+    return (repaymentIncome - 69528) * 0.15;
   }
-  return 0;
+  if (repaymentIncome <= 186050) {
+    const tier1 = (129717 - 69528) * 0.15; // 9,028.35
+    return tier1 + (repaymentIncome - 129717) * 0.17;
+  }
+  // Above $186,051: flat 10% of total repayment income
+  return repaymentIncome * 0.10;
 }
 
 /**
  * Return the HELP/HECS repayment rate (0% to 10%) for a given repayment income.
- * Returns 0 for incomes at or below the minimum threshold ($67,000).
+ * Returns 0 for incomes at or below the minimum threshold ($69,528).
  */
 export function calcHELPRate(repaymentIncome: number): number {
   for (const t of HELP_REPAYMENT_THRESHOLDS_2026_27) {
@@ -63,7 +56,7 @@ export function calcHELPRate(repaymentIncome: number): number {
 
 /**
  * Return the HELP/HECS threshold bracket a given repayment income falls into.
- * @returns The matching HELPThreshold or undefined below $67,000.
+ * @returns The matching HELPThreshold or undefined below $69,528.
  */
 export function getHELPBracket(repaymentIncome: number): HELPThreshold | undefined {
   return HELP_REPAYMENT_THRESHOLDS_2026_27.find(
@@ -74,6 +67,7 @@ export function getHELPBracket(repaymentIncome: number): HELPThreshold | undefin
 }
 
 // ─── PAYG Withholding & Tax-Free Threshold ───────────────────────────────────
+
 /** $18,200 tax-free threshold for residents — built into TAX_BRACKETS_2026_27 */
 export const TAX_FREE_THRESHOLD = 18200;
 

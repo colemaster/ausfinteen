@@ -2,6 +2,7 @@ import { MANDY_MODULES } from '@/data/mandy-topics';
 import { TopicGuideAccordion } from '@/components/shared/TopicGuideAccordion';
 import { BrisbaneBudgetCalculator } from '@/calculators/teen-brisbane/BrisbaneBudgetCalculator';
 import { BrisbaneUniExplorer } from '@/calculators/teen-brisbane/BrisbaneUniExplorer';
+import { QldSchoolsYear12 } from '@/calculators/teen-brisbane/QldSchoolsYear12';
 import { WebReferenceLink } from '@/components/shared/WebReferenceLink';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
@@ -20,7 +21,7 @@ import { SmartImage } from '@/components/ui/SmartImage';
 import { ModulePrevNext } from '@/components/shared/ModulePrevNext';
 import { usePageTitle } from '@/hooks/usePageTitle';
 
-const BNE_TABS = ['unis', 'realestate', 'help'] as const;
+const BNE_TABS = ['unis', 'schools', 'realestate', 'help'] as const;
 type BneTab = (typeof BNE_TABS)[number];
 
 function readBneTab(searchParams: URLSearchParams): BneTab {
@@ -46,6 +47,8 @@ const BRISBANE_WEB_SOURCES = [
   OFFICIAL_WEB_LINKS.qld_fhog,
   OFFICIAL_WEB_LINKS.qld_boost_to_buy,
   OFFICIAL_WEB_LINKS.qld_rego,
+  OFFICIAL_WEB_LINKS.qcaa,
+  OFFICIAL_WEB_LINKS.qce_atar,
 ];
 
 export function BrisbaneQLD() {
@@ -125,6 +128,7 @@ export function BrisbaneQLD() {
         <Tabs
           tabs={[
             { id: 'unis', label: '🎓 Brisbane Unis & HECS' },
+            { id: 'schools', label: '🏫 Year 12 & Schools' },
             { id: 'realestate', label: '🏠 Real Estate & Renting' },
             { id: 'help', label: '💰 First-Home Help' },
           ]}
@@ -167,6 +171,10 @@ export function BrisbaneQLD() {
               </div>
             </Card>
           </div>
+        )}
+
+        {tab === 'schools' && (
+          <QldSchoolsYear12 />
         )}
 
         {tab === 'realestate' && (

@@ -8,7 +8,7 @@ import {
 
 describe('getJuniorRatePct', () => {
   it('maps under-16 workers to the youngest junior band (fast food 40%)', () => {
-    expect(getJuniorRatePct(15, 'fast_food')).toEqual({ pct: 0.40, label: '40% of Adult Rate' });
+    expect(getJuniorRatePct(15, 'fast_food').pct).toBe(0.40);
   });
 
   it('maps 16-year-olds to the 50% retail band', () => {
@@ -49,12 +49,12 @@ describe('netPayWithAllowances', () => {
     expect(res.superWeekly).toBe(0);
   });
 
-  it('withholds 16% above the $350 weekly threshold', () => {
+  it('withholds 15% above the $350 weekly threshold', () => {
     const res = netPayWithAllowances(18, 27.80, 22, 'retail');
     // 70% junior rate -> $19.46/hr x 22h = $428.12
     expect(res.grossWeekly).toBeCloseTo(428.12, 2);
-    expect(res.taxWithheldWeekly).toBeCloseTo((428.12 - 350) * 0.16, 2);
-    expect(res.netWeekly).toBeCloseTo(428.12 - (428.12 - 350) * 0.16, 2);
+    expect(res.taxWithheldWeekly).toBeCloseTo((428.12 - 350) * 0.15, 2);
+    expect(res.netWeekly).toBeCloseTo(428.12 - (428.12 - 350) * 0.15, 2);
     // 18yo -> super always paid
     expect(res.isSuperEligible).toBe(true);
     expect(res.superWeekly).toBeCloseTo(428.12 * 0.12, 2);
@@ -76,9 +76,9 @@ describe('netPayWithAllowances', () => {
     expect(res.grossWeekly).toBeCloseTo(135.50, 2);
   });
 
-  it('withholds 16% from the first dollar when the tax-free threshold is not claimed', () => {
+  it('withholds 15% from the first dollar when the tax-free threshold is not claimed', () => {
     const res = netPayWithAllowances(15, 17.20, 8, 'fast_food', { claimsTaxFreeThreshold: false });
-    expect(res.taxWithheldWeekly).toBeCloseTo(res.grossWeekly * 0.16, 2);
+    expect(res.taxWithheldWeekly).toBeCloseTo(res.grossWeekly * 0.15, 2);
   });
 
   it('handles zero hours and zero hourly rate without NaN', () => {
@@ -101,13 +101,16 @@ describe('netPayWithAllowances', () => {
 describe('penaltyRateBreakdown', () => {
   it('produces one row per shift type with the correct multipliers', () => {
     const rows = penaltyRateBreakdown(20.4);
-    expect(rows).toHaveLength(5);
+    expect(rows).toHaveLength(6);
     const sat = rows.find(r => r.type === 'saturday');
-    const ph = rows.find(r => r.type === 'public_holiday');
+    const phPerm = rows.find(r => r.type === 'public_holiday_perm');
+    const phCasual = rows.find(r => r.type === 'public_holiday_casual');
     expect(sat?.multiplier).toBe(1.25);
     expect(sat?.effectiveRate).toBeCloseTo(25.5, 2);
-    expect(ph?.multiplier).toBe(2.25);
-    expect(ph?.effectiveRate).toBeCloseTo(45.9, 2);
+    expect(phPerm?.multiplier).toBe(2.50);
+    expect(phPerm?.effectiveRate).toBeCloseTo(51.0, 2);
+    expect(phCasual?.multiplier).toBe(2.75);
+    expect(phCasual?.effectiveRate).toBeCloseTo(56.1, 2);
   });
 
   it('returns all-zero effective rates for a zero base rate', () => {

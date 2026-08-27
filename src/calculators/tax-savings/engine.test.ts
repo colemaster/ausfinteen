@@ -155,11 +155,11 @@ describe('calculateDRTaxBenefit', () => {
 });
 
 describe('taxWithHELP', () => {
-  it('known answer: $80k income with HELP debt → HELP rate 2%', () => {
+  it('known answer: $80k income with HELP debt → HELP rate 15% (2026-27) marginal', () => {
     const result = taxWithHELP(80000, 20000);
-    // $75,001–$80,000 bracket → 2% of $80,000 = $1,600
-    expect(result.helpRate).toBe(0.02);
-    expect(result.helpRepayment).toBe(1600);
+    // $69,529–$129,717 band → marginal: ($80,000 − $69,528) × 15% = $1,570.80
+    expect(result.helpRate).toBe(0.15);
+    expect(result.helpRepayment).toBeCloseTo((80000 - 69528) * 0.15, 0);
   });
 
   it('income tax + medicare + HELP = total', () => {
@@ -181,8 +181,8 @@ describe('taxWithHELP', () => {
 
   it('marginal rate with HELP = combined marginal + HELP rate', () => {
     const result = taxWithHELP(150000, 10000);
-    // $150k: marginal 37% + medicare 2% + HELP 9% ($145,001–$150,000 → 9%)
-    expect(result.marginalRateWithHELP).toBeCloseTo(0.37 + 0.02 + 0.09, 5);
+    // $150k: marginal 37% + medicare 2% + HELP 17% ($129,718–$186,050 → 17%)
+    expect(result.marginalRateWithHELP).toBeCloseTo(0.37 + 0.02 + 0.17, 5);
   });
 
   it('edge: zero income → zero tax', () => {
@@ -239,13 +239,14 @@ describe('div293Exposure', () => {
 });
 
 describe('marginalRateBrackets', () => {
-  it('known answer: $100k → $42,288 + $16,500 in 30% bracket', () => {
+  it('known answer: $100k → $16,500 in 30% bracket, $22,520 total', () => {
     const rows = marginalRateBrackets(100000, false);
     const b30 = rows.find(r => r.key === 'bracket-45001');
     expect(b30?.rate).toBe(0.30);
     expect(b30?.tax).toBeCloseTo(16500, 2);
     const total = rows.find(r => r.kind === 'total');
-    expect(total?.tax).toBeCloseTo(20787.84 + 2000, 0);
+    // Income tax (15% on $26,800 + 30% on $55,000 = $20,520) + Medicare $2,000
+    expect(total?.tax).toBeCloseTo(20520 + 2000, 0);
   });
 
   it('bracket taxes sum to calcIncomeTax(income)', () => {

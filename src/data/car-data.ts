@@ -23,24 +23,24 @@ export interface QldLicenceStep {
   restrictions: string;
 }
 
-/** QLD graduated licensing pathway (under-25 driver, the standard teen route) */
+/** QLD graduated licensing pathway (under-25 driver, the standard teen route) — fees as at 1 July 2026 (qld.gov.au) */
 export const QLD_LICENCE_PATH: QldLicenceStep[] = [
   {
     stage: 'Learner (L)',
     plates: 'L plates',
     minAge: 16,
     holdTime: '12 months minimum',
-    fees: 'PrepL $30.70 + learner licence $82.90 (3 yrs)',
-    requirements: 'Pass PrepL online road rules test at 16. Under 25s complete 100 logbook hours (10 at night).',
-    restrictions: 'Must be supervised by an open-licence driver, display L plates, 0.00 blood alcohol.',
+    fees: 'PrepL $29.70 + learner licence $80.15 (3 yrs)',
+    requirements: 'Pass PrepL online road rules test at 16. Under 25s complete 100 logbook hours (10 at night) via logbook app, submit 12 business days before test, 3-for-1 instructor bonus max 10 hrs.',
+    restrictions: 'Must be supervised by an open-licence driver (1yr open licence), display L plates, 0.00 BAC.',
   },
   {
     stage: 'Provisional P1 (Red P)',
     plates: 'Red P plates',
     minAge: 17,
     holdTime: '12 months',
-    fees: 'HPT $44.15 + practical test $71.75 + P1 licence $97.85 (1 yr)',
-    requirements: 'Hold Ls 12 months, finish 100 logbook hours, pass hazard perception test + practical driving test.',
+    fees: 'HPT $42.70 + practical test $69.40 + P1 licence $94.65 (1 yr)',
+    requirements: 'Hold Ls 12 months, finish 100 logbook hours, pass hazard perception test + practical driving test (Q-SAFE).',
     restrictions: 'Under 25: total phone ban, max 1 peer passenger 11pm–5am, no high-powered vehicles, 0.00 BAC.',
   },
   {
@@ -48,7 +48,7 @@ export const QLD_LICENCE_PATH: QldLicenceStep[] = [
     plates: 'Green P plates',
     minAge: 18,
     holdTime: '12–24 months (age dependent)',
-    fees: 'P2 licence $136.50 (2 yrs)',
+    fees: 'P2 licence $132.00 (2 yrs) — $94.65 (1 yr) option also available',
     requirements: 'Hold P1 for 12 months with a clean record. No extra test needed.',
     restrictions: 'Hands-free phone OK, no passenger limits, no high-powered vehicles (under 25), 0.00 BAC.',
   },
@@ -57,9 +57,9 @@ export const QLD_LICENCE_PATH: QldLicenceStep[] = [
     plates: 'No plates',
     minAge: 20,
     holdTime: 'Unrestricted',
-    fees: 'Open licence $97.85 (1 yr) onwards',
+    fees: 'Open licence $94.65 (1 yr) / $132.00 (2 yrs) / $163.25 (3 yrs) / $188.95 (4 yrs) / $212.00 (5 yrs)',
     requirements: 'Hold P2 for the required period (min. age 20 for under-25 starters).',
-    restrictions: 'Normal road rules apply. No special conditions.',
+    restrictions: 'Normal road rules apply. No special conditions. GIR 3.4% indexation 2026-27.',
   },
 ];
 
@@ -69,17 +69,17 @@ export interface QldLicenceFee {
   note: string;
 }
 
-/** QLD licence test & licence fees as at 1 July 2026 (qld.gov.au) */
+/** QLD licence test & licence fees as at 1 July 2026 (qld.gov.au/transport/licensing/driver-licensing/fees) */
 export const QLD_LICENCE_FEES: QldLicenceFee[] = [
-  { item: 'PrepL online road rules test', cost: 30.70, note: 'Sit at home / online via TMR' },
-  { item: 'Written road rules (knowledge) test', cost: 30.70, note: 'If not doing PrepL' },
-  { item: 'Learner licence (3 years)', cost: 82.90, note: 'Issued from age 16' },
-  { item: 'Replacement learner licence', cost: 38.70, note: 'Lost / damaged card' },
-  { item: 'Hazard Perception Test (HPT)', cost: 44.15, note: 'Online, valid 12 months' },
-  { item: 'Practical driving test (all classes)', cost: 71.75, note: 'Booked through TMR' },
-  { item: 'P1 provisional licence (1 year)', cost: 97.85, note: 'Red P stage' },
-  { item: 'P2 provisional licence (2 years)', cost: 136.50, note: 'Green P stage' },
-  { item: 'Open licence (1 year)', cost: 97.85, note: 'Full licence' },
+  { item: 'PrepL online road rules test', cost: 29.70, note: 'Sit at home / online via TMR — 30 Qs, 90% pass' },
+  { item: 'Written road rules (knowledge) test', cost: 29.70, note: 'If not doing PrepL' },
+  { item: 'Learner licence (3 years)', cost: 80.15, note: 'Issued from age 16, incl. logbook $25.90 if required' },
+  { item: 'Replacement learner licence / logbook', cost: 37.40, note: 'Lost / damaged card; logbook replacement $25.90, exemption $51.45' },
+  { item: 'Hazard Perception Test (HPT)', cost: 42.70, note: 'Online, valid 12 months, 12-month access after paying' },
+  { item: 'Practical driving test (all classes)', cost: 69.40, note: 'Booked through TMR (Q-SAFE); interstate transfer $87.05' },
+  { item: 'P1 provisional licence (1 year)', cost: 94.65, note: 'Red P stage — $132.00/2yrs, $163.25/3yrs options' },
+  { item: 'P2 provisional licence (2 years)', cost: 132.00, note: 'Green P stage — $94.65/1yr, $188.95/4yrs, $212.00/5yrs options' },
+  { item: 'Open licence (1 year)', cost: 94.65, note: 'Full licence; 5-yr $212.00. Fees set by start date of new period, GIR 3.4% 2026-27.' },
 ];
 
 /** Typical driving lesson cost in South East Queensland (per hour) */

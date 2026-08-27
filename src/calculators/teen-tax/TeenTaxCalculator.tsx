@@ -43,7 +43,7 @@ export function TeenTaxCalculator() {
   // Income Tax on earned income ($18,200 threshold)
   let earnedIncomeTax = 0;
   if (taxableEarnedIncome > 18200) {
-    earnedIncomeTax = (taxableEarnedIncome - 18200) * 0.16; // 16% Stage 3 rate under $45k
+    earnedIncomeTax = (taxableEarnedIncome - 18200) * 0.15; // 15% 2026-27 rate under $45k
   }
 
   // Division 6AA Minor Unearned Income Tax Math
@@ -176,7 +176,7 @@ export function TeenTaxCalculator() {
           numericValue={earnedIncomeTax}
           format="currency"
           color={earnedIncomeTax === 0 ? 'green' : 'amber'}
-          subtext={taxableEarnedIncome <= 18200 ? '$18,200 Tax-Free Threshold claimed!' : '16% Stage 3 marginal rate'}
+          subtext={taxableEarnedIncome <= 18200 ? '$18,200 Tax-Free Threshold claimed!' : '15% 2026-27 marginal rate'}
         />
         <StatCard
           label="Div 6AA Unearned Minor Tax"

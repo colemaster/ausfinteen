@@ -11,7 +11,7 @@ const HECS_TOPICS = [
     moduleId: 'hecs-payoff',
     moduleTitle: 'HECS-HELP Loan Reforms 🎓',
     question: 'How does the 2025–2027 Universities Accord marginal repayment system work?',
-    answer: 'From 1 July 2025, Australia transitions from a cliff-edge system to a marginal repayment system with a $67,000 threshold. Under this new system, you only pay a percentage on the portion of your income ABOVE $67,000 (15% on $67k-$125k, 20% on $125k-$180k, 25% on $180k+), saving average graduates hundreds of dollars every year.',
+    answer: 'From 1 July 2026, Australia transitions from a cliff-edge system to a marginal repayment system with a $69,528 threshold. Under this new system, you only pay a percentage on the portion of your income ABOVE $69,528 (15% on $69,529-$129,717, 17% on $129,718-$186,050, and 10% above $186,050), saving average graduates hundreds of dollars every year.',
     actionStep: 'Use the calculator above to compare your repayment under the marginal system vs the older 19-tier system.',
   },
   {

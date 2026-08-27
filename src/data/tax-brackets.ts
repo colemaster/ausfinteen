@@ -2,6 +2,9 @@
  * Australian tax brackets and Medicare levy thresholds for 2024-2027.
  * Source: ATO — ato.gov.au/rates/individual-income-tax-rates/
  * Stage 3 legislated tax rates apply from 1 July 2024 and through 2026-27.
+ * From 1 July 2026: second bracket rate reduced from 16% to 15%.
+ * From 1 July 2027: second bracket rate reduced from 15% to 14%.
+ * Medicare levy low-income thresholds increased 2.9% from 1 July 2025 (retroactive).
  */
 
 export interface TaxBracket {
@@ -11,12 +14,13 @@ export interface TaxBracket {
   baseTax?: number; // Pre-calculated tax on the lower bound for efficiency
 }
 
+/** 2026-27 tax brackets (effective 1 July 2026) */
 export const TAX_BRACKETS_2026_27: TaxBracket[] = [
   { min: 0,      max: 18200,   rate: 0,    baseTax: 0 },
-  { min: 18201,  max: 45000,   rate: 0.16, baseTax: 0 },
-  { min: 45001,  max: 135000,  rate: 0.30, baseTax: 4288 },
-  { min: 135001, max: 190000,  rate: 0.37, baseTax: 31288 },
-  { min: 190001, max: Infinity, rate: 0.45, baseTax: 51638 },
+  { min: 18201,  max: 45000,   rate: 0.15, baseTax: 0 },
+  { min: 45001,  max: 135000,  rate: 0.30, baseTax: 4020 },
+  { min: 135001, max: 190000,  rate: 0.37, baseTax: 31020 },
+  { min: 190001, max: Infinity, rate: 0.45, baseTax: 51370 },
 ];
 
 /** @deprecated Use TAX_BRACKETS_2026_27 instead */
@@ -25,11 +29,11 @@ export const TAX_BRACKETS_2024_25 = TAX_BRACKETS_2026_27;
 export const MEDICARE_LEVY_RATE = 0.02;
 
 export const MEDICARE_LEVY_REDUCTION = {
-  threshold: 27222,        // Below this, full exemption (FY2024-25/26/27)
-  phaseOutThreshold: 34027, // Above this, full 2% applies
+  threshold: 28011,        // Below this, full exemption (FY2025-26/26/27 — 2.9% uplift Budget 5 May 2026, retroactive 1 July 2025)
+  phaseOutThreshold: 35013, // Above this, full 2% applies (threshold × 1.25)
   shadeInRate: 0.10,       // 10% shade-in rate
-  familyThreshold: 45907,
-  familyChildBonus: 4216,
+  familyThreshold: 47238,  // Family low-income threshold 2025-26 (up from $45,907)
+  familyChildBonus: 4338,  // Per dependent child uplift to lower threshold (upper uplift + $5,423)
 };
 
 export const MEDICARE_LEVY_SURCHARGE = {

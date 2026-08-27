@@ -1,6 +1,7 @@
 /**
- * Australian stamp duty (transfer duty) tables by state/territory — 2024-2027.
+ * Australian stamp duty (transfer duty) tables by state/territory — 2026-27.
  * Sources: State Revenue Offices (SRO VIC, Revenue NSW, QRO, RevenueWA, RevenueSA, SRO TAS, ACT Revenue, NT SRO).
+ * Updated with 2026-27 rates and thresholds.
  */
 
 export interface DutyBracket {
@@ -48,12 +49,12 @@ export const VIC_STAMP_DUTY: StampDutyTable = {
 export const NSW_STAMP_DUTY: StampDutyTable = {
   stateName: 'New South Wales',
   general: [
-    { min: 0,        max: 16000,    rate: 0.0125, base: 0 },
-    { min: 16000,    max: 35000,    rate: 0.015,  base: 200 },
-    { min: 35000,    max: 93000,    rate: 0.0175, base: 485 },
-    { min: 93000,    max: 351000,   rate: 0.035,  base: 1500 },
-    { min: 351000,   max: 1168000,  rate: 0.045,  base: 10530 },
-    { min: 1168000,  max: 3505000,  rate: 0.055,  base: 47295 },
+    { min: 0,        max: 18000,    rate: 0.0125, base: 0 },
+    { min: 18000,    max: 38000,    rate: 0.015,  base: 225 },
+    { min: 38000,    max: 103000,   rate: 0.0175, base: 525 },
+    { min: 103000,   max: 387000,   rate: 0.035,  base: 1662 },
+    { min: 387000,   max: 1290000,  rate: 0.045,  base: 11602 },
+    { min: 1290000,  max: 3505000,  rate: 0.055,  base: 52237 },
     { min: 3505000,  max: Infinity, rate: 0.07,   base: 175830 },
   ],
   firstHomeBuyer: {
@@ -62,7 +63,7 @@ export const NSW_STAMP_DUTY: StampDutyTable = {
     grantAmount: 10000,
     grantPriceCapNew: 600000,
   },
-  foreignSurchargeRate: 0.08,
+  foreignSurchargeRate: 0.09,
 };
 
 // ─── Queensland ──────────────────────────────────────────────────────────────
@@ -76,9 +77,9 @@ export const QLD_STAMP_DUTY: StampDutyTable = {
     { min: 1000000, max: Infinity, rate: 0.0575, base: 38025 },
   ],
   firstHomeBuyer: {
-    fullExemptionThreshold: 700000, // Raised to $700,000 in June 2024
-    concessionTopThreshold: 800000,
-    grantAmount: 30000,             // $30k FHOG for new homes
+    fullExemptionThreshold: 700000,  // Full concession to $700k
+    concessionTopThreshold: 800000,  // Phases out to $800k
+    grantAmount: 30000,              // $30k FHOG for new homes (locked in 2026-27 Budget)
     grantPriceCapNew: 750000,
   },
   foreignSurchargeRate: 0.08,
@@ -95,10 +96,10 @@ export const WA_STAMP_DUTY: StampDutyTable = {
     { min: 725000,  max: Infinity, rate: 0.0515, base: 28453 },
   ],
   firstHomeBuyer: {
-    fullExemptionThreshold: 450000, // Raised to $450,000 in 2024
-    concessionTopThreshold: 600000,
+    fullExemptionThreshold: 600000,   // From 7 May 2026
+    concessionTopThreshold: 800000,   // From 7 May 2026
     grantAmount: 10000,
-    grantPriceCapNew: 750000,
+    grantPriceCapNew: 800000,         // Increased to $800k from 7 May 2026
   },
   foreignSurchargeRate: 0.07,
 };

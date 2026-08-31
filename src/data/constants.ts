@@ -1,6 +1,6 @@
 /**
  * Australian financial constants for 2026-27.
- * Sources: ATO, ASIC MoneySmart, StudyAssist.
+ * Sources: ATO, ASIC MoneySmart, StudyAssist, Fair Work, QCAA, QTAC.
  */
 
 // ─── HELP / HECS Repayment Thresholds 2026-27 ────────────────────────────────
@@ -21,6 +21,12 @@ export const HELP_REPAYMENT_THRESHOLDS_2026_27: HELPThreshold[] = [
 
 /** @deprecated Use HELP_REPAYMENT_THRESHOLDS_2026_27 instead */
 export const HELP_REPAYMENT_THRESHOLDS_2024_25 = HELP_REPAYMENT_THRESHOLDS_2026_27;
+
+/** HELP debt indexation rate for 2026 (applied 1 June 2026) — confirmed by ATO/StudyAssist */
+export const HELP_INDEXATION_RATE_2026 = 0.028; // 2.8%
+
+/** One-off 20% HELP debt reduction applied before indexation on 1 June 2025 */
+export const HELP_DEBT_REDUCTION_2025 = 0.20; // 20%
 
 /**
  * Calculate HELP/HECS compulsory repayment for a given repayment income
@@ -71,11 +77,25 @@ export function getHELPBracket(repaymentIncome: number): HELPThreshold | undefin
 /** $18,200 tax-free threshold for residents — built into TAX_BRACKETS_2026_27 */
 export const TAX_FREE_THRESHOLD = 18200;
 
+/** $1,000 standard deduction for work-related expenses (from 2026-27, replacing $300 no-receipt threshold) */
+export const STANDARD_DEDUCTION_2026_27 = 1000;
+
 /** Top marginal rate used when a TFN is NOT provided (or exemption not claimed) */
 export const TFN_WITHHOLDING_RATE = 0.47;
 
 /** Weeks in a standard working year used for weekly → annual estimates */
 export const WEEKS_PER_YEAR = 52;
+
+// ─── Tax Year 2026-27 Key Dates ────────────────────────────────────────────────
+
+export const TAX_DEADLINES_2026_27 = {
+  fyStart: '1 July 2026',
+  fyEnd: '30 June 2027',
+  lodgementDeadline: '31 October 2027',
+  agentLodgementDeadline: '15 January 2028 (with lodgement)',
+  instantAssetWriteOffThreshold: 20000, // $20,000 permanent for businesses < $10M turnover
+  instantAssetWriteOffPermanentFrom: '1 July 2026',
+} as const;
 
 // ─── CGT Discount Rates ───────────────────────────────────────────────────────
 
@@ -101,6 +121,10 @@ export const LMI_ESTIMATES = [
 // ─── APRA Serviceability Buffer ───────────────────────────────────────────────
 export const APRA_SERVICEABILITY_BUFFER = 0.03; // 3% above the loan rate
 
+// ─── Payday Super (from 1 July 2026) ───────────────────────────────────────────
+/** Super must be paid with each pay run (within 7 business days of payday) from 1 July 2026 */
+export const PAYDAY_SUPER_FROM = '1 July 2026';
+
 // ─── Common Property Holding Cost Defaults ───────────────────────────────────
 export const PROPERTY_HOLDING_COST_DEFAULTS = {
   councilRatesAnnual: 2000,
@@ -113,3 +137,7 @@ export const PROPERTY_HOLDING_COST_DEFAULTS = {
 
 // ─── Tax Year Label ───────────────────────────────────────────────────────────
 export const CURRENT_TAX_YEAR = '2026-27';
+
+// ─── Future Legislation (2027-28) ────────────────────────────────────────────────
+/** $250 Working Australians Tax Offset (WATO) legislated from 2027-28 */
+export const WORKING_AMERICANS_TAX_OFFSET_2027_28 = 250;

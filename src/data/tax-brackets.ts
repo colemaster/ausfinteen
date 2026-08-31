@@ -5,6 +5,9 @@
  * From 1 July 2026: second bracket rate reduced from 16% to 15%.
  * From 1 July 2027: second bracket rate reduced from 15% to 14%.
  * Medicare levy low-income thresholds increased 2.9% from 1 July 2025 (retroactive).
+ * $1,000 standard deduction for work-related expenses introduced from 2026-27 (replaces $300 no-receipt threshold).
+ * $20,000 instant asset write-off now permanent for businesses with turnover < $10M (from 1 July 2026).
+ * Payday Super: employers must pay super with each pay run from 1 July 2026 (within 7 business days).
  */
 
 export interface TaxBracket {

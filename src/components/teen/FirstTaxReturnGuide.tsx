@@ -3,7 +3,7 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { OFFICIAL_WEB_LINKS } from '@/data/teen-finance-data';
 import { WebReferenceLink } from '@/components/shared/WebReferenceLink';
-import { ReceiptText, CheckCircle2, ShieldCheck, DollarSign, ArrowRight, Sparkles, HelpCircle } from 'lucide-react';
+import { ReceiptText, CheckCircle2, ShieldCheck, DollarSign, ArrowRight, Sparkles } from 'lucide-react';
 
 const TAX_RETURN_STEPS = [
   {

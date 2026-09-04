@@ -6,7 +6,7 @@ import { WebVitalsBadge } from '@/components/WebVitalsBadge';
 import pkg from '../../../package.json';
 
 const GITHUB_URL = 'https://github.com/ravisha22/PersonalFinanceToolkit';
-const LAST_UPDATED = 'Aug 2026';
+const LAST_UPDATED = 'Sep 2026';
 
 const TOOLS_LINKS = [
   { to: '/', label: 'Home' },

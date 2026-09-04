@@ -1,10 +1,10 @@
 import React, { useRef } from 'react';
 import confetti from 'canvas-confetti';
-import { motion, useReducedMotion } from 'motion/react';
+import { motion, useReducedMotion, type HTMLMotionProps } from 'motion/react';
 import { sound } from '@/lib/sound-synthesizer';
 import { cn } from '@/lib/utils';
 
-export interface ConfettiButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ConfettiButtonProps extends Omit<HTMLMotionProps<'button'>, 'children'> {
   children: React.ReactNode;
   variant?: 'default' | 'primary' | 'success' | 'outline' | 'ghost';
   size?: 'sm' | 'md' | 'lg';

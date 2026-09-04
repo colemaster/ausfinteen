@@ -712,7 +712,7 @@ export const OFFICIAL_WEB_LINKS: Record<string, WebLink> = {
     description: 'Official council parking facilities in the Brisbane CBD with night and weekend flat rate specials.',
   },
   // --- ADDITIONAL ATO & SUPERANNUATION SOURCES ---
-  ato_lito: {
+  ato_lito_overview: {
     title: 'ATO: Low Income Tax Offset (LITO)',
     url: 'https://www.ato.gov.au/individuals-and-families/income-deductions-offsets-and-records/tax-offsets/low-and-middle-income-earner-tax-offsets',
     source: 'ATO',
@@ -731,7 +731,7 @@ export const OFFICIAL_WEB_LINKS: Record<string, WebLink> = {
     source: 'ATO',
     description: 'Rules preventing duplicate default super accounts by linking a worker to their existing stapled fund upon job change.',
   },
-  ato_super_co_contribution: {
+  ato_super_co_contribution_scheme: {
     title: 'ATO: Super Co-Contribution Scheme for Low Earners',
     url: 'https://www.ato.gov.au/individuals-and-families/super-for-individuals-and-families/super/growing-and-keeping-track-of-your-super/caps-limits-and-tax/super-co-contribution',
     source: 'ATO',
@@ -743,7 +743,7 @@ export const OFFICIAL_WEB_LINKS: Record<string, WebLink> = {
     source: 'ATO',
     description: 'Voluntary salary sacrifice super scheme allowing first home buyers to save up to $50,000 inside low-tax super.',
   },
-  ato_deductions_clothing: {
+  ato_deductions_uniform_clothing: {
     title: 'ATO: Work Clothing, Shoes & Laundry Expenses',
     url: 'https://www.ato.gov.au/individuals-and-families/income-deductions-offsets-and-records/deductions-you-can-claim/clothes-and-items-you-wear-at-work/clothing-laundry-and-dry-cleaning-expenses',
     source: 'ATO',
@@ -787,13 +787,13 @@ export const OFFICIAL_WEB_LINKS: Record<string, WebLink> = {
   },
 
   // --- ADDITIONAL FAIR WORK OMBUDSMAN SOURCES ---
-  fairwork_minimum_shifts: {
+  fairwork_minimum_shifts_casual: {
     title: 'Fair Work: Minimum Shift Engagement Periods',
     url: 'https://www.fairwork.gov.au/starting-employment/types-of-employees/casual-employees',
     source: 'Fair Work',
     description: 'Standard minimum call-out hours (typically 2 or 3 hours) ensuring casuals are compensated for rostered time.',
   },
-  fairwork_breaks: {
+  fairwork_breaks_rest_pauses: {
     title: 'Fair Work Ombudsman: Rest Pauses and Meal Breaks',
     url: 'https://www.fairwork.gov.au/employment-conditions/hours-of-work-breaks-and-rosters/breaks',
     source: 'Fair Work',
@@ -972,7 +972,7 @@ export const OFFICIAL_WEB_LINKS: Record<string, WebLink> = {
   },
 
   // --- HIGH-INTEREST YOUTH SAVINGS ACCOUNTS ---
-  boq_future_saver: {
+  boq_future_saver_youth: {
     title: 'BOQ: Future Saver Account (5.80% p.a. for Ages 14–35)',
     url: 'https://www.boq.com.au/personal/banking/savings-and-term-deposits/future-saver-account',
     source: 'Bank',

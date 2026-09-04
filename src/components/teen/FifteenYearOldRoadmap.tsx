@@ -3,7 +3,7 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { FIFTEEN_YO_ROADMAP_MILESTONES, OFFICIAL_WEB_LINKS } from '@/data/teen-finance-data';
 import { WebReferenceLink } from '@/components/shared/WebReferenceLink';
-import { CheckCircle2, Circle, Sparkles, Compass, PartyPopper } from 'lucide-react';
+import { CheckCircle2, Circle, Sparkles, Compass } from 'lucide-react';
 import { CelebrationRing } from '@/components/ui/CelebrationRing';
 import { sound } from '@/lib/sound-synthesizer';
 

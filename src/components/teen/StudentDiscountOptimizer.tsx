@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
-import { STUDENT_DISCOUNTS_AU, OFFICIAL_WEB_LINKS, type StudentDiscountItem } from '@/data/teen-finance-data';
+import { STUDENT_DISCOUNTS_AU, OFFICIAL_WEB_LINKS } from '@/data/teen-finance-data';
 import { WebReferenceLink } from '@/components/shared/WebReferenceLink';
 import { Sparkles, CheckCircle2, Circle, Tag, ShoppingBag, Smartphone, Bus, Music, Laptop, Film } from 'lucide-react';
 

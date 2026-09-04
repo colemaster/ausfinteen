@@ -22,9 +22,10 @@ const {
   description = 'Free, open-source, privacy-first Australian finance guides & calculators for young Aussies and investors. 100% browser-based with zero tracking.',
   keywords = 'teen finance Australia, first job pay, tax calculator Australia, superannuation, penalty rates, HECS, QLD licence, Brisbane budget, ASX ETFs, money guide, capital gains tax, novated lease',
   ogType = 'website',
-  canonicalUrl = Astro.url.href,
+  canonicalUrl: customCanonicalUrl,
 } = Astro.props;
 
+const canonicalUrl = customCanonicalUrl || (Astro.site ? new URL(Astro.url.pathname, Astro.site).href : Astro.url.href);
 const siteTitle = title.includes('AusFinance') ? title : `${title} | AusFinance Suite`;
 ---
 
@@ -64,22 +65,21 @@ const siteTitle = title.includes('AusFinance') ? title : `${title} | AusFinance 
     <link rel="manifest" href="/manifest.webmanifest" />
 
     <!-- Schema.org JSON-LD Structured Data -->
-    <script type="application/ld+json" is:inline>
-      {
-        "@context": "https://schema.org",
-        "@type": "WebApplication",
-        "name": "AusFinance Suite",
-        "url": "https://ausfintools.com",
-        "description": "Free, privacy-first Australian personal finance guides, calculators and statutory Q&A. 100% browser-based with zero tracking.",
-        "applicationCategory": "FinanceApplication",
-        "operatingSystem": "Any",
-        "offers": {
-          "@type": "Offer",
-          "price": "0",
-          "priceCurrency": "AUD"
-        }
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": siteTitle,
+      "url": canonicalUrl,
+      "description": description,
+      "applicationCategory": "FinanceApplication",
+      "operatingSystem": "Any",
+      "inLanguage": "en-AU",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "AUD"
       }
-    </script>
+    })} />
 
     <!-- Speculation Rules API for sub-50ms instant page loads -->
     <script type="speculationrules" is:inline>
@@ -156,8 +156,8 @@ const siteTitle = title.includes('AusFinance') ? title : `${title} | AusFinance 
       aria-hidden="true"
     ></div>
 
-    <!-- Navigation Bar Island -->
-    <Navbar client:load />
+    <!-- Navigation Bar Island with ClientRouter persistence -->
+    <Navbar client:load transition:persist />
 
     <!-- Page Content Container with Ambient Chromatic Aura -->
     <div class="relative flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 py-6">
@@ -170,11 +170,11 @@ const siteTitle = title.includes('AusFinance') ? title : `${title} | AusFinance 
       </main>
     </div>
 
-    <!-- Footer -->
-    <Footer client:idle />
+    <!-- Footer with viewport-visible lazy hydration -->
+    <Footer client:visible />
 
-    <!-- Toast Notifications -->
-    <Toaster client:idle />
+    <!-- Toast Notifications with transition persistence -->
+    <Toaster client:idle transition:persist />
 
     <script is:inline>
       (function() {

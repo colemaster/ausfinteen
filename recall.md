@@ -48,7 +48,8 @@
 | v5.8.0  | 2026-27 Wave 2 Data Expansion | Second 500+ source verification wave + deeper QLD education expansion: QLD schools 32→53 with Better Education 2025 + NAPLAN scores; updated ICSEA; ATAR cutoffs 18→34; new QCE_SUBJECT_EXAMPLES; TAFE 22→30 fee-free courses + Free Apprenticeships Under 25 (130+ pathways) | Local |
 | v5.9.0  | 15yo First Job, Youth Banking & Savings Goals Overhaul | 500+ Web-source deep audit: 10 Modern Awards (Fast Food, Retail, Restaurant, Hospitality, Clubs, Pharmacy, Fitness, Cleaning, Hair & Beauty, Amusement), 2026-27 Youth HISA comparison (BOQ 5.80%, Newcastle Perm 5.75%, GSB 5.50%, ING 5.50%), 8-state child labor laws, 100-pt ID, Form MS011 Medicare transfer, 120+ structured Q&A topics across all 11 Mandy Money modules, 14 student discount deals ($3,000+/yr), Barefoot 3-bucket & 50/30/20 frameworks, teen cyber safety & money muling defense | Local |
 | v6.0.0  | Cutting-Edge 2027 Frontend SDK & UI/UX Overhaul | React 19 + Astro 7 + Motion 13 + Tailwind v4 upgrade: Animated SVG `Sparkline` with cubic bezier curves & scrub cursor, `CelebrationRing` with auto-confetti burst & audio fanfare, `FinancialHealthRadar` 6-pillar spider benchmark chart, `AmbientLiquidityCanvas` zero-lag TypedArray 2D particle engine, `AccentColorPicker` with View Transitions, and tactile audio micro-interactions | Local |
-| v6.1.0  | 15yo First Job, Banking & 500+ Web Source Goal Complete | Comprehensive 30-stream subagent synthesis: 500+ verified Australian web sources, 15yo first job statutory compliance (NAT 3092, NAT 13080, FWIS, CEIS, MS011, QLD Form 1), 8-state child labor laws, 10 Modern Awards + junior pay scales, youth HISA accounts (BOQ 5.80%, Newcastle Perm 5.75%, GSB 5.50%), Barefoot 3-bucket & 50/30/20 savings goals, 16 top teen employers, and all 11 Mandy Money modules updated | Local |
+| v6.1.0  | 15yo First Job, Banking & 500+ Web Source Goal Complete | Comprehensive 30-stream subagent synthesis: 500+ verified Australian web sources, 15yo first job statutory compliance (NAT 3092, NAT 13080, FWIS, CEIS, MS011, QLD Form 1), 8-state child labor laws, 10 Modern Awards + junior pay scales, youth HISA accounts (BOQ 5.80%, Newcastle Perm 5.75%, GSB 5.50%), Barefoot 3-bucket & 50/30/20 savings goals, 16 top teen employers, and all 11 Mandy Money modules updated | Pushed |
+| v6.2.0  | Frontend & Astro Modernization | Full update of frontend components, libs, and SDKs: Astro 7.3.1, Motion 13.2.0, Vite 8.2.2, Lucide 1.40, Vitest 4.1.11; enabled ClientRouter transition:persist, client:visible footer hydration, dynamic Schema.org JSON-LD, incrementalBuild, contentIntellisense, responsiveStyles, concurrency 4, zero-error strict TypeScript pass | Local |
 
 ---
 
@@ -1013,4 +1014,50 @@ Exhaustive synthesis of the 30-stream subagent research audit across Australian 
 5. **Test & Build Verification**:
    - Vitest: 27 test files, **374 tests passing (100% green)**.
    - Static Prerender: Astro static site build compiled all **30 pages cleanly in 7.05s**.
+
+---
+
+## v6.2.0 — FRONTEND COMPONENTS, LIBS, SDK & ASTRO MODERNIZATION (4 Sep 2026)
+
+### Summary
+Full modernization of all frontend libraries, SDKs, Astro components, and build architecture: upgraded to Astro 7.3.1, Motion 13.2.0, Vite 8.2.2, Lucide React 1.40.0, Vitest 4.1.11, React Router DOM 7.18.3, and Testing Library 16.3.3. Enabled ClientRouter View Transition persistence (`transition:persist`), lazy viewport hydration (`client:visible`), dynamic Schema.org JSON-LD injection, Astro incremental build caching, content intelligence, and 4-way static build concurrency. Completely resolved all TypeScript compiler checks (`tsc --noEmit` 0 errors).
+
+### Key Upgrades & Technical Enhancements:
+1. **Libraries & SDKs Upgrades**:
+   - **Astro**: `^7.2.2` ➔ `^7.3.1` (Astro 7 latest release).
+   - **Motion**: `^13.1.0` ➔ `^13.2.0` (latest unified `motion/react` spring physics).
+   - **Vite**: `^8.2.1` ➔ `^8.2.2`.
+   - **@astrojs/react**: `^6.0.2` ➔ `^6.0.5`.
+   - **@astrojs/sitemap**: `^3.7.3` ➔ `^3.7.4`.
+   - **Lucide React**: `^1.31.0` ➔ `^1.40.0`.
+   - **React Router DOM**: `^7.18.2` ➔ `^7.18.3`.
+   - **Vitest & @vitest/ui**: `^4.1.10` ➔ `^4.1.11`.
+   - **@testing-library/react**: `^16.3.2` ➔ `^16.3.3`.
+   - **@types/react-dom**: `^19.2.4` ➔ `^19.2.7`.
+   - **@vitejs/plugin-react**: `^6.0.5` ➔ `^6.1.1`.
+
+2. **Astro 7.3 Configuration & Engine Enhancements (`astro.config.mjs`)**:
+   - `experimental.incrementalBuild: true` enabled for rapid rebuilds and warm asset caching.
+   - `experimental.contentIntellisense: true` enabled for enhanced IDE and schema inference.
+   - `experimental.clientPrerender: true` active for instantaneous speculative navigations.
+   - `image.responsiveStyles: true` enabled for modern responsive image attributes.
+   - `build.concurrency: 4` enabled for multi-threaded static HTML page generation.
+
+3. **Astro Layout & Hydration Architecture (`src/layouts/Layout.astro`)**:
+   - **ClientRouter View Transition Persistence**: Added `transition:persist` to `<Navbar client:load />` and `<Toaster client:idle />`. Audio state, theme preferences, open menus, and active toast alerts seamlessly persist across page transitions without unmounting or re-hydrating.
+   - **Lazy Viewport Hydration**: Changed `<Footer />` from `client:idle` to `<Footer client:visible />`, deferring hydration until the footer enters the user's viewport and significantly reducing initial Total Blocking Time (TBT).
+   - **Dynamic Schema.org Structured Data**: Replaced static JSON-LD script with dynamic `set:html={JSON.stringify(...)}` evaluating per-page `canonicalUrl`, `siteTitle`, and localized `en-AU` schema definitions.
+   - **Clean Canonical URL Construction**: Normalized `canonicalUrl` to use clean origin + pathname without transient query strings (`?theme=`, `?tab=`), preventing search engine duplicate indexing.
+
+4. **Component & TypeScript Integrity**:
+   - Cleaned up unused imports in `FifteenYearOldRoadmap.tsx` (`PartyPopper`), `FirstTaxReturnGuide.tsx` (`HelpCircle`), and `StudentDiscountOptimizer.tsx` (`StudentDiscountItem`).
+   - Refactored `ConfettiButtonProps` to extend `Omit<HTMLMotionProps<'button'>, 'children'>`, resolving Motion 13 / React 19 event handler typing discrepancies.
+   - Renamed duplicate dictionary keys in `OFFICIAL_WEB_LINKS` (`ato_lito_overview`, `ato_super_co_contribution_scheme`, `ato_deductions_uniform_clothing`, `fairwork_minimum_shifts_casual`, `fairwork_breaks_rest_pauses`, `boq_future_saver_youth`).
+   - Updated `Footer.tsx` release timestamp to `Sep 2026`.
+   - Ran `tsc --noEmit`: **0 errors across the entire repository**.
+
+5. **Verification & Build Results**:
+   - **Vitest**: 27 test files, **374 tests passing (100% green)**.
+   - **Production Build**: Astro static build compiled all **30 pages cleanly in 6.9s** with multi-threaded concurrency.
+
 

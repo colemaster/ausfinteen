@@ -9,10 +9,11 @@ pids
 *.seed
 *.pid.lock
 
-# Dependency directories
+# Dependency and build directories
 node_modules/
 dist/
 dist-ssr/
+.astro/
 *.local
 
 # TypeScript build cache

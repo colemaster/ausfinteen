@@ -15,6 +15,14 @@ export default defineConfig({
   },
   experimental: {
     clientPrerender: true,
+    contentIntellisense: true,
+    incrementalBuild: true,
+  },
+  image: {
+    responsiveStyles: true,
+  },
+  build: {
+    concurrency: 4,
   },
   integrations: [
     react({

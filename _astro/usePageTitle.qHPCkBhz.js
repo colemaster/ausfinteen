@@ -1,0 +1,1 @@
+import{r as e}from"./rolldown-runtime.hePW80VL.js";import{v as t}from"./charts.C18xph8p.js";import{t as n}from"./compiler-runtime.CCdblpPZ.js";var r=n(),i=e(t(),1),a=`AusTeen Money`;function o(e){let t=(0,r.c)(3),n,o;t[0]===e?(n=t[1],o=t[2]):(n=()=>{if(!e){document.title=a;return}document.title=`${e} · ${a}`},o=[e],t[0]=e,t[1]=n,t[2]=o),(0,i.useEffect)(n,o)}export{o as t};

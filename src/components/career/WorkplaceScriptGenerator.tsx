@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { MessageSquare, Copy, Check, Sparkles } from 'lucide-react';
+import { sound } from '@/lib/sound-synthesizer';
 
 export function WorkplaceScriptGenerator() {
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
@@ -53,6 +54,7 @@ export function WorkplaceScriptGenerator() {
 
   const handleCopy = (text: string, index: number) => {
     navigator.clipboard.writeText(text);
+    sound.playClick();
     setCopiedIndex(index);
     setTimeout(() => setCopiedIndex(null), 2500);
   };

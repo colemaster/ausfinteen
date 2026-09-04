@@ -4,6 +4,7 @@ import { MANDY_MODULES } from '@/data/mandy-topics';
 import { Badge } from '@/components/ui/Badge';
 import { BorderBeam } from '@/components/ui/BorderBeam';
 import { InteractiveGridPattern } from '@/components/ui/InteractiveGridPattern';
+import { AmbientLiquidityCanvas } from '@/components/ui/AmbientLiquidityCanvas';
 import { HolographicTiltCard } from '@/components/ui/HolographicTiltCard';
 import { ScenarioSplitterWidget } from '@/components/ui/ScenarioSplitterWidget';
 import {
@@ -478,6 +479,7 @@ export function Landing() {
       <section className="relative rounded-3xl border border-primary/30 bg-gradient-to-br from-primary/25 via-purple-500/15 to-amber-500/25 p-8 sm:p-14 text-center sm:text-left shadow-2xl">
         <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-3xl" aria-hidden="true">
           <InteractiveGridPattern glowSize={500} glowColor="oklch(0.65 0.18 250 / 0.25)" />
+          <AmbientLiquidityCanvas particleCount={20} />
           <div className="absolute inset-0">
             <div className="absolute -top-28 -right-28 w-80 h-80 rounded-full bg-primary/30 blur-3xl" />
             <div className="absolute -bottom-32 -left-20 w-72 h-72 rounded-full bg-amber-500/25 blur-3xl" />

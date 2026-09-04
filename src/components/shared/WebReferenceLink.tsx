@@ -1,7 +1,8 @@
 import { ExternalLink, ShieldCheck } from 'lucide-react';
 import { WebLink } from '@/data/teen-finance-data';
 
-export function WebReferenceLink({ link, className = '' }: { link: WebLink; className?: string }) {
+export function WebReferenceLink({ link, className = '' }: { link?: WebLink; className?: string }) {
+  if (!link || !link.url) return null;
   return (
     <a
       href={link.url}

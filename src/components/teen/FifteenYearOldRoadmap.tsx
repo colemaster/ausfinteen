@@ -3,7 +3,9 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { FIFTEEN_YO_ROADMAP_MILESTONES, OFFICIAL_WEB_LINKS } from '@/data/teen-finance-data';
 import { WebReferenceLink } from '@/components/shared/WebReferenceLink';
-import { CheckCircle2, Circle, Sparkles, Compass } from 'lucide-react';
+import { CheckCircle2, Circle, Sparkles, Compass, PartyPopper } from 'lucide-react';
+import { CelebrationRing } from '@/components/ui/CelebrationRing';
+import { sound } from '@/lib/sound-synthesizer';
 
 export function FifteenYearOldRoadmap() {
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
@@ -20,10 +22,20 @@ export function FifteenYearOldRoadmap() {
   }, []);
 
   const toggleStep = (stepNumber: number) => {
-    const next = completedSteps.includes(stepNumber)
-      ? completedSteps.filter(s => s !== stepNumber)
-      : [...completedSteps, stepNumber];
+    const isNowCompleted = !completedSteps.includes(stepNumber);
+    const next = isNowCompleted
+      ? [...completedSteps, stepNumber]
+      : completedSteps.filter(s => s !== stepNumber);
+
     setCompletedSteps(next);
+
+    if (isNowCompleted) {
+      sound.playClick();
+      if (next.length === FIFTEEN_YO_ROADMAP_MILESTONES.length) {
+        sound.playGoalCelebration();
+      }
+    }
+
     try {
       localStorage.setItem('pft_15yo_roadmap', JSON.stringify(next));
     } catch {
@@ -34,8 +46,8 @@ export function FifteenYearOldRoadmap() {
   const progressPercent = Math.round((completedSteps.length / FIFTEEN_YO_ROADMAP_MILESTONES.length) * 100);
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border pb-4">
+    <div className="space-y-6 select-none">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
             <Compass className="w-5 h-5 text-amber-500" />
@@ -45,19 +57,15 @@ export function FifteenYearOldRoadmap() {
             Your 6 essential financial independence milestones: TFN, High-Interest Banking, Medicare, First Casual Job, Ls Prep, and Student Perks.
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <Badge variant={progressPercent === 100 ? 'success' : 'outline'}>
-            {completedSteps.length} of {FIFTEEN_YO_ROADMAP_MILESTONES.length} Completed ({progressPercent}%)
-          </Badge>
+        <div className="flex items-center gap-3">
+          <CelebrationRing
+            progress={progressPercent}
+            size={76}
+            strokeWidth={6}
+            colorTheme={progressPercent === 100 ? 'emerald' : 'amber'}
+            autoConfetti={true}
+          />
         </div>
-      </div>
-
-      {/* Progress Bar */}
-      <div className="w-full bg-muted rounded-full h-2.5 overflow-hidden">
-        <div
-          className="bg-gradient-to-r from-amber-500 via-primary to-emerald-500 h-2.5 rounded-full transition-all duration-500"
-          style={{ width: `${progressPercent}%` }}
-        />
       </div>
 
       {/* 6 Interactive Milestone Cards */}

@@ -4,9 +4,15 @@ import { Badge } from '@/components/ui/Badge';
 import { OFFICIAL_WEB_LINKS, TEEN_ID_CHECKLIST_15YO } from '@/data/teen-finance-data';
 import { WebReferenceLink } from '@/components/shared/WebReferenceLink';
 import { FileText, CheckCircle2, ChevronDown, Award, HeartPulse, IdCard } from 'lucide-react';
+import { sound } from '@/lib/sound-synthesizer';
 
 export function GovernmentFormsVault() {
   const [openFormId, setOpenFormId] = useState<string>('nat3092');
+
+  const handleToggleForm = (id: string) => {
+    sound.playClick();
+    setOpenFormId(prev => (prev === id ? '' : id));
+  };
 
   return (
     <div className="space-y-6">
@@ -61,8 +67,8 @@ export function GovernmentFormsVault() {
         <div className="rounded-2xl border border-border bg-card overflow-hidden transition-all shadow-xs">
           <button
             type="button"
-            onClick={() => setOpenFormId(openFormId === 'tfn_auspost' ? '' : 'tfn_auspost')}
-            className="w-full p-4 text-left flex items-center justify-between gap-3 focus:outline-none"
+            onClick={() => handleToggleForm('tfn_auspost')}
+            className="w-full p-4 text-left flex items-center justify-between gap-3 focus:outline-none cursor-pointer"
           >
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-xl bg-red-500/10 text-red-500 font-bold text-xs font-mono flex items-center gap-1">
@@ -103,23 +109,23 @@ export function GovernmentFormsVault() {
         <div className="rounded-2xl border border-border bg-card overflow-hidden transition-all shadow-xs">
           <button
             type="button"
-            onClick={() => setOpenFormId(openFormId === 'medicare_ms004' ? '' : 'medicare_ms004')}
-            className="w-full p-4 text-left flex items-center justify-between gap-3 focus:outline-none"
+            onClick={() => handleToggleForm('medicare_ms011')}
+            className="w-full p-4 text-left flex items-center justify-between gap-3 focus:outline-none cursor-pointer"
           >
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-500 font-bold text-xs font-mono flex items-center gap-1">
                 <HeartPulse className="w-4 h-4" />
-                <span>Form MS004</span>
+                <span>Form MS011</span>
               </div>
               <div>
                 <h4 className="font-bold text-sm text-foreground">Services Australia: Getting Your Own Medicare Card at 15</h4>
                 <p className="text-xs text-muted-foreground">Independent doctor appointments & private bulk billing</p>
               </div>
             </div>
-            <ChevronDown className={`w-4 h-4 transition-transform ${openFormId === 'medicare_ms004' ? 'rotate-180 text-primary' : 'text-muted-foreground'}`} />
+            <ChevronDown className={`w-4 h-4 transition-transform ${openFormId === 'medicare_ms011' ? 'rotate-180 text-primary' : 'text-muted-foreground'}`} />
           </button>
 
-          {openFormId === 'medicare_ms004' && (
+          {openFormId === 'medicare_ms011' && (
             <div className="p-4 border-t border-border/50 text-xs space-y-3 leading-relaxed animate-fade-in">
               <p className="text-muted-foreground">
                 In Australia, once you turn 15 you are legally entitled to your own green Medicare card. You can choose to get your own card while staying on your parents’ card (a "copy") or move onto your own card entirely (a "transfer").
@@ -127,10 +133,10 @@ export function GovernmentFormsVault() {
               <div className="p-3 rounded-xl bg-muted/60 space-y-2">
                 <span className="font-bold text-foreground block">How to Claim Your Card:</span>
                 <ul className="list-disc list-inside space-y-1 text-muted-foreground">
-                  <li><strong>Form:</strong> Complete Services Australia Form MS004 (Application to copy or transfer from one Medicare card to another).</li>
+                  <li><strong>Form / Online:</strong> Apply online via myGov under "Get a new card and number", or complete Services Australia Form MS011 (Application to copy or transfer from one Medicare card to another).</li>
                   <li><strong>Identification:</strong> Provide 2 identity documents (Birth Certificate + School ID or Passport).</li>
                   <li><strong>Submit:</strong> Upload via myGov linked to Medicare, post it, or take it to any Services Australia service centre.</li>
-                  <li><strong>Digital Card:</strong> You will get instant access to your digital Medicare card inside the Express Plus Medicare mobile app!</li>
+                  <li><strong>Digital Card:</strong> You will get instant access to your digital Medicare card inside the Express Plus Medicare mobile app & myGov app!</li>
                 </ul>
               </div>
               <div className="flex flex-wrap gap-2 pt-1">
@@ -145,8 +151,8 @@ export function GovernmentFormsVault() {
         <div className="rounded-2xl border border-border bg-card overflow-hidden transition-all shadow-xs">
           <button
             type="button"
-            onClick={() => setOpenFormId(openFormId === 'nat3092' ? '' : 'nat3092')}
-            className="w-full p-4 text-left flex items-center justify-between gap-3 focus:outline-none"
+            onClick={() => handleToggleForm('nat3092')}
+            className="w-full p-4 text-left flex items-center justify-between gap-3 focus:outline-none cursor-pointer"
           >
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-500 font-bold text-xs font-mono">
@@ -186,8 +192,8 @@ export function GovernmentFormsVault() {
         <div className="rounded-2xl border border-border bg-card overflow-hidden transition-all shadow-xs">
           <button
             type="button"
-            onClick={() => setOpenFormId(openFormId === 'nat13080' ? '' : 'nat13080')}
-            className="w-full p-4 text-left flex items-center justify-between gap-3 focus:outline-none"
+            onClick={() => handleToggleForm('nat13080')}
+            className="w-full p-4 text-left flex items-center justify-between gap-3 focus:outline-none cursor-pointer"
           >
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-xl bg-amber-500/10 text-amber-500 font-bold text-xs font-mono">
@@ -226,8 +232,8 @@ export function GovernmentFormsVault() {
         <div className="rounded-2xl border border-border bg-card overflow-hidden transition-all shadow-xs">
           <button
             type="button"
-            onClick={() => setOpenFormId(openFormId === 'fwis' ? '' : 'fwis')}
-            className="w-full p-4 text-left flex items-center justify-between gap-3 focus:outline-none"
+            onClick={() => handleToggleForm('fwis')}
+            className="w-full p-4 text-left flex items-center justify-between gap-3 focus:outline-none cursor-pointer"
           >
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-xl bg-blue-500/10 text-blue-500 font-bold text-xs font-mono">
@@ -257,8 +263,8 @@ export function GovernmentFormsVault() {
         <div className="rounded-2xl border border-border bg-card overflow-hidden transition-all shadow-xs">
           <button
             type="button"
-            onClick={() => setOpenFormId(openFormId === 'ceis' ? '' : 'ceis')}
-            className="w-full p-4 text-left flex items-center justify-between gap-3 focus:outline-none"
+            onClick={() => handleToggleForm('ceis')}
+            className="w-full p-4 text-left flex items-center justify-between gap-3 focus:outline-none cursor-pointer"
           >
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-xl bg-purple-500/10 text-purple-500 font-bold text-xs font-mono">

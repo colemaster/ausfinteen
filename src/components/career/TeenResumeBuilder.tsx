@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/Badge';
 import { FileText, User, Award, ChevronDown, Copy, Check, Printer, Sparkles } from 'lucide-react';
 import { useTeenProfile } from '@/context/TeenProfileContext';
 import { TOP_TEEN_EMPLOYERS_AU } from '@/data/teen-finance-data';
+import { sound } from '@/lib/sound-synthesizer';
 
 interface RolePreset {
   name: string;
@@ -51,6 +52,24 @@ const ROLE_PRESETS: RolePreset[] = [
     availability: 'Saturday & Sunday mornings',
     experience: 'Junior Club Player for 5 Years, Completed Level 1 Junior Referee Course',
     profileSummary: 'Active and confident Year 10 student seeking junior officiating roles. Deep knowledge of game rules, assertive communication, and committed to fair play and player safety.',
+  },
+  {
+    name: 'Babysitting & Childcare Helper',
+    badge: 'Babysitter / Mother’s Helper',
+    schoolYear: 'Year 10',
+    skills: ['Patient & Caring Supervision', 'First Aid / CPR Certified', 'Engaging Activity & Meal Prep'],
+    availability: 'Friday & Saturday evenings, School Holidays',
+    experience: 'Supervised younger siblings/cousins, Certified HLTAID011 First Aid',
+    profileSummary: 'Responsible, patient, and CPR-certified Year 10 student available for local babysitting and after-school helper duties. Punctual, energetic, and highly safety-conscious.',
+  },
+  {
+    name: 'Lawn Care & Yard Maintenance',
+    badge: 'Yard Assistant',
+    schoolYear: 'Year 10',
+    skills: ['Lawn Mowing & Edge Trimming', 'Physical Stamina & Work Ethic', 'Equipment Care & Safety Standards'],
+    availability: 'Weekend mornings and school holiday afternoons',
+    experience: 'Maintained family and neighbor lawns for 2 years, Self-Motivated',
+    profileSummary: 'Reliable and fit Year 10 student offering garden and lawn maintenance services. Hard-working, punctual, respectful of property, and brings high attention to detail.',
   },
 ];
 
@@ -126,6 +145,18 @@ Available upon request (School Teacher & Sports Coach / Coordinator)`;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(getFullResumeText());
+    sound.playSuccess();
+    try {
+      import('canvas-confetti').then((m) => {
+        m.default({
+          particleCount: 40,
+          spread: 60,
+          origin: { y: 0.3 },
+          colors: ['#10b981', '#3b82f6', '#8b5cf6', '#f59e0b'],
+          disableForReducedMotion: true,
+        });
+      });
+    } catch {}
     setCopied(true);
     setTimeout(() => setCopied(false), 2500);
   };

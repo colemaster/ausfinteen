@@ -2,6 +2,7 @@ import React from 'react';
 import { ArrowDownRight, ArrowUpRight, Minus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { AnimatedNumber } from './AnimatedNumber';
+import { Sparkline } from './Sparkline';
 
 type StatColor = 'blue' | 'green' | 'red' | 'purple' | 'cyan' | 'amber';
 type Trend = 'up' | 'down' | 'flat';
@@ -23,32 +24,40 @@ interface StatCardProps {
   trend?: Trend;
   /** Optional percentage delta rendered next to the trend arrow (e.g. 2.5 -> "+2.5%"). */
   delta?: number;
+  /** Optional sparkline trend history array (e.g. [100, 120, 150, 140, 190]) */
+  sparklineData?: number[];
 }
 
-const ACCENTS: Record<StatColor, { gradient: string; value: string }> = {
+const ACCENTS: Record<StatColor, { gradient: string; value: string; stroke: string }> = {
   blue: {
     gradient: 'from-primary/80 via-primary/30 to-transparent',
     value: 'text-primary',
+    stroke: 'var(--primary)',
   },
   green: {
     gradient: 'from-success/80 via-success/30 to-transparent',
     value: 'text-success',
+    stroke: '#10b981',
   },
   red: {
     gradient: 'from-danger/80 via-danger/30 to-transparent',
     value: 'text-danger',
+    stroke: '#ef4444',
   },
   purple: {
     gradient: 'from-violet-500/80 via-violet-500/30 to-transparent',
     value: 'text-violet-500',
+    stroke: '#8b5cf6',
   },
   cyan: {
     gradient: 'from-cyan-500/80 via-cyan-500/30 to-transparent',
     value: 'text-cyan-500',
+    stroke: '#06b6d4',
   },
   amber: {
     gradient: 'from-amber-500/80 via-amber-500/30 to-transparent',
     value: 'text-amber-500',
+    stroke: '#f59e0b',
   },
 };
 
@@ -70,6 +79,7 @@ export const StatCard = React.memo(function StatCard({
   format,
   trend,
   delta,
+  sparklineData,
 }: StatCardProps) {
   const accent = ACCENTS[color];
   const TrendIcon = trend ? TREND_ICON[trend] : null;
@@ -95,7 +105,7 @@ export const StatCard = React.memo(function StatCard({
   return (
     <div
       className={cn(
-        'card-container relative overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md',
+        'card-container relative overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md select-none',
         dense ? 'px-4 py-3' : 'px-5 py-4'
       )}
     >
@@ -119,24 +129,41 @@ export const StatCard = React.memo(function StatCard({
           </span>
         )}
       </div>
-      <div
-        className={cn(
-          'font-bold font-mono tabular-nums tracking-tight',
-          dense ? 'mt-1 text-xl' : 'mt-1.5 text-2xl @sm:text-3xl',
-          accent.value
-        )}
-      >
-        {numericValue !== undefined ? (
-          <AnimatedNumber value={numericValue} format={format} />
-        ) : (
-          value
+
+      <div className="flex items-end justify-between gap-2">
+        <div
+          className={cn(
+            'font-bold font-mono tabular-nums tracking-tight',
+            dense ? 'mt-1 text-xl' : 'mt-1.5 text-2xl @sm:text-3xl',
+            accent.value
+          )}
+        >
+          {numericValue !== undefined ? (
+            <AnimatedNumber value={numericValue} format={format} />
+          ) : (
+            value
+          )}
+        </div>
+
+        {/* Optional Micro-Sparkline */}
+        {sparklineData && sparklineData.length > 1 && (
+          <div className="w-20 sm:w-24 shrink-0 pb-1">
+            <Sparkline
+              data={sparklineData}
+              height={26}
+              strokeColor={accent.stroke}
+              interactive={false}
+            />
+          </div>
         )}
       </div>
+
       {subLine && (
         <div className="mt-1.5 text-xs font-medium text-muted-foreground">
           {subLine}
         </div>
       )}
+
       {targetProgress !== undefined && (
         <div className="mt-2.5">
           <div

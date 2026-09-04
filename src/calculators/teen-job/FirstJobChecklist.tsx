@@ -16,9 +16,9 @@ export interface FirstJobChecklistItem {
 const FIRST_JOB_CHECKLIST: FirstJobChecklistItem[] = [
   { id: 'tfn', title: 'Apply for a Tax File Number (TFN)', detail: 'Free via Australia Post / ATO online — bring your Birth Certificate + Student ID.' },
   { id: 'bank', title: 'Open a fee-free 5.0%+ youth bank account', detail: 'Providing your TFN to the bank stops 47% withholding tax on your savings interest.' },
-  { id: 'medicare', title: 'Claim your own green Medicare card (Age 15+)', detail: 'Submit Services Australia Form MS004 for independent doctor visits and bulk billing.' },
+  { id: 'medicare', title: 'Claim your own green Medicare card (Age 15+)', detail: 'Submit Services Australia Form MS011 / MS004 for independent doctor visits, confidential medical care, and bulk billing.' },
   { id: 'super', title: 'Choose your super fund & complete NAT 13080', detail: 'Staple your super fund so 12.0% SG lands in one account (mandatory when working >30h/wk under 18).' },
-  { id: 'threshold', title: 'Claim the $18,200 tax-free threshold (NAT 3092)', detail: 'Select YES to Question 8 on day one so zero tax is withheld on your first $350/week.' },
+  { id: 'threshold', title: 'Claim the $18,200 tax-free threshold (NAT 3092)', detail: 'Select YES to Question 9 on Form NAT 3092 on day one so zero tax is withheld on your first $350/week.' },
   { id: 'payslip', title: 'Check your first payslip carefully', detail: 'Gross pay, tax withheld, super and award rate must all appear as legal line items.' },
   { id: 'award', title: 'Verify your junior award rate on Fair Work PACT', detail: 'At 15 you earn 40% of adult base ($11.12/hr) + 25% casual loading = $13.90/hr.' },
   { id: 'min_shift', title: 'Enforce the 3-hour minimum shift rule', detail: 'Under Fast Food and Retail Awards, employers MUST pay at least 3 hours per casual shift.' },

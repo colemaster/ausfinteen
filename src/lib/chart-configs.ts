@@ -67,7 +67,7 @@ export const asxTopEtfConfig = {
   ioz: { label: "IOZ", color: "var(--chart-6)" },
   ndq: { label: "NDQ", color: "var(--chart-7)" },
   dace: { label: "DACE", color: "var(--chart-1)" },
-  mgoc: { label: "MGOC", color: "var(--chart-2)" },
+  v1ac: { label: "V1AC", color: "var(--chart-2)" },
   vts: { label: "VTS", color: "var(--chart-3)" },
 } satisfies ChartConfig;
 

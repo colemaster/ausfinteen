@@ -5,9 +5,11 @@
  * From 1 July 2026: second bracket rate reduced from 16% to 15%.
  * From 1 July 2027: second bracket rate reduced from 15% to 14%.
  * Medicare levy low-income thresholds increased 2.9% from 1 July 2025 (retroactive).
+ * MLS income thresholds indexed from 1 July 2026 (single $105k/$123k/$164k).
  * $1,000 standard deduction for work-related expenses introduced from 2026-27 (replaces $300 no-receipt threshold).
  * $20,000 instant asset write-off now permanent for businesses with turnover < $10M (from 1 July 2026).
  * Payday Super: employers must pay super with each pay run from 1 July 2026 (within 7 business days).
+ * Verified against ATO rates pages, 5 Sept 2026.
  */
 
 export interface TaxBracket {
@@ -41,14 +43,14 @@ export const MEDICARE_LEVY_REDUCTION = {
 
 export const MEDICARE_LEVY_SURCHARGE = {
   thresholds: {
-    tier1: 101000,
-    tier2: 118000,
-    tier3: 158000,
+    tier1: 105000,   // 2026-27 indexed (was $101,000 in 2025-26)
+    tier2: 123000,   // 2026-27 indexed (was $118,000 in 2025-26)
+    tier3: 164000,   // 2026-27 indexed (was $158,000 in 2025-26)
   },
   familyThresholds: {
-    tier1: 202000,
-    tier2: 236000,
-    tier3: 316000,
+    tier1: 210000,   // 2026-27 indexed (was $202,000 in 2025-26)
+    tier2: 246000,   // 2026-27 indexed (was $236,000 in 2025-26)
+    tier3: 328000,   // 2026-27 indexed (was $316,000 in 2025-26)
   },
   rates: {
     tier1: 0.010,

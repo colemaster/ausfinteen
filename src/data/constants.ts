@@ -77,7 +77,7 @@ export function getHELPBracket(repaymentIncome: number): HELPThreshold | undefin
 /** $18,200 tax-free threshold for residents — built into TAX_BRACKETS_2026_27 */
 export const TAX_FREE_THRESHOLD = 18200;
 
-/** $1,000 standard deduction for work-related expenses (from 2026-27, replacing $300 no-receipt threshold) */
+/** $1,000 standard deduction for work-related expenses (from 2026-27, replacing $300 no-receipt threshold; legislated via Tax Reform No.1 Act 2026 — auto-applied against labour income, first claimed in 2026-27 return) */
 export const STANDARD_DEDUCTION_2026_27 = 1000;
 
 /** Top marginal rate used when a TFN is NOT provided (or exemption not claimed) */
@@ -93,7 +93,7 @@ export const TAX_DEADLINES_2026_27 = {
   fyEnd: '30 June 2027',
   lodgementDeadline: '31 October 2027',
   agentLodgementDeadline: '15 January 2028 (with lodgement)',
-  instantAssetWriteOffThreshold: 20000, // $20,000 permanent for businesses < $10M turnover
+  instantAssetWriteOffThreshold: 20000, // $20,000 permanent for businesses < $10M turnover (now law via Tax Reform No.2 Act 2026, passed Aug 2026)
   instantAssetWriteOffPermanentFrom: '1 July 2026',
 } as const;
 
@@ -139,5 +139,63 @@ export const PROPERTY_HOLDING_COST_DEFAULTS = {
 export const CURRENT_TAX_YEAR = '2026-27';
 
 // ─── Future Legislation (2027-28) ────────────────────────────────────────────────
-/** $250 Working Australians Tax Offset (WATO) legislated from 2027-28 */
-export const WORKING_AMERICANS_TAX_OFFSET_2027_28 = 250;
+/** $250 Working Australians Tax Offset (WATO) legislated from 2027-28 (non-refundable, labour income > $18,200; first claimed in 2027-28 return) */
+export const WORKING_AUSTRALIANS_TAX_OFFSET_2027_28 = 250;
+
+/** @deprecated Typo alias — use WORKING_AUSTRALIANS_TAX_OFFSET_2027_28 instead */
+export const WORKING_AMERICANS_TAX_OFFSET_2027_28 = WORKING_AUSTRALIANS_TAX_OFFSET_2027_28;
+
+// ─── HELP Loan & Fee Caps 2026 ──────────────────────────────────────────────────
+// Sources: StudyAssist 2026 booklets, Dept of Education indexed rates (1 Jan 2026)
+
+/** HELP borrowing limit 2026: $129,883 general / $186,544 medicine-dentistry-vet-aviation */
+export const HELP_LOAN_LIMIT_2026 = {
+  general: 129883,
+  medicineDentistryVetAviation: 186544,
+} as const;
+
+/** FEE-HELP loan fee for undergraduate non-Table B courses (25% → 20% from 1 Jan 2023; postgrad/Table B exempt) */
+export const FEE_HELP_LOAN_FEE_UNDERGRAD = 0.20;
+
+/** VET Student Loans indexed course caps 2026 (1 Jan 2026) */
+export const VET_STUDENT_LOAN_CAPS_2026 = {
+  band1: 6428,
+  band2: 12858,
+  band3: 19290,
+  specificSchedule2: 96467,
+} as const;
+
+/** 2027 indexed student contribution bands (StudyAssist, published 15 July 2026) */
+export const HECS_BANDS_2027 = {
+  cluster1LawCommerce: 18025,
+  cluster2AlliedHealthEngineeringScience: 9880,
+  cluster1LowBandEducationNursing: 4908,
+  cluster4MedicineDentistryVet: 14046,
+} as const;
+
+// ─── Super Co-contribution 2026-27 ──────────────────────────────────────────────
+// Source: ATO key super rates (max $500 matching for eligible after-tax contributions)
+
+/** Government co-contribution income test 2026-27 ($49,293–$64,293; was $47,488–$62,488 in 2025-26) */
+export const SUPER_CO_CONTRIBUTION_2026_27 = {
+  maxContribution: 500,
+  lowerThreshold: 49293,
+  upperThreshold: 64293,
+} as const;
+
+// ─── RBA Cash Rate (Sept 2026) ──────────────────────────────────────────────────
+// Source: RBA cash rate target decisions (held 11–12 Aug 2026 meeting)
+
+/** RBA cash rate target, 4.35% p.a. (raised Feb/Mar/May 2026 after 3.60% low in Aug 2025) */
+export const RBA_CASH_RATE_SEPT_2026 = 0.0435;
+
+// ─── National Minimum Wage (1 July 2026) ────────────────────────────────────────
+// Source: FWC Annual Wage Review 2026 ([2026] FWCFB 3500, 2 June 2026)
+
+/** NMW $26.44/hr / $1,004.90 per 38-hr week (+~6%); modern awards +4.75% (Retail/Fast Food L1 adult $27.81/hr base, $34.76/hr casual) */
+export const NATIONAL_MINIMUM_WAGE_2026 = {
+  hourly: 26.44,
+  weekly38hr: 1004.90,
+  casualLoading: 0.25,
+  retailFastFoodL1Base: 27.81,
+} as const;

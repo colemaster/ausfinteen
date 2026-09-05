@@ -2,15 +2,15 @@
  * Top 10 Most Popular ASX ETFs — reference data for the Investing & Shares module.
  *
  * Ranking: Funds Under Management (FUM / AUM) as published by the ASX in its monthly
- * Investment Products report and issuer PDS disclosures (August 2026).
+ * Investment Products report and issuer PDS disclosures (September 2026).
  *
  * Sources:
- *  - ASX Investment Products report (August 2026): https://www.asx.com.au
+ *  - ASX Investment Products report (July–August 2026): https://www.asx.com.au
  *  - Morningstar AU / Yahoo Finance AU (annual & trailing returns)
  *  - etfinfo.com.au (MER, AUM, distribution yields, flows)
- *  - Issuer PDSs (Vanguard, Betashares, iShares/BlackRock, VanEck, Dimensional, Magellan)
+ *  - Issuer PDSs (Vanguard, Betashares, iShares/BlackRock, VanEck, Dimensional, Vinva)
  *
- * IMPORTANT: Figures are historical reference data as at August 2026 for education only.
+ * IMPORTANT: Figures are historical reference data as at September 2026 for education only.
  * They are NOT live quotes and NOT financial advice. Past performance is not
  * indicative of future returns. Always verify against the issuer's current PDS.
  *
@@ -47,7 +47,7 @@ export const TOP_10_ASX_ETFS: ASXETF[] = [
     issuer: 'Vanguard',
     tracks: 'S&P/ASX 300 Index (largest ~300 AU-listed companies)',
     mer: 0.07,
-    fum: 26.4,
+    fum: 25.3,
     dividendYield: 3.01,
     payFrequency: 'Quarterly',
     inception: '2009',
@@ -81,7 +81,7 @@ export const TOP_10_ASX_ETFS: ASXETF[] = [
     issuer: 'Vanguard',
     tracks: 'MSCI World ex-Australia (~1,300 companies across 23 countries)',
     mer: 0.18,
-    fum: 17.5,
+    fum: 16.0,
     dividendYield: 1.28,
     payFrequency: 'Quarterly',
     inception: '2014',
@@ -111,7 +111,7 @@ export const TOP_10_ASX_ETFS: ASXETF[] = [
     issuer: 'iShares (BlackRock)',
     tracks: 'S&P 500 Index (500 largest US companies)',
     mer: 0.04,
-    fum: 13.8,
+    fum: 12.8,
     dividendYield: 1.09,
     payFrequency: 'Quarterly',
     inception: '2012',
@@ -146,7 +146,7 @@ export const TOP_10_ASX_ETFS: ASXETF[] = [
     issuer: 'BetaShares',
     tracks: 'Solactive Australia 200 Index (largest 200 AU companies)',
     mer: 0.04,
-    fum: 10.7,
+    fum: 9.6,
     dividendYield: 4.29,
     payFrequency: 'Quarterly',
     inception: '2018',
@@ -177,7 +177,7 @@ export const TOP_10_ASX_ETFS: ASXETF[] = [
     issuer: 'VanEck',
     tracks: 'MSCI World ex-Australia Quality (~300 high-ROE developed-market companies)',
     mer: 0.4,
-    fum: 8.8,
+    fum: 8.3,
     dividendYield: 1.16,
     payFrequency: 'Semi-Annual',
     inception: '2014',
@@ -237,7 +237,7 @@ export const TOP_10_ASX_ETFS: ASXETF[] = [
     issuer: 'BetaShares',
     tracks: 'NASDAQ-100 Index (100 largest US-listed non-financial tech companies)',
     mer: 0.48,
-    fum: 8.6,
+    fum: 8.7,
     dividendYield: 1.5,
     payFrequency: 'Semi-Annual',
     inception: '2015',
@@ -271,7 +271,7 @@ export const TOP_10_ASX_ETFS: ASXETF[] = [
     issuer: 'Dimensional',
     tracks: 'Actively managed — broad ASX portfolio selected by Dimensional analysts',
     mer: 0.28,
-    fum: 7.0,
+    fum: 6.7,
     dividendYield: 3.8,
     payFrequency: 'Semi-Annual',
     inception: '2019',
@@ -295,16 +295,16 @@ export const TOP_10_ASX_ETFS: ASXETF[] = [
       'Dimensional’s actively structured core ETF that tilts systematically toward Australian value, small-cap, and high-profitability factors.',
   },
   {
-    code: 'MGOC',
-    name: 'Magellan Global Fund — Active ETF',
-    issuer: 'Magellan',
-    tracks: 'Actively managed — global equity growth strategy (transitioning to Vinva systematic strategy as V1AC)',
-    mer: 1.35,
-    fum: 6.2,
+    code: 'V1AC',
+    name: 'Vinva Global Alpha Fund — Active ETF (ex-Magellan MGOC)',
+    issuer: 'Vinva',
+    tracks: 'Systematic quantitative global equity alpha strategy (transitioned from Magellan Global Fund MGOC, 5 June 2026)',
+    mer: 0.89,
+    fum: 4.7,
     dividendYield: 2.0,
     payFrequency: 'Annual',
-    inception: '2018',
-    url: 'https://www.magellangroup.com.au',
+    inception: '2026 (strategy transition; predecessor MGOC 2018)',
+    url: 'https://www.asx.com.au/markets/trade-our-cash-market/list-of-etfs',
     annualReturns: {
       '2021': 17.0,
       '2022': -24.0,
@@ -321,7 +321,7 @@ export const TOP_10_ASX_ETFS: ASXETF[] = [
       'Mastercard Inc (4.1%)',
     ],
     description:
-      'Active global equities fund transitioning in 2026 to Vinva’s systematic alpha strategy for disciplined quantitative portfolio management.',
+      'Former Magellan Global Fund converted 5 June 2026 to Vinva’s systematic alpha strategy (0.89% fee, no performance fee). Pre-transition returns belong to the old Magellan strategy — not indicative of Vinva management.',
   },
   {
     code: 'VTS',
@@ -329,7 +329,7 @@ export const TOP_10_ASX_ETFS: ASXETF[] = [
     issuer: 'Vanguard',
     tracks: 'CRSP US Total Market Index (~4,000 US companies across large, mid, small, micro cap)',
     mer: 0.03,
-    fum: 7.1,
+    fum: 6.7,
     dividendYield: 0.92,
     payFrequency: 'Quarterly',
     inception: '2013',
@@ -356,7 +356,7 @@ export const TOP_10_ASX_ETFS: ASXETF[] = [
   },
 ];
 
-export const ASX_ETF_DATA_AS_AT = 'August 2026 (see source notes above)';
+export const ASX_ETF_DATA_AS_AT = 'September 2026 (see source notes above)';
 
 /** Average annual total return of the top-10 index ETFs (VAS + VGS blend ~ 8.5%) */
 export const ASX_ETF_LONG_TERM_AVG_RETURN = 8.5;
@@ -496,9 +496,9 @@ export const BEST_3_ETF_PORTFOLIOS: ETFPortfolioOption[] = [
       { code: 'A200', pct: 40 },
       { code: 'DACE', pct: 25 },
       { code: 'QUAL', pct: 20 },
-      { code: 'MGOC', pct: 15 },
+      { code: 'V1AC', pct: 15 },
     ],
-    note: 'Blends franking-credit heavy AU funds with high-ROE international quality. Approx. 2.9% yield.',
+    note: 'Blends franking-credit heavy AU funds with high-ROE international quality. Approx. 2.9% yield. V1AC (ex-Magellan MGOC) is now a Vinva systematic strategy — pre-June-2026 returns belong to old management.',
   },
 ];
 

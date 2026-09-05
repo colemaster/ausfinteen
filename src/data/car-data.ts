@@ -1,15 +1,15 @@
 /**
  * Cars & Driving — Brisbane, QLD reference data.
  *
- * Sources (2026):
+ * Sources (verified 5 Sept 2026):
  *  - Queensland Government / TMR (licence fees as at 1 July 2026, licence steps, tests, P1/P2 restrictions)
- *  - FuelPrice Australia / RACQ / AIP (Brisbane retail fuel averages, late July 2026)
+ *  - AIP weekly petrol/diesel reports + Brisbane retail charts (Aug 2026), RACQ quarterly fuel reports, ACCC price cycles
  *  - Green Vehicle Guide (typical L/100km & kWh/100km)
- *  - AEMO (residential electricity tariffs) & Electric Vehicle Council (EV charging costs)
+ *  - Ergon/Energex residential tariffs + QCA (EV charging costs)
  *  - Brisbane City Council (parking zones, meter fees, free parking, council car parks)
  *  - Parkhound / Ray White (off-street daily parking averages)
  *
- * All figures are historical reference data as at mid-2026 for education only,
+ * All figures are historical reference data as at Aug–Sept 2026 for education only,
  * NOT live quotes and NOT financial advice. Verify against official sources.
  */
 
@@ -41,7 +41,7 @@ export const QLD_LICENCE_PATH: QldLicenceStep[] = [
     holdTime: '12 months',
     fees: 'HPT $42.70 + practical test $69.40 + P1 licence $94.65 (1 yr)',
     requirements: 'Hold Ls 12 months, finish 100 logbook hours, pass hazard perception test + practical driving test (Q-SAFE).',
-    restrictions: 'Under 25: total phone ban, max 1 peer passenger 11pm–5am, no high-powered vehicles, 0.00 BAC.',
+    restrictions: 'Under 25: total phone ban, max 1 peer passenger 11pm–5am, no high-powered vehicles, 0.00 BAC. No general night-driving curfew (11pm–5am ban only after a demerit suspension).',
   },
   {
     stage: 'Provisional P2 (Green P)',
@@ -69,7 +69,7 @@ export interface QldLicenceFee {
   note: string;
 }
 
-/** QLD licence test & licence fees as at 1 July 2026 (qld.gov.au/transport/licensing/driver-licensing/fees) */
+/** QLD licence test & licence fees as at 1 July 2026 (qld.gov.au/transport/licensing/driver-licensing/fees, ~3.4% indexation; verified 5 Sept 2026) */
 export const QLD_LICENCE_FEES: QldLicenceFee[] = [
   { item: 'PrepL online road rules test', cost: 29.70, note: 'Sit at home / online via TMR — 30 Qs, 90% pass' },
   { item: 'Written road rules (knowledge) test', cost: 29.70, note: 'If not doing PrepL' },
@@ -94,20 +94,20 @@ export interface BrisbaneFuelPrice {
   note: string;
 }
 
-/** Brisbane average retail fuel prices, 2026 (FuelPrice Australia / RACQ / AIP) */
+/** Brisbane average retail fuel prices, Aug–Sept 2026 (AIP weekly reports + Brisbane retail chart; RACQ) */
 export const BRISBANE_FUEL_PRICES: BrisbaneFuelPrice[] = [
-  { fuel: 'E10', pricePerLitre: 1.95, note: 'Cheapest ethanol-blend petrol — suitable for most modern cars' },
-  { fuel: 'Unleaded 91', pricePerLitre: 1.97, note: 'Standard regular unleaded petrol (ULP 91)' },
-  { fuel: 'Premium 95', pricePerLitre: 2.15, note: 'For performance engines requiring 95 RON min' },
-  { fuel: 'Premium 98', pricePerLitre: 2.23, note: 'High-octane premium petrol' },
-  { fuel: 'Diesel', pricePerLitre: 2.39, note: 'Mostly 4WDs, commercial vehicles & diesel hatchbacks' },
+  { fuel: 'E10', pricePerLitre: 1.98, note: 'Cheapest ethanol-blend petrol — ~3–4c below ULP 91' },
+  { fuel: 'Unleaded 91', pricePerLitre: 2.02, note: 'Standard regular unleaded petrol (AIP Brisbane avg w/e 16 Aug 2026: 202.2c/L)' },
+  { fuel: 'Premium 95', pricePerLitre: 2.16, note: 'For performance engines requiring 95 RON min (+12–15c over 91)' },
+  { fuel: 'Premium 98', pricePerLitre: 2.25, note: 'High-octane premium petrol (+20–25c over 91)' },
+  { fuel: 'Diesel', pricePerLitre: 2.53, note: 'Late-Aug 2026 spike (AIP Brisbane avg w/e 30 Aug 2026: 252.8c/L) — normally only +5–15c over ULP' },
   { fuel: 'LPG', pricePerLitre: 1.16, note: 'Rare — requires dedicated LPG dual-fuel conversion' },
 ];
 
-/** Brisbane fuel price cycle: prices swing over ~23 to 28 days (RACQ / AIP) */
+/** Brisbane fuel price cycle: long ~35–45 day "sawtooth" (ACCC 2025 avg 6.5 weeks — longest in Aus; RACQ). Fill up at the trough. */
 export const BRISBANE_PRICE_CYCLE = {
-  days: 23,
-  note: 'Brisbane operates on an extended 23-to-28 day "sawtooth" price cycle. Fill up at the trough or use live fuel apps (FuelRadar, PetrolSpy, RACQ Fair Fuel) to avoid peak pricing.',
+  days: 40,
+  note: 'Brisbane operates on an extended ~35-to-45 day "sawtooth" price cycle (ACCC 2025 average 6.5 weeks — the longest in Australia). Fill up at the trough or use live fuel apps (FuelRadar, PetrolSpy, RACQ Fair Fuel) to avoid peak pricing.',
 };
 
 export interface EvVsPetrolDefaults {
@@ -120,14 +120,14 @@ export interface EvVsPetrolDefaults {
   publicFastSharePct: number; // % of EV charging done at public fast chargers
 }
 
-/** Default 2026 assumptions for the EV vs Petrol comparator */
+/** Default Sept 2026 assumptions for the EV vs Petrol comparator */
 export const EV_VS_PETROL_DEFAULTS: EvVsPetrolDefaults = {
   kmPerYear: 15000,
   petrolLPer100km: 6.5, // typical small hatchback
-  petrolPricePerLitre: 1.97, // Brisbane ULP 91 retail avg
-  evKwhPer100km: 15.5, // typical compact EV (Green Vehicle Guide 2026)
-  homeOffPeakPricePerKwh: 0.32, // QLD residential off-peak electricity tariff ($/kWh)
-  publicFastPricePerKwh: 0.68, // DC public fast charger rate ($/kWh)
+  petrolPricePerLitre: 2.02, // Brisbane ULP 91 retail avg, Aug 2026 (AIP)
+  evKwhPer100km: 16.0, // typical compact EV (Green Vehicle Guide 2026: Atto 3 14.8, Model Y 14.6)
+  homeOffPeakPricePerKwh: 0.30, // flat-tariff equivalent; TOU overnight plans run 7–12c/kWh, standard flat 27–30c
+  publicFastPricePerKwh: 0.65, // DC public fast charger rate ($/kWh; range 40–85c by speed/network)
   publicFastSharePct: 10, // 90% home charging / 10% public fast charging
 };
 
@@ -139,28 +139,28 @@ export interface BrisbaneParkingZone {
   note: string;
 }
 
-/** Brisbane on-street parking zones (Brisbane City Council) */
+/** Brisbane on-street parking zones (Brisbane City Council, meter terms Feb 2026) */
 export const BRISBANE_PARKING_ZONES: BrisbaneParkingZone[] = [
   {
     zone: 'Zone 1',
     area: 'Brisbane CBD',
     weekdayHourly: 6.85,
-    freeAfter7pm: 'Free Sat & Sun all zones; Mon–Fri in 4hr+ meters',
-    note: 'Most expensive, mostly 2-hour limits. Shortest stays.',
+    freeAfter7pm: 'Free Sat & Sun all zones; Mon–Fri only in 4hr+ meters (≤3hr meters paid to midnight)',
+    note: 'Most expensive, mostly 2-hour limits. Weeknights 7pm–midnight $3.70/hr; weekends 7am–7pm $3.70/hr.',
   },
   {
     zone: 'Zone 2',
     area: 'City fringe (Spring Hill, Fortitude Valley, South Bank)',
     weekdayHourly: 4.95,
-    freeAfter7pm: 'Free Sat & Sun; Mon–Fri in 4hr+ meters',
-    note: 'Cheaper than the CBD, still close to the city.',
+    freeAfter7pm: 'Free Sat & Sun; Mon–Fri only in 4hr+ meters',
+    note: 'Cheaper than the CBD, still close to the city. Nights/weekends $3.45/hr in ≤3hr meters.',
   },
   {
     zone: 'Zone 3',
     area: 'Suburbs across Brisbane',
     weekdayHourly: 3.45,
-    freeAfter7pm: 'Free after 7pm all week + Sat/Sun',
-    note: 'Cheapest on-street rates. Great for park-and-ride.',
+    freeAfter7pm: 'Free after 7pm all week (to 10pm) + Sat/Sun',
+    note: 'Cheapest on-street rates. Great for park-and-ride. Check every sign — fines are $90+.',
   },
 ];
 
@@ -175,6 +175,6 @@ export const BRISBANE_FREE_PARKING_TIPS = [
 /** Indicative off-street (car park) daily rates in the Brisbane CBD (Parkhound / Ray White 2026) */
 export const BRISBANE_OFFSTREET_PARKING = {
   dailyMax: '$78–83',
-  note: 'Brisbane CBD now has Australia\'s most expensive daily parking (~$79.83/day average).',
-  councilCarParks: 'King George Square & Wickham Terrace: 15 min free, early bird ~$26–28, night rates ~$10–15.',
+  note: 'Brisbane CBD private operators (Secure, Wilson) charge Australia\'s most expensive drive-up daily parking (~$79.83/day average). Council car parks are far cheaper (max ~$49 to 6pm).',
+  councilCarParks: 'King George Square: early bird $28, max $49 to 6pm ($64 overnight). Wickham Terrace: early bird $26, max $49 ($55 overnight), evenings after 4pm $6 flat, weekends $6 flat. 15 min free in both.',
 };

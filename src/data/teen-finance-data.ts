@@ -112,13 +112,16 @@ export const MINOR_UNEARNED_TAX_RATES = {
 } as const;
 
 /**
- * Centrelink Youth Allowance & Student Assistance Rates (2026-27 indexed, source: Services Australia).
+ * Centrelink Youth Allowance & Student Assistance Rates (Jan 2026 indexation = Sept 2026 current; source: Services Australia).
+ * Student personal income test: $539/fn free, then 50c per $ ($539–$646) and 60c above $646.
+ * Verified 5 Sept 2026.
  */
 export const CENTRELINK_YOUTH_ALLOWANCE_RATES = {
-  singleUnder18AtHome: 456.60,
-  single18PlusAtHome: 549.00,
+  singleUnder18AtHome: 418.90,
+  single18PlusAtHome: 482.40,
   singleAwayFromHome: 677.20,
-  incomeFreeFortnight: 559,
+  incomeFreeFortnight: 539,
+  incomeTaperUpperFortnight: 646,
   taperRateLow: 0.50,
   taperRateHigh: 0.60,
   studentStartUpLoan: 1349,
@@ -167,11 +170,11 @@ export const OFFICIAL_WEB_LINKS: Record<string, WebLink> = {
     description: '100% online TFN application for 15+ year olds with Strong myID strength (Passport + Birth Cert + Face Verification).',
   },
   ato_tfn_nat2717: {
-    title: 'ATO: Paper TFN Application Form for Individuals (NAT 2717)',
-    url: 'https://www.ato.gov.au/forms-and-instructions/tax-file-number-application-or-enquiry-for-an-individual',
+    title: 'ATO: Withholding Declaration (NAT 3093) — Vary Tax Withheld',
+    url: 'https://www.ato.gov.au/forms-and-instructions/withholding-declaration',
     source: 'ATO',
-    formCode: 'NAT 2717',
-    description: 'Official ATO paper application form for applicants unable to use online or Australia Post channels.',
+    formCode: 'NAT 3093',
+    description: 'Official ATO form to vary the rate of tax withheld after lodging your TFN Declaration (NAT 3092) — e.g. stop claiming the tax-free threshold on a second job. Give it to your payer, not the ATO.',
   },
   ato_super_choice_form: {
     title: 'ATO: Superannuation Standard Choice Form (NAT 13080)',
@@ -336,7 +339,7 @@ export const OFFICIAL_WEB_LINKS: Record<string, WebLink> = {
     title: 'Services Australia: Youth Allowance & Student Start-up Loan',
     url: 'https://www.servicesaustralia.gov.au/youth-allowance',
     source: 'Services Australia',
-    description: 'Centrelink independence test, fortnightly income-free area ($559 for students in 2026-27), and student start-up loans.',
+    description: 'Centrelink independence test, fortnightly income-free area ($539 for students in 2026-27, then 50c/$539–$646 and 60c above), and student start-up loans.',
   },
   scamwatch_au: {
     title: 'Scamwatch: Spotting & Reporting Financial Scams',
@@ -922,11 +925,11 @@ export const OFFICIAL_WEB_LINKS: Record<string, WebLink> = {
 
   // --- STATE CHILD EMPLOYMENT REGULATORS & PERMITS ---
   qld_form1_consent: {
-    title: 'Business Queensland: Parent\'s Consent Form for Child Employment (Form 1)',
+    title: 'Business Queensland: Parent\'s Consent Form for Child Employment (approved form)',
     url: 'https://www.business.qld.gov.au/running-business/employing/child-employment/forms',
     source: 'QLD Government',
-    formCode: 'Form 1',
-    description: 'Mandatory Queensland consent form required for workers under 16 documenting capped hours and school hours.',
+    formCode: 'Approved consent form',
+    description: 'Mandatory Queensland consent form (chief-executive approved under Child Employment Act 2006 s10(3)) required for workers under 16, documenting capped hours and school hours.',
   },
   vic_child_employment: {
     title: 'Workforce Inspectorate Victoria: Child Employment Standards',
@@ -1378,7 +1381,7 @@ export const TEEN_CAR_COST_DEFAULTS = {
   ctpGreenSlipAnnual: 418.00,              // QLD CTP Class 1 scheme average ($411.80-$424.80, 2026-27)
   comprehensiveInsuranceUnder25: 1650.00,  // Under-25 young driver comprehensive policy avg ($1,400-$2,000)
   thirdPartyPropertyUnder25: 520.00,       // Third-party property damage only (for low-value cash cars)
-  fuelWeekly: 47.50,                       // ~$45-$55/wk based on ~13,500km/yr at 6.8L/100km @ $1.97/L
+  fuelWeekly: 48.70,                       // ~$46-$56/wk based on ~13,500km/yr at 6.8L/100km @ $2.02/L (Brisbane ULP 91, Aug 2026)
   servicingAnnual: 450.00,                 // Annual logbook minor service + fluid changes
   tiresAndRepairsAnnual: 350.00,           // Tyres ($400-$600 set amortised over 3-4 yrs) + minor repairs
   roadsideAssistanceAnnual: 125.00,        // RACQ Standard Roadside Cover
@@ -1450,6 +1453,15 @@ export const TEEN_SAVINGS_ACCOUNTS = [
     bestFor: 'Big Four bank branch access, cash deposit Smart ATMs, 1.75% base rate',
   },
   {
+    bank: 'Westpac Life (18–29 Spend & Save)',
+    maxRate: 5.75,
+    baseRate: 0.10,
+    conditions: 'Grow balance month-on-month + ≥1 deposit + 20 settled debit purchases per month (up to $150k; otherwise 5.00%/0.10%)',
+    maxAge: 29,
+    minAge: 18,
+    bestFor: 'Top Big Four rate once you turn 18 and can hit the monthly card-spend hurdle',
+  },
+  {
     bank: 'CommBank Youthsaver',
     maxRate: 5.05,
     baseRate: 2.15,
@@ -1460,9 +1472,9 @@ export const TEEN_SAVINGS_ACCOUNTS = [
   },
   {
     bank: 'Up Bank (Savers)',
-    maxRate: 5.00,
-    baseRate: 1.50,
-    conditions: 'Make 5 settled purchases per month using Up debit card or digital wallet (balances up to $50k across all Savers)',
+    maxRate: 5.35,
+    baseRate: 0.00,
+    conditions: 'Make 5 settled card purchases per month and make no withdrawal from that Saver (balances up to $250k combined across Savers; Flow fallback 2.00%)',
     maxAge: 99,
     minAge: 16,
     bestFor: 'Ages 16+ wanting automated round-ups, custom save targets, and gamified app design',
@@ -1510,15 +1522,15 @@ export const AU_STATE_WORKING_HOURS_RULES: StateWorkingHoursRule[] = [
     minAgeGeneral: '13 years (retail, fast food, hospitality)',
     minAgeLightOrDelivery: '11 years (supervised delivery of newspapers & pamphlets)',
     parentConsentMandatory: true,
-    parentConsentDetails: 'Mandatory signed Parent\'s Consent Form (Form 1) required before starting work; must state school hours and be updated if school hours change.',
+    parentConsentDetails: 'Mandatory signed parent\'s consent form (chief-executive approved form under s10(3) — the old "Form 1" number is deprecated) required before starting work; must state school hours and be updated if school hours change.',
     schoolTermMaxHours: 'Max 12 hours per week during school terms',
     schoolDayMaxHours: 'Max 4 hours on a school day',
     nonSchoolDayMaxHours: 'Max 8 hours on a non-school day (weekend)',
     holidayMaxHours: 'Max 38 hours per week in school holidays (max 8 hrs/day)',
     nightWorkRestrictions: 'Strict curfew: No work between 10:00pm and 6:00am',
     mandatoryRestBreaks: '1-hour rest pause after 4 continuous hours; minimum 12-hour break between shifts',
-    rulesFor15YearOlds: 'Under QLD law, 15-year-olds who have not completed Year 10 are classified as "school-aged children" and subject to the 12 hr/week term cap, 4 hr school-day limit, Form 1 parental consent, and 10pm curfew.',
-    keyRule: 'School attendance is compulsory; employers cannot roster students during school hours. Form 1 parental consent is legally mandatory for all workers under 16.',
+    rulesFor15YearOlds: 'Under QLD law, 15-year-olds who have not completed Year 10 are classified as "school-aged children" and subject to the 12 hr/week term cap, 4 hr school-day limit, approved parent consent form, and 10pm curfew.',
+    keyRule: 'School attendance is compulsory; employers cannot roster students during school hours. The approved parent\'s consent form is legally mandatory for all workers under 16.',
   },
   {
     state: 'Victoria (VIC)',

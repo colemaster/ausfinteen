@@ -22,9 +22,9 @@ export interface BudgetItem {
   note: string;
 }
 
-/** Typical weekly living costs for a student / young adult in Brisbane (sharehouse) */
+/** Typical weekly living costs for a student / young adult in Brisbane (sharehouse) — Sept 2026 */
 export const BRISBANE_WEEKLY_BUDGET: BudgetItem[] = [
-  { category: 'Rent (sharehouse room)', emoji: '🏠', weekly: 280, note: 'Median shared room within 5km of CBD ≈ $286/wk (2026)' },
+  { category: 'Rent (sharehouse room)', emoji: '🏠', weekly: 250, note: 'Median shared room inner Brisbane $235–$260/wk (2026, RTA bond medians; range $180 Kelvin Grove – $350 New Farm)' },
   { category: 'Groceries & food', emoji: '🛒', weekly: 100, note: 'Aldi/Woolies deals; West End & Rocklea markets' },
   { category: 'Public transport (50c Translink fares)', emoji: '🚌', weekly: 5, note: 'Queensland permanent 50-cent flat fare across all SE QLD trains, buses & ferries ≈ $5/wk' },
   { category: 'Phone + internet', emoji: '📱', weekly: 15, note: 'Budget SIM plans from $15/mo' },
@@ -196,8 +196,8 @@ export const DETAILED_BRISBANE_UNIS: DetailedBrisbaneUni[] = [
     code: 'UQ',
     name: 'University of Queensland',
     tagline: "Australia's Top Go8 Research & Medical Powerhouse",
-    worldRankQS: '#40 World (QS 2026/2027)',
-    ausRank: '#5 in Australia',
+    worldRankQS: '#40 World (QS 2027)',
+    ausRank: '#6 in Australia',
     logoEmoji: '🏰',
     url: 'https://study.uq.edu.au',
     campuses: [
@@ -206,9 +206,9 @@ export const DETAILED_BRISBANE_UNIS: DetailedBrisbaneUni[] = [
       { name: 'Gatton', location: 'Gatton (Lockyer Valley, 1hr West)', transitTip: 'UQ Inter-campus shuttle bus' },
     ],
     enrollments: {
-      total: 55400,
-      undergrad: 37500,
-      postgrad: 17900,
+      total: 57143, // 2024 Annual Report record (50,745 St Lucia; provisional ~60,173 in 2025 stats)
+      undergrad: 38900,
+      postgrad: 18243,
       domesticPct: 68,
       internationalPct: 32,
       femalePct: 54,
@@ -278,8 +278,8 @@ export const DETAILED_BRISBANE_UNIS: DetailedBrisbaneUni[] = [
     code: 'QUT',
     name: 'Queensland University of Technology',
     tagline: 'The University for the Real World — Inner-City Tech & Industry Hub',
-    worldRankQS: '#189 World (QS 2026/2027)',
-    ausRank: '#12 in Australia',
+    worldRankQS: '#240 World (QS 2027)',
+    ausRank: '#16 in Australia',
     logoEmoji: '🚀',
     url: 'https://www.qut.edu.au/study',
     campuses: [
@@ -359,8 +359,8 @@ export const DETAILED_BRISBANE_UNIS: DetailedBrisbaneUni[] = [
     code: 'GRIFFITH',
     name: 'Griffith University',
     tagline: 'Practical, Innovative & Health-Focused University of SEQ',
-    worldRankQS: '#243 World (QS 2026/2027)',
-    ausRank: '#16 in Australia',
+    worldRankQS: '#230 World (QS 2027)',
+    ausRank: '#15 in Australia',
     logoEmoji: '🌿',
     url: 'https://www.griffith.edu.au/study',
     campuses: [
@@ -369,9 +369,9 @@ export const DETAILED_BRISBANE_UNIS: DetailedBrisbaneUni[] = [
       { name: 'Gold Coast & Logan', location: 'South Coast Health & Knowledge Precinct', transitTip: 'G:link Light Rail direct to Gold Coast campus' },
     ],
     enrollments: {
-      total: 49800,
-      undergrad: 38100,
-      postgrad: 11700,
+      total: 44807, // 2024 Facts & Figures (down from 49,819 in 2020)
+      undergrad: 34107,
+      postgrad: 10700,
       domesticPct: 76,
       internationalPct: 24,
       femalePct: 57,
@@ -441,7 +441,7 @@ export const DETAILED_BRISBANE_UNIS: DetailedBrisbaneUni[] = [
     code: 'UniSC',
     name: 'University of the Sunshine Coast (Moreton Bay)',
     tagline: 'Fastest-Growing High-Tech Campus Hub in North Brisbane',
-    worldRankQS: 'Top 2% Globally (#1 QLD for Student Experience)',
+    worldRankQS: 'Outside QS top-1000 (1001–1200 band)',
     ausRank: '#1 in QLD for Overall Experience (QILT)',
     logoEmoji: '☀️',
     url: 'https://www.usc.edu.au/study',
@@ -450,9 +450,9 @@ export const DETAILED_BRISBANE_UNIS: DetailedBrisbaneUni[] = [
       { name: 'Sunshine Coast', location: 'Sippy Downs (Sunshine Coast)', transitTip: 'Direct highway/bus connection' },
     ],
     enrollments: {
-      total: 18500,
-      undergrad: 15200,
-      postgrad: 3300,
+      total: 20782, // Key Statistics Feb 2026 cut (Sunshine Coast 11,104; Moreton Bay 5,905)
+      undergrad: 16800,
+      postgrad: 3982,
       domesticPct: 89,
       internationalPct: 11,
       femalePct: 61,
@@ -609,9 +609,9 @@ export const DETAILED_BRISBANE_UNIS: DetailedBrisbaneUni[] = [
       { name: 'Banyo', location: 'Banyo (12km North of Brisbane CBD)', transitTip: 'Direct shuttle bus from Toombul & Earnshaw Train Station' },
     ],
     enrollments: {
-      total: 33500,
-      undergrad: 26800,
-      postgrad: 6700,
+      total: 34983, // 2024 Annual Report national (26,356 undergrad incl. 29,165 domestic)
+      undergrad: 26356,
+      postgrad: 8627,
       domesticPct: 88,
       internationalPct: 12,
       femalePct: 71,
@@ -690,8 +690,8 @@ export const DETAILED_BRISBANE_UNIS: DetailedBrisbaneUni[] = [
       { name: 'Mt Gravatt & Acacia Ridge', location: 'Acacia Ridge (Trades & Automotive)', transitTip: 'Direct bus connection' },
     ],
     enrollments: {
-      total: 120000,
-      undergrad: 110000,
+      total: 139000, // 2024-25 Annual Report (420 programs, 60+ locations, 29,700 apprentices/trainees)
+      undergrad: 129000,
       postgrad: 10000,
       domesticPct: 93,
       internationalPct: 7,
@@ -769,8 +769,43 @@ export const HECS_BANDS_2026 = [
   { band: 'Cluster 4c — Medicine, dentistry, veterinary science', fee: 13558, label: '≈ $13,558/yr' },
 ];
 
-/** Student Services & Amenities Fee (SSAF) cap for 2026 (Dept of Education — $373 max, $279.75 part-time) */
+/** Student Services & Amenities Fee (SSAF) cap for 2026 (Dept of Education — $373 max, $279.75 part-time; was $365 in 2025, $386 in 2027) */
 export const SSAF_CAP_2026 = 373;
+
+/**
+ * QILT national graduate benchmarks — GOS 2025 & GOS-L 2025 (published 2026, Social Research Centre for Dept of Education).
+ * GOS 2025: undergrad full-time employment 75.4% (4–6 months after completion), median full-time salary $77,000
+ * (postgrad coursework $104,700). GOS-L 2025 (2022 grads re-surveyed): 79.5% → 91.7% full-time after 3 yrs,
+ * median salary $69,000 → $91,000 (+31.9%). NOTE: 2025 labour-force definition changed — employment rates
+ * are NOT directly comparable to 2024. Per-uni figures in DETAILED_BRISBANE_UNIS come from ComparED 3-year
+ * pooled releases — use https://www.compared.edu.au for live by-uni filters.
+ */
+export const QILT_NATIONAL_2025 = {
+  undergradFullTimeEmploymentPct: 75.4,
+  undergradMedianSalary: 77000,
+  postgradCourseworkMedianSalary: 104700,
+  threeYearFullTimeEmploymentPct: 91.7,
+  threeYearMedianSalary: 91000,
+  source: 'QILT Graduate Outcomes Survey 2025 & GOS-L 2025 (published 2026)',
+} as const;
+
+/**
+ * QTAC application fees for 2027 admissions incl. GST (qtac.edu.au/fees, verified 5 Sept 2026).
+ * Current Year 12 students: $75 (4 Aug–30 Sep 2026) / $159 (1 Oct 2026–28 Feb 2027) / $128 (1 Mar–Jul 2027).
+ * All other applicants: $128 / $165 / $128 in the same windows. First 3 preference saves free, then a fee applies.
+ * ATAR release 9am Fri 18 Dec 2026; major offer rounds Wed 23 Dec 2026 & Thu 14 Jan 2027.
+ */
+export const QTAC_FEES_2027 = {
+  year12Early: 75,
+  year12Standard: 159,
+  year12Late: 128,
+  otherEarly: 128,
+  otherStandard: 165,
+  otherLate: 128,
+  atarRelease: '9am Fri 18 Dec 2026',
+  majorOfferRound1: 'Wed 23 Dec 2026',
+  majorOfferRound2: 'Thu 14 Jan 2027',
+} as const;
 
 /** Median weekly rents by Brisbane suburb (early 2026) */
 export interface SuburbRent {
@@ -782,22 +817,23 @@ export interface SuburbRent {
 }
 
 export const BRISBANE_SUBURBS: SuburbRent[] = [
-  { suburb: 'St Lucia', sharedWeekly: '$350–500', unitWeekly: '$550+', commute: 'Bus/ferry 15 min', vibe: 'UQ student hub' },
-  { suburb: 'Toowong', sharedWeekly: '$280–400', unitWeekly: '$480–620', commute: 'Train 10 min', vibe: 'Convenient, safe' },
-  { suburb: 'South Bank / West End', sharedWeekly: '$380–520', unitWeekly: '$650–700', commute: 'Walk/bus 10 min', vibe: 'Trendy, riverside' },
-  { suburb: 'Fortitude Valley', sharedWeekly: '$400–600', unitWeekly: '$600+', commute: 'Train 5 min', vibe: 'Nightlife district' },
-  { suburb: 'Indooroopilly', sharedWeekly: '$280–400', unitWeekly: '$470–580', commute: 'Train 20 min', vibe: 'Affordable, family-friendly' },
-  { suburb: 'Chermside', sharedWeekly: '$250–350', unitWeekly: '$420–520', commute: 'Bus 30 min', vibe: 'Suburban value' },
-  { suburb: 'Kelvin Grove', sharedWeekly: '$330–450', unitWeekly: '$520+', commute: 'Bus 15 min', vibe: 'QUT creative campus' },
-  { suburb: 'Annerley', sharedWeekly: '$240–350', unitWeekly: '$430–520', commute: 'Bus 25 min', vibe: 'Budget south-side option' },
+  { suburb: 'St Lucia', sharedWeekly: '$350–500', unitWeekly: '$550+', commute: 'Bus/ferry 15 min', vibe: 'UQ student hub (UQ premium; catered colleges $509–777/wk)' },
+  { suburb: 'Toowong', sharedWeekly: '$280–400', unitWeekly: '$500 (~$780 house)', commute: 'Train 10 min', vibe: 'Convenient, safe' },
+  { suburb: 'South Bank / West End', sharedWeekly: '$380–520', unitWeekly: '$520 (~$820 house)', commute: 'Walk/bus 10 min', vibe: 'Trendy, riverside' },
+  { suburb: 'Fortitude Valley', sharedWeekly: '$400–600', unitWeekly: '$510 (~$780 house)', commute: 'Train 5 min', vibe: 'Nightlife district' },
+  { suburb: 'New Farm', sharedWeekly: '$400–600', unitWeekly: '$560 (~$900 house)', commute: 'Ferry/bus 10 min', vibe: 'Riverside premium' },
+  { suburb: 'Indooroopilly', sharedWeekly: '$280–400', unitWeekly: '$480–520', commute: 'Train 20 min', vibe: 'Affordable, family-friendly' },
+  { suburb: 'Chermside', sharedWeekly: '$250–350', unitWeekly: '$440', commute: 'Bus 30 min', vibe: 'Suburban value' },
+  { suburb: 'Kelvin Grove', sharedWeekly: '$330–450', unitWeekly: '$450–500', commute: 'Bus 15 min', vibe: 'QUT creative campus (rooms from ~$180)' },
+  { suburb: 'Annerley', sharedWeekly: '$240–350', unitWeekly: '$450–480', commute: 'Bus 25 min', vibe: 'Budget south-side option' },
 ];
 
-/** QLD first home buyer help (2026) */
+/** QLD first home buyer help (Sept 2026 — verify with QRO/Housing Australia before exchange) */
 export const QLD_FIRST_HOME_HELP = [
-  { name: 'First Home Owner Grant', amount: '$30,000', note: 'New homes under $750,000 (contracts from 1 July 2026)' },
-  { name: 'First Home Transfer Duty Concession', amount: 'Up to 100% off', note: 'Full or partial stamp duty reduction on your first home' },
-  { name: 'Boost to Buy shared equity', amount: 'Gov up to 30%', note: '2% deposit; government co-invests on new homes' },
-  { name: 'First Home Guarantee', amount: '5% deposit', note: 'Federal scheme — no LMI with just 5% down' },
+  { name: 'First Home Owner Grant', amount: '$30,000', note: 'New homes under $750,000 (contracts from 20 Nov 2023; extended in 2026-27 Budget, ongoing from 1 July 2026)' },
+  { name: 'First Home Transfer Duty Concession', amount: 'Up to 100% off', note: 'Nil duty on established homes ≤$700k, sliding scale to $800k (saves up to $24,525); NEW homes get FULL relief with NO cap from 1 May 2025' },
+  { name: 'Boost to Buy shared equity', amount: 'Gov up to 30%', note: '2% genuine-savings deposit; government co-invests (new ≤$1m). Round 2 open but SEQ allocations exhausted — regional places remain' },
+  { name: '5% Deposit Scheme (federal)', amount: '5% deposit', note: 'From 1 Oct 2025: no income caps, no place caps — all first buyers via participating lenders, no LMI' },
 ];
 
 /** QLD teen-specific state rules */
@@ -870,7 +906,7 @@ export const QLD_UNIVERSITIES: University[] = [
     abbreviation: 'UQ',
     qsWorld2027: 40,
     qsNational2027: 6,
-    timesWorld2026: 77,
+    timesWorld2026: 80,
     mainCampus: 'St Lucia',
     campuses: ['St Lucia', 'Gatton', 'Herston', 'Ponce (UQ Downtown)'],
     typicalATAR: '80–90',
@@ -878,7 +914,7 @@ export const QLD_UNIVERSITIES: University[] = [
     domesticUndergradFees: 'CSP $4,738–$17,399/yr + SSAF $373',
     cspBands: { band1: 4738, band2: 9537, band3: 13558, band4: 17399 },
     ssaf2026: 373,
-    notable: 'Group of Eight. QS 40= world (up 2 from 42 in 2026), THE 77–79. Strong in medicine, agriculture, mining, business. St Lucia riverside campus.',
+    notable: 'Group of Eight. QS =40 world (up 2 from =42 in 2026), THE =80 (2026 rankings). Strong in medicine, agriculture, mining, business. St Lucia riverside campus.',
     website: 'https://www.uq.edu.au',
   },
   {
@@ -916,8 +952,8 @@ export const QLD_UNIVERSITIES: University[] = [
   {
     name: 'University of the Sunshine Coast',
     abbreviation: 'UniSC',
-    qsWorld2027: 851,
-    qsNational2027: 32,
+    qsWorld2027: undefined, // Outside QS top-1000 published table (1001–1200 band) — do not rank numerically
+    qsNational2027: undefined,
     timesWorld2026: 601,
     mainCampus: 'Sippy Downs',
     campuses: ['Sippy Downs', 'Sunshine Coast Health (Birtinya)', 'Moreton Bay', 'Fraser Coast', 'Gympie'],
@@ -926,7 +962,7 @@ export const QLD_UNIVERSITIES: University[] = [
     domesticUndergradFees: 'CSP $4,738–$17,399/yr + SSAF $373',
     cspBands: { band1: 4738, band2: 9537, band3: 13558, band4: 17399 },
     ssaf2026: 373,
-    notable: 'QS 851–900 (2027). THE 501–600. Fast-growing regional. Strong in nursing, education, sport science. Moreton Bay campus now open (2020).',
+    notable: 'Fast-growing regional (20,782 students, 2025). THE 501–600. #1 in QLD for student experience (QILT SES). Strong in nursing, education, sport science. Moreton Bay campus at Petrie station.',
     website: 'https://www.usc.edu.au',
   },
   {
@@ -968,7 +1004,7 @@ export const QLD_UNIVERSITIES: University[] = [
     qsNational2027: 25,
     timesWorld2026: 501,
     mainCampus: 'Rockhampton',
-    campuses: ['Rockhampton', 'Brisbane (King St)', 'Bundaberg', 'Cairns', 'Gladstone', 'Mackay', 'Melbourne', 'Sydney', 'Perth'],
+    campuses: ['Brisbane City — 160 Ann St, 4000 (9 floors, near Central station)', 'Rockhampton', 'Bundaberg', 'Cairns', 'Gladstone', 'Mackay', 'Melbourne', 'Sydney', 'Perth'],
     typicalATAR: '60–75 (plus extensive VET-to-degree pathways)',
     competitiveATAR: 'Engineering 70 / Nursing 70 / Education 70',
     domesticUndergradFees: 'CSP $4,738–$17,399/yr + SSAF $373',
@@ -984,7 +1020,7 @@ export const QLD_UNIVERSITIES: University[] = [
     qsNational2027: 26,
     timesWorld2026: 351,
     mainCampus: 'Townsville (Bebegu Yumba)',
-    campuses: ['Townsville', 'Cairns (Nguma-bada)', 'Brisbane (Exchange)', 'Mackay', 'Mount Isa'],
+    campuses: ['Brisbane — 349 Queen St, 4000 (JCUB, with Russo Higher Education)', 'Townsville', 'Cairns (Nguma-bada)', 'Mackay', 'Mount Isa'],
     typicalATAR: '60–80',
     competitiveATAR: 'Medicine 84.15 lowest / 97.90 median (rural-access) / Dentistry 95+ / Marine Biology 70',
     domesticUndergradFees: 'CSP $4,738–$17,399/yr + SSAF $373',
@@ -1000,7 +1036,7 @@ export const QLD_UNIVERSITIES: University[] = [
     qsNational2027: 28,
     timesWorld2026: 401,
     mainCampus: 'Robina (Gold Coast)',
-    campuses: ['Robina (Gold Coast)'],
+    campuses: ['Robina (Gold Coast)', 'Brisbane teaching — 433 Boundary St, Spring Hill + L26, 240 Queen St (Executive Ed hub)'],
     typicalATAR: 'No ATAR threshold — psychometric + interview (competitive ~95+ for Medicine)',
     competitiveATAR: 'Law ~85+ / Medicine (full-fee, UCAT + interview, competitive 96+)',
     domesticUndergradFees: 'Full-fee private: ~$50k–$75k/yr (accelerated 2-yr bachelor; no CSP)',
@@ -1016,7 +1052,7 @@ export const QLD_UNIVERSITIES: University[] = [
     qsNational2027: undefined,
     timesWorld2026: undefined,
     mainCampus: 'Fortitude Valley (Brisbane CBD)',
-    campuses: ['Fortitude Valley', 'Sydney', 'Melbourne', 'Gold Coast', 'Adelaide', 'Perth', 'Brisbane'],
+    campuses: ['West End — cnr Jane St & Riverside Dr, 4101 (4-storey creative hub)', 'Sydney', 'Melbourne', 'Gold Coast', 'Adelaide', 'Perth'],
     typicalATAR: 'No ATAR required — portfolio/interview entry',
     competitiveATAR: 'N/A — creative industry focus',
     domesticUndergradFees: 'Full-fee private: ~$30k–$50k/yr (Bachelor of Film, Audio, Design, Games)',
@@ -1032,7 +1068,7 @@ export const QLD_UNIVERSITIES: University[] = [
     qsNational2027: undefined,
     timesWorld2026: undefined,
     mainCampus: 'Fortitude Valley (Brisbane CBD)',
-    campuses: ['Fortitude Valley (Brisbane)', 'Sydney', 'Melbourne', 'Adelaide', 'Gold Coast'],
+    campuses: ['Fortitude Valley — 90 Bowen Tce, 4006 (Business/Health/Design)', 'Sydney', 'Melbourne', 'Adelaide', 'Gold Coast'],
     typicalATAR: 'No ATAR required — application/interview entry',
     competitiveATAR: 'N/A — industry-focused degrees',
     domesticUndergradFees: 'Full-fee private: ~$25k–$45k/yr',
@@ -1048,7 +1084,7 @@ export const QLD_UNIVERSITIES: University[] = [
     qsNational2027: undefined,
     timesWorld2026: undefined,
     mainCampus: 'Brisbane CBD',
-    campuses: ['Brisbane', 'Sydney', 'Melbourne'],
+    campuses: ['South Brisbane — 75 Grey St, 4101 (South Bank arts precinct; new 8-floor building at 69 Grey St)', 'Sydney', 'Melbourne'],
     typicalATAR: 'No ATAR required — application entry',
     competitiveATAR: 'N/A — creative arts & entertainment focus',
     domesticUndergradFees: 'Full-fee private: ~$25k–$40k/yr',
@@ -1072,7 +1108,7 @@ export interface QCEInfo {
 export const QLD_YEAR12_OVERVIEW: QCEInfo[] = [
   {
     title: 'QCE (Queensland Certificate of Education)',
-    detail: 'Awarded when you achieve at least 20 credits (12 credits must be from completed Core courses) and meet literacy/numeracy requirements. Learning account must be opened while enrolled at a QLD school; at least one Core credit completed while enrolled. Replaced the OP system in 2020. From Aug 2026 all QCE graduates must complete the 1-hour QCAA Academic Integrity Course via the myQCE Portal.',
+    detail: 'Awarded when you achieve at least 20 credits (12 credits must be from completed Core courses) and meet literacy/numeracy requirements. Learning account must be opened while enrolled at a QLD school; at least one Core credit completed while enrolled. Replaced the OP system in 2020. From Aug 2026 all QCE graduates must complete the 1-hour QCAA Academic Integrity Course via the myQCE Portal (exempt if you finished/scheduled to finish Year 12 before Aug 2026).',
   },
   {
     title: 'ATAR (Australian Tertiary Admission Rank)',
@@ -1088,7 +1124,7 @@ export const QLD_YEAR12_OVERVIEW: QCEInfo[] = [
   },
   {
     title: 'Key dates 2026–27',
-    detail: 'QTAC applications open 4 Aug 2026. ATAR released 18 Dec 2026 at 12pm (register via QTAC ATAR Portal). Change-of-preference 19–20 Dec 2026. Major Year 12 offers 23 Dec 2026; further rounds 14/21/28 Jan & 4/11 Feb 2027 (weekly Thu rounds from 6 Aug 2026). Y12 Early Offers 4 Sep / 16 Oct / 20 Nov 2026 (VET/Head Start).',
+    detail: 'QTAC applications open 4 Aug 2026 (2027 intake; $75 early-bird to 30 Sep, then $159). ATAR released 18 Dec 2026 at 9am (register via QTAC ATAR Portal). Change-of-preference 21 Dec 2026 (Dec round) / 7 Jan 2027 (Jan major). Major Year 12 offers 23 Dec 2026 & 14 Jan 2027; further rounds 21/28 Jan & 4/11 Feb 2027. Y12 Early Offers 4 Sep / 16 Oct / 20 Nov 2026 (VET/Head Start). SEE exams 12 Oct–18 Nov 2026.',
   },
   {
     title: 'Literacy & numeracy',
@@ -1096,7 +1132,7 @@ export const QLD_YEAR12_OVERVIEW: QCEInfo[] = [
   },
 ];
 
-/** Indicative 2026 ATAR cut-offs for popular QLD courses (QTAC, indicative only) */
+/** Indicative 2026 ATAR cut-offs for popular QLD courses (QTAC Jan 2026 offer data: lowest = lowest rank offered, excl = raw ATAR / incl = selection rank with adjustments; median = median offer. Indicative only) */
 export interface ATARCutoff {
   course: string;
   provider: string;
@@ -1104,46 +1140,54 @@ export interface ATARCutoff {
 }
 
 export const QLD_ATAR_CUTOFFS_2026: ATARCutoff[] = [
-  { course: 'Medicine (provisional entry)', provider: 'UQ', atar: '95.00 adjusted + UCAT/MMI (competitive 99.00+ lowest 2290 UCAT non-rural)' },
-  { course: 'Dentistry', provider: 'UQ', atar: '98.00+ (Honours, very high demand)' },
-  { course: 'Laws (Honours)', provider: 'UQ', atar: '97.50 (Honours); Law Admission Scheme can assist' },
-  { course: 'Engineering (Honours)', provider: 'UQ', atar: '84.00' },
-  { course: 'Commerce / Business Management', provider: 'UQ', atar: '84.00 (Business Management 74 adjusted)' },
-  { course: 'Nursing', provider: 'UQ', atar: '83.00 threshold; median 88.35 (lowest 78.40 incl. adj)' },
-  { course: 'Science', provider: 'UQ', atar: '78.00' },
-  { course: 'Nursing', provider: 'QUT', atar: '74.00 threshold / 80.00 guarantee; median 82.30 incl. adj' },
-  { course: 'Laws (Honours)', provider: 'QUT', atar: '84.00 threshold / 87.00 guarantee' },
-  { course: 'Engineering (Honours)', provider: 'QUT', atar: '82.00 (median 87.90 incl. adj; lowest 82.00)' },
-  { course: 'Information Technology', provider: 'QUT', atar: '70–75.00' },
-  { course: 'Medical Imaging (Honours)', provider: 'QUT', atar: '96.00' },
-  { course: 'Nursing', provider: 'Griffith', atar: '72.00 threshold; median 80.70 incl. adj (Shanghai #1 for nursing)' },
-  { course: 'Engineering/Business (Honours)', provider: 'Griffith', atar: '75.25 incl. adj (median 81.15; lowest 67.25 raw)' },
-  { course: 'Physiotherapy (Honours)', provider: 'Griffith', atar: '94.00 (median 97.10)' },
-  { course: 'Medicine', provider: 'Griffith (Gold Coast/Brisbane South)', atar: '99.90 (99.80–99.90 range, UCAT tie-breaker)' },
-  { course: 'Biomedical Science (MD Pathway)', provider: 'Griffith', atar: '82.00' },
-  { course: 'Nursing', provider: 'ACU (Brisbane)', atar: '65.00 incl. adj (median 78.95; lowest 56.75 raw)' },
-  { course: 'Education (Primary)', provider: 'ACU (Brisbane)', atar: '70.00' },
-  { course: 'Medicine', provider: 'JCU (Townsville/Cairns)', atar: '84.15 lowest / 97.90 median (rural-access focus, interview + written app)' },
+  { course: 'Medicine (provisional, non-bonded)', provider: 'UQ', atar: 'Lowest 95.00 excl / 98.10 incl; median 99.65 / 99.95 + UCAT (1960 rural / 2290 non-rural invite) + MMI' },
+  { course: 'Medicine (provisional, bonded)', provider: 'UQ', atar: 'Lowest 93.25 excl / 97.25 incl; median 99.20 / 99.95 + UCAT + MMI' },
+  { course: 'Dentistry (Honours)', provider: 'UQ', atar: 'Lowest 95.70 excl / 99.00 incl; median 99.30 / 99.95' },
+  { course: 'Laws (Honours)', provider: 'UQ', atar: 'Lowest 93.95 excl / 97.60 incl; median 97.70 / 99.80' },
+  { course: 'Commerce / Laws (Honours dual)', provider: 'UQ', atar: 'Lowest 92.55 excl / 97.55 incl; median 97.80 / 99.30' },
+  { course: 'Engineering (Honours)', provider: 'UQ', atar: 'Lowest 79.45 excl / 84.00 incl; median 92.10 / 94.10' },
+  { course: 'Engineering / Commerce (dual)', provider: 'UQ', atar: 'Lowest 82.00 excl / 84.00 incl; median 94.00 / 95.90' },
+  { course: 'Commerce / Science (dual)', provider: 'UQ', atar: 'Lowest 85.70 excl / 85.70 incl; median 93.25 / 94.25' },
+  { course: 'Commerce / Business Management', provider: 'UQ', atar: '84.00 (Business Management 74 adjusted); UQ ATAR Guarantee pathways apply' },
+  { course: 'Nursing', provider: 'UQ', atar: 'Lowest 78.40 excl / 83.10 incl; median 88.35 / 89.95' },
+  { course: 'Nursing / Midwifery (dual)', provider: 'UQ', atar: 'Lowest 89.00 excl / 93.00 incl; median 94.30 / 96.50' },
+  { course: 'Science', provider: 'UQ', atar: 'Lowest 75.40 excl / 80.00 incl; median 90.80 / 91.70' },
+  { course: 'Nursing', provider: 'QUT', atar: 'Lowest 67.70 excl / 75.00 incl (threshold 74–75); median 79.85 / 82.30' },
+  { course: 'Laws (Honours)', provider: 'QUT', atar: 'Lowest 76.85 excl / ~84–85 incl (threshold 85.00); median 87.90 / 91.20' },
+  { course: 'Business / Laws (Honours dual)', provider: 'QUT', atar: 'Lowest 76.00 excl / 84.20 incl (threshold 84); median 89.65 / 91.50' },
+  { course: 'Engineering (Honours)', provider: 'QUT', atar: 'Lowest 74.50 excl / 84.05 incl (threshold 84); median 88.45 / 91.60' },
+  { course: 'Information Technology', provider: 'QUT', atar: 'Lowest 65.10 excl / 70.00 incl (threshold 70); median 76.80 / 79.85' },
+  { course: 'Data Science', provider: 'QUT', atar: 'Lowest 74.75 excl / 80.65 incl (threshold 80); median 85.45 / 86.45' },
+  { course: 'Medical Imaging (Honours)', provider: 'QUT', atar: 'Lowest 89.70 excl / 99.10 incl (threshold 99.00); median 98.60 / 99.95' },
+  { course: 'Paramedic Science', provider: 'QUT', atar: '87.10 threshold (recent ATAR bands on QUT course page)' },
+  { course: 'Nursing', provider: 'Griffith', atar: 'Lowest 64.10 excl / 72.05 incl; median ~74.65 / 79.95' },
+  { course: 'Engineering / Business (Honours)', provider: 'Griffith', atar: 'Lowest 67.25 raw / 75.25 incl; median 81.15 incl' },
+  { course: 'Physiotherapy (Honours)', provider: 'Griffith', atar: 'Lowest 89.90 excl / 97.50 incl; median 94.20 / 99.95' },
+  { course: 'Medicine (MD provisional)', provider: 'Griffith (Gold Coast/Brisbane South)', atar: 'Lowest 99.80–99.85 excl / 99.95 incl; median 99.95 (UCAT tie-breaker)' },
+  { course: 'Dental Health Science (DMD pathway)', provider: 'Griffith', atar: '~99.85 floor, no discrete UCAT cut (~90th+ percentile competitive; 69 admitted 2025)' },
+  { course: 'Biomedical Science (MD Pathway)', provider: 'Griffith', atar: '82.00 threshold' },
+  { course: 'Business / Data Science (dual)', provider: 'Griffith', atar: '63.00 threshold (strong demand)' },
+  { course: 'Nursing', provider: 'ACU (Brisbane)', atar: 'Lowest 56.75 excl / 65.00 incl (handbook rank 65); median 71.65 / 78.95' },
+  { course: 'Paramedicine', provider: 'ACU (Brisbane)', atar: 'Lowest 67.70 excl / 79.45 incl (handbook 79); median 81.70 / 87.30' },
+  { course: 'Nursing / Paramedicine (dual)', provider: 'ACU (Brisbane)', atar: 'Lowest 77.65 excl / 87.25 incl (handbook 86.60)' },
+  { course: 'Physiotherapy', provider: 'ACU (Brisbane)', atar: 'Lowest 82.90 excl / 94.10 incl (handbook 94–95); median 91.45 / 99.00' },
+  { course: 'Education (Primary)', provider: 'ACU (Brisbane)', atar: '70.00 (handbook rank 65)' },
+  { course: 'Medicine', provider: 'JCU (Townsville/Cairns)', atar: 'Lowest 84.15 / median 97.90 (no UCAT — written application + interview; rural-access focus)' },
+  { course: 'Nursing', provider: 'JCU', atar: 'Lowest 64.45 excl / 66.35 incl; median 68.30 / 71.80' },
   { course: 'Education (Primary)', provider: 'UniSC', atar: '70.00' },
   { course: 'Paramedicine', provider: 'QUT / UniSC', atar: '87.00 (QUT) / 80.00 (UniSC)' },
   { course: 'Aviation (Flight Ops)', provider: 'UniSQ', atar: '68.00' },
+  { course: 'Paramedicine', provider: 'UniSQ', atar: 'Lowest ~66.15; median 76.95 (threshold ~65.60)' },
+  { course: 'Nursing', provider: 'UniSQ / CQU', atar: 'Threshold 60.00 (UniSQ) / 70.00 (CQU); e.g. UniSQ Toowoomba median ~75.00' },
   { course: 'Nursing (Enrolled via TAFE→B)', provider: 'TAFE QLD', atar: 'No ATAR — Cert III/Diploma pathway' },
-  { course: 'Business / Data Science (dual)', provider: 'QUT', atar: '80.00 threshold; median 94.30 incl. adj (lowest 81.00)' },
-  { course: 'Data Science', provider: 'QUT', atar: '84.00 threshold; median 97.30 incl. adj (lowest 82.40)' },
-  { course: 'Commerce / Science (dual)', provider: 'UQ', atar: '84.00 threshold; median 94.55 incl. adj (lowest 84.20)' },
-  { course: 'Behavioural Science (Psychology) / Business', provider: 'QUT', atar: '70.00 threshold; median 85.20 incl. adj (lowest 62.50)' },
-  { course: 'Biomedical Science / Business', provider: 'QUT', atar: '70.00 threshold; median 77.20 incl. adj (lowest 65.15)' },
-  { course: 'Business / Data Science (dual)', provider: 'Griffith', atar: '63.00 threshold (strong demand)' },
   { course: 'Psychology (Honours)', provider: 'UQ / Griffith / QUT', atar: '82.00 (UQ) / 75.00 (Griffith) / 70.00 (QUT)' },
-  { course: 'Commerce', provider: 'UQ', atar: '84.00 (Business Management 74 adjusted)' },
-  { course: 'Science / Data Science (dual)', provider: 'UQ', atar: '84.00 (entry to BSc, data sci major)' },
 ];
 
-/** QCAA subject categories available to Year 11–12 students (QCAA syllabuses 2025/2026) */
+/** QCAA subject categories available to Year 11–12 students (QCAA syllabuses 2025/2026 — General/Extension/Short Course suites revised from 2025; myQCE cites 97 QCAA subjects total) */
 export const QCE_SUBJECT_CATEGORIES = [
-  { category: 'General subjects', count: 46, note: 'University-oriented, +2 Extension (English & Literature Ext, Music Ext) + SEE — scaled for ATAR (e.g. Maths Methods, Physics, English)' },
+  { category: 'General subjects', count: 46, note: 'University-oriented, +2 Extension (English & Literature Ext, Music Ext) + SEE variants — scaled for ATAR (e.g. Maths Methods, Physics, English)' },
   { category: 'Applied subjects', count: 22, note: 'Incl. Essential English & Essential Mathematics — only ONE can count toward ATAR' },
-  { category: 'Short Courses', count: 4, note: 'Literacy, Numeracy, Aboriginal & Torres Strait Islander Languages, Career Education — up to 1 Short Course credit can count' },
+  { category: 'Short Courses', count: 4, note: 'Literacy, Numeracy, Aboriginal & Torres Strait Islander Languages, Career Education — 1 QCE credit each, no ATAR contribution' },
   { category: 'VET qualifications', count: 'many', note: 'Cert I–IV, Diploma & Advanced Diploma; ONE completed Cert III+ can count toward ATAR' },
 ];
 
@@ -1782,6 +1826,135 @@ export const QLD_HIGH_SCHOOLS: HighSchool[] = [
     notable: 'Strong academic results in Moreton Bay. Popular state school with good ATAR outcomes.',
     website: 'https://dbahs.eq.edu.au',
   },
+  // ─── Gold Coast extras ───────────────────────────────────────────────────
+  {
+    name: 'Queensland Academy for Health Sciences (QAHS)',
+    type: 'State',
+    suburb: 'Southport (Gold Coast)',
+    yearLevels: '10–12',
+    notable: 'Selective IB World School for health sciences. Entry by exam + interview; top-3 QLD IB results, direct Griffith health pathways.',
+    website: 'https://qa.eq.edu.au',
+  },
+  {
+    name: 'Citipointe Christian College',
+    type: 'Independent',
+    suburb: 'Carindale (Brisbane E)',
+    yearLevels: 'Prep–12',
+    indicativeICSEA: 1120,
+    notable: 'Co-ed independent. NAPLAN primary #2 QLD 572.8 (2025). Strong academics, ~1,700 students.',
+    website: 'https://www.citipointe.qld.edu.au',
+  },
+  {
+    name: 'Robina State High School',
+    type: 'State',
+    suburb: 'Robina (Gold Coast)',
+    yearLevels: '7–12',
+    indicativeICSEA: 1026,
+    notable: 'Gold Coast health-precinct link school near QAHS. ~1,530 students, strong STEM and sport.',
+    website: 'https://robinashs.eq.edu.au',
+  },
+  // ─── Sunshine Coast extras ───────────────────────────────────────────────
+  {
+    name: "St Andrew's Anglican College",
+    type: 'Independent',
+    suburb: 'Peregian Springs (Sunshine Coast)',
+    yearLevels: 'Prep–12',
+    indicativeICSEA: 1130,
+    notable: 'Co-ed Anglican school with boarding and IB option. Strong academics on the Sunshine Coast.',
+    website: 'https://www.saac.qld.edu.au',
+  },
+  {
+    name: 'Immanuel Lutheran College',
+    type: 'Independent',
+    suburb: 'Buderim (Sunshine Coast)',
+    yearLevels: 'Prep–12',
+    indicativeICSEA: 1119,
+    notable: 'Co-ed Lutheran school. 2026 Y12 ~$13,860 — strong value private option on the Sunshine Coast.',
+    website: 'https://www.immanuel.qld.edu.au',
+  },
+  // ─── Ipswich / Logan / Redlands / Moreton Bay extras ─────────────────────
+  {
+    name: 'Ipswich Grammar School',
+    type: 'Independent',
+    suburb: 'Ipswich',
+    yearLevels: 'Prep–12',
+    indicativeICSEA: 1114,
+    notable: 'Boys independent (+ Ipswich Girls Grammar). NAPLAN primary 531.5 (#3 QLD 2024), secondary 633.4 (#4 2025); median ATAR 94.1.',
+    website: 'https://www.ipswichgrammar.com',
+  },
+  {
+    name: "St Edmund's College",
+    type: 'Catholic',
+    suburb: 'Woodend (Ipswich)',
+    yearLevels: '5–12',
+    indicativeICSEA: 1049,
+    notable: 'Boys Catholic school (Edmund Rice). ~1,171 students, strong community and sport.',
+    website: 'https://www.sec.qld.edu.au',
+  },
+  {
+    name: 'John Paul College',
+    type: 'Independent',
+    suburb: 'Daisy Hill (Logan)',
+    yearLevels: 'Prep–12',
+    indicativeICSEA: 1090,
+    notable: 'Co-ed independent in the Logan growth corridor. Strong ATAR and international program.',
+    website: 'https://www.johnpaulcollege.com.au',
+  },
+  {
+    name: 'Sheldon College',
+    type: 'Independent',
+    suburb: 'Sheldon (Redlands)',
+    yearLevels: 'Prep–12',
+    indicativeICSEA: 1124,
+    notable: 'Co-ed independent. ~1,481 students, strong performing arts and technology programs.',
+    website: 'https://www.sheldoncollege.com',
+  },
+  {
+    name: 'Cleveland District State High School',
+    type: 'State',
+    suburb: 'Cleveland (Redlands)',
+    yearLevels: '7–12',
+    indicativeICSEA: 1030,
+    notable: 'Large bayside catchment state school with excellence programs in STEM, arts and sport.',
+    website: 'https://clevelanddistshs.eq.edu.au',
+  },
+  {
+    name: "St Columban's College",
+    type: 'Catholic',
+    suburb: 'Caboolture (Moreton Bay)',
+    yearLevels: '7–12',
+    indicativeICSEA: 1026,
+    notable: 'Co-ed Catholic school (EREA). ~1,171 students, strong community in the Moreton Bay growth corridor.',
+    website: 'https://www.stc.qld.edu.au',
+  },
+  // ─── Regional extras ─────────────────────────────────────────────────────
+  {
+    name: 'Kirwan State High School',
+    type: 'State',
+    suburb: 'Kirwan (Townsville)',
+    yearLevels: '7–12',
+    indicativeICSEA: 919,
+    notable: 'One of Queensland\'s largest secondaries (~1,922 students). Major STEM, sport and creative excellence programs.',
+    website: 'https://kirwanshs.eq.edu.au',
+  },
+  {
+    name: 'The Rockhampton Grammar School',
+    type: 'Independent',
+    suburb: 'Rockhampton',
+    yearLevels: 'Prep–12',
+    indicativeICSEA: 1069,
+    notable: 'Co-ed independent (est 1881) with boarding ELC–12. ~1,472 students, leading Central QLD school.',
+    website: 'https://www.rgs.qld.edu.au',
+  },
+  {
+    name: "St Brendan's College",
+    type: 'Catholic',
+    suburb: 'Yeppoon (Capricorn Coast)',
+    yearLevels: '7–12',
+    indicativeICSEA: 994,
+    notable: 'Boys Catholic boarding/day school (Edmund Rice). ~1,034 students, strong rugby and community.',
+    website: 'https://www.stbrendans.qld.edu.au',
+  },
 ];
 
 /** QLD school cost reference (annual tuition, indicative 2026 — Brisbane/South-East) */
@@ -1792,14 +1965,14 @@ export const QLD_SCHOOL_COSTS = {
     note: 'No tuition fees at Queensland state schools. Selective schools (BSHS, QASMT) have subject/resource levies. Devices ~$500–$900. Trade Training Allowance $164 Y7-10 / $357 Y11-12 offsets costs.',
   },
   catholicSchool: {
-    tuition: '$11,280–$24,214/yr secondary (2026 Brisbane)',
+    tuition: '$3,000–$24,214/yr secondary (2026 Brisbane)',
     extras: '~$1,000–$2,500/yr (building levy 8–15%, uniforms $500–$800, excursions/camps)',
-    note: 'Brisbane Catholic secondary 2026: systemic primary $3k–$6k, secondary $11k (Lourdes Hill/Padua low) to $24k (Terrace). Typical $14k–$19k (All Hallows $18,950, Marist $18,710). Sibling discounts 10–15% at most colleges.',
+    note: 'Systemic parish secondaries run ~$3k–$10k (e.g. Mt Maria $9,805 Y10-12 incl levies); congregational colleges higher — typical $14k–$19k (All Hallows $18,950, Marist $18,710, Terrace $24k). Sibling discounts 10–15% at most colleges.',
   },
   independentSchool: {
-    tuition: '$11,280–$36,300/yr (median $18,703)',
+    tuition: '$2,582–$36,300/yr (QLD median Y12 ~$14,780; Brisbane median ~$18,703)',
     extras: '~$2,000–$5,000/yr (capital/building levy, uniforms, excursions, technology)',
-    note: 'Brisbane independent median $18,703 (35 schools). Most expensive: Brisbane Grammar $36,300, BGGS ~$34k, Somerville ~$31,872. Cheapest independent ~$11k. Boarding adds $28k–$36k. Total K-12 Futurity: Gov $113k / Catholic metro QLD $273k / Independent metro QLD $423k.',
+    note: 'Most expensive: Brisbane Grammar $36,300, BGGS ~$34,088, Churchie ~$33,720, Somerville ~$31,872. Indexation ~4.5% in 2026. Boarding adds $22k–$31k on top of tuition. Total K-12 Futurity: Gov $113k / Catholic metro QLD $273k / Independent metro QLD $423k.',
   },
 };
 
@@ -1847,7 +2020,9 @@ export const QLD_TAFE = {
     industries: ['Automotive', 'Construction & Civil', 'Electrotechnology & Utilities', 'Engineering & Aviation', 'Hospitality & Cookery', 'Agriculture & Horticulture', 'Manufacturing & Furnishing', 'Community Services', 'Arts & Entertainment', 'Retail & Recreation'],
     eligibility: 'Under 25, QLD resident, employed as apprentice/trainee in a priority qualification, contract commenced 1 Jan 2021 – 30 Jun 2027.',
   },
-  freeConstructionOver25: 'Free Construction Apprenticeships for Over 25s covers full tuition for priority construction trades (bricklaying, carpentry, plumbing, painting, tiling, roofing, civil construction). Available at TAFE QLD + CQUniversity.',
+  freeConstructionOver25: 'Free Construction Apprenticeships for Over 25s covers full tuition for priority construction trades (bricklaying, carpentry, plumbing, painting, tiling, roofing, civil construction). Available at TAFE QLD + CQUniversity for contracts commenced 1 Jul 2024 – 30 Jun 2027.',
+  freeNursing2026: 'Free Nursing: the Diploma of Nursing (Enrolled Nurse) is fully funded in 2026 under Fee-Free TAFE — same residency/age/not-at-school/one-qualification rules apply.',
+  vetStudentLoans2026: 'VET Student Loans indexed caps 2026: Band 1 $6,428 / Band 2 $12,858 / Band 3 $19,290 / Schedule 2 specific courses $96,467. FEE-HELP loan fee is 20% for undergrad non-Table B courses (postgrad exempt). HELP borrowing limit 2026: $129,883 general / $186,544 medicine-dentistry-vet-aviation.',
   typicalCourseCost: '$0–$3,000 (Fee-Free) or $4,000–$15,000 (full-fee diplomas); Free Apprenticeships under 25 cover tuition for priority trades',
   apprenticeshipNote: 'School-based apprenticeships (SATs) available from Year 10 — minimum 7.5 hours/week paid employment + training. SATs combine paid work, TAFE training and school to earn a national qualification while completing QCE.',
 };

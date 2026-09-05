@@ -46,6 +46,8 @@ export const VIC_STAMP_DUTY: StampDutyTable = {
 };
 
 // ─── New South Wales ──────────────────────────────────────────────────────────
+// NOTE (Sept 2026): brackets CPI-indexed for 2026-27. FHB assistance $0 ≤$800k
+// (concessional <$1M). Foreign surcharge 9% (highest nationally, from 1 Jan 2025).
 export const NSW_STAMP_DUTY: StampDutyTable = {
   stateName: 'New South Wales',
   general: [
@@ -67,6 +69,12 @@ export const NSW_STAMP_DUTY: StampDutyTable = {
 };
 
 // ─── Queensland ──────────────────────────────────────────────────────────────
+// NOTE (Sept 2026): established-home FHB concession <$800k (nil duty ≤$700k,
+// saving up to $24,525). From 1 May 2025 first-home NEW homes and vacant
+// residential land get FULL duty relief with NO value cap. From 1 Aug 2026
+// home/first-home concessions require Australian citizenship/PR (per-buyer
+// apportionment). FHOG $30,000 for new homes <$750k (contracts ≥20 Nov 2023,
+// extended in 2026-27 Budget). Foreign AFAD 8%.
 export const QLD_STAMP_DUTY: StampDutyTable = {
   stateName: 'Queensland',
   general: [
@@ -96,8 +104,8 @@ export const WA_STAMP_DUTY: StampDutyTable = {
     { min: 725000,  max: Infinity, rate: 0.0515, base: 28453 },
   ],
   firstHomeBuyer: {
-    fullExemptionThreshold: 600000,   // From 7 May 2026
-    concessionTopThreshold: 800000,   // From 7 May 2026
+    fullExemptionThreshold: 600000,   // From 7 May 2026 Budget (was $500k)
+    concessionTopThreshold: 800000,   // From 7 May 2026 (statewide; metro/Peel split removed)
     grantAmount: 10000,
     grantPriceCapNew: 800000,         // Increased to $800k from 7 May 2026
   },
@@ -129,6 +137,9 @@ export const SA_STAMP_DUTY: StampDutyTable = {
 };
 
 // ─── Tasmania ─────────────────────────────────────────────────────────────────
+// NOTE (Sept 2026): the 100% established-home FHB duty relief (≤$750k) EXPIRED
+// 30 June 2026 and was not renewed — FHBs now pay full duty. FHOG is $20,000
+// for new homes in 2026-27 (1 July 2026 – 30 June 2027; was $30k temporary, $10k base).
 export const TAS_STAMP_DUTY: StampDutyTable = {
   stateName: 'Tasmania',
   general: [
@@ -142,15 +153,19 @@ export const TAS_STAMP_DUTY: StampDutyTable = {
     { min: 725000,  max: Infinity, rate: 0.045,  base: 27748 },
   ],
   firstHomeBuyer: {
-    fullExemptionThreshold: 750000, // 50% discount on duty for homes up to $750k
-    concessionTopThreshold: 750000,
-    grantAmount: 10000,
+    fullExemptionThreshold: 0, // No FHB duty concession from 1 July 2026 (expired 30 June 2026)
+    concessionTopThreshold: 0,
+    grantAmount: 20000, // $20,000 FHOG for new homes in 2026-27
     grantPriceCapNew: 750000,
   },
   foreignSurchargeRate: 0.08,
 };
 
 // ─── Australian Capital Territory ─────────────────────────────────────────────
+// NOTE (Sept 2026): from 1 July 2026 duty is ABOLISHED for eligible FHB
+// owner-occupiers with NO price cap and NO income test (2026-27 ACT Budget —
+// first in Australia; replaces the $1.02M means-tested Home Buyer Concession).
+// No FHOG in the ACT (abolished 2019).
 export const ACT_STAMP_DUTY: StampDutyTable = {
   stateName: 'Australian Capital Territory',
   general: [
@@ -163,13 +178,19 @@ export const ACT_STAMP_DUTY: StampDutyTable = {
     { min: 1455000, max: Infinity, rate: 0.0454, base: 50949 },
   ],
   firstHomeBuyer: {
-    fullExemptionThreshold: 1000000, // ACT Home Buyer Concession full exemption (income-tested)
-    concessionTopThreshold: 1000000,
+    fullExemptionThreshold: Infinity, // Duty abolished for FHB owner-occupiers from 1 July 2026 — no cap
+    concessionTopThreshold: Infinity,
     grantAmount: 0,
     grantPriceCapNew: 1000000,
   },
   foreignSurchargeRate: 0.08,
 };
+
+// ─── Northern Territory ───────────────────────────────────────────────────────
+// NOTE (Sept 2026): NT first-buyer help centres on the HomeGrown Territory
+// Grant ($50,000 for new or established homes, incl. returning Territorians —
+// verify current caps/dates with NT Treasury before relying on modelled figures).
+// No foreign buyer surcharge in the NT.
 
 // ─── Northern Territory ───────────────────────────────────────────────────────
 export const NT_STAMP_DUTY: StampDutyTable = {

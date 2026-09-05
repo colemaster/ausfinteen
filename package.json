@@ -3,7 +3,7 @@
   "private": true,
   "version": "6.5.0",
   "description": "Free, open-source, privacy-first suite of Australian personal finance calculators",
-  "homepage": "https://github.com/ravisha22/PersonalFinanceToolkit",
+  "homepage": "https://github.com/colemaster/ausfinteen",
   "type": "module",
   "scripts": {
     "dev": "astro dev",

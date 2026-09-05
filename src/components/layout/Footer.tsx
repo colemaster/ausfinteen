@@ -5,7 +5,7 @@ import { PerformanceModal } from '@/components/shared/PerformanceModal';
 import { WebVitalsBadge } from '@/components/WebVitalsBadge';
 import pkg from '../../../package.json';
 
-const GITHUB_URL = 'https://github.com/ravisha22/PersonalFinanceToolkit';
+const GITHUB_URL = 'https://github.com/colemaster/ausfinteen';
 const LAST_UPDATED = 'Sep 2026';
 
 const TOOLS_LINKS = [

@@ -7,8 +7,8 @@ Thanks for helping improve Australia's best open-source finance calculator suite
 ## Getting Started
 
 ```bash
-git clone https://github.com/ravisha22/PersonalFinanceToolkit.git
-cd PersonalFinanceToolkit
+git clone https://github.com/colemaster/ausfinteen.git
+cd ausfinteen
 npm install
 npm run dev
 ```

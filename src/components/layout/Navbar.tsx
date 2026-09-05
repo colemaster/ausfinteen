@@ -274,7 +274,7 @@ export function Navbar() {
           <div className="flex items-center gap-1.5">
             {/* What's New — version badge linking to the changelog */}
             <a
-              href="https://github.com/ravisha22/PersonalFinanceToolkit/releases"
+              href="https://github.com/colemaster/ausfinteen/releases"
               target="_blank"
               rel="noreferrer"
               title="What's new in v5.3.0 — changelog"

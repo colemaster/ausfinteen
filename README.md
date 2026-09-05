@@ -2,7 +2,7 @@
 
 > Free, open-source, privacy-first suite of Australian personal finance tools.
 
-[![Build](https://github.com/ravisha22/PersonalFinanceToolkit/actions/workflows/deploy.yml/badge.svg)](https://github.com/ravisha22/PersonalFinanceToolkit/actions/workflows/deploy.yml)
+[![Build](https://github.com/colemaster/ausfinteen/actions/workflows/deploy.yml/badge.svg)](https://github.com/colemaster/ausfinteen/actions/workflows/deploy.yml)
 ![Based on 2024-25 ATO rates](https://img.shields.io/badge/ATO%20rates-2024--25-blue)
 ![License: MIT](https://img.shields.io/badge/License-MIT-green)
 ![No tracking](https://img.shields.io/badge/privacy-no%20tracking-brightgreen)

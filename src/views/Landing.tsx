@@ -2,10 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { Link } from '@/lib/router';
 import { MANDY_MODULES } from '@/data/mandy-topics';
 import { Badge } from '@/components/ui/Badge';
-import { BorderBeam } from '@/components/ui/BorderBeam';
-import { InteractiveGridPattern } from '@/components/ui/InteractiveGridPattern';
-import { AmbientLiquidityCanvas } from '@/components/ui/AmbientLiquidityCanvas';
 import { HolographicTiltCard } from '@/components/ui/HolographicTiltCard';
+import { SmartImage } from '@/components/ui/SmartImage';
 import { ScenarioSplitterWidget } from '@/components/ui/ScenarioSplitterWidget';
 import {
   Sparkles,
@@ -21,25 +19,38 @@ import {
   LayoutGrid,
   Filter,
 } from 'lucide-react';
-import { motion, useReducedMotion, LayoutGroup } from 'motion/react';
+import { motion, LayoutGroup } from 'motion/react';
 import { fadeInUp, staggerContainer, fastStagger } from '@/lib/animations';
 import { cn } from '@/lib/utils';
 import { useUrlParams } from '@/hooks/useUrlParams';
-import { OdometerCounter } from '@/components/shared/OdometerCounter';
 import { SpotlightCard } from '@/components/ui/SpotlightCard';
 import { AnimatedNumber } from '@/components/ui/AnimatedNumber';
 import { formatCurrency } from '@/utils/formatters';
 import { TAX_BRACKETS_2026_27, getCombinedMarginalRate } from '@/data/tax-brackets';
 import { SUPER_RULES } from '@/data/super-rules';
 import { QLD_STAMP_DUTY } from '@/data/stamp-duty-tables';
-import { HELP_REPAYMENT_THRESHOLDS_2026_27 } from '@/data/constants';
-import { useTeenProfile } from '@/context/TeenProfileContext';
-import { SiteSearchBar } from '@/components/search/SiteSearchBar';
-import { SmartImage } from '@/components/ui/SmartImage';
-import { MagneticButton } from '@/components/ui/MagneticButton';
 import { TickerMarquee, type TickerItem } from '@/components/ui/TickerMarquee';
 import { usePageTitle } from '@/hooks/usePageTitle';
 import { sound } from '@/lib/sound-synthesizer';
+import { Hero15yo } from '@/components/landing/Hero15yo';
+import { ParallaxHeroArt } from '@/components/landing/ParallaxHeroArt';
+import { LiveMoneyCounters } from '@/components/landing/LiveMoneyCounters';
+import { StatsBand } from '@/components/landing/StatsBand';
+import { StartHereQuiz } from '@/components/landing/StartHereQuiz';
+import { AgeJourneyRail } from '@/components/landing/AgeJourneyRail';
+import { FirstPaycheckWidget } from '@/components/landing/FirstPaycheckWidget';
+import { HisaShowdown } from '@/components/landing/HisaShowdown';
+import { PenaltyPayBooster } from '@/components/landing/PenaltyPayBooster';
+import { FiftyCentWins } from '@/components/landing/FiftyCentWins';
+import { CompoundRocket } from '@/components/landing/CompoundRocket';
+import { SchoolSpotlight } from '@/components/landing/SchoolSpotlight';
+import { UniPathways } from '@/components/landing/UniPathways';
+import { JourneyMap } from '@/components/landing/JourneyMap';
+import { TopicSpotlight } from '@/components/landing/TopicSpotlight';
+import { MoneyMyths } from '@/components/landing/MoneyMyths';
+import { ScamShield } from '@/components/landing/ScamShield';
+import { TrustStrip } from '@/components/landing/TrustStrip';
+import { SeoFaq } from '@/components/landing/SeoFaq';
 
 // ─── Landing enhancements: module categories, fast paths, featured calculators ───
 
@@ -179,56 +190,6 @@ const FEATURED_CALCULATORS: ReadonlyArray<{
   },
 ];
 
-const LIVE_FIGURES: ReadonlyArray<{
-  value: number;
-  prefix: string;
-  suffix: string;
-  decimals: number;
-  label: string;
-  caption: string;
-}> = [
-  {
-    value: Math.round(SUPER_RULES.sgRate * 100),
-    prefix: '',
-    suffix: '%',
-    decimals: 0,
-    label: 'Super Guarantee',
-    caption: 'Compulsory employer super (2026-27)',
-  },
-  {
-    value: TAX_BRACKETS_2026_27[0].max,
-    prefix: '$',
-    suffix: '',
-    decimals: 0,
-    label: 'Tax-Free Threshold',
-    caption: 'First dollars earned are tax-free',
-  },
-  {
-    value: HELP_REPAYMENT_THRESHOLDS_2026_27[0].max,
-    prefix: '$',
-    suffix: '',
-    decimals: 0,
-    label: 'HELP Threshold',
-    caption: 'Compulsory HECS repayments start here',
-  },
-  {
-    value: Math.round(TAX_BRACKETS_2026_27[2].rate * 100),
-    prefix: '',
-    suffix: '%',
-    decimals: 0,
-    label: '30¢ Bracket',
-    caption: `From ${formatCurrency(TAX_BRACKETS_2026_27[2].min)} (2026-27)`,
-  },
-  {
-    value: QLD_STAMP_DUTY.firstHomeBuyer.grantAmount ?? 0,
-    prefix: '$',
-    suffix: '',
-    decimals: 0,
-    label: 'QLD First Home Grant',
-    caption: `New homes under ${formatCurrency(QLD_STAMP_DUTY.firstHomeBuyer.grantPriceCapNew)}`,
-  },
-];
-
 function ModuleSelector({ value, onChange }: { value: string; onChange: (id: string) => void }) {
   const [open, setOpen] = useState(false);
   const [activeIdx, setActiveIdx] = useState(0);
@@ -331,47 +292,6 @@ function ModuleSelector({ value, onChange }: { value: string; onChange: (id: str
   );
 }
 
-function HeroLiveFigure({ reduceMotion }: { reduceMotion: boolean | null }) {
-  const [idx, setIdx] = useState(0);
-
-  useEffect(() => {
-    if (reduceMotion) return;
-    const id = setInterval(() => {
-      if (document.hidden) return;
-      setIdx(i => (i + 1) % LIVE_FIGURES.length);
-    }, 2600);
-    return () => clearInterval(id);
-  }, [reduceMotion]);
-
-  const fig = LIVE_FIGURES[idx];
-
-  return (
-    <div className="flex items-center gap-3.5 rounded-2xl border border-primary/25 bg-card/70 backdrop-blur-md px-4 py-3 shadow-lg shadow-primary/5">
-      <span className="relative flex h-2.5 w-2.5 shrink-0" aria-hidden="true">
-        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary/60" />
-        <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-primary" />
-      </span>
-      <div className="flex-1 min-w-0">
-        <span className="block text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-          Live Money Pulse · 2026-27
-        </span>
-        <div className="flex items-baseline gap-2">
-          <OdometerCounter
-            value={fig.value}
-            prefix={fig.prefix}
-            suffix={fig.suffix}
-            decimals={fig.decimals}
-            durationMs={900}
-            className="text-2xl text-primary"
-          />
-          <span className="text-xs font-bold text-foreground truncate">{fig.label}</span>
-        </div>
-        <p className="text-[10px] text-muted-foreground truncate">{fig.caption}</p>
-      </div>
-    </div>
-  );
-}
-
 function CategoryChips({ value, onChange }: { value: string; onChange: (id: string) => void }) {
   return (
     <LayoutGroup id="landing-category-chips">
@@ -450,8 +370,6 @@ function CompactToggle({ compact, onChange }: { compact: boolean; onChange: (v: 
 
 export function Landing() {
   usePageTitle('AusFinance Suite — 2030 Australian Personal Finance Intelligence & Calculators');
-  const { applyAgePreset, profile } = useTeenProfile();
-  const reduceMotion = useReducedMotion();
   const [{ cat, compact }, setParams] = useUrlParams<{ cat: string; compact: boolean }>({ cat: 'all', compact: false });
   const [selectedModuleId, setSelectedModuleId] = useState<string>('careers-employment');
   const selectedModule = MANDY_MODULES.find(m => m.id === selectedModuleId) || MANDY_MODULES[1];
@@ -466,7 +384,7 @@ export function Landing() {
     { label: 'Super Guarantee', value: '12.0%' },
     { label: 'Tax-Free Threshold', value: '$18,200' },
     { label: 'EV FBT Exemption', value: '100% Pre-Tax' },
-    { label: 'HISA Top Rates', value: '5.0%+ p.a.' },
+    { label: 'HISA Top Rates', value: '5.80% p.a.' },
     { label: 'APRA Guarantee', value: '$250k FCS' },
     { label: 'Translink Flat Fare', value: '50c' },
     { label: 'First-Home Grant (QLD)', value: '$30,000' },
@@ -475,119 +393,32 @@ export function Landing() {
 
   return (
     <div className="space-y-12 animate-fade-in pb-12">
-      {/* Hero Section */}
-      <section className="relative rounded-3xl border border-primary/30 bg-gradient-to-br from-primary/25 via-purple-500/15 to-amber-500/25 p-8 sm:p-14 text-center sm:text-left shadow-2xl">
-        <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-3xl" aria-hidden="true">
-          <InteractiveGridPattern glowSize={500} glowColor="oklch(0.65 0.18 250 / 0.25)" />
-          <AmbientLiquidityCanvas particleCount={20} />
-          <div className="absolute inset-0">
-            <div className="absolute -top-28 -right-28 w-80 h-80 rounded-full bg-primary/30 blur-3xl" />
-            <div className="absolute -bottom-32 -left-20 w-72 h-72 rounded-full bg-amber-500/25 blur-3xl" />
-            <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[36rem] h-64 rounded-full bg-purple-500/20 blur-[110px]" />
-            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent" />
-          </div>
-        </div>
-        <BorderBeam size={280} duration={14} colorFrom="#3b82f6" colorTo="#a855f7" />
+      {/* 15yo-first Hero */}
+      <Hero15yo>
+        <ParallaxHeroArt />
+      </Hero15yo>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
-          <div className="lg:col-span-7 space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Next-Gen Australian Personal Finance & Tax Suite (2030 Edition) 🇦🇺</span>
-            </div>
+      {/* Live 15yo money counters */}
+      <section className="calculator-section" aria-label="Live money figures for teens">
+        <LiveMoneyCounters />
+      </section>
 
-            <h1 className="text-4xl sm:text-6xl font-black text-foreground tracking-tight leading-none">
-              Master your <span className="text-primary bg-gradient-to-r from-primary via-violet-500 to-amber-500 bg-clip-text text-transparent">wealth & taxes</span>.
-            </h1>
+      {/* Live stats marquee */}
+      <StatsBand />
 
-            <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
-              Statutory-accurate Australian calculators and real-world guides — from the 2025 Universities Accord HECS reforms and EV novated leasing to Super drawdowns, Age Pension deeming, and property CGT.
-            </p>
+      {/* Start-here recommender */}
+      <section className="calculator-section" aria-label="Find your starting point">
+        <StartHereQuiz />
+      </section>
 
-            {/* Site-wide search */}
-            <div className="pt-3 flex flex-col items-center sm:items-start gap-2">
-              <SiteSearchBar />
-              <span className="text-[11px] text-muted-foreground/80">
-                🔍 Instant fuzzy search across all 20+ calculators, 150+ guide topics, and official ATO resources (Press ⌘K).
-              </span>
-            </div>
+      {/* 15→18 journey rail */}
+      <section className="calculator-section" aria-label="Your journey from 15 to 18">
+        <AgeJourneyRail />
+      </section>
 
-            <div className="pt-3 flex flex-wrap items-center justify-center sm:justify-start gap-3">
-              <MagneticButton
-                strength={0.25}
-                ariaLabel="Explore All Calculators"
-                className="px-6 py-3.5 rounded-2xl bg-gradient-to-r from-primary via-violet-500 to-purple-500 text-primary-foreground font-bold text-sm hover:opacity-90 hover:shadow-xl hover:shadow-primary/25 transition-shadow shadow-md gap-2 cursor-pointer"
-              >
-                <Link to="/calculators" onClick={() => sound.playClick()} className="inline-flex items-center gap-2">
-                  <span>⚡️ Explore All 20+ Calculators</span>
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
-              </MagneticButton>
-
-              <MagneticButton
-                strength={0.2}
-                ariaLabel="Set Up My Profile"
-                className="px-6 py-3.5 rounded-2xl bg-card/80 border border-border text-foreground font-bold text-sm hover:bg-card hover:border-primary/40 transition-all backdrop-blur cursor-pointer"
-              >
-                <Link to="/profile" onClick={() => sound.playClick()} className="inline-flex items-center gap-2">
-                  My Profile ({profile.age}yo)
-                </Link>
-              </MagneticButton>
-            </div>
-
-            {/* Quick Age Toggle Pills in Hero */}
-            <div className="pt-3 flex flex-wrap items-center justify-center sm:justify-start gap-2">
-              <span className="text-xs font-semibold text-muted-foreground flex items-center gap-1">
-                <Zap className="w-3.5 h-3.5 text-amber-500" />
-                Persona Presets:
-              </span>
-              {[15, 16, 17, 18].map(a => (
-                <button
-                  key={a}
-                  type="button"
-                  onClick={() => {
-                    sound.playClick();
-                    applyAgePreset(a);
-                  }}
-                  className={`px-3 py-1 rounded-full text-xs font-bold transition-all border ${
-                    profile.age === a
-                      ? 'bg-primary text-primary-foreground border-primary shadow-xs'
-                      : 'bg-card/80 hover:bg-card hover:border-primary/40 border-border text-foreground'
-                  }`}
-                >
-                  {a}yo Preset
-                </button>
-              ))}
-            </div>
-
-            {/* Hero Live Money Pulse (odometer-style) */}
-            <div className="pt-4 max-w-md mx-auto sm:mx-0">
-              <HeroLiveFigure reduceMotion={reduceMotion} />
-            </div>
-          </div>
-
-          {/* Hero 3D Graphic Asset Card */}
-          <div className="lg:col-span-5 hidden lg:block relative">
-            <HolographicTiltCard showBeam={false} className="border-primary/30">
-              <SmartImage
-                src="/assets/aus_teen_hero.jpg"
-                alt="AusTeen Money Graphic Illustration"
-                className="w-full h-auto object-cover rounded-2xl"
-                loading="eager"
-                width={1376}
-                height={768}
-                fetchPriority="high"
-              />
-              <div className="mt-3 flex items-center justify-between text-xs font-bold text-foreground">
-                <span className="flex items-center gap-1.5">
-                  <Sparkles className="w-4 h-4 text-amber-400" />
-                  2026-2027 Australian Edition
-                </span>
-                <span className="text-primary font-bold">100% Free & Privacy-First 🛡️</span>
-              </div>
-            </HolographicTiltCard>
-          </div>
-        </div>
+      {/* First paycheck calculator */}
+      <section className="calculator-section" aria-label="First paycheck calculator">
+        <FirstPaycheckWidget />
       </section>
 
       {/* Quick-Start Fast Paths */}
@@ -700,6 +531,23 @@ export function Landing() {
         </motion.div>
       </section>
 
+      {/* Youth money widgets: HISA showdown, penalty pay, 50c fares, compounding */}
+      <section className="calculator-section" aria-label="Youth savings and pay boosters">
+        <HisaShowdown />
+      </section>
+
+      <section className="calculator-section" aria-label="Weekend penalty pay booster">
+        <PenaltyPayBooster />
+      </section>
+
+      <section className="calculator-section" aria-label="50 cent fare savings">
+        <FiftyCentWins />
+      </section>
+
+      <section className="calculator-section" aria-label="Compound growth from 15">
+        <CompoundRocket />
+      </section>
+
       {/* 2026 Top Calculators Bento Showcase */}
       <section className="space-y-6 calculator-section">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
@@ -737,7 +585,7 @@ export function Landing() {
               route: '/hecs-payoff',
               emoji: '🎓',
               icon: GraduationCap,
-              badge: '2025 Accord $67k',
+              badge: '2026 Accord $69.5k',
               desc: 'Simulate voluntary payoff vs Mortgage Offset vs ASX ETFs with min(CPI, WPI) indexation cap.',
             },
             {
@@ -829,6 +677,23 @@ export function Landing() {
             <TickerMarquee items={tickerItems} speed="42s" className="flex-1" />
           </div>
         </div>
+      </section>
+
+      {/* Schools, uni pathways, year map, topic spotlight */}
+      <section className="calculator-section" aria-label="Find your high school">
+        <SchoolSpotlight />
+      </section>
+
+      <section className="calculator-section" aria-label="University pathways and QTAC dates">
+        <UniPathways />
+      </section>
+
+      <section className="calculator-section" aria-label="Your money year map">
+        <JourneyMap />
+      </section>
+
+      <section className="calculator-section" aria-label="Featured money guides">
+        <TopicSpotlight />
       </section>
 
       {/* 11 Mandy Money Modules Grid */}
@@ -961,6 +826,21 @@ export function Landing() {
             <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
+      </section>
+
+      {/* Money myths, scam shield, trust, FAQ */}
+      <section className="calculator-section" aria-label="Money myths debunked">
+        <MoneyMyths />
+      </section>
+
+      <section className="calculator-section" aria-label="Scam defence quiz">
+        <ScamShield />
+      </section>
+
+      <TrustStrip />
+
+      <section className="calculator-section" aria-label="Frequently asked questions">
+        <SeoFaq />
       </section>
     </div>
   );

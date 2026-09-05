@@ -152,7 +152,7 @@ export function SiteSearchBar() {
           aria-controls="site-search-results"
           aria-activedescendant={open && activeHit ? `site-search-option-${activeHit.id}` : undefined}
           aria-label="Search all money guides"
-          placeholder="Search 160+ money guides — e.g. 'HECS', 'penalty rates', 'first car'…"
+          placeholder="Search 150+ money guides — e.g. 'HECS', 'penalty rates', 'first car'…"
           value={query}
           onChange={e => {
             setQuery(e.target.value);

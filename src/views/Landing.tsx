@@ -508,7 +508,7 @@ export function Landing() {
             <div className="pt-3 flex flex-col items-center sm:items-start gap-2">
               <SiteSearchBar />
               <span className="text-[11px] text-muted-foreground/80">
-                🔍 Instant fuzzy search across all 20+ calculators, 160+ guide topics, and official ATO resources (Press ⌘K).
+                🔍 Instant fuzzy search across all 20+ calculators, 150+ guide topics, and official ATO resources (Press ⌘K).
               </span>
             </div>
 
@@ -839,7 +839,7 @@ export function Landing() {
               11 Real-World Learning Modules
             </Badge>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
-              160+ Money Questions Answered
+              150+ Money Questions Answered
             </h2>
             <p className="text-xs sm:text-sm text-muted-foreground">
               Click any module to dive into interactive calculators, step-by-step guides, and official Australian web resources.

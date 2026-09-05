@@ -31,6 +31,17 @@ export const SUPER_RULES = {
   /** Division 293 extra tax rate */
   division293Rate: 0.15,
 
+  /**
+   * Division 296 tax on large balances (from 1 July 2026 — first assessments H2 2027-28).
+   * Extra 15% on super earnings attributable to TSB > $3M, plus a further 10%
+   * on the portion > $10M. Both thresholds indexed. Realised earnings only.
+   * Source: ATO Division 296 guidance (updated 29 June 2026).
+   */
+  division296Threshold: 3000000,
+  division296UpperThreshold: 10000000,
+  division296Rate: 0.15,
+  division296UpperAdditionalRate: 0.10,
+
   /** Preservation age for individuals born after 1 July 1964 */
   preservationAge: 60,
 
@@ -115,4 +126,24 @@ export function calcDivision293Tax(income: number, concessionalContribs: number)
 export function getMinimumDrawdownRate(age: number): number {
   const tier = SUPER_RULES.minimumDrawdown.find(t => age >= t.minAge && age <= t.maxAge);
   return tier ? tier.rate : 0.04;
+}
+
+/**
+ * Estimate Division 296 tax on large super balances (from 1 July 2026).
+ * Simplified model: applies the 15% rate to the share of earnings attributable
+ * to the balance above $3M, plus a further 10% on the share above $10M.
+ * @param totalSuperBalance - TSB at 30 June (assessable year end)
+ * @param superEarnings - Total super earnings for the year (realised basis)
+ */
+export function calcDivision296Tax(totalSuperBalance: number, superEarnings: number): { applies: boolean; taxPayable: number } {
+  if (totalSuperBalance <= SUPER_RULES.division296Threshold || superEarnings <= 0) {
+    return { applies: false, taxPayable: 0 };
+  }
+  const pctAbove3M = (totalSuperBalance - SUPER_RULES.division296Threshold) / totalSuperBalance;
+  let taxPayable = superEarnings * pctAbove3M * SUPER_RULES.division296Rate;
+  if (totalSuperBalance > SUPER_RULES.division296UpperThreshold) {
+    const pctAbove10M = (totalSuperBalance - SUPER_RULES.division296UpperThreshold) / totalSuperBalance;
+    taxPayable += superEarnings * pctAbove10M * SUPER_RULES.division296UpperAdditionalRate;
+  }
+  return { applies: true, taxPayable };
 }

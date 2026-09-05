@@ -1,0 +1,136 @@
+---
+import { ClientRouter } from 'astro:transitions';
+
+interface Props {
+  title?: string;
+  description?: string;
+  keywords?: string;
+  ogType?: string;
+  canonicalUrl?: string;
+}
+
+const {
+  title = 'AusFinance Suite — Australian Personal Finance Toolkit & Real-World Guides',
+  description = 'Free, open-source, privacy-first Australian finance guides & calculators for young Aussies and investors. 100% browser-based with zero tracking.',
+  keywords = 'teen finance Australia, first job pay, tax calculator Australia, superannuation, penalty rates, HECS, QLD licence, Brisbane budget, ASX ETFs, money guide, capital gains tax, novated lease',
+  ogType = 'website',
+  canonicalUrl: customCanonicalUrl,
+} = Astro.props;
+
+const canonicalUrl = customCanonicalUrl || (Astro.site ? new URL(Astro.url.pathname, Astro.site).href : Astro.url.href);
+const siteTitle = title.includes('AusFinance') ? title : `${title} | AusFinance Suite`;
+---
+
+<!-- Global Metadata -->
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="canonical" href={canonicalUrl} />
+<meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)" />
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+<meta name="color-scheme" content="light dark" />
+
+<!-- SEO Primary Meta Tags -->
+<title>{siteTitle}</title>
+<meta name="description" content={description} />
+<meta name="keywords" content={keywords} />
+<meta name="author" content="AusFinance Suite Open Source Community" />
+<meta name="robots" content="index, follow" />
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content={ogType} />
+<meta property="og:url" content={canonicalUrl} />
+<meta property="og:title" content={siteTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:site_name" content="AusFinance Suite" />
+<meta property="og:locale" content="en_AU" />
+<meta property="og:image" content="/favicon.svg" />
+
+<!-- Twitter Cards -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={siteTitle} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content="/favicon.svg" />
+
+<!-- Web App Manifest -->
+<link rel="manifest" href="/manifest.webmanifest" />
+
+<!-- Schema.org JSON-LD Structured Data -->
+<script type="application/ld+json" set:html={JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": siteTitle,
+  "url": canonicalUrl,
+  "description": description,
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Any",
+  "inLanguage": "en-AU",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "AUD"
+  }
+})} />
+
+<!-- Speculation Rules API for sub-50ms instant page loads -->
+<script type="speculationrules" is:inline>
+  {
+    "prefetch": [
+      { "where": { "href_matches": "/*" }, "eagerness": "moderate" }
+    ],
+    "prerender": [
+      { "where": { "href_matches": "/*" }, "eagerness": "conservative" }
+    ]
+  }
+</script>
+
+<!-- Anti-FOUC Theme & Preferences Initializer (with astro:after-swap support) -->
+<script is:inline>
+  (function() {
+    function applyThemeAndPreferences() {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const urlTheme = params.get('theme');
+        const stored = localStorage.getItem('theme');
+        const isDark = (urlTheme === 'dark' || (!urlTheme && stored === 'dark') || (!urlTheme && !stored && window.matchMedia('(prefers-color-scheme: dark)').matches));
+        document.documentElement.classList.toggle('dark', isDark);
+
+        const ACCENTS = ['emerald', 'violet', 'amber', 'rose', 'cyan', 'default'];
+        const accent = params.get('accent');
+        if (accent && ACCENTS.indexOf(accent) !== -1) {
+          if (accent === 'default') {
+            delete document.documentElement.dataset.accent;
+          } else {
+            document.documentElement.dataset.accent = accent;
+          }
+        }
+
+        const SCALES = ['sm', 'md', 'lg'];
+        const scale = params.get('scale');
+        if (scale && SCALES.indexOf(scale) !== -1) {
+          if (scale === 'sm') {
+            delete document.documentElement.dataset.scale;
+          } else {
+            document.documentElement.dataset.scale = scale;
+          }
+        }
+
+        const CONTRASTS = ['normal', 'high'];
+        const contrast = params.get('contrast');
+        if (contrast && CONTRASTS.indexOf(contrast) !== -1) {
+          if (contrast === 'normal') {
+            delete document.documentElement.dataset.contrast;
+          } else {
+            document.documentElement.dataset.contrast = contrast;
+          }
+        }
+      } catch (e) {}
+    }
+
+    applyThemeAndPreferences();
+    document.addEventListener('astro:after-swap', applyThemeAndPreferences);
+  })();
+</script>
+
+<!-- Astro View Transitions ClientRouter -->
+<ClientRouter />

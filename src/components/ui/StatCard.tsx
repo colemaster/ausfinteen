@@ -3,6 +3,7 @@ import { ArrowDownRight, ArrowUpRight, Minus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { AnimatedNumber } from './AnimatedNumber';
 import { Sparkline } from './Sparkline';
+import { ComparisonPill } from './ComparisonPill';
 
 type StatColor = 'blue' | 'green' | 'red' | 'purple' | 'cyan' | 'amber';
 type Trend = 'up' | 'down' | 'flat';
@@ -24,6 +25,10 @@ interface StatCardProps {
   trend?: Trend;
   /** Optional percentage delta rendered next to the trend arrow (e.g. 2.5 -> "+2.5%"). */
   delta?: number;
+  /** Optional format for delta ('percent' | 'currency' | 'number'). Defaults to 'percent'. */
+  deltaFormat?: 'currency' | 'percent' | 'number';
+  /** If true, negative delta is marked as good (e.g. expense, tax). */
+  deltaInverse?: boolean;
   /** Optional sparkline trend history array (e.g. [100, 120, 150, 140, 190]) */
   sparklineData?: number[];
 }
@@ -79,6 +84,8 @@ export const StatCard = React.memo(function StatCard({
   format,
   trend,
   delta,
+  deltaFormat,
+  deltaInverse,
   sparklineData,
 }: StatCardProps) {
   const accent = ACCENTS[color];
@@ -117,7 +124,14 @@ export const StatCard = React.memo(function StatCard({
         <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
           {label}
         </div>
-        {TrendIcon && (
+        {delta !== undefined ? (
+          <ComparisonPill
+            delta={delta}
+            format={deltaFormat || 'percent'}
+            inverse={deltaInverse}
+            size="xs"
+          />
+        ) : TrendIcon ? (
           <span
             className={cn(
               'inline-flex items-center gap-0.5 text-xs font-semibold tabular-nums',
@@ -125,9 +139,8 @@ export const StatCard = React.memo(function StatCard({
             )}
           >
             <TrendIcon className="h-3.5 w-3.5" aria-hidden="true" />
-            {delta !== undefined && `${delta > 0 ? '+' : ''}${delta}%`}
           </span>
-        )}
+        ) : null}
       </div>
 
       <div className="flex items-end justify-between gap-2">

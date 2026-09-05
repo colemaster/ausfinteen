@@ -1,0 +1,59 @@
+---
+interface Props {
+  badge?: string;
+  title: string;
+  description?: string;
+  backHref?: string;
+  backLabel?: string;
+  moduleNumber?: number;
+  class?: string;
+}
+
+const {
+  badge,
+  title,
+  description,
+  backHref,
+  backLabel,
+  moduleNumber,
+  class: className = '',
+} = Astro.props;
+---
+
+<header class={`mb-8 ${className}`}>
+  {backHref && (
+    <a
+      href={backHref}
+      class="inline-flex items-center gap-1.5 text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors mb-4 group"
+    >
+      <span class="group-hover:-translate-x-0.5 transition-transform">←</span>
+      <span>{backLabel || 'Back'}</span>
+    </a>
+  )}
+
+  <div class="flex flex-wrap items-center gap-2.5 mb-2">
+    {moduleNumber !== undefined && (
+      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold tracking-wider uppercase bg-primary/10 text-primary border border-primary/20 font-mono">
+        Module {moduleNumber}
+      </span>
+    )}
+    {badge && (
+      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-muted text-muted-foreground border border-border/60">
+        {badge}
+      </span>
+    )}
+  </div>
+
+  <h1
+    class="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-foreground"
+    transition:name={`page-title-${title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
+  >
+    {title}
+  </h1>
+
+  {description && (
+    <p class="mt-2 text-sm sm:text-base text-muted-foreground max-w-3xl leading-relaxed">
+      {description}
+    </p>
+  )}
+</header>

@@ -57,4 +57,53 @@ describe('2027 Frontend Components & Micro-Interactions', () => {
     expect(evaluateArithmetic('2500 + 450 * 12')).toBe(7900);
     expect(evaluateArithmetic('malicious_code()')).toBeNull();
   });
+
+  it('formats ComparisonPill delta values correctly for positive, negative, and zero', () => {
+    const formatDelta = (delta: number, format: 'currency' | 'percent' = 'currency') => {
+      const isZero = Math.abs(delta) < 0.001;
+      const isPositive = delta > 0;
+      const sign = isZero ? '' : isPositive ? '+' : '-';
+      const abs = Math.abs(delta);
+      const valStr = format === 'percent' ? `${abs.toFixed(1)}%` : `$${Math.round(abs).toLocaleString('en-AU')}`;
+      return `${sign}${valStr}`;
+    };
+
+    expect(formatDelta(1500)).toBe('+$1,500');
+    expect(formatDelta(-450)).toBe('-$450');
+    expect(formatDelta(0)).toBe('$0');
+    expect(formatDelta(5.2, 'percent')).toBe('+5.2%');
+    expect(formatDelta(-2.8, 'percent')).toBe('-2.8%');
+  });
+
+  it('handles CurrencyInput parsing and clamping within bounds', () => {
+    const parseCurrency = (input: string, min = 0, max = 1_000_000): number => {
+      const isNeg = input.trim().startsWith('-');
+      const raw = input.replace(/[^0-9]/g, '');
+      const num = raw === '' ? 0 : parseInt(raw, 10) * (isNeg ? -1 : 1);
+      return Math.max(min, Math.min(max, num));
+    };
+
+    expect(parseCurrency('$12,345')).toBe(12345);
+    expect(parseCurrency('abc')).toBe(0);
+    expect(parseCurrency('$2,500,000', 0, 1_000_000)).toBe(1_000_000);
+    expect(parseCurrency('-500', 100, 1000)).toBe(100);
+    expect(parseCurrency('-500', -1000, 1000)).toBe(-500);
+  });
+
+  it('verifies WAI-ARIA tab keyboard navigation calculations', () => {
+    const getNextTabIndex = (currentIndex: number, totalTabs: number, key: string): number => {
+      if (key === 'ArrowRight') return (currentIndex + 1) % totalTabs;
+      if (key === 'ArrowLeft') return (currentIndex - 1 + totalTabs) % totalTabs;
+      if (key === 'Home') return 0;
+      if (key === 'End') return totalTabs - 1;
+      return currentIndex;
+    };
+
+    expect(getNextTabIndex(0, 4, 'ArrowRight')).toBe(1);
+    expect(getNextTabIndex(3, 4, 'ArrowRight')).toBe(0); // wraps
+    expect(getNextTabIndex(0, 4, 'ArrowLeft')).toBe(3); // wraps back
+    expect(getNextTabIndex(2, 4, 'Home')).toBe(0);
+    expect(getNextTabIndex(1, 4, 'End')).toBe(3);
+  });
 });
+

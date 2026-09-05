@@ -4,6 +4,8 @@ import { NumberInput } from '@/components/ui/NumberInput';
 import { SliderControl } from '@/components/ui/SliderControl';
 import { StatCard } from '@/components/ui/StatCard';
 import { Badge } from '@/components/ui/Badge';
+import { InfoTooltip } from '@/components/ui/InfoTooltip';
+import { ComparisonPill } from '@/components/ui/ComparisonPill';
 import { OFFICIAL_WEB_LINKS } from '@/data/teen-finance-data';
 import { WebReferenceLink } from '@/components/shared/WebReferenceLink';
 import { Sparkles, Info, ShieldCheck, Scale } from 'lucide-react';
@@ -234,12 +236,20 @@ export function TeenSuperCalculator() {
             <div className="text-lg font-bold font-mono text-foreground">${decision.futureValueOutside.toLocaleString()}</div>
             <div className="text-[10px] text-muted-foreground">same money, after marginal tax</div>
           </div>
-          <div className={`rounded-xl border p-3 text-center ${decision.superAdvantage >= 0 ? 'border-emerald-500/40 bg-emerald-500/10' : 'border-amber-500/40 bg-amber-500/10'}`}>
-            <div className="text-[10px] uppercase tracking-wide text-muted-foreground font-semibold">Super Advantage</div>
-            <div className={`text-lg font-bold font-mono ${decision.superAdvantage >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'}`}>
-              ${Math.abs(decision.superAdvantage).toLocaleString()}
+          <div className={`rounded-xl border p-3 text-center flex flex-col items-center justify-center ${decision.superAdvantage >= 0 ? 'border-emerald-500/40 bg-emerald-500/10' : 'border-amber-500/40 bg-amber-500/10'}`}>
+            <div className="text-[10px] uppercase tracking-wide text-muted-foreground font-semibold mb-1 flex items-center gap-1">
+              <span>Super Advantage</span>
+              <InfoTooltip
+                title="Super Tax Concession Advantage"
+                content="Contributions and earnings inside super are taxed at a concessional 15% rate instead of your personal marginal tax rate. However, funds are preserved until age 60."
+              />
             </div>
-            <div className="text-[10px] text-muted-foreground">
+            <ComparisonPill
+              delta={decision.superAdvantage}
+              format="currency"
+              size="md"
+            />
+            <div className="text-[10px] text-muted-foreground mt-1">
               {decision.superAdvantage >= 0 ? 'super wins by this much' : 'outside investing wins by this much'}
             </div>
           </div>

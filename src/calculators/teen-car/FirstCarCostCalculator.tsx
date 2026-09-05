@@ -4,6 +4,7 @@ import { NumberInput } from '@/components/ui/NumberInput';
 import { SliderControl } from '@/components/ui/SliderControl';
 import { StatCard } from '@/components/ui/StatCard';
 import { Badge } from '@/components/ui/Badge';
+import { InfoTooltip } from '@/components/ui/InfoTooltip';
 import { OFFICIAL_WEB_LINKS, TEEN_CAR_COST_DEFAULTS } from '@/data/teen-finance-data';
 import { WebReferenceLink } from '@/components/shared/WebReferenceLink';
 import { Car, CheckCircle2, Flame, Wrench } from 'lucide-react';
@@ -64,6 +65,7 @@ export function FirstCarCostCalculator() {
             max={25000}
             step={500}
             prefix="$"
+            tooltip={<InfoTooltip term="ppsr" />}
           />
 
           <NumberInput
@@ -175,8 +177,13 @@ export function FirstCarCostCalculator() {
         <StatCard
           label="Total Car Purchase Cost"
           value={`$${totalPurchaseCost.toLocaleString()}`}
+          numericValue={totalPurchaseCost}
+          format="currency"
           color={purchaseType === 'cash' ? 'green' : 'red'}
           subtext={purchaseType === 'cash' ? 'Bought 100% in cash' : `Includes $${Math.round(totalLoanInterest).toLocaleString()} loan interest!`}
+          delta={purchaseType === 'loan' ? Math.round(totalLoanInterest) : undefined}
+          deltaFormat="currency"
+          deltaInverse={true}
         />
         <StatCard
           label="Annual Running Costs"

@@ -3,6 +3,7 @@ import { Card } from '@/components/ui/Card';
 import { NumberInput } from '@/components/ui/NumberInput';
 import { StatCard } from '@/components/ui/StatCard';
 import { Badge } from '@/components/ui/Badge';
+import { InfoTooltip } from '@/components/ui/InfoTooltip';
 import { Toggle } from '@/components/ui/Toggle';
 import { OFFICIAL_WEB_LINKS, MINOR_UNEARNED_TAX_RATES } from '@/data/teen-finance-data';
 import { WebReferenceLink } from '@/components/shared/WebReferenceLink';
@@ -99,6 +100,12 @@ export function TeenTaxCalculator() {
             max={60000}
             step={500}
             prefix="$"
+            tooltip={
+              <InfoTooltip
+                title="Tax-Free Threshold"
+                content="The first $18,200 you earn each financial year is 100% tax-free if you are an Australian resident for tax purposes."
+              />
+            }
           />
 
           <NumberInput
@@ -109,6 +116,12 @@ export function TeenTaxCalculator() {
             max={1000}
             step={20}
             prefix="$"
+            tooltip={
+              <InfoTooltip
+                title="Workplace Deductions"
+                content="You can claim occupation-specific clothing, non-slip protective shoes, and compulsory logo uniforms. Keep receipts or bank statements!"
+              />
+            }
           />
         </div>
 
@@ -121,6 +134,12 @@ export function TeenTaxCalculator() {
             max={500}
             step={25}
             prefix="$"
+            tooltip={
+              <InfoTooltip
+                title="Self-Education Deductions"
+                content="Course fees (RSA/RCG, First Aid) directly required to maintain or advance in your existing employment can be claimed as a tax deduction."
+              />
+            }
           />
 
           <NumberInput
@@ -131,6 +150,12 @@ export function TeenTaxCalculator() {
             max={5000}
             step={50}
             prefix="$"
+            tooltip={
+              <InfoTooltip
+                title="ATO Division 6AA Minor Rules"
+                content="Minors under 18 pay punitive tax rates (up to 45%–66%) on passive/unearned income over $416/year to prevent tax avoidance by adults."
+              />
+            }
           />
         </div>
       </div>

@@ -1,0 +1,45 @@
+---
+interface Props {
+  height?: string;
+  gradient?: string;
+}
+
+const {
+  height = 'h-[3px]',
+  gradient = 'from-primary via-violet-500 to-amber-400',
+} = Astro.props;
+---
+
+<div
+  id="scroll-progress-bar"
+  class={`fixed top-0 left-0 z-50 ${height} bg-gradient-to-r ${gradient} transition-[width] duration-150 ease-out pointer-events-none`}
+  style="width: 0%"
+  aria-hidden="true"
+></div>
+
+<script is:inline>
+  (function() {
+    function initScrollProgress() {
+      const bar = document.getElementById('scroll-progress-bar');
+      if (!bar || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      let ticking = false;
+      function update() {
+        const doc = document.documentElement;
+        const scrollTop = window.scrollY || doc.scrollTop;
+        const height = doc.scrollHeight - doc.clientHeight;
+        bar.style.width = (height > 0 ? Math.min(1, scrollTop / height) * 100 : 0) + '%';
+        ticking = false;
+      }
+      window.addEventListener('scroll', function() {
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(update);
+        }
+      }, { passive: true });
+      window.addEventListener('resize', update, { passive: true });
+      update();
+    }
+    document.addEventListener('astro:page-load', initScrollProgress);
+    initScrollProgress();
+  })();
+</script>

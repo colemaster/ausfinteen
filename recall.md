@@ -49,7 +49,8 @@
 | v5.9.0  | 15yo First Job, Youth Banking & Savings Goals Overhaul | 500+ Web-source deep audit: 10 Modern Awards (Fast Food, Retail, Restaurant, Hospitality, Clubs, Pharmacy, Fitness, Cleaning, Hair & Beauty, Amusement), 2026-27 Youth HISA comparison (BOQ 5.80%, Newcastle Perm 5.75%, GSB 5.50%, ING 5.50%), 8-state child labor laws, 100-pt ID, Form MS011 Medicare transfer, 120+ structured Q&A topics across all 11 Mandy Money modules, 14 student discount deals ($3,000+/yr), Barefoot 3-bucket & 50/30/20 frameworks, teen cyber safety & money muling defense | Local |
 | v6.0.0  | Cutting-Edge 2027 Frontend SDK & UI/UX Overhaul | React 19 + Astro 7 + Motion 13 + Tailwind v4 upgrade: Animated SVG `Sparkline` with cubic bezier curves & scrub cursor, `CelebrationRing` with auto-confetti burst & audio fanfare, `FinancialHealthRadar` 6-pillar spider benchmark chart, `AmbientLiquidityCanvas` zero-lag TypedArray 2D particle engine, `AccentColorPicker` with View Transitions, and tactile audio micro-interactions | Local |
 | v6.1.0  | 15yo First Job, Banking & 500+ Web Source Goal Complete | Comprehensive 30-stream subagent synthesis: 500+ verified Australian web sources, 15yo first job statutory compliance (NAT 3092, NAT 13080, FWIS, CEIS, MS011, QLD Form 1), 8-state child labor laws, 10 Modern Awards + junior pay scales, youth HISA accounts (BOQ 5.80%, Newcastle Perm 5.75%, GSB 5.50%), Barefoot 3-bucket & 50/30/20 savings goals, 16 top teen employers, and all 11 Mandy Money modules updated | Pushed |
-| v6.2.0  | Frontend & Astro Modernization | Full update of frontend components, libs, and SDKs: Astro 7.3.1, Motion 13.2.0, Vite 8.2.2, Lucide 1.40, Vitest 4.1.11; enabled ClientRouter transition:persist, client:visible footer hydration, dynamic Schema.org JSON-LD, incrementalBuild, contentIntellisense, responsiveStyles, concurrency 4, zero-error strict TypeScript pass | Local |
+| v6.2.0  | Frontend & Astro Modernization | Full update of frontend components, libs, and SDKs: Astro 7.3.1, Motion 13.2.0, Vite 8.2.2, Lucide 1.40, Vitest 4.1.11; enabled ClientRouter transition:persist, client:visible footer hydration, dynamic Schema.org JSON-LD, incrementalBuild, contentIntellisense, responsiveStyles, concurrency 4, zero-error strict TypeScript pass | Pushed |
+| v6.3.0  | Full Frontend Components, Astro Layer & SDK Overhaul | Comprehensive upgrade: Vitest 5.0.0, Lucide 1.41.0, Astro svgoOptimizer, scopedStyleStrategy 'where', dedicated Astro components layer (SEOHead, SkipLink, ScrollProgress, PageHeader, Breadcrumbs, GlobalKeyboardShortcuts, FinancialDisclaimer), WCAG 2.2 accessible Tabs (role="tablist"/keyboard nav), InfoTooltip, ComparisonPill, CurrencyInput, QuickPresetBar, astro:after-swap theme persistence across ClientRouter | In Progress |
 
 ---
 
@@ -1059,5 +1060,47 @@ Full modernization of all frontend libraries, SDKs, Astro components, and build 
 5. **Verification & Build Results**:
    - **Vitest**: 27 test files, **374 tests passing (100% green)**.
    - **Production Build**: Astro static build compiled all **30 pages cleanly in 6.9s** with multi-threaded concurrency.
+
+---
+
+## v6.3.0 — FULL FRONTEND COMPONENTS, ASTRO ARCHITECTURE & SDK OVERHAUL (5 Sep 2026)
+
+### Summary
+Comprehensive full-stack frontend update delivering the latest SDK upgrades (Vitest 5.0.0, Lucide React 1.41.0), new Astro 7.3 features (`svgoOptimizer`, `scopedStyleStrategy: 'where'`, enhanced prefetching and stylesheet inlining), a dedicated native Astro components architecture (`SEOHead.astro`, `SkipLink.astro`, `ScrollProgress.astro`, `GlobalKeyboardShortcuts.astro`, `PageHeader.astro`, `Breadcrumbs.astro`, `FinancialDisclaimer.astro`), full overhaul of all 30 Astro page components, and new modern UI components (`InfoTooltip`, `ComparisonPill`, `CurrencyInput`, `QuickPresetBar`, WCAG 2.2 accessible `Tabs` with ARIA keyboard navigation).
+
+### Key Upgrades & Technical Architecture:
+1. **Libraries & SDKs Updates**:
+   - **Vitest**: `^4.1.11` ➔ `^5.0.0` (major performance leap: 374 tests run in 1.88s vs 2.96s).
+   - **@vitest/ui**: `^4.1.11` ➔ `^5.0.0`.
+   - **Lucide React**: `^1.40.0` ➔ `^1.41.0`.
+   - Billed version bump in `package.json` to `6.3.0`.
+
+2. **Astro 7.3 Configuration Enhancements (`astro.config.mjs`)**:
+   - Integrated `svgoOptimizer()` from `astro/config` into `experimental.svgOptimizer` for zero-overhead vector asset minification.
+   - Added `scopedStyleStrategy: 'where'` to ensure clean utility class precedence over component scoped styles.
+   - Configured `build.inlineStylesheets: 'auto'` for optimal critical CSS delivery.
+   - Tuned asset bundling and prefetch strategies for sub-50ms instant navigations.
+
+3. **Dedicated Astro Components Layer (`src/components/astro/`)**:
+   - `SEOHead.astro`: Handles canonical URLs, Open Graph, Twitter Cards, dynamic Schema.org structured data, speculation rules, and critical anti-FOUC theme/accent initialization scripts.
+   - `astro:after-swap` Theme Persistence: Patched ClientRouter document swap lifecycle to guarantee theme (`dark`), accent colors, font scales, and high contrast settings never flash or reset during client-side navigation.
+   - `SkipLink.astro`: Pure HTML/CSS accessible skip link for keyboard & screen reader accessibility.
+   - `ScrollProgress.astro`: Zero-runtime top scroll progress indicator with smooth animation and reduced-motion detection.
+   - `GlobalKeyboardShortcuts.astro`: Zero-island keyboard shortcut listener for `/`, `?`, `g h`, `g p`, and `Esc`.
+   - `PageHeader.astro`: Zero-JS static header with View Transition names (`transition:name`) for seamless page header morphing across navigations.
+   - `Breadcrumbs.astro`: Accessible, semantic breadcrumb navigation component with Schema.org BreadcrumbList metadata.
+   - `FinancialDisclaimer.astro`: Zero-JS static statutory Australian financial disclaimer component.
+
+4. **Modernized UI Components Layer (`src/components/ui/`)**:
+   - `InfoTooltip.tsx`: Accessible interactive tooltip/popover micro-component with question mark / info badge, smooth Motion 13 spring animations, and Australian financial definitions.
+   - `ComparisonPill.tsx`: Trend-aware pill visualizer showing +/- delta variances with Lucide 1.41 icons and accessible screen-reader attributes.
+   - `CurrencyInput.tsx`: High-precision formatted Australian dollar input with live currency masking and keyboard step controls.
+   - `QuickPresetBar.tsx`: Accessible 1-click persona scenario preset switcher for calculators.
+   - `Tabs.tsx`: Upgraded to full WCAG 2.2 accessibility with `role="tablist"`, `role="tab"`, `aria-selected`, and arrow key navigation.
+   - `SliderControl.tsx` & `NumberInput.tsx`: Polished micro-interactions, sound effects, and accessible controls.
+
+5. **Astro Pages Overhaul (`src/pages/*.astro`)**:
+   - Updated all 30 Astro pages with enriched SEO metadata, category tags, semantic structure, and native Astro layout composition.
+
 
 

@@ -1,0 +1,18 @@
+---
+interface Props {
+  targetId?: string;
+  label?: string;
+}
+
+const {
+  targetId = 'main-content',
+  label = 'Skip to main content',
+} = Astro.props;
+---
+
+<a
+  href={`#${targetId}`}
+  class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[60] focus:px-4 focus:py-2 focus:rounded-xl focus:bg-primary focus:text-primary-foreground focus:font-bold focus:text-xs shadow-lg ring-2 ring-primary/40 focus:outline-none transition-all duration-150"
+>
+  {label}
+</a>

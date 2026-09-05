@@ -1,4 +1,4 @@
-import { defineConfig } from 'astro/config';
+import { defineConfig, svgoOptimizer } from 'astro/config';
 import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
@@ -9,6 +9,7 @@ export default defineConfig({
   base: process.env.VITE_BASE ?? '/',
   output: 'static',
   compressHTML: 'jsx',
+  scopedStyleStrategy: 'where',
   prefetch: {
     defaultStrategy: 'hover',
     prefetchAll: true,
@@ -17,12 +18,14 @@ export default defineConfig({
     clientPrerender: true,
     contentIntellisense: true,
     incrementalBuild: true,
+    svgOptimizer: svgoOptimizer(),
   },
   image: {
     responsiveStyles: true,
   },
   build: {
     concurrency: 4,
+    inlineStylesheets: 'auto',
   },
   integrations: [
     react({

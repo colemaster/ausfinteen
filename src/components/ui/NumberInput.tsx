@@ -1,4 +1,5 @@
 import { cn } from '@/lib/utils';
+import { sound } from '@/lib/sound-synthesizer';
 import {
   convertPeriod,
   withPeriodSuffix,
@@ -27,6 +28,8 @@ interface NumberInputProps {
   basePeriod?: PaymentPeriod;
   /** Render − / + stepper buttons that clamp to min/max and snap to step. */
   stepButtons?: boolean;
+  /** Optional interactive info tooltip rendered next to label. */
+  tooltip?: React.ReactNode;
 }
 
 function snapToStep(v: number, step: number, min?: number): number {
@@ -48,6 +51,7 @@ export function NumberInput({
   onPeriodChange,
   basePeriod = 'monthly',
   stepButtons = false,
+  tooltip,
 }: NumberInputProps) {
   const displayValue =
     period && period !== basePeriod ? convertPeriod(value, period, basePeriod) : value;
@@ -69,13 +73,17 @@ export function NumberInput({
       Math.max(min === undefined ? next : min, next)
     );
     onChange(clamped);
+    sound.playClick();
   };
 
   return (
     <div className="group flex flex-col gap-1.5">
-      <label className="text-xs font-medium uppercase tracking-wide text-muted-foreground transition-colors group-focus-within:text-foreground">
-        {label}
-      </label>
+      <div className="flex items-center justify-between gap-1">
+        <label className="text-xs font-medium uppercase tracking-wide text-muted-foreground transition-colors group-focus-within:text-foreground">
+          {label}
+        </label>
+        {tooltip && <div className="shrink-0">{tooltip}</div>}
+      </div>
       <div className="flex items-center rounded-xl border border-border bg-background shadow-sm transition-all duration-200 focus-within:border-primary/50 focus-within:ring-4 focus-within:ring-primary/10">
         {prefix && (
           <span className="flex h-full shrink-0 select-none items-center self-stretch rounded-l-xl border-r border-border/60 bg-muted/40 px-3 text-sm font-medium text-muted-foreground">

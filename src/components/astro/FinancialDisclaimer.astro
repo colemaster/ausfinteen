@@ -1,0 +1,37 @@
+---
+interface Props {
+  sourceYear?: string;
+  class?: string;
+}
+
+const {
+  sourceYear = '2026-27',
+  class: className = '',
+} = Astro.props;
+---
+
+<div class={`rounded-2xl border border-amber-500/25 bg-amber-500/5 p-4 sm:p-5 text-xs text-muted-foreground leading-relaxed my-8 ${className}`}>
+  <div class="flex items-start gap-3">
+    <div class="p-1.5 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5">
+      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="8" x2="12" y2="12"></line>
+        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+      </svg>
+    </div>
+    <div class="space-y-1.5">
+      <div class="font-bold text-foreground flex flex-wrap items-center gap-2">
+        <span>General Financial Information & Modelling Only</span>
+        <span class="inline-flex items-center px-2 py-0.2 rounded-full text-[10px] font-semibold bg-amber-500/15 text-amber-700 dark:text-amber-300">
+          ATO {sourceYear} Rates
+        </span>
+      </div>
+      <p>
+        AusTeen Money and AusFinance Suite are free educational tools made for young Australians and general investors. All calculations, estimates, tax rules, and comparisons are strictly illustrative and based on Australian legislation (ATO, APRA, ASIC, Fair Work Ombudsman). They do not take into account your personal financial objectives, situation, or needs.
+      </p>
+      <p>
+        This is not financial, legal, or tax advice. You should always seek independent advice from a licensed Australian Financial Services (AFS) licence holder or registered tax agent before making financial decisions.
+      </p>
+    </div>
+  </div>
+</div>

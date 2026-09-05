@@ -4,6 +4,7 @@ import { NumberInput } from '@/components/ui/NumberInput';
 import { SliderControl } from '@/components/ui/SliderControl';
 import { StatCard } from '@/components/ui/StatCard';
 import { Badge } from '@/components/ui/Badge';
+import { InfoTooltip } from '@/components/ui/InfoTooltip';
 import { PaymentPeriodToggle, type PaymentPeriod } from '@/components/ui/PaymentPeriodToggle';
 import { OFFICIAL_WEB_LINKS } from '@/data/teen-finance-data';
 import { WebReferenceLink } from '@/components/shared/WebReferenceLink';
@@ -127,6 +128,12 @@ export function FirstPaycheckSplitter() {
             max={4000}
             step={10}
             prefix="$"
+            tooltip={
+              <InfoTooltip
+                title="Take-Home Pay"
+                content="Your net take-home pay deposited into your bank account. For casual employees under 18 earning under $350/wk who claim the tax-free threshold, gross pay equals take-home pay ($0 tax withheld)!"
+              />
+            }
           />
           <div className="space-y-1.5">
             <span className="text-[11px] font-semibold text-muted-foreground block">15yo Quick Shift Amounts:</span>

@@ -1,5 +1,7 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import Breadcrumbs from "@/components/astro/Breadcrumbs.astro";
+import FinancialDisclaimer from "@/components/astro/FinancialDisclaimer.astro";
 import { TeenBudgeting } from "@/views/TeenBudgeting";
 ---
 
@@ -8,5 +10,7 @@ import { TeenBudgeting } from "@/views/TeenBudgeting";
   description="Interactive paycheck splitter: Barefoot 3-bucket system (Blow, Mojo, Grow), inverted 50/30/20 rule for teens living at home, and automated payday routines."
   keywords="teen budgeting, paycheck splitter, Barefoot 3 buckets, 50 30 20 rule teen, Australian youth budget, savings goals"
 >
+  <Breadcrumbs items={[{ label: "Modules", href: "/#modules" }, { label: "Module 3: Teen Budgeting" }]} />
   <TeenBudgeting client:load />
+  <FinancialDisclaimer sourceYear="2026-27" />
 </Layout>

@@ -1,5 +1,7 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import Breadcrumbs from "@/components/astro/Breadcrumbs.astro";
+import FinancialDisclaimer from "@/components/astro/FinancialDisclaimer.astro";
 import { TaxGuide } from "@/views/TaxGuide";
 ---
 
@@ -8,5 +10,7 @@ import { TaxGuide } from "@/views/TaxGuide";
   description="ATO Stage 3 tax brackets 2026-27, $18,200 tax-free threshold, myGov ATO linking, work-related deductions, PAYG withholding refund, and youth tax guide."
   keywords="Australian tax brackets 2026-27, tax-free threshold 18200, first tax return Australia, myGov ATO, PAYG refund, work deductions, youth tax"
 >
+  <Breadcrumbs items={[{ label: "Modules", href: "/#modules" }, { label: "Module 5: Tax & First Return" }]} />
   <TaxGuide client:load />
+  <FinancialDisclaimer sourceYear="2026-27" />
 </Layout>

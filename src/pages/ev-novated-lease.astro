@@ -1,12 +1,16 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import Breadcrumbs from "@/components/astro/Breadcrumbs.astro";
+import FinancialDisclaimer from "@/components/astro/FinancialDisclaimer.astro";
 import { EVNovatedLease } from "@/views/EVNovatedLease";
 ---
 
 <Layout
-  title="EV Novated Lease Calculator & FBT Exemption Analyser | AusFinance Suite"
-  description="Compare Electric Vehicle novated leasing vs cash purchase or dealer financing. Calculate pre-tax salary sacrifice savings under the Treasury Laws Amendment FBT exemption."
-  keywords="EV novated lease calculator, electric car FBT exemption Australia, salary sacrifice vehicle, luxury car tax threshold"
+  title="EV Novated Lease Calculator & FBT Exemption Engine | AusFinance Suite"
+  description="Model pre-tax salary packaging savings for zero and low-emissions electric vehicles under the Australian Federal FBT exemption (Treasury Laws Amendment Act)."
+  keywords="EV novated lease calculator, electric vehicle salary packaging, FBT exemption EV Australia, novated lease tax savings, novated lease running costs"
 >
+  <Breadcrumbs items={[{ label: "Calculators", href: "/calculators" }, { label: "EV Novated Lease Calculator" }]} />
   <EVNovatedLease client:load />
+  <FinancialDisclaimer sourceYear="2026-27" />
 </Layout>

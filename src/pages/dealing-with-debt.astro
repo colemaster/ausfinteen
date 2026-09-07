@@ -1,12 +1,16 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import Breadcrumbs from "@/components/astro/Breadcrumbs.astro";
+import FinancialDisclaimer from "@/components/astro/FinancialDisclaimer.astro";
 import { DealingWithDebt } from "@/views/DealingWithDebt";
 ---
 
 <Layout
-  title="Dealing with Debt, BNPL & Credit Traps (Module 6) | AusFinance Suite"
-  description="Afterpay/Zip BNPL debt trap simulator, credit card compound interest, credit scores (Equifax/Experian/Illion), and National Debt Helpline 1800 007 007."
-  keywords="BNPL debt trap, Afterpay fees, credit card interest calculator, credit score Australia, National Debt Helpline 1800 007 007"
+  title="Dealing with Debt: BNPL Traps, Credit Scores & National Debt Helpline (Module 6) | AusFinance Suite"
+  description="Buy Now Pay Later (BNPL) hidden fees, credit score mechanics (Equifax/Experian), hardship variations (NCCP section 72), and free support from National Debt Helpline (1800 007 007)."
+  keywords="BNPL debt trap, Buy Now Pay Later fees, Australian credit score, hardship variation NCCP 72, National Debt Helpline 1800 007 007, debt relief Australia"
 >
+  <Breadcrumbs items={[{ label: "Modules", href: "/#modules" }, { label: "Module 6: Dealing with Debt" }]} />
   <DealingWithDebt client:load />
+  <FinancialDisclaimer sourceYear="2026-27" />
 </Layout>

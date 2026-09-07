@@ -1,5 +1,6 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import Breadcrumbs from "@/components/astro/Breadcrumbs.astro";
 import { TeenProfile } from "@/views/TeenProfile";
 ---
 
@@ -8,5 +9,6 @@ import { TeenProfile } from "@/views/TeenProfile";
   description="Personalise your Australian financial journey: track savings goals, first job pay, super balance, and customized next steps for 15-to-18-year-old Aussies."
   keywords="teen finance profile, youth financial goals, Barefoot 3-buckets, first job savings, Australian teen money dashboard"
 >
+  <Breadcrumbs items={[{ label: "My Profile" }]} />
   <TeenProfile client:load />
 </Layout>

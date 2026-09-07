@@ -8,6 +8,7 @@ import SEOHead from '@/components/astro/SEOHead.astro';
 import SkipLink from '@/components/astro/SkipLink.astro';
 import ScrollProgress from '@/components/astro/ScrollProgress.astro';
 import GlobalKeyboardShortcuts from '@/components/astro/GlobalKeyboardShortcuts.astro';
+import AuraBackground from '@/components/astro/AuraBackground.astro';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { Toaster } from '@/components/ui/Toaster';
@@ -18,17 +19,21 @@ interface Props {
   keywords?: string;
   ogType?: string;
   canonicalUrl?: string;
+  class?: string;
 }
 
-const props = Astro.props;
+const {
+  class: className = '',
+  ...seoProps
+} = Astro.props;
 ---
 
 <!doctype html>
 <html lang="en-AU" class="scroll-smooth">
   <head>
-    <SEOHead {...props} />
+    <SEOHead {...seoProps} />
   </head>
-  <body class="min-h-screen flex flex-col bg-background text-foreground transition-colors duration-200 selection:bg-primary/20 selection:text-primary">
+  <body class="min-h-screen flex flex-col bg-background text-foreground transition-colors duration-200 selection:bg-primary/20 selection:text-primary antialiased">
     <!-- Accessible Skip Link -->
     <SkipLink />
 
@@ -39,12 +44,9 @@ const props = Astro.props;
     <Navbar client:load transition:persist />
 
     <!-- Page Content Container with Ambient Chromatic Aura -->
-    <div class="relative flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 py-6">
-      <div class="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
-        <div class="aura-orb-1"></div>
-        <div class="aura-orb-2"></div>
-      </div>
-      <main id="main-content" tabindex="-1" class="relative z-10 focus:outline-none">
+    <div class={`relative flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 py-6 ${className}`}>
+      <AuraBackground />
+      <main id="main-content" tabindex="-1" class="relative z-10 focus:outline-none" transition:animate="fade">
         <slot />
       </main>
     </div>
@@ -55,7 +57,7 @@ const props = Astro.props;
     <!-- Toast Notifications with transition persistence -->
     <Toaster client:idle transition:persist />
 
-    <!-- Zero-runtime Global Keyboard Shortcuts -->
+    <!-- Zero-runtime Global Keyboard Shortcuts with ClientRouter navigate -->
     <GlobalKeyboardShortcuts />
   </body>
 </html>

@@ -1,0 +1,21 @@
+---
+interface Props {
+  class?: string;
+}
+
+const { class: className = '' } = Astro.props;
+---
+
+<div
+  class={`pointer-events-none absolute inset-0 overflow-hidden select-none ${className}`}
+  aria-hidden="true"
+>
+  <div
+    class="aura-orb-1 will-change-transform opacity-70 dark:opacity-60 blur-3xl transition-opacity duration-700"
+    style="transform: translate3d(0, 0, 0);"
+  ></div>
+  <div
+    class="aura-orb-2 will-change-transform opacity-60 dark:opacity-50 blur-3xl transition-opacity duration-700"
+    style="transform: translate3d(0, 0, 0);"
+  ></div>
+</div>

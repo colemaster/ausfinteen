@@ -1,5 +1,7 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import Breadcrumbs from "@/components/astro/Breadcrumbs.astro";
+import FinancialDisclaimer from "@/components/astro/FinancialDisclaimer.astro";
 import { InvestingShares } from "@/views/InvestingShares";
 ---
 
@@ -8,5 +10,7 @@ import { InvestingShares } from "@/views/InvestingShares";
   description="ASX index funds (VAS, VGS, NDQ, A200), compound interest simulator, CHESS sponsorship, dividend reinvestment (DRP), and minor trust accounts under 18."
   keywords="ASX ETFs, VAS VGS, compound interest calculator, CHESS sponsorship, minor trust account investing, beginner ETF portfolio, DRP"
 >
+  <Breadcrumbs items={[{ label: "Modules", href: "/#modules" }, { label: "Module 7: Investing & Shares" }]} />
   <InvestingShares client:load />
+  <FinancialDisclaimer sourceYear="2026-27" />
 </Layout>

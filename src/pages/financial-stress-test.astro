@@ -1,5 +1,7 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import Breadcrumbs from "@/components/astro/Breadcrumbs.astro";
+import FinancialDisclaimer from "@/components/astro/FinancialDisclaimer.astro";
 import { FinancialStressTest } from "@/views/FinancialStressTest";
 ---
 
@@ -8,5 +10,7 @@ import { FinancialStressTest } from "@/views/FinancialStressTest";
   description="Stress-test your mortgage, living expenses, and emergency runway against Australian rate shocks (+100bps to +300bps), inflation spikes, and income loss."
   keywords="financial stress test, mortgage rate shock, RBA rate hike simulator, emergency fund runway, household resilience"
 >
+  <Breadcrumbs items={[{ label: "Calculators", href: "/calculators" }, { label: "Financial Stress Test" }]} />
   <FinancialStressTest client:load />
+  <FinancialDisclaimer sourceYear="2026-27" />
 </Layout>

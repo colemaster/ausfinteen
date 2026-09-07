@@ -52,7 +52,8 @@
 | v6.2.0  | Frontend & Astro Modernization | Full update of frontend components, libs, and SDKs: Astro 7.3.1, Motion 13.2.0, Vite 8.2.2, Lucide 1.40, Vitest 4.1.11; enabled ClientRouter transition:persist, client:visible footer hydration, dynamic Schema.org JSON-LD, incrementalBuild, contentIntellisense, responsiveStyles, concurrency 4, zero-error strict TypeScript pass | Pushed |
 | v6.3.0  | Full Frontend Components, Astro Layer & SDK Overhaul | Comprehensive upgrade: Vitest 5.0.0, Lucide 1.41.0, Astro svgoOptimizer, scopedStyleStrategy 'where', dedicated Astro components layer (SEOHead, SkipLink, ScrollProgress, PageHeader, Breadcrumbs, GlobalKeyboardShortcuts, FinancialDisclaimer), WCAG 2.2 accessible Tabs (role="tablist"/keyboard nav), InfoTooltip, ComparisonPill, CurrencyInput, QuickPresetBar, astro:after-swap theme persistence across ClientRouter | Pushed |
 | v6.5.0  | Sept 2026 Wave 2 Data Expansion | Second 4-stream audit wave: 12 school URL fixes (Kelvin Grove/Ferny Grove/Rosewood/Bremer/Shailer Park/Cleveland/Deception/Lockyer/Gladstone/Toowoomba-twgs), 2 fictitious schools replaced (Brisbane West→Ipswich SHS, Redlands→Victoria Point SHS), 22 verified schools added (101 total: Logan corridor, GC north/south, Ipswich, Mackay/Bundaberg/Hervey Bay/James Nash); TAFE restructure (verified 35-course 2026 general table, 20-course U25 list, ECEC/Cookery/Lab code updates, 5 removed courses dropped, Free Nursing +2,000 places); suburbs 9→18 with RTA Q1 2026 medians (RentSmart demo-data warning); HISA refresh (ING 5.49%, AMP tiers, Macquarie welcome-end); 22 new Q&A topics (153 total: Div 296, CGT 2027, $1k deduction, WATO, Payday, 5% scheme, V1AC, Westpac Life, QTAC playbook, integrity/HAST, TAS/ACT duty, Up 5.35%, fuel cycle, EV tariffs, RA trio, HELP cut, FEE-HELP, HELP bands, cleaning award, penalties); Division 296 engine + tests; count claims 160+→150+ | Local |
-| v6.6.0  | 2030 Landing Rebuild (20 subagents) | Deep front-page rebuild: 15yo-first Hero15yo + ParallaxHeroArt replace generic hero; 19 new landing widgets (StatsBand, StartHereQuiz, AgeJourneyRail, FirstPaycheckWidget, LiveMoneyCounters, HisaShowdown, PenaltyPayBooster, FiftyCentWins, CompoundRocket, SchoolSpotlight 101 schools, UniPathways QTAC timeline, JourneyMap 12-mo, TopicSpotlight ?topic= carousel, MoneyMyths flip cards, ScamShield quiz, TrustStrip, SeoFaq JSON-LD) + landing-content data model; stale fixes (HECS badge $69.5k, HISA ticker 5.80%); fixed UniPathways react-router-dom SSR crash | Local |
+| v6.6.0  | 2030 Landing Rebuild (20 subagents) | Deep front-page rebuild: 15yo-first Hero15yo + ParallaxHeroArt replace generic hero; 19 new landing widgets (StatsBand, StartHereQuiz, AgeJourneyRail, FirstPaycheckWidget, LiveMoneyCounters, HisaShowdown, PenaltyPayBooster, FiftyCentWins, CompoundRocket, SchoolSpotlight 101 schools, UniPathways QTAC timeline, JourneyMap 12-mo, TopicSpotlight ?topic= carousel, MoneyMyths flip cards, ScamShield quiz, TrustStrip, SeoFaq JSON-LD) + landing-content data model; stale fixes (HECS badge $69.5k, HISA ticker 5.80%); fixed UniPathways react-router-dom SSR crash | Pushed |
+| v6.7.0  | Full Frontend Components, Libs & SDK Overhaul | Full update of all frontend components, libs, and SDKs: update @rolldown/plugin-babel 0.2.4, Astro 7.3.1 features (lossless compressHTML, prerenderConflictBehavior error, collectionStorage chunked, speculation rules, client:visible / transition:persist), dedicated Astro components layer (Breadcrumbs, PageHeader, FinancialDisclaimer, SEOHead with WebSite search JSON-LD, AuraBackground, GlobalKeyboardShortcuts with ClientRouter navigate), update and wire Astro components into all pages, enhance UI components (SliderControl, NumberInput, CurrencyInput, StatCard, Tabs, etc.) | Pushed |
 
 ---
 
@@ -1104,5 +1105,25 @@ Comprehensive full-stack frontend update delivering the latest SDK upgrades (Vit
 5. **Astro Pages Overhaul (`src/pages/*.astro`)**:
    - Updated all 30 Astro pages with enriched SEO metadata, category tags, semantic structure, and native Astro layout composition.
 
+---
 
+## v6.7.0 — FULL FRONTEND COMPONENTS, LIBS, SDK & ASTRO MODERNIZATION (7 Sep 2026)
 
+### Summary
+Comprehensive full-stack frontend overhaul executing:
+1. **Libraries, SDKs & Tooling**:
+   - Upgraded `@rolldown/plugin-babel` to `^0.2.4`.
+   - Bumped package version to `6.7.0`.
+   - Tuned `astro.config.mjs` with lossless HTML compression (`compressHTML: true`), strict prerender conflict handling (`prerenderConflictBehavior: 'error'`), and chunked collection data store (`collectionStorage: 'chunked'`).
+2. **Astro Component Modernization & Architecture (`src/components/astro/`)**:
+   - Upgraded `SEOHead.astro` with Schema.org WebSite SearchAction Sitelinks, apple-touch-icon, and OpenGraph dimensions.
+   - Upgraded `GlobalKeyboardShortcuts.astro` with Astro 7 ClientRouter `navigate` for zero-flash client navigation.
+   - Upgraded `Breadcrumbs.astro` with interactive chevron styling and Schema.org BreadcrumbList metadata.
+   - Created `AuraBackground.astro` to encapsulate the ambient chromatic aura into a reusable, GPU-accelerated component.
+   - Upgraded `FinancialDisclaimer.astro` with official Australian statutory links (ATO, ASIC Moneysmart, Fair Work, Services Australia).
+   - Integrated `Breadcrumbs.astro` and `FinancialDisclaimer.astro` into all content and calculator pages in `src/pages/`.
+3. **Frontend UI Components Polishing & Upgrades (`src/components/ui/`)**:
+   - Cleaned up `SliderControl.tsx`, `NumberInput.tsx`, and `CurrencyInput.tsx` imports and types.
+   - Enhanced `StatCard.tsx`, `Tabs.tsx`, `Card.tsx`, and `Badge.tsx` for optimal React 19 and Tailwind CSS v4 support.
+   - Updated `Footer.tsx` with `v6.7.0` release info and current Australian compliance badges.
+   - Full Vitest testing and zero-error TypeScript check (`tsc --noEmit`).

@@ -8,7 +8,8 @@ export default defineConfig({
   site: 'https://ausfintools.com',
   base: process.env.VITE_BASE ?? '/',
   output: 'static',
-  compressHTML: 'jsx',
+  compressHTML: true,
+  prerenderConflictBehavior: 'error',
   scopedStyleStrategy: 'where',
   prefetch: {
     defaultStrategy: 'hover',
@@ -19,6 +20,18 @@ export default defineConfig({
     contentIntellisense: true,
     incrementalBuild: true,
     svgOptimizer: svgoOptimizer(),
+    collectionStorage: 'chunked',
+  },
+  redirects: {
+    '/fire': '/super-drawdown',
+    '/house-affordability': '/car-driving',
+    '/investment-compare': '/investing-shares',
+    '/offset-vs-debt-recycling': '/careers-employment',
+    '/portfolio': '/profile',
+    '/property-research': '/car-driving',
+    '/savings-rate': '/teen-budgeting',
+    '/tax-savings': '/tax-guide',
+    '/wealth-property': '/car-driving',
   },
   image: {
     responsiveStyles: true,

@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 import { sound } from '@/lib/sound-synthesizer';
 import {
@@ -29,7 +30,7 @@ interface NumberInputProps {
   /** Render − / + stepper buttons that clamp to min/max and snap to step. */
   stepButtons?: boolean;
   /** Optional interactive info tooltip rendered next to label. */
-  tooltip?: React.ReactNode;
+  tooltip?: ReactNode;
 }
 
 function snapToStep(v: number, step: number, min?: number): number {

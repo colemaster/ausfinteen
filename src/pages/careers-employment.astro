@@ -1,12 +1,16 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import Breadcrumbs from "@/components/astro/Breadcrumbs.astro";
+import FinancialDisclaimer from "@/components/astro/FinancialDisclaimer.astro";
 import { CareersEmployment } from "@/views/CareersEmployment";
 ---
 
 <Layout
-  title="Careers, First Jobs & Fair Work Rights in Australia (Module 4) | AusFinance Suite"
-  description="Australian award rates, junior pay scales (15-20yo), 25% casual loading, Sunday/public holiday penalty rates, TFN declaration (NAT 3092), and youth resume builder."
-  keywords="first job Australia, junior award rates, Fair Work Ombudsman, 25% casual loading, penalty rates Sunday, TFN form NAT 3092, teen resume builder, workplace rights"
+  title="Careers & Employment: First Job, Rights & Awards (Module 4) | AusFinance Suite"
+  description="15yo first job roadmap, TFN application, 10 Modern Awards junior pay rates, penalty rate booster, Fair Work Information Statement, and teen resume builder."
+  keywords="teen first job Australia, junior pay rates, Fair Work Information Statement, TFN application 15yo, penalty rates casual, teen resume builder"
 >
+  <Breadcrumbs items={[{ label: "Modules", href: "/#modules" }, { label: "Module 4: Careers & Employment" }]} />
   <CareersEmployment client:load />
+  <FinancialDisclaimer sourceYear="2026-27" />
 </Layout>

@@ -1,5 +1,7 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import Breadcrumbs from "@/components/astro/Breadcrumbs.astro";
+import FinancialDisclaimer from "@/components/astro/FinancialDisclaimer.astro";
 import { CarDriving } from "@/views/CarDriving";
 ---
 
@@ -8,5 +10,7 @@ import { CarDriving } from "@/views/CarDriving";
   description="QLD learner-to-open licence pathway, PrepL test, first car true purchase costs, PPSR search ($2.00), CTP + comprehensive insurance, and EV vs petrol running cost calculator."
   keywords="QLD licence pathway, PrepL, first car costs, PPSR check, CTP insurance Queensland, EV vs petrol calculator, Translink 50c fares"
 >
+  <Breadcrumbs items={[{ label: "Modules", href: "/#modules" }, { label: "Module 10: Cars & Driving" }]} />
   <CarDriving client:load />
+  <FinancialDisclaimer sourceYear="2026-27" />
 </Layout>

@@ -1,5 +1,6 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import Breadcrumbs from "@/components/astro/Breadcrumbs.astro";
 import { NotFound } from "@/views/NotFound";
 ---
 
@@ -8,5 +9,6 @@ import { NotFound } from "@/views/NotFound";
   description="The requested page could not be found. Explore our 11 modules of Australian personal finance guides and interactive financial calculators."
   keywords="404, not found, Australian finance, financial calculators"
 >
+  <Breadcrumbs items={[{ label: "404 Not Found" }]} />
   <NotFound client:load />
 </Layout>

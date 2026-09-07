@@ -1,5 +1,7 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import Breadcrumbs from "@/components/astro/Breadcrumbs.astro";
+import FinancialDisclaimer from "@/components/astro/FinancialDisclaimer.astro";
 import { InterestFinancialProducts } from "@/views/InterestFinancialProducts";
 ---
 
@@ -8,5 +10,7 @@ import { InterestFinancialProducts } from "@/views/InterestFinancialProducts";
   description="Simple vs compound interest, APRA Financial Claims Scheme $250,000 guarantee, term deposits vs HISA bonus criteria, and inflation purchasing power."
   keywords="term deposits Australia, high interest savings accounts, APRA deposit guarantee 250k, compound interest formula, bank interest rates"
 >
+  <Breadcrumbs items={[{ label: "Modules", href: "/#modules" }, { label: "Module 8: Interest & Products" }]} />
   <InterestFinancialProducts client:load />
+  <FinancialDisclaimer sourceYear="2026-27" />
 </Layout>

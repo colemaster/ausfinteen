@@ -1,3 +1,16 @@
 ---
-return Astro.redirect('/investing-shares', 301);
+import Layout from "@/layouts/Layout.astro";
+import Breadcrumbs from "@/components/astro/Breadcrumbs.astro";
+import FinancialDisclaimer from "@/components/astro/FinancialDisclaimer.astro";
+import { DirectVsDR } from "@/calculators/direct-vs-dr/DirectVsDR";
 ---
+
+<Layout
+  title="Direct Investing vs Debt Recycling Calculator | AusFinance Suite"
+  description="Compare direct non-deductible share investing against debt recycling via tax-deductible investment loan splits under Australian tax law."
+  keywords="debt recycling calculator, direct investing vs debt recycling, tax deductible interest, home loan split investing Australia"
+>
+  <Breadcrumbs items={[{ label: "Calculators", href: "/calculators" }, { label: "Direct vs Debt Recycling" }]} />
+  <DirectVsDR client:load />
+  <FinancialDisclaimer sourceYear="2026-27" />
+</Layout>

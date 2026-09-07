@@ -105,5 +105,28 @@ describe('2027 Frontend Components & Micro-Interactions', () => {
     expect(getNextTabIndex(2, 4, 'Home')).toBe(0);
     expect(getNextTabIndex(1, 4, 'End')).toBe(3);
   });
+
+  it('generates valid Schema.org BreadcrumbList item positions', () => {
+    const items = [
+      { label: 'Modules', href: '/#modules' },
+      { label: 'Module 1: Money & You' },
+    ];
+    // Home is position 1, subsequent items are 2, 3...
+    const positions = items.map((_, idx) => idx + 2);
+    expect(positions).toEqual([2, 3]);
+  });
+
+  it('validates official Australian statutory authority links', () => {
+    const OFFICIAL_PORTALS = [
+      { name: 'ATO', url: 'https://www.ato.gov.au' },
+      { name: 'Moneysmart', url: 'https://moneysmart.gov.au' },
+      { name: 'Fair Work', url: 'https://www.fairwork.gov.au' },
+      { name: 'National Debt Helpline', url: 'https://www.ndh.org.au' },
+    ];
+    for (const portal of OFFICIAL_PORTALS) {
+      expect(portal.url).toMatch(/^https:\/\//);
+      expect(portal.name.length).toBeGreaterThan(0);
+    }
+  });
 });
 

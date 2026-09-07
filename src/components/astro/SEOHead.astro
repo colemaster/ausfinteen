@@ -52,25 +52,42 @@ const siteTitle = title.includes('AusFinance') ? title : `${title} | AusFinance 
 <meta name="twitter:description" content={description} />
 <meta name="twitter:image" content="/favicon.svg" />
 
-<!-- Web App Manifest -->
+<!-- Web App Manifest & Icons -->
 <link rel="manifest" href="/manifest.webmanifest" />
+<link rel="apple-touch-icon" href="/favicon.svg" />
 
-<!-- Schema.org JSON-LD Structured Data -->
-<script type="application/ld+json" set:html={JSON.stringify({
-  "@context": "https://schema.org",
-  "@type": "WebApplication",
-  "name": siteTitle,
-  "url": canonicalUrl,
-  "description": description,
-  "applicationCategory": "FinanceApplication",
-  "operatingSystem": "Any",
-  "inLanguage": "en-AU",
-  "offers": {
-    "@type": "Offer",
-    "price": "0",
-    "priceCurrency": "AUD"
+<!-- Schema.org JSON-LD Structured Data (WebApplication + WebSite with SearchAction) -->
+<script type="application/ld+json" set:html={JSON.stringify([
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": siteTitle,
+    "url": canonicalUrl,
+    "description": description,
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Any",
+    "inLanguage": "en-AU",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "AUD"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "AusFinance Suite & AusTeen Money",
+    "url": Astro.site ? new URL('/', Astro.site).href : "https://ausfintools.com/",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": "https://ausfintools.com/?topic={search_term_string}"
+      },
+      "query-input": "required name=search_term_string"
+    }
   }
-})} />
+])} />
 
 <!-- Speculation Rules API for sub-50ms instant page loads -->
 <script type="speculationrules" is:inline>
@@ -132,5 +149,5 @@ const siteTitle = title.includes('AusFinance') ? title : `${title} | AusFinance 
   })();
 </script>
 
-<!-- Astro View Transitions ClientRouter -->
-<ClientRouter />
+<!-- Astro View Transitions ClientRouter with Swap Fallback -->
+<ClientRouter fallback="swap" />

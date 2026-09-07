@@ -10,7 +10,7 @@ const {
 } = Astro.props;
 ---
 
-<div class={`rounded-2xl border border-amber-500/25 bg-amber-500/5 p-4 sm:p-5 text-xs text-muted-foreground leading-relaxed my-8 ${className}`}>
+<div class={`rounded-2xl border border-amber-500/25 bg-amber-500/5 p-4 sm:p-5 text-xs text-muted-foreground leading-relaxed my-8 shadow-xs ${className}`}>
   <div class="flex items-start gap-3">
     <div class="p-1.5 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5">
       <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -19,19 +19,37 @@ const {
         <line x1="12" y1="16" x2="12.01" y2="16"></line>
       </svg>
     </div>
-    <div class="space-y-1.5">
+    <div class="space-y-2 flex-1">
       <div class="font-bold text-foreground flex flex-wrap items-center gap-2">
-        <span>General Financial Information & Modelling Only</span>
-        <span class="inline-flex items-center px-2 py-0.2 rounded-full text-[10px] font-semibold bg-amber-500/15 text-amber-700 dark:text-amber-300">
-          ATO {sourceYear} Rates
+        <span>General Information Only — Not Personal Advice</span>
+        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/20">
+          ATO {sourceYear} Rates Verified
         </span>
       </div>
       <p>
-        AusTeen Money and AusFinance Suite are free educational tools made for young Australians and general investors. All calculations, estimates, tax rules, and comparisons are strictly illustrative and based on Australian legislation (ATO, APRA, ASIC, Fair Work Ombudsman). They do not take into account your personal financial objectives, situation, or needs.
+        AusTeen Money and AusFinance Suite are free educational tools made for young Australians and general investors. All calculations, estimates, tax rules, and comparisons are strictly illustrative and based on Australian statutory rules (ATO, APRA, ASIC, Fair Work Ombudsman). They do not take into account your personal financial objectives, situation, or needs.
       </p>
       <p>
         This is not financial, legal, or tax advice. You should always seek independent advice from a licensed Australian Financial Services (AFS) licence holder or registered tax agent before making financial decisions.
       </p>
+      <div class="flex flex-wrap items-center gap-2 pt-1">
+        <span class="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/80">Official Portals:</span>
+        <a href="https://www.ato.gov.au" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-[11px] text-primary hover:underline font-medium">
+          ATO.gov.au ↗
+        </a>
+        <span class="text-muted-foreground/30">•</span>
+        <a href="https://moneysmart.gov.au" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-[11px] text-primary hover:underline font-medium">
+          ASIC Moneysmart ↗
+        </a>
+        <span class="text-muted-foreground/30">•</span>
+        <a href="https://www.fairwork.gov.au" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-[11px] text-primary hover:underline font-medium">
+          Fair Work ↗
+        </a>
+        <span class="text-muted-foreground/30">•</span>
+        <a href="https://www.ndh.org.au" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-[11px] text-primary hover:underline font-medium">
+          National Debt Helpline (1800 007 007) ↗
+        </a>
+      </div>
     </div>
   </div>
 </div>

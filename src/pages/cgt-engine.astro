@@ -1,12 +1,16 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import Breadcrumbs from "@/components/astro/Breadcrumbs.astro";
+import FinancialDisclaimer from "@/components/astro/FinancialDisclaimer.astro";
 import { CGTEngine } from "@/views/CGTEngine";
 ---
 
 <Layout
-  title="Capital Gains Tax (CGT) & 6-Year Main Residence Rule Engine | AusFinance Suite"
-  description="Calculate Australian capital gains tax with the 50% CGT discount for assets held >12 months, and model the ITAA 1997 Section 118-145 6-Year Main Residence Exemption."
-  keywords="CGT calculator Australia, 50% CGT discount, 6 year main residence rule, capital gains tax shares property, cost base indexing"
+  title="Capital Gains Tax (CGT) Calculator & Multi-Asset Engine | AusFinance Suite"
+  description="Multi-asset Australian Capital Gains Tax calculator: 50% CGT general discount, cost base indexation, capital loss carry-forward, and FY2026-27 marginal tax brackets."
+  keywords="CGT calculator Australia, capital gains tax, 50% CGT discount, cost base calculator, capital losses carry forward, shares crypto property CGT"
 >
+  <Breadcrumbs items={[{ label: "Calculators", href: "/calculators" }, { label: "CGT Engine" }]} />
   <CGTEngine client:load />
+  <FinancialDisclaimer sourceYear="2026-27" />
 </Layout>

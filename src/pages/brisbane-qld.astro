@@ -1,12 +1,16 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import Breadcrumbs from "@/components/astro/Breadcrumbs.astro";
+import FinancialDisclaimer from "@/components/astro/FinancialDisclaimer.astro";
 import { BrisbaneQLD } from "@/views/BrisbaneQLD";
 ---
 
 <Layout
-  title="Brisbane & SEQ Guide: Uni, TAFE & Cost of Living (Module 11) | AusFinance Suite"
-  description="Brisbane student cost of living, 50c Translink public transport, UQ/QUT/Griffith/UniSC/UniSQ/ACU degree selector, TAFE fee-free courses, and QLD school ATAR data."
-  keywords="Brisbane cost of living, 50c Translink fares, UQ QUT Griffith ATAR, TAFE QLD fee free courses, Brisbane student budget, QCE ATAR cutoffs"
+  title="Brisbane & Queensland Living: Suburbs, Translink 50c & Unis (Module 11) | AusFinance Suite"
+  description="Brisbane living costs, Translink 50c flat fares ($5.00/wk), SEQ uni explorer (UQ, QUT, Griffith, UniSC, UniSQ, ACU, TAFE QLD), and QLD high school Year 12 ATAR guide."
+  keywords="Brisbane living costs, Translink 50c fares, Brisbane universities, UQ QUT Griffith, TAFE QLD, QCE ATAR guide, QLD high schools"
 >
+  <Breadcrumbs items={[{ label: "Modules", href: "/#modules" }, { label: "Module 11: Brisbane & QLD" }]} />
   <BrisbaneQLD client:load />
+  <FinancialDisclaimer sourceYear="2026-27" />
 </Layout>

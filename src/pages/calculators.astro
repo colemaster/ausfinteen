@@ -1,5 +1,7 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import Breadcrumbs from "@/components/astro/Breadcrumbs.astro";
+import FinancialDisclaimer from "@/components/astro/FinancialDisclaimer.astro";
 import { CalculatorsHub } from "@/views/CalculatorsHub";
 ---
 
@@ -8,5 +10,7 @@ import { CalculatorsHub } from "@/views/CalculatorsHub";
   description="Explore the complete suite of Australian personal finance calculators: HECS payoff, Super drawdown, EV novated lease, CGT engine, mortgage offset, and savings rate simulators."
   keywords="Australian financial calculators, HECS calculator, super drawdown calculator, EV novated lease calculator, capital gains tax calculator, mortgage offset calculator, financial stress test"
 >
+  <Breadcrumbs items={[{ label: "Calculators Hub" }]} />
   <CalculatorsHub client:load />
+  <FinancialDisclaimer sourceYear="2026-27" />
 </Layout>

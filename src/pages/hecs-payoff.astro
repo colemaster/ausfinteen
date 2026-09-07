@@ -1,5 +1,7 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import Breadcrumbs from "@/components/astro/Breadcrumbs.astro";
+import FinancialDisclaimer from "@/components/astro/FinancialDisclaimer.astro";
 import { HECSPayoff } from "@/views/HECSPayoff";
 ---
 
@@ -8,5 +10,7 @@ import { HECSPayoff } from "@/views/HECSPayoff";
   description="Calculate your HECS/HELP debt repayment timeline under Australian statutory repayment thresholds, CPI/WPI indexation caps, and voluntary repayment trade-offs."
   keywords="HECS debt payoff, HELP loan repayment calculator, HECS indexation CPI WPI, voluntary HECS repayment, Australian university loan"
 >
+  <Breadcrumbs items={[{ label: "Calculators", href: "/calculators" }, { label: "HECS Payoff Calculator" }]} />
   <HECSPayoff client:load />
+  <FinancialDisclaimer sourceYear="2026-27" />
 </Layout>

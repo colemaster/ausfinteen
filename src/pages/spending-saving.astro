@@ -1,5 +1,7 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import Breadcrumbs from "@/components/astro/Breadcrumbs.astro";
+import FinancialDisclaimer from "@/components/astro/FinancialDisclaimer.astro";
 import { SpendingSavingRealWorld } from "@/views/SpendingSavingRealWorld";
 ---
 
@@ -8,5 +10,7 @@ import { SpendingSavingRealWorld } from "@/views/SpendingSavingRealWorld";
   description="Real-world spending, teen bank accounts, 5.0%+ HISA comparison, debit card security, avoiding bank fees, and smart sinking funds for Aussie youth."
   keywords="youth savings accounts Australia, HISA 5 percent, debit cards under 18, bank fees, Barefoot sinking funds, APRA deposit guarantee"
 >
+  <Breadcrumbs items={[{ label: "Modules", href: "/#modules" }, { label: "Module 2: Spending & Saving" }]} />
   <SpendingSavingRealWorld client:load />
+  <FinancialDisclaimer sourceYear="2026-27" />
 </Layout>

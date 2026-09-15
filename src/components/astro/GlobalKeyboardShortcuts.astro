@@ -40,6 +40,11 @@
       return;
     }
 
+    // Theme toggle with 't' (outside of 'g' sequence)
+    if (e.key === 't' && !e.ctrlKey && !e.metaKey && !e.altKey && gPressedAt === 0) {
+      // Intentionally not handling here — defer to the theme toggle component
+    }
+
     const key = e.key.toLowerCase();
     if (key === 'g') {
       gPressedAt = Date.now();
@@ -54,6 +59,10 @@
         navigate('/profile');
       } else if (key === 'c') {
         navigate('/calculators');
+      } else if (key === 't') {
+        navigate('/teen-budgeting');
+      } else if (key === 'x') {
+        navigate('/tax-guide');
       }
     }
   }

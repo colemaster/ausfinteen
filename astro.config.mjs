@@ -8,7 +8,7 @@ export default defineConfig({
   site: 'https://ausfintools.com',
   base: process.env.VITE_BASE ?? '/',
   output: 'static',
-  compressHTML: true,
+  compressHTML: 'jsx',
   prerenderConflictBehavior: 'error',
   scopedStyleStrategy: 'where',
   prefetch: {
@@ -21,6 +21,7 @@ export default defineConfig({
     incrementalBuild: true,
     svgOptimizer: svgoOptimizer(),
     collectionStorage: 'chunked',
+    chromeDevtoolsWorkspace: true,
   },
   redirects: {
     '/fire': '/super-drawdown',

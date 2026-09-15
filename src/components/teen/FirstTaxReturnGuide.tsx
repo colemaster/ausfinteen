@@ -26,7 +26,7 @@ const TAX_RETURN_STEPS = [
     step: 3,
     title: 'Review Pre-Filled Wages & Withholding',
     summary: 'Log into myTax on myGov — your employer has already entered your gross income and tax withheld.',
-    detail: 'Check that the gross earnings and PAYG tax withheld match your final payslip of the financial year (ended 30 June). If you earned under $18,200, 100% of any tax withheld will be refunded.',
+    detail: 'Check that the gross earnings and PAYG tax withheld match your final payslip of the financial year (ended 30 June). If you earned under the $22,575 effective tax-free threshold ($18,200 statutory + $700 Low Income Tax Offset / 0.16 bracket), 100% of any tax withheld is refunded directly to your bank account! Starting mid-year does NOT pro-rate this threshold for Australian residents.',
     badge: 'Step 3 • Verify',
     icon: DollarSign,
   },

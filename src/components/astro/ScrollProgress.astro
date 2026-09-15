@@ -12,13 +12,41 @@ const {
 
 <div
   id="scroll-progress-bar"
-  class={`fixed top-0 left-0 z-50 ${height} bg-gradient-to-r ${gradient} transition-[width] duration-150 ease-out pointer-events-none`}
+  class={`fixed top-0 left-0 z-50 ${height} bg-gradient-to-r ${gradient} pointer-events-none`}
   style="width: 0%"
   aria-hidden="true"
 ></div>
 
+<style>
+  /* CSS scroll-driven animation (Chrome 115+, Edge 115+, Firefox 135+) */
+  @supports (animation-timeline: scroll()) {
+    #scroll-progress-bar {
+      width: 100% !important;
+      transform-origin: left;
+      scale: 0 1;
+      animation: scroll-progress linear;
+      animation-timeline: scroll();
+      transition: none;
+    }
+    @keyframes scroll-progress {
+      to {
+        scale: 1 1;
+      }
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #scroll-progress-bar {
+      display: none;
+    }
+  }
+</style>
+
 <script is:inline>
   (function() {
+    /* Only use JS fallback when CSS scroll-driven animations aren't supported */
+    if (CSS.supports && CSS.supports('animation-timeline', 'scroll()')) return;
+
     function initScrollProgress() {
       const bar = document.getElementById('scroll-progress-bar');
       if (!bar || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;

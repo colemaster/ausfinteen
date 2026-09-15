@@ -15,7 +15,7 @@ const { items, class: className = '' } = Astro.props;
 <nav aria-label="Breadcrumb" class={`flex items-center text-xs text-muted-foreground mb-5 ${className}`}>
   <ol class="inline-flex items-center gap-1.5 flex-wrap px-3 py-1.5 rounded-xl bg-muted/40 border border-border/50 backdrop-blur-sm shadow-xs" itemscope itemtype="https://schema.org/BreadcrumbList">
     <li class="inline-flex items-center" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-      <a href="/" class="hover:text-foreground transition-colors font-medium flex items-center gap-1 group py-0.5" itemprop="item">
+      <a href="/" class="hover:text-foreground transition-colors font-medium flex items-center gap-1 group py-0.5" itemprop="item" data-prerender>
         <svg class="w-3.5 h-3.5 text-muted-foreground/80 group-hover:text-primary transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
           <polyline points="9 22 9 12 15 12 15 22" />
@@ -31,7 +31,7 @@ const { items, class: className = '' } = Astro.props;
           <polyline points="9 18 15 12 9 6" />
         </svg>
         {item.href ? (
-          <a href={item.href} class="hover:text-foreground hover:text-primary transition-colors font-medium py-0.5" itemprop="item">
+          <a href={item.href} class="hover:text-foreground hover:text-primary transition-colors font-medium py-0.5" itemprop="item" data-prerender>
             <span itemprop="name">{item.label}</span>
           </a>
         ) : (

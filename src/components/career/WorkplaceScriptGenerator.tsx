@@ -89,11 +89,11 @@ export function WorkplaceScriptGenerator() {
           </div>
           <div className="p-3 rounded-xl bg-card border border-border space-y-1">
             <span className="font-bold text-emerald-600 dark:text-emerald-400 block">2. Mojo Bucket (20%)</span>
-            <span className="text-muted-foreground">Emergency savings buffer! Build a minimum $2,000 Mojo fund in high-interest savings.</span>
+            <span className="text-muted-foreground">Starter cash emergency buffer ($500) locked in a cardless separate HISA. Once full, this 20% cascades into Grow!</span>
           </div>
           <div className="p-3 rounded-xl bg-card border border-border space-y-1">
-            <span className="font-bold text-purple-600 dark:text-purple-400 block">3. Grow Bucket (20%)</span>
-            <span className="text-muted-foreground">Long-term goals like buying your first car outright in CASH—never take on car debt at 17!</span>
+            <span className="font-bold text-purple-600 dark:text-purple-400 block">3. Grow Bucket (20% → 40%)</span>
+            <span className="text-muted-foreground">First car bought in cash, 10 driving lessons, and investing at 18. Leaps to 40% once Mojo hits $500!</span>
           </div>
         </div>
       </Card>

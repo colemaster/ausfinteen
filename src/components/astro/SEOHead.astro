@@ -35,7 +35,7 @@ const siteTitle = title.includes('AusFinance') ? title : `${title} | AusFinance 
 <meta name="description" content={description} />
 <meta name="keywords" content={keywords} />
 <meta name="author" content="AusFinance Suite Open Source Community" />
-<meta name="robots" content="index, follow" />
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content={ogType} />
@@ -55,6 +55,10 @@ const siteTitle = title.includes('AusFinance') ? title : `${title} | AusFinance 
 <!-- Web App Manifest & Icons -->
 <link rel="manifest" href="/manifest.webmanifest" />
 <link rel="apple-touch-icon" href="/favicon.svg" />
+
+<!-- DNS Prefetch for performance -->
+<link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+<link rel="dns-prefetch" href="https://fonts.gstatic.com" />
 
 <!-- Schema.org JSON-LD Structured Data (WebApplication + WebSite with SearchAction) -->
 <script type="application/ld+json" set:html={JSON.stringify([
@@ -96,7 +100,8 @@ const siteTitle = title.includes('AusFinance') ? title : `${title} | AusFinance 
       { "where": { "href_matches": "/*" }, "eagerness": "moderate" }
     ],
     "prerender": [
-      { "where": { "href_matches": "/*" }, "eagerness": "conservative" }
+      { "where": { "href_matches": "/*" }, "eagerness": "conservative" },
+      { "where": { "selector_matches": "[data-prerender]" }, "eagerness": "moderate" }
     ]
   }
 </script>

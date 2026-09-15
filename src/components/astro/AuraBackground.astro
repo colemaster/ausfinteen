@@ -9,6 +9,7 @@ const { class: className = '' } = Astro.props;
 <div
   class={`pointer-events-none absolute inset-0 overflow-hidden select-none ${className}`}
   aria-hidden="true"
+  style="content-visibility: auto; contain-intrinsic-size: auto 100%;"
 >
   <div
     class="aura-orb-1 will-change-transform opacity-70 dark:opacity-60 blur-3xl transition-opacity duration-700"

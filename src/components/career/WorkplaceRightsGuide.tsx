@@ -38,10 +38,10 @@ export function WorkplaceRightsGuide() {
             <h3 className="font-bold text-sm text-foreground">Unpaid Trial Shift Rules</h3>
           </div>
           <p className="text-xs text-muted-foreground leading-relaxed">
-            An unpaid trial is ONLY legal if it is a brief skills evaluation (typically <strong>1 to 2 hours maximum</strong>). If you are asked to work a full 6-hour shift or perform unsupervised customer service, it MUST be paid at your full legal award rate!
+            An unpaid trial is ONLY legal if it is a brief skills evaluation (typically <strong>1 hour maximum</strong> for basic tasks like carrying trays or register navigation). If you are asked to work a full shift or perform unsupervised commercial work, it MUST be paid at your full legal award rate! Employers forcing teens onto an ABN to evade awards commit illegal <strong>sham contracting</strong> (Fair Work Act s 357 / s 15AA).
           </p>
           <div className="p-2.5 rounded-xl bg-amber-500/10 text-[11px] text-amber-800 dark:text-amber-300 font-medium">
-            💡 Rule: Anything beyond 1-2 hours is illegal wage theft under Fair Work.
+            💡 Rule: Anything beyond 1 hour of skill demonstration is illegal wage theft under Fair Work.
           </div>
         </Card>
 

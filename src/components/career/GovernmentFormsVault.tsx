@@ -176,7 +176,7 @@ export function GovernmentFormsVault() {
                 <ul className="list-disc list-inside space-y-1 text-muted-foreground">
                   <li><strong>Question 1 (TFN):</strong> Enter your 9-digit Tax File Number.</li>
                   <li><strong>Question 6 (Residency):</strong> Select "YES" if you live in Australia.</li>
-                  <li><strong>Question 8 (Tax-Free Threshold):</strong> Select <strong>"YES"</strong> to claim the $18,200 Tax-Free Threshold for your main job! (Select "NO" only if you already claim it on a second job).</li>
+                  <li><strong>Question 8 (Tax-Free Threshold):</strong> Select <strong>"YES"</strong> to claim the Tax-Free Threshold for your main job! Combined with the $700 Low Income Tax Offset (LITO), your effective tax-free threshold is <strong>$22,575</strong> ($0 tax paid!). Starting a first job mid-year does NOT pro-rate this threshold for Australian residents.</li>
                   <li><strong>Question 9 (HELP Loan):</strong> Select "YES" only if you have an active HECS-HELP uni loan.</li>
                 </ul>
               </div>
@@ -201,7 +201,7 @@ export function GovernmentFormsVault() {
               </div>
               <div>
                 <h4 className="font-bold text-sm text-foreground">ATO Superannuation Standard Choice Form</h4>
-                <p className="text-xs text-muted-foreground">Staple your super fund USI & Member ID</p>
+                <p className="text-xs text-muted-foreground">Staple your super fund USI & Member ID (12.0% SG Rate)</p>
               </div>
             </div>
             <ChevronDown className={`w-4 h-4 transition-transform ${openFormId === 'nat13080' ? 'rotate-180 text-primary' : 'text-muted-foreground'}`} />
@@ -210,7 +210,7 @@ export function GovernmentFormsVault() {
           {openFormId === 'nat13080' && (
             <div className="p-4 border-t border-border/50 text-xs space-y-3 leading-relaxed animate-fade-in">
               <p className="text-muted-foreground">
-                By law, employers must give you this form within 28 days of starting. Filling out Section B ensures your employer pays your 12% super into your existing fund instead of opening duplicate fee-charging funds!
+                By law, employers must give you this form within 28 days of starting. Filling out Section B ensures your employer pays your 12.0% super into your chosen fund instead of opening duplicate fee-charging funds! (Note for under-18s: under the <em>Superannuation Guarantee Administration Act 1992</em> s 28, compulsory super is payable if you work <strong>more than 30 hours in a single calendar week</strong>. Accounts under $6,000 are protected by a statutory 3% fee cap under SIS Act s 99G).
               </p>
               <div className="p-3 rounded-xl bg-muted/60 space-y-2">
                 <span className="font-bold text-foreground block">3 Details You Need:</span>

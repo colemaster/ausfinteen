@@ -90,7 +90,7 @@ export interface TaxBreakdown {
  * @returns SuperSacrificeResult
  *
  * Key rules:
- * - Concessional cap = $30,000 (2024-25); includes employer SG
+ * - Concessional cap = $30,000 (2026-27); includes employer SG
  * - Carry-forward allows using unused cap from prior 5 years (only if total super < $500k)
  * - Division 293: extra 15% on concessional contributions if income + contribs > $250k
  */

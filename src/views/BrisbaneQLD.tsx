@@ -1,4 +1,4 @@
-import { MANDY_MODULES } from '@/data/mandy-topics';
+import { brisbaneQldModule as moduleData } from '@/data/modules/brisbane-qld';
 import { TopicGuideAccordion } from '@/components/shared/TopicGuideAccordion';
 import { BrisbaneBudgetCalculator } from '@/calculators/teen-brisbane/BrisbaneBudgetCalculator';
 import { BrisbaneUniExplorer } from '@/calculators/teen-brisbane/BrisbaneUniExplorer';
@@ -53,7 +53,6 @@ const BRISBANE_WEB_SOURCES = [
 
 export function BrisbaneQLD() {
   usePageTitle('Brisbane, QLD · Living & Uni Guide');
-  const moduleData = MANDY_MODULES.find(m => m.id === 'brisbane-qld')!;
   const { profile, updateProfile } = useTeenProfile();
   const [searchParams, setSearchParams] = useSearchParams();
   const tab = readBneTab(searchParams);

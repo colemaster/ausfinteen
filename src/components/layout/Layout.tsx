@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useRef, type ReactNode } from 'react';
+import { lazy, Suspense, useEffect, type ReactNode } from 'react';
 import { Outlet } from 'react-router-dom';
 import { useLocation, useNavigationType } from '@/lib/router';
 import { Navbar } from './Navbar';
@@ -8,40 +8,8 @@ const CommandPalette = lazy(() => import('@/components/CommandPalette').then(m =
 const KeyboardShortcutsModal = lazy(() => import('@/components/KeyboardShortcutsModal').then(m => ({ default: m.KeyboardShortcutsModal })));
 
 export function Layout({ children }: { children?: ReactNode }) {
-  const progressRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
   const navigationType = useNavigationType();
-
-  // Scroll progress without React re-renders: write to the DOM node directly.
-  // Respects prefers-reduced-motion by leaving the bar at 0-width (hidden).
-  useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const bar = progressRef.current;
-    if (!bar) return;
-
-    let ticking = false;
-    const update = () => {
-      const doc = document.documentElement;
-      const scrollTop = window.scrollY || doc.scrollTop;
-      const height = doc.scrollHeight - doc.clientHeight;
-      bar.style.width = `${height > 0 ? Math.min(1, scrollTop / height) * 100 : 0}%`;
-      ticking = false;
-    };
-    const onScroll = () => {
-      if (!ticking) {
-        ticking = true;
-        requestAnimationFrame(update);
-      }
-    };
-
-    update();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll, { passive: true });
-    return () => {
-      window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onScroll);
-    };
-  }, []);
 
   // Scroll to top on PUSH/REPLACE navigations so users never land mid-page.
   // POP (browser back/forward) keeps native scroll restoration instead.
@@ -62,9 +30,12 @@ export function Layout({ children }: { children?: ReactNode }) {
 
       {/* Scroll progress bar — fixed, 3px, gradient; 0-width under reduced motion */}
       <div
-        ref={progressRef}
-        className="fixed top-0 left-0 z-50 h-[3px] bg-gradient-to-r from-primary via-violet-500 to-warning transition-[width] duration-150 ease-out"
-        style={{ width: '0%' }}
+        className="fixed top-0 left-0 z-50 h-[3px] bg-gradient-to-r from-primary via-violet-500 to-warning origin-left"
+        style={{ 
+          animation: 'scroll-progress linear',
+          animationTimeline: 'scroll()',
+          transform: 'scaleX(0)',
+        }}
         aria-hidden="true"
       />
       {/* The Navbar component handles the .glass-nav internal styling */}

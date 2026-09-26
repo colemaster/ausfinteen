@@ -1,6 +1,6 @@
 import Fuse from 'fuse.js';
 import { MANDY_MODULES, type TopicGuide } from '@/data/mandy-topics';
-import { OFFICIAL_WEB_LINKS } from '@/data/teen-finance-data';
+import { OFFICIAL_WEB_LINKS } from '@/data/official-web-links';
 
 export type SearchResultType = 'module' | 'topic' | 'tool' | 'weblink';
 
@@ -108,19 +108,34 @@ const docs: SearchDoc[] = [
   })),
 ];
 
-const fuse = new Fuse<SearchDoc>(docs, {
-  keys: [
-    { name: 'title', weight: 0.5 },
-    { name: 'keywords', weight: 0.3 },
-    { name: 'subtitle', weight: 0.2 },
-  ],
-  includeMatches: true,
-  includeScore: true,
-  threshold: 0.4,
-  ignoreLocation: true,
-  useTokenSearch: true,
-  minMatchCharLength: 2,
-});
+let _fuseInstance: Fuse<SearchDoc> | null = null;
+
+function getFuse(): Fuse<SearchDoc> {
+  if (!_fuseInstance) {
+    _fuseInstance = new Fuse<SearchDoc>(docs, {
+      keys: [
+        { name: 'title', weight: 0.5 },
+        { name: 'keywords', weight: 0.3 },
+        { name: 'subtitle', weight: 0.2 },
+      ],
+      includeMatches: true,
+      includeScore: true,
+      threshold: 0.4,
+      ignoreLocation: true,
+      useTokenSearch: true,
+      minMatchCharLength: 2,
+    });
+  }
+  return _fuseInstance;
+}
+
+// Warm up index in background when idle in browser
+if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+  window.requestIdleCallback(() => getFuse());
+}
+
+const searchCache = new Map<string, { groups: { type: SearchResultType; label: string; hits: SearchHit[] }[]; total: number }>();
+const autocompleteCache = new Map<string, string[]>();
 
 const GROUP_ORDER: SearchResultType[] = ['tool', 'topic', 'module', 'weblink'];
 const GROUP_LABELS: Record<SearchResultType, string> = {
@@ -140,7 +155,11 @@ export function searchSite(query: string, maxPerGroup = 6): { groups: { type: Se
     return { groups: [], total: 0 };
   }
 
-  const results = fuse.search(trimmed, { limit: 60 });
+  const cacheKey = `${trimmed.toLowerCase()}::${maxPerGroup}`;
+  const cached = searchCache.get(cacheKey);
+  if (cached) return cached;
+
+  const results = getFuse().search(trimmed, { limit: 60 });
   const byGroup = new Map<SearchResultType, SearchHit[]>();
   for (const r of results) {
     const type = r.item.type;
@@ -169,64 +188,31 @@ export function searchSite(query: string, maxPerGroup = 6): { groups: { type: Se
     .map(type => ({ type, label: GROUP_LABELS[type], hits: byGroup.get(type)! }));
 
   const total = results.length;
-  return { groups, total };
+  const out = { groups, total };
+  searchCache.set(cacheKey, out);
+  return out;
 }
 
 /** Quick autocomplete/suggestion titles for a partial query (used as placeholder suggestions). */
 export function autocomplete(query: string, limit = 5): string[] {
   const trimmed = query.trim();
   if (trimmed.length < 2) return [];
-  return fuse
+  const cacheKey = `${trimmed.toLowerCase()}::${limit}`;
+  const cached = autocompleteCache.get(cacheKey);
+  if (cached) return cached;
+
+  const out = getFuse()
     .search(trimmed, { limit })
     .map(r => r.item.title.replace(/^\S+\s/, '').trim())
     .filter((v, i, a) => a.indexOf(v) === i);
+  autocompleteCache.set(cacheKey, out);
+  return out;
 }
 
-/** Popular search starters shown before the user types. */
-export const POPULAR_SEARCHES = [
-  'HECS',
-  'EV Novated Lease',
-  'Super Drawdown',
-  'CGT 6-Year Rule',
-  'Emergency Stress Test',
-  'HISA 5.0%',
-  'APRA $250k',
-  'PayID',
-  'Stage 3 tax',
-  'penalty rates',
-  'super 12%',
-  'tax-free threshold',
-  'myID',
-  '50c fares',
-  'Open Banking CDR',
-  'PPSR',
-  'BNPL',
-  'QLD licence',
-  'ETF',
-  'Mojo buffer',
-];
+export {
+  POPULAR_SEARCHES,
+  getRecentSearches,
+  addRecentSearch,
+  clearRecentSearches,
+} from './search-storage';
 
-const MAX_RECENT_SEARCHES = 5;
-let recentSearches: string[] = [];
-
-/**
- * Session-only history of the user's most recent searches (max 5).
- * Deliberately in-memory (module scope) and NEVER persisted — privacy-first,
- * no localStorage, nothing written to disk. Resets on page reload.
- */
-export function getRecentSearches(): string[] {
-  return [...recentSearches];
-}
-
-export function addRecentSearch(query: string): void {
-  const trimmed = query.trim();
-  if (trimmed.length < 2) return;
-  recentSearches = [
-    trimmed,
-    ...recentSearches.filter(q => q.toLowerCase() !== trimmed.toLowerCase()),
-  ].slice(0, MAX_RECENT_SEARCHES);
-}
-
-export function clearRecentSearches(): void {
-  recentSearches = [];
-}

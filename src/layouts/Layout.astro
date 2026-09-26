@@ -1,8 +1,5 @@
 ---
 import '@/fonts.css';
-import '@fontsource/jetbrains-mono/latin-400.css';
-import '@fontsource/jetbrains-mono/latin-500.css';
-import '@fontsource/jetbrains-mono/latin-600.css';
 import '@/index.css';
 import SEOHead from '@/components/astro/SEOHead.astro';
 import SkipLink from '@/components/astro/SkipLink.astro';
@@ -41,7 +38,7 @@ const {
     <ScrollProgress />
 
     <!-- Navigation Bar Island with ClientRouter persistence -->
-    <Navbar client:load transition:persist />
+    <Navbar client:idle transition:persist />
 
     <!-- Page Content Container with Ambient Chromatic Aura -->
     <div class={`relative flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 py-6 ${className}`}>

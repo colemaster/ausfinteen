@@ -16,7 +16,7 @@ import {
   Landmark,
   ReceiptText,
 } from 'lucide-react';
-import { toast } from 'sonner';
+import { toast } from '@/lib/toast';
 
 const WORKFLOW_STEPS = [
   { id: 'buy', label: 'Buy', icon: KeyRound },

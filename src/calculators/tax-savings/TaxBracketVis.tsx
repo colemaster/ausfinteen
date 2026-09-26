@@ -13,7 +13,7 @@ import {
   YAxis,
   Cell,
   CartesianGrid,
-} from 'recharts';
+} from '@/components/charts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { taxBracketConfig } from '@/lib/chart-configs';
 

@@ -52,7 +52,7 @@ export function HECSPayoff() {
         <PrintResultButton />
       </div>
 
-      <div className="max-w-5xl mx-auto space-y-6">
+      <div className="max-w-5xl mx-auto space-y-6 content-auto">
         <TopicGuideAccordion
           topics={HECS_TOPICS}
           title="HECS-HELP Loan Masterclass & ATO Rules"

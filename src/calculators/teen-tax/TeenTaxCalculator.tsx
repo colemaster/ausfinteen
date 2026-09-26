@@ -9,7 +9,7 @@ import { OFFICIAL_WEB_LINKS, MINOR_UNEARNED_TAX_RATES } from '@/data/teen-financ
 import { WebReferenceLink } from '@/components/shared/WebReferenceLink';
 import { Calculator, ShieldAlert, ReceiptText } from 'lucide-react';
 import { useTeenProfile } from '@/context/TeenProfileContext';
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from '@/components/charts';
 import { ChartContainer, ChartTooltipContent } from '@/components/ui/chart';
 import { afterSchoolJobTax, payslipBreakdown } from './engine';
 import { PaySlipPreview } from './PaySlipPreview';

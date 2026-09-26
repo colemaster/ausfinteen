@@ -3,7 +3,7 @@
  * Serializes arbitrary financial plans to URL hash `#plan=...` using CompressionStream / Base64URL.
  * Includes a zero-dependency SVG QR Code generator for mobile scan & transfer.
  */
-import { toast } from 'sonner';
+import { toast } from '@/lib/toast';
 
 /**
  * Copy the current page URL (including any `#plan=` / query state) to the

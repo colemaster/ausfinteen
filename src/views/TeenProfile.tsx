@@ -11,7 +11,7 @@ import { AGE_PRESETS } from '@/data/teen-finance-data';
 import { usePageTitle } from '@/hooks/usePageTitle';
 import { User, Briefcase, Target, RefreshCw, Zap, MapPin, ArrowRight, Compass } from 'lucide-react';
 import { Link } from '@/lib/router';
-import { MANDY_MODULES } from '@/data/mandy-topics';
+import { NAV_MODULES } from '@/data/nav-modules';
 
 export function TeenProfile() {
   usePageTitle('My Real-World Money Profile');
@@ -267,7 +267,7 @@ export function TeenProfile() {
           numericValue={estimatedTaxWithheldWeekly}
           format="currency"
           color={estimatedTaxWithheldWeekly === 0 ? 'green' : 'amber'}
-          subtext={estimatedTaxWithheldWeekly === 0 ? '$18,200 Tax-Free claimed' : 'PAYG tax sent to ATO'}
+          subtext={estimatedTaxWithheldWeekly === 0 ? '$22,575 Effective Tax-Free claimed' : 'PAYG tax sent to ATO'}
         />
         <StatCard
           label="Take-Home Pay (Bank)"
@@ -336,7 +336,7 @@ export function TeenProfile() {
 }
 
 function getRecommendedModules(age: number) {
-  const byId = (id: string) => MANDY_MODULES.find(m => m.id === id)!;
+  const byId = (id: string) => NAV_MODULES.find(m => m.id === id)!;
   if (age < 16) {
     return [byId('money-and-you'), byId('careers-employment'), byId('teen-budgeting'), byId('brisbane-qld')];
   }

@@ -3,8 +3,8 @@ import { Zap } from 'lucide-react';
 import { Link } from '@/lib/router';
 import { PerformanceModal } from '@/components/shared/PerformanceModal';
 import { WebVitalsBadge } from '@/components/WebVitalsBadge';
-import pkg from '../../../package.json';
 
+const APP_VERSION = '7.2.0';
 const GITHUB_URL = 'https://github.com/colemaster/ausfinteen';
 const LAST_UPDATED = 'Sep 2026';
 
@@ -72,7 +72,7 @@ export function Footer() {
               <span>View source on GitHub</span>
             </a>
             <span className="text-[11px] text-muted-foreground/80">
-              v{pkg.version} · Last updated: {LAST_UPDATED}
+              v{APP_VERSION} · Last updated: {LAST_UPDATED}
             </span>
           </div>
         </div>

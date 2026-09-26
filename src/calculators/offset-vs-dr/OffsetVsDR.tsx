@@ -6,7 +6,7 @@ import { SliderControl } from '../../components/ui/SliderControl';
 import { NumberInput } from '../../components/ui/NumberInput';
 import { PortfolioField } from '../../components/ui/PortfolioField';
 import { StatCard } from '../../components/ui/StatCard';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid } from '@/components/charts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent } from '@/components/ui/chart';
 import { offsetVsDRConfig } from '@/lib/chart-configs';
 import { Assumptions } from '../../components/shared/Assumptions';

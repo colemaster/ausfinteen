@@ -74,7 +74,7 @@ export function DebtRecyclingTax({ investLoanBal, onInvestLoanBalChange, rate, o
       </div>
 
       <p className="text-[10px] text-[var(--muted-foreground)]">
-        IO loan assumed constant. Annual deduction = loan × rate × margTax. Based on 2024-25 ATO rates.
+        IO loan assumed constant. Annual deduction = loan × rate × margTax. Based on 2026-27 ATO rates.
       </p>
     </div>
   );

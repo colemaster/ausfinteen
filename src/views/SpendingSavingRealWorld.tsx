@@ -1,7 +1,8 @@
-import { MANDY_MODULES } from '@/data/mandy-topics';
+import { spendingSavingModule as moduleData } from '@/data/modules/spending-saving';
 import { TopicGuideAccordion } from '@/components/shared/TopicGuideAccordion';
 import { ModulePrevNext } from '@/components/shared/ModulePrevNext';
 import { StudentDiscountOptimizer } from '@/components/teen/StudentDiscountOptimizer';
+import { SavingsGoalsPlanner } from '@/components/teen/SavingsGoalsPlanner';
 import { Smartphone, ShieldCheck, ShoppingBag } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
@@ -9,7 +10,6 @@ import { usePageTitle } from '@/hooks/usePageTitle';
 
 export function SpendingSavingRealWorld() {
   usePageTitle('Spending, Saving & Real World Money');
-  const moduleData = MANDY_MODULES.find(m => m.id === 'spending-saving')!;
 
   return (
     <div className="space-y-8 animate-fade-in">
@@ -31,6 +31,9 @@ export function SpendingSavingRealWorld() {
 
       {/* Interactive Student Discount & Subscription Optimizer */}
       <StudentDiscountOptimizer />
+
+      {/* Interactive Teen Savings Goals & Sinking Funds Planner */}
+      <SavingsGoalsPlanner />
 
       {/* Highlights Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

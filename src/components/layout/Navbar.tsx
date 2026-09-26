@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, lazy, Suspense } from 'react';
 import { Link, useLocation } from '@/lib/router';
-import { MANDY_MODULES } from '@/data/mandy-topics';
+import { NAV_MODULES } from '@/data/nav-modules';
 import { useTeenProfile } from '@/context/TeenProfileContext';
 import { prefetchRoute } from '@/utils/prefetch';
 import {
@@ -165,6 +165,7 @@ export function Navbar() {
                   <Link
                     role="menuitem"
                     to="/calculators"
+                    onMouseEnter={() => prefetchRoute('/calculators')}
                     onClick={() => {
                       sound.playClick();
                       setCalcsDropdownOpen(false);
@@ -186,6 +187,7 @@ export function Navbar() {
                       key={c.route}
                       role="menuitem"
                       to={c.route}
+                      onMouseEnter={() => prefetchRoute(c.route)}
                       onClick={() => {
                         sound.playClick();
                         setCalcsDropdownOpen(false);
@@ -225,7 +227,7 @@ export function Navbar() {
                   aria-label="11 Real-World Modules"
                   className="absolute top-full left-0 mt-2 w-72 max-h-[70vh] overflow-y-auto p-2 rounded-2xl bg-card border border-border shadow-xl grid grid-cols-1 gap-1 z-50 animate-in fade-in slide-in-from-top-4 zoom-in-98 duration-200"
                 >
-                  {MANDY_MODULES.map(m => (
+                  {NAV_MODULES.map(m => (
                     <Link
                       key={m.id}
                       role="menuitem"
@@ -277,14 +279,14 @@ export function Navbar() {
               href="https://github.com/colemaster/ausfinteen/releases"
               target="_blank"
               rel="noreferrer"
-              title="What's new in v5.3.0 — changelog"
-              aria-label="What's new in v5.3.0 — changelog"
+              title="What's new in v7.2.0 — changelog"
+              aria-label="What's new in v7.2.0 — changelog"
               className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border border-border bg-muted/40 text-muted-foreground hover:text-primary hover:border-primary/40 transition-all text-[10px] font-bold"
             >
               <span className="relative flex h-2 w-2" aria-hidden="true">
                 <span className="inline-flex rounded-full h-2 w-2 bg-emerald-500" />
               </span>
-              v5.3.0
+              v7.2.0
             </a>
 
             {/* Quick Search */}
@@ -455,7 +457,7 @@ export function Navbar() {
               11 Real-World Learning Modules
             </div>
 
-            {MANDY_MODULES.map(m => (
+            {NAV_MODULES.map(m => (
               <Link
                 key={m.id}
                 to={m.route}

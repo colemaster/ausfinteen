@@ -10,13 +10,13 @@ import { OFFICIAL_WEB_LINKS } from '@/data/teen-finance-data';
 import { WebReferenceLink } from '@/components/shared/WebReferenceLink';
 import { PieChart as PieChartIcon, Sparkles } from 'lucide-react';
 import { useTeenProfile } from '@/context/TeenProfileContext';
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from '@/components/charts';
 import { ChartContainer, ChartTooltipContent } from '@/components/ui/chart';
 import { splitPaycheck, adjustSplitKeepingTotal, convertPaycheckPeriod, type BucketKey } from './engine';
 
 const BUCKET_COLORS = ['#f59e0b', '#10b981', '#a855f7', '#3b82f6'];
 
-type SplitSystem = 'barefoot' | 'rule503020' | 'bucket4' | 'custom';
+type SplitSystem = 'barefoot' | 'teenInverted' | 'rule503020' | 'bucket4' | 'custom';
 
 export function FirstPaycheckSplitter() {
   const { weeklyNetPay } = useTeenProfile();
@@ -25,11 +25,14 @@ export function FirstPaycheckSplitter() {
   const [systemStyle, setSystemStyle] = useState<SplitSystem>('barefoot');
   const [customSplit, setCustomSplit] = useState({ needs: 50, wants: 30, savings: 20 });
 
+  const periodSuffix = period === 'weekly' ? 'wk' : period === 'fortnightly' ? 'fn' : 'mo';
+
   // Amount expressed per week regardless of the selected period
   const weeklyEquivalent = convertPaycheckPeriod(paycheckAmount, period, 'weekly');
 
-  const applyPreset = (split: 'barefoot' | 'rule503020' | 'bucket4' | 'custom') => {
+  const applyPreset = (split: SplitSystem) => {
     setSystemStyle(split);
+    if (split === 'teenInverted') setCustomSplit({ needs: 20, wants: 30, savings: 50 });
     if (split === 'rule503020') setCustomSplit({ needs: 50, wants: 30, savings: 20 });
     if (split === 'barefoot') setCustomSplit({ needs: 60, wants: 20, savings: 20 });
   };
@@ -66,6 +69,12 @@ export function FirstPaycheckSplitter() {
         { name: 'Blow Bucket (60%)', value: Math.round(barefootBlow), color: '#f59e0b' },
         { name: 'Mojo Buffer (20%)', value: Math.round(barefootMojo), color: '#10b981' },
         { name: 'Grow Fund (20%)', value: Math.round(barefootGrow), color: '#a855f7' },
+      ];
+    } else if (systemStyle === 'teenInverted') {
+      return [
+        { name: 'Grow & Wealth (50%)', value: Math.round(paycheckAmount * 0.50), color: '#10b981' },
+        { name: 'Guilt-Free Splurge (30%)', value: Math.round(paycheckAmount * 0.30), color: '#a855f7' },
+        { name: 'Daily Essentials (20%)', value: Math.round(paycheckAmount * 0.20), color: '#3b82f6' },
       ];
     } else if (systemStyle === 'rule503020') {
       return [
@@ -121,7 +130,7 @@ export function FirstPaycheckSplitter() {
             <PaymentPeriodToggle value={period} onChange={setPeriod} fullWidth />
           </div>
           <NumberInput
-            label={`Paycheck Amount ($${period === 'weekly' ? 'wk' : period === 'fortnightly' ? 'fn' : 'mo'})`}
+            label={`Paycheck Amount ($/${periodSuffix})`}
             value={paycheckAmount}
             onChange={v => setPaycheckAmount(v)}
             min={50}
@@ -131,7 +140,7 @@ export function FirstPaycheckSplitter() {
             tooltip={
               <InfoTooltip
                 title="Take-Home Pay"
-                content="Your net take-home pay deposited into your bank account. For casual employees under 18 earning under $350/wk who claim the tax-free threshold, gross pay equals take-home pay ($0 tax withheld)!"
+                content="Your net take-home pay deposited into your bank account. For casual employees under 18 earning under $350/wk ($18,200 statutory, $22,575 effective with $700 LITO) who claim the tax-free threshold, gross pay equals take-home pay ($0 tax withheld)!"
               />
             }
           />
@@ -177,7 +186,7 @@ export function FirstPaycheckSplitter() {
 
           <div className="space-y-2">
             <label className="text-xs font-semibold text-muted-foreground block">Select Budgeting Framework</label>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               <button
                 type="button"
                 onClick={() => applyPreset('barefoot')}
@@ -188,6 +197,17 @@ export function FirstPaycheckSplitter() {
                 }`}
               >
                 Barefoot 3-Bucket
+              </button>
+              <button
+                type="button"
+                onClick={() => applyPreset('teenInverted')}
+                className={`py-2 px-2 text-xs font-bold rounded-xl border transition-all ${
+                  systemStyle === 'teenInverted'
+                    ? 'bg-emerald-500 text-white border-emerald-500 shadow-xs'
+                    : 'bg-card border-border hover:bg-muted text-foreground'
+                }`}
+              >
+                Inverted 50/30/20
               </button>
               <button
                 type="button"
@@ -291,57 +311,118 @@ export function FirstPaycheckSplitter() {
                     <Cell key={`cell-${index}`} fill={entry.color || BUCKET_COLORS[index % BUCKET_COLORS.length]} />
                   ))}
                 </Pie>
-                <Tooltip content={<ChartTooltipContent formatter={(v, n) => [`$${v}/wk`, n]} />} />
+                <Tooltip content={<ChartTooltipContent formatter={(v, n) => [`$${v}/${periodSuffix}`, n]} />} />
               </PieChart>
             </ResponsiveContainer>
           </ChartContainer>
         </div>
       </div>
 
-      {systemStyle === 'barefoot' && (
-        <div className="space-y-4 animate-fade-in">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <StatCard
-              label="1. Blow Bucket (60%)"
-              value={`$${barefootBlow.toFixed(2)}/wk`}
-              numericValue={barefootBlow}
-              format="currency"
-              color="amber"
-              subtext="Daily food, transport, fun & living"
-            />
-            <StatCard
-              label="2. Mojo Bucket (20%)"
-              value={`$${barefootMojo.toFixed(2)}/wk`}
-              numericValue={barefootMojo}
-              format="currency"
-              color="green"
-              subtext="Emergency buffer (aim for $2,000)"
-            />
-            <StatCard
-              label="3. Grow Bucket (20%)"
-              value={`$${barefootGrow.toFixed(2)}/wk`}
-              numericValue={barefootGrow}
-              format="currency"
-              color="purple"
-              subtext="First car cash fund (zero debt!)"
-            />
-          </div>
-          <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-xs flex items-start gap-2">
-            <Sparkles className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
-            <div>
-              <span className="font-bold block mb-0.5">Scott Pape's Barefoot Tip:</span>
-              Set up automatic transfers on payday so your 20% Mojo emergency fund is saved <em>before</em> you spend a single dollar on daily fun!
+      {systemStyle === 'barefoot' && (() => {
+        const weeklyMojo = convertPaycheckPeriod(barefootMojo, period, 'weekly');
+        const weeksToMojo500 = Math.ceil(500 / Math.max(weeklyMojo, 1));
+        const growWeeklyAfterMojo = convertPaycheckPeriod(paycheckAmount * 0.40, period, 'weekly');
+
+        return (
+          <div className="space-y-4 animate-fade-in">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <StatCard
+                label="1. Blow Bucket (60%)"
+                value={`$${barefootBlow.toFixed(2)}/${periodSuffix}`}
+                numericValue={barefootBlow}
+                format="currency"
+                color="amber"
+                subtext="Daily food, transport, phone & fun"
+              />
+              <StatCard
+                label="2. Mojo Bucket (20%)"
+                value={`$${barefootMojo.toFixed(2)}/${periodSuffix}`}
+                numericValue={barefootMojo}
+                format="currency"
+                color="green"
+                subtext="Safety buffer (target $500 cash)"
+              />
+              <StatCard
+                label="3. Grow Bucket (20% -> 40%)"
+                value={`$${barefootGrow.toFixed(2)}/${periodSuffix}`}
+                numericValue={barefootGrow}
+                format="currency"
+                color="purple"
+                subtext="First car & driving lessons cash fund"
+              />
+            </div>
+            <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-xs flex items-start gap-2">
+              <Sparkles className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+              <div>
+                <span className="font-bold block mb-0.5">Scott Pape's Barefoot Youth Rule ($500 Mojo Milestone):</span>
+                {weeklyMojo > 0 ? (
+                  <>At <strong className="font-mono">${weeklyMojo.toFixed(2)}/wk</strong> into Mojo, your $500 safety cushion is fully funded in approximately <strong className="font-mono">{weeksToMojo500} weeks</strong>! Once Mojo reaches $500, Mojo transfers stop and cascade into Grow — expanding your car savings to <strong>40% (${growWeeklyAfterMojo.toFixed(2)}/wk or ${(growWeeklyAfterMojo * 52).toLocaleString('en-AU', { maximumFractionDigits: 0 })}/yr)</strong>!</>
+                ) : (
+                  <>Set your weekly paycheck above to see how quickly your 20% Mojo transfers reach the $500 milestone!</>
+                )}
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
+
+      {systemStyle === 'teenInverted' && (() => {
+        const grow50 = paycheckAmount * 0.50;
+        const splurge30 = paycheckAmount * 0.30;
+        const essentials20 = paycheckAmount * 0.20;
+        const periodSuffix = period === 'weekly' ? 'wk' : period === 'fortnightly' ? 'fn' : 'mo';
+        const weeklyGrow = convertPaycheckPeriod(grow50, period, 'weekly');
+        const yearlyGrow = weeklyGrow * 52;
+
+        return (
+          <div className="space-y-4 animate-fade-in">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <StatCard
+                label="1. Grow & Wealth (50%)"
+                value={`$${grow50.toFixed(2)}/${periodSuffix}`}
+                numericValue={grow50}
+                format="currency"
+                color="green"
+                subtext="High-yield savings (5.8%), first car & investing"
+              />
+              <StatCard
+                label="2. Guilt-Free Splurge (30%)"
+                value={`$${splurge30.toFixed(2)}/${periodSuffix}`}
+                numericValue={splurge30}
+                format="currency"
+                color="purple"
+                subtext="Dining out, social, sneakers & entertainment"
+              />
+              <StatCard
+                label="3. Daily Essentials (20%)"
+                value={`$${essentials20.toFixed(2)}/${periodSuffix}`}
+                numericValue={essentials20}
+                format="currency"
+                color="blue"
+                subtext="50c Translink fares, phone plan & school items"
+              />
+            </div>
+            <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-xs flex items-start gap-2">
+              <Sparkles className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+              <div>
+                <span className="font-bold block mb-0.5">The Teen Living-At-Home Wealth Advantage:</span>
+                {weeklyGrow > 0 ? (
+                  <>Because you have $0 rent and $0 electricity bills, inverting the traditional adult budget gives you massive wealth momentum! Saving 50% puts <strong className="font-mono">${weeklyGrow.toFixed(2)}/wk (${yearlyGrow.toLocaleString('en-AU', { maximumFractionDigits: 0 })}/year)</strong> directly into high-interest savings (BOQ 5.80% or Newcastle Perm 5.75%), funding a $5,000 cash car in under 2 years!</>
+                ) : (
+                  <>Enter your paycheck amount above to see your 50% high-yield savings momentum and car fund timeline!</>
+                )}
+              </div>
+            </div>
+          </div>
+        );
+      })()}
 
       {systemStyle === 'rule503020' && (
         <div className="space-y-4 animate-fade-in">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <StatCard
               label="Needs (50%)"
-              value={`$${needs50.toFixed(2)}/wk`}
+              value={`$${needs50.toFixed(2)}/${periodSuffix}`}
               numericValue={needs50}
               format="currency"
               color="blue"
@@ -349,7 +430,7 @@ export function FirstPaycheckSplitter() {
             />
             <StatCard
               label="Wants (30%)"
-              value={`$${wants30.toFixed(2)}/wk`}
+              value={`$${wants30.toFixed(2)}/${periodSuffix}`}
               numericValue={wants30}
               format="currency"
               color="purple"
@@ -357,12 +438,19 @@ export function FirstPaycheckSplitter() {
             />
             <StatCard
               label="Savings (20%)"
-              value={`$${savings20.toFixed(2)}/wk`}
+              value={`$${savings20.toFixed(2)}/${periodSuffix}`}
               numericValue={savings20}
               format="currency"
               color="green"
               subtext="High-yield savings goal"
             />
+          </div>
+          <div className="p-3.5 rounded-xl bg-primary/10 border border-primary/30 text-xs flex items-start gap-2">
+            <Sparkles className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+            <div>
+              <span className="font-bold block mb-0.5">Inverted Teen 50/30/20 Strategy:</span>
+              Because a teenager living at home has $0 rent and utility bills, consider inverting this split: allocate <strong>50% to Grow/Savings</strong> (${(paycheckAmount * 0.50).toFixed(2)}), <strong>30% to Guilt-Free Fun</strong> (${(paycheckAmount * 0.30).toFixed(2)}), and <strong>20% to Daily Admin</strong> (${(paycheckAmount * 0.20).toFixed(2)})!
+            </div>
           </div>
         </div>
       )}
@@ -372,15 +460,15 @@ export function FirstPaycheckSplitter() {
           <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
             <StatCard
               label="Everyday (40%)"
-              value={`$${b4Everyday.toFixed(2)}/wk`}
+              value={`$${b4Everyday.toFixed(2)}/${periodSuffix}`}
               numericValue={b4Everyday}
               format="currency"
               color="blue"
-              subtext="Weekly spending"
+              subtext="Spending bucket"
             />
             <StatCard
               label="Savings (30%)"
-              value={`$${b4Savings.toFixed(2)}/wk`}
+              value={`$${b4Savings.toFixed(2)}/${periodSuffix}`}
               numericValue={b4Savings}
               format="currency"
               color="green"
@@ -388,7 +476,7 @@ export function FirstPaycheckSplitter() {
             />
             <StatCard
               label="Emergency (20%)"
-              value={`$${b4Emergency.toFixed(2)}/wk`}
+              value={`$${b4Emergency.toFixed(2)}/${periodSuffix}`}
               numericValue={b4Emergency}
               format="currency"
               color="amber"
@@ -396,7 +484,7 @@ export function FirstPaycheckSplitter() {
             />
             <StatCard
               label="Big Goal (10%)"
-              value={`$${b4BigGoal.toFixed(2)}/wk`}
+              value={`$${b4BigGoal.toFixed(2)}/${periodSuffix}`}
               numericValue={b4BigGoal}
               format="currency"
               color="purple"
@@ -411,7 +499,7 @@ export function FirstPaycheckSplitter() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <StatCard
               label={`Needs (${customSplit.needs.toFixed(0)}%)`}
-              value={`$${customAmounts.needs.toFixed(2)}/${period === 'fortnightly' ? 'fn' : period === 'monthly' ? 'mo' : 'wk'}`}
+              value={`$${customAmounts.needs.toFixed(2)}/${periodSuffix}`}
               numericValue={customAmounts.needs}
               format="currency"
               color="blue"
@@ -419,7 +507,7 @@ export function FirstPaycheckSplitter() {
             />
             <StatCard
               label={`Wants (${customSplit.wants.toFixed(0)}%)`}
-              value={`$${customAmounts.wants.toFixed(2)}/${period === 'fortnightly' ? 'fn' : period === 'monthly' ? 'mo' : 'wk'}`}
+              value={`$${customAmounts.wants.toFixed(2)}/${periodSuffix}`}
               numericValue={customAmounts.wants}
               format="currency"
               color="purple"
@@ -427,7 +515,7 @@ export function FirstPaycheckSplitter() {
             />
             <StatCard
               label={`Savings (${customSplit.savings.toFixed(0)}%)`}
-              value={`$${customAmounts.savings.toFixed(2)}/${period === 'fortnightly' ? 'fn' : period === 'monthly' ? 'mo' : 'wk'}`}
+              value={`$${customAmounts.savings.toFixed(2)}/${periodSuffix}`}
               numericValue={customAmounts.savings}
               format="currency"
               color="green"

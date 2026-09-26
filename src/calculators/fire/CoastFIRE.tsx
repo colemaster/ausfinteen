@@ -4,7 +4,7 @@ import { NumberInput } from '../../components/ui/NumberInput';
 import { SliderControl } from '../../components/ui/SliderControl';
 import { calculateFIRENumber, coastFIRENumber, projectCoastToRetirement } from './engine';
 import { formatCurrency, formatCompact } from '../../utils/formatters';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, ReferenceLine } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, ReferenceLine } from '@/components/charts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { fireTrajectoryConfig } from '@/lib/chart-configs';
 

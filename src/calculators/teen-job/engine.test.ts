@@ -32,6 +32,24 @@ describe('getJuniorRatePct', () => {
     expect(getJuniorRatePct(16, 'fitness').pct).toBe(0.55);
     expect(getJuniorRatePct(18, 'fitness').pct).toBe(0.75);
   });
+
+  it('maps 20-year-olds under 20+ years bands to full 100% adult rate (restaurant, hospitality)', () => {
+    expect(getJuniorRatePct(20, 'restaurant').pct).toBe(1.00);
+    expect(getJuniorRatePct(20, 'hospitality').pct).toBe(1.00);
+    expect(getJuniorRatePct(20, 'children_services').pct).toBe(1.00);
+  });
+
+  it('correctly maps age ranges such as 16-20 years in cleaning award', () => {
+    const res = getJuniorRatePct(18, 'cleaning');
+    expect(res.pct).toBe(1.00);
+    expect(res.label).toContain('100% Adult Rate');
+  });
+
+  it('maps 16-year-olds to Under 17 first band in restaurant award', () => {
+    const res = getJuniorRatePct(16, 'restaurant');
+    expect(res.pct).toBe(0.50);
+    expect(res.label).toContain('50% of Adult Rate');
+  });
 });
 
 describe('netPayWithAllowances', () => {

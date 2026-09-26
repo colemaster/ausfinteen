@@ -1,6 +1,6 @@
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
-} from 'recharts';
+} from '@/components/charts';
 import { formatCompact, formatCurrency } from '../../utils/formatters';
 import { useReducedMotion, type MoneyFormat } from './chart';
 

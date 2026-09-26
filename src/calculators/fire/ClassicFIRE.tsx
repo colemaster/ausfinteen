@@ -14,7 +14,7 @@ import {
   type ReturnScenario,
 } from './engine';
 import { formatCurrency, formatCompact } from '../../utils/formatters';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, ReferenceLine } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, ReferenceLine } from '@/components/charts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { fireTrajectoryConfig } from '@/lib/chart-configs';
 

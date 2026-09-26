@@ -35,7 +35,7 @@ const ASSUMPTIONS = [
   'Borrowing capacity assumes 30% of gross income for housing repayments.',
   'LMI estimate is approximate — actual premiums vary significantly by lender.',
   'Monthly holding costs use default estimates for council rates, insurance, and maintenance.',
-  'Stamp duty based on 2024-25 state revenue office rates.',
+  'Stamp duty based on 2026-27 state revenue office rates.',
   'Not modelled: strata levies (set to $0 by default), conveyancing, building inspection fees.',
 ];
 
@@ -132,7 +132,7 @@ export function HouseAffordability() {
           House Purchasing Affordability
         </h1>
         <p className="text-xs text-[var(--muted-foreground)] mt-1">
-          APRA serviceability assessment, stamp duty, LMI, monthly costs and rate stress tests. Based on 2024-25 rates.
+          APRA serviceability assessment, stamp duty, LMI, monthly costs and rate stress tests. Based on 2026-27 rates.
         </p>
       </div>
 

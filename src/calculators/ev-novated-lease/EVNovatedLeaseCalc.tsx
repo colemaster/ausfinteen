@@ -11,7 +11,7 @@ import {
   Share2,
   X,
 } from 'lucide-react';
-import { toast } from 'sonner';
+import { toast } from '@/lib/toast';
 
 interface CarPreset {
   name: string;

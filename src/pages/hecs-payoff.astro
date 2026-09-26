@@ -11,6 +11,6 @@ import { HECSPayoff } from "@/views/HECSPayoff";
   keywords="HECS debt payoff, HELP loan repayment calculator, HECS indexation CPI WPI, voluntary HECS repayment, Australian university loan"
 >
   <Breadcrumbs items={[{ label: "Calculators", href: "/calculators" }, { label: "HECS Payoff Calculator" }]} />
-  <HECSPayoff client:load />
+  <HECSPayoff client:idle />
   <FinancialDisclaimer sourceYear="2026-27" />
 </Layout>

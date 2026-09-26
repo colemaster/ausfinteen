@@ -1,9 +1,9 @@
 import { Link } from '@/lib/router';
-import { MANDY_MODULES } from '@/data/mandy-topics';
+import { NAV_MODULES } from '@/data/nav-modules';
 import { ArrowRight, ArrowLeft, Sparkles } from 'lucide-react';
 
 interface ModulePrevNextProps {
-  /** The current module's MANDY_MODULES id (or 'brisbane-qld' for the location module). */
+  /** The current module's NAV_MODULES id (or 'brisbane-qld' for the location module). */
   currentId: string;
   /** Render a Home / Module / Sub-tab breadcrumb trail above the pager. Default true. */
   showBreadcrumbs?: boolean;
@@ -16,12 +16,12 @@ interface ModulePrevNextProps {
  * flows module 1 → 2 → ... → 11 instead of dead-ending at each page.
  */
 export function ModulePrevNext({ currentId, showBreadcrumbs = true, subTabLabel }: ModulePrevNextProps) {
-  const idx = MANDY_MODULES.findIndex(m => m.id === currentId);
+  const idx = NAV_MODULES.findIndex(m => m.id === currentId);
   if (idx === -1) return null;
 
-  const current = MANDY_MODULES[idx];
-  const prev = MANDY_MODULES[idx === 0 ? MANDY_MODULES.length - 1 : idx - 1];
-  const next = MANDY_MODULES[idx === MANDY_MODULES.length - 1 ? 0 : idx + 1];
+  const current = NAV_MODULES[idx];
+  const prev = NAV_MODULES[idx === 0 ? NAV_MODULES.length - 1 : idx - 1];
+  const next = NAV_MODULES[idx === NAV_MODULES.length - 1 ? 0 : idx + 1];
 
   return (
     <nav aria-label="Continue your money journey" className="calculator-section">

@@ -1,0 +1,6962 @@
+{
+  "results": [
+    {
+      "page": "/brisbane-qld/",
+      "htmlGz": 25229,
+      "cssGz": 26070,
+      "cssInlinedRaw": 2416,
+      "jsGz": 355582,
+      "jsRequests": 78,
+      "totalGz": 406881,
+      "jsFiles": [
+        {
+          "f": "_astro/ClientRouter.astro_astro_type_script_index_0_lang.C2AlSOH7.js",
+          "raw": 1634,
+          "gz": 812
+        },
+        {
+          "f": "_astro/client.CMnqbhkF.js",
+          "raw": 12358,
+          "gz": 4312
+        },
+        {
+          "f": "_astro/client.ChiJXsfH.js",
+          "raw": 24,
+          "gz": 44
+        },
+        {
+          "f": "_astro/prefetch.Ctgy7oyW.js",
+          "raw": 3122,
+          "gz": 1404
+        },
+        {
+          "f": "_astro/page.CuGKr0Yj.js",
+          "raw": 47,
+          "gz": 67
+        },
+        {
+          "f": "_astro/GlobalKeyboardShortcuts.astro_astro_type_script_index_0_lang.DAGWLJDN.js",
+          "raw": 956,
+          "gz": 520
+        },
+        {
+          "f": "_astro/Navbar.BAmQEyKl.js",
+          "raw": 25314,
+          "gz": 8170
+        },
+        {
+          "f": "_astro/react.DB-4Zxce.js",
+          "raw": 8529,
+          "gz": 3302
+        },
+        {
+          "f": "_astro/jsx-runtime.DdU6g033.js",
+          "raw": 593,
+          "gz": 398
+        },
+        {
+          "f": "_astro/react.DPfJpc42.js",
+          "raw": 123386,
+          "gz": 39689
+        },
+        {
+          "f": "_astro/AnimatePresence.Duky30po.js",
+          "raw": 4272,
+          "gz": 1961
+        },
+        {
+          "f": "_astro/animations.C5i1DvKL.js",
+          "raw": 436,
+          "gz": 184
+        },
+        {
+          "f": "_astro/createLucideIcon.BcSSw_Hq.js",
+          "raw": 6246,
+          "gz": 2533
+        },
+        {
+          "f": "_astro/utils.DOQQTBMN.js",
+          "raw": 27630,
+          "gz": 8657
+        },
+        {
+          "f": "_astro/book-open.CAqXpR2Y.js",
+          "raw": 329,
+          "gz": 250
+        },
+        {
+          "f": "_astro/calculator.CHYsHMMC.js",
+          "raw": 570,
+          "gz": 308
+        },
+        {
+          "f": "_astro/check.CgMgmewM.js",
+          "raw": 164,
+          "gz": 167
+        },
+        {
+          "f": "_astro/chevron-down.zsspu0at.js",
+          "raw": 168,
+          "gz": 165
+        },
+        {
+          "f": "_astro/map-pin.CN5AImeU.js",
+          "raw": 299,
+          "gz": 251
+        },
+        {
+          "f": "_astro/moon.DkIUIgig.js",
+          "raw": 257,
+          "gz": 227
+        },
+        {
+          "f": "_astro/search.CGVXpBqC.js",
+          "raw": 214,
+          "gz": 194
+        },
+        {
+          "f": "_astro/sparkles.C3JCpR6Z.js",
+          "raw": 552,
+          "gz": 318
+        },
+        {
+          "f": "_astro/user.BXZ3QGE8.js",
+          "raw": 236,
+          "gz": 208
+        },
+        {
+          "f": "_astro/x.BabufJsr.js",
+          "raw": 194,
+          "gz": 177
+        },
+        {
+          "f": "_astro/sound-synthesizer.D-p-Us6B.js",
+          "raw": 3416,
+          "gz": 1106
+        },
+        {
+          "f": "_astro/nav-modules.Djz_G4xk.js",
+          "raw": 3140,
+          "gz": 1327
+        },
+        {
+          "f": "_astro/TeenProfileContext.Cj1pifPp.js",
+          "raw": 1048,
+          "gz": 632
+        },
+        {
+          "f": "_astro/preload-helper.B3nfOi5I.js",
+          "raw": 1364,
+          "gz": 743
+        },
+        {
+          "f": "_astro/prefetch.Q0-hnUtA.js",
+          "raw": 8752,
+          "gz": 3353
+        },
+        {
+          "f": "_astro/BrisbaneQLD.DfiBxfE9.js",
+          "raw": 82792,
+          "gz": 18305
+        },
+        {
+          "f": "_astro/StatCard.C2jrfF_p.js",
+          "raw": 15747,
+          "gz": 6537
+        },
+        {
+          "f": "_astro/use-reduced-motion.n2zLXpNJ.js",
+          "raw": 197,
+          "gz": 167
+        },
+        {
+          "f": "_astro/formatters.C-9pvD6N.js",
+          "raw": 371,
+          "gz": 231
+        },
+        {
+          "f": "_astro/award.PUH2YJzu.js",
+          "raw": 314,
+          "gz": 254
+        },
+        {
+          "f": "_astro/building.Bbu9KWoj.js",
+          "raw": 603,
+          "gz": 310
+        },
+        {
+          "f": "_astro/TopicGuideAccordion.urVq-Mmh.js",
+          "raw": 4708,
+          "gz": 2107
+        },
+        {
+          "f": "_astro/zap._FToVy9v.js",
+          "raw": 313,
+          "gz": 246
+        },
+        {
+          "f": "_astro/WebReferenceLink.DBg2N9R9.js",
+          "raw": 2386,
+          "gz": 1189
+        },
+        {
+          "f": "_astro/external-link.CAy5Qhn5.js",
+          "raw": 291,
+          "gz": 230
+        },
+        {
+          "f": "_astro/shield-check.DHkB8RdP.js",
+          "raw": 360,
+          "gz": 279
+        },
+        {
+          "f": "_astro/dist.ByrwBCcb.js",
+          "raw": 641,
+          "gz": 391
+        },
+        {
+          "f": "_astro/circle-check.C6GdmqOX.js",
+          "raw": 250,
+          "gz": 217
+        },
+        {
+          "f": "_astro/compass.BaWRZj9I.js",
+          "raw": 291,
+          "gz": 236
+        },
+        {
+          "f": "_astro/dollar-sign.DaGowH08.js",
+          "raw": 259,
+          "gz": 219
+        },
+        {
+          "f": "_astro/graduation-cap.C3PJ1qc-.js",
+          "raw": 372,
+          "gz": 275
+        },
+        {
+          "f": "_astro/house.CQzjA81_.js",
+          "raw": 338,
+          "gz": 253
+        },
+        {
+          "f": "_astro/landmark.OWI0QqZI.js",
+          "raw": 425,
+          "gz": 275
+        },
+        {
+          "f": "_astro/school.C1ah2gq5.js",
+          "raw": 495,
+          "gz": 320
+        },
+        {
+          "f": "_astro/target.CXZeMgA1.js",
+          "raw": 266,
+          "gz": 188
+        },
+        {
+          "f": "_astro/trending-up.D9_iRsJp.js",
+          "raw": 215,
+          "gz": 196
+        },
+        {
+          "f": "_astro/users.DMxUxQuZ.js",
+          "raw": 346,
+          "gz": 251
+        },
+        {
+          "f": "_astro/SliderControl.Dl2Hz5s6.js",
+          "raw": 5780,
+          "gz": 2316
+        },
+        {
+          "f": "_astro/PaymentPeriodToggle.D7-g92Ub.js",
+          "raw": 1624,
+          "gz": 929
+        },
+        {
+          "f": "_astro/NumberInput.BhqYeHr6.js",
+          "raw": 4746,
+          "gz": 1937
+        },
+        {
+          "f": "_astro/CategoricalChart.DOLsDhLY.js",
+          "raw": 304807,
+          "gz": 90221
+        },
+        {
+          "f": "_astro/react-dom.BUrlqAcn.js",
+          "raw": 3853,
+          "gz": 1382
+        },
+        {
+          "f": "_astro/tooltipContext.DRJc3EJn.js",
+          "raw": 513,
+          "gz": 274
+        },
+        {
+          "f": "_astro/BarChart.CzrPn_0y.js",
+          "raw": 20088,
+          "gz": 6776
+        },
+        {
+          "f": "_astro/CartesianChart.CuOzhI-b.js",
+          "raw": 28425,
+          "gz": 8300
+        },
+        {
+          "f": "_astro/ErrorBarContext.B_sH4tlG.js",
+          "raw": 675,
+          "gz": 423
+        },
+        {
+          "f": "_astro/graphicalItemSelectors.Ce9bKyPK.js",
+          "raw": 192,
+          "gz": 127
+        },
+        {
+          "f": "_astro/statutory-links.DJ7jRrI-.js",
+          "raw": 36711,
+          "gz": 11832
+        },
+        {
+          "f": "_astro/brisbane-qld.BtRDm8dy.js",
+          "raw": 13512,
+          "gz": 5930
+        },
+        {
+          "f": "_astro/Badge.CbZgL8kF.js",
+          "raw": 1354,
+          "gz": 654
+        },
+        {
+          "f": "_astro/brisbane-data.B5ypgUiR.js",
+          "raw": 87670,
+          "gz": 24375
+        },
+        {
+          "f": "_astro/Tabs.KjENhTR-.js",
+          "raw": 2485,
+          "gz": 1342
+        },
+        {
+          "f": "_astro/SpotlightCard.BiztPRLQ.js",
+          "raw": 2007,
+          "gz": 1091
+        },
+        {
+          "f": "_astro/SmartImage.DpN0WcBP.js",
+          "raw": 1180,
+          "gz": 693
+        },
+        {
+          "f": "_astro/ModulePrevNext.CVJwGQPj.js",
+          "raw": 3796,
+          "gz": 1305
+        },
+        {
+          "f": "_astro/arrow-left.BfhXphFw.js",
+          "raw": 205,
+          "gz": 188
+        },
+        {
+          "f": "_astro/arrow-right.C4414OgF.js",
+          "raw": 205,
+          "gz": 188
+        },
+        {
+          "f": "_astro/usePageTitle.Dli3XLjJ.js",
+          "raw": 192,
+          "gz": 175
+        },
+        {
+          "f": "_astro/Footer.DDiY1TmU.js",
+          "raw": 18018,
+          "gz": 5706
+        },
+        {
+          "f": "_astro/activity.BZEZRUjE.js",
+          "raw": 274,
+          "gz": 230
+        },
+        {
+          "f": "_astro/refresh-cw.DmmFk8xH.js",
+          "raw": 361,
+          "gz": 252
+        },
+        {
+          "f": "_astro/Toaster.CUDxRbIE.js",
+          "raw": 595,
+          "gz": 386
+        },
+        {
+          "f": "_astro/dist.DPrgbPaa.js",
+          "raw": 33544,
+          "gz": 9318
+        },
+        {
+          "f": "_astro/client.DLrVKEOT.js",
+          "raw": 209191,
+          "gz": 65077
+        }
+      ]
+    },
+    {
+      "page": "/car-driving/",
+      "htmlGz": 23749,
+      "cssGz": 26070,
+      "cssInlinedRaw": 2550,
+      "jsGz": 351956,
+      "jsRequests": 74,
+      "totalGz": 401775,
+      "jsFiles": [
+        {
+          "f": "_astro/ClientRouter.astro_astro_type_script_index_0_lang.C2AlSOH7.js",
+          "raw": 1634,
+          "gz": 812
+        },
+        {
+          "f": "_astro/client.CMnqbhkF.js",
+          "raw": 12358,
+          "gz": 4312
+        },
+        {
+          "f": "_astro/client.ChiJXsfH.js",
+          "raw": 24,
+          "gz": 44
+        },
+        {
+          "f": "_astro/prefetch.Ctgy7oyW.js",
+          "raw": 3122,
+          "gz": 1404
+        },
+        {
+          "f": "_astro/page.CuGKr0Yj.js",
+          "raw": 47,
+          "gz": 67
+        },
+        {
+          "f": "_astro/GlobalKeyboardShortcuts.astro_astro_type_script_index_0_lang.DAGWLJDN.js",
+          "raw": 956,
+          "gz": 520
+        },
+        {
+          "f": "_astro/Navbar.BAmQEyKl.js",
+          "raw": 25314,
+          "gz": 8170
+        },
+        {
+          "f": "_astro/react.DB-4Zxce.js",
+          "raw": 8529,
+          "gz": 3302
+        },
+        {
+          "f": "_astro/jsx-runtime.DdU6g033.js",
+          "raw": 593,
+          "gz": 398
+        },
+        {
+          "f": "_astro/react.DPfJpc42.js",
+          "raw": 123386,
+          "gz": 39689
+        },
+        {
+          "f": "_astro/AnimatePresence.Duky30po.js",
+          "raw": 4272,
+          "gz": 1961
+        },
+        {
+          "f": "_astro/animations.C5i1DvKL.js",
+          "raw": 436,
+          "gz": 184
+        },
+        {
+          "f": "_astro/createLucideIcon.BcSSw_Hq.js",
+          "raw": 6246,
+          "gz": 2533
+        },
+        {
+          "f": "_astro/utils.DOQQTBMN.js",
+          "raw": 27630,
+          "gz": 8657
+        },
+        {
+          "f": "_astro/book-open.CAqXpR2Y.js",
+          "raw": 329,
+          "gz": 250
+        },
+        {
+          "f": "_astro/calculator.CHYsHMMC.js",
+          "raw": 570,
+          "gz": 308
+        },
+        {
+          "f": "_astro/check.CgMgmewM.js",
+          "raw": 164,
+          "gz": 167
+        },
+        {
+          "f": "_astro/chevron-down.zsspu0at.js",
+          "raw": 168,
+          "gz": 165
+        },
+        {
+          "f": "_astro/map-pin.CN5AImeU.js",
+          "raw": 299,
+          "gz": 251
+        },
+        {
+          "f": "_astro/moon.DkIUIgig.js",
+          "raw": 257,
+          "gz": 227
+        },
+        {
+          "f": "_astro/search.CGVXpBqC.js",
+          "raw": 214,
+          "gz": 194
+        },
+        {
+          "f": "_astro/sparkles.C3JCpR6Z.js",
+          "raw": 552,
+          "gz": 318
+        },
+        {
+          "f": "_astro/user.BXZ3QGE8.js",
+          "raw": 236,
+          "gz": 208
+        },
+        {
+          "f": "_astro/x.BabufJsr.js",
+          "raw": 194,
+          "gz": 177
+        },
+        {
+          "f": "_astro/sound-synthesizer.D-p-Us6B.js",
+          "raw": 3416,
+          "gz": 1106
+        },
+        {
+          "f": "_astro/nav-modules.Djz_G4xk.js",
+          "raw": 3140,
+          "gz": 1327
+        },
+        {
+          "f": "_astro/TeenProfileContext.Cj1pifPp.js",
+          "raw": 1048,
+          "gz": 632
+        },
+        {
+          "f": "_astro/preload-helper.B3nfOi5I.js",
+          "raw": 1364,
+          "gz": 743
+        },
+        {
+          "f": "_astro/prefetch.Q0-hnUtA.js",
+          "raw": 8752,
+          "gz": 3353
+        },
+        {
+          "f": "_astro/CarDriving.BzSiUPUe.js",
+          "raw": 41603,
+          "gz": 12723
+        },
+        {
+          "f": "_astro/StatCard.C2jrfF_p.js",
+          "raw": 15747,
+          "gz": 6537
+        },
+        {
+          "f": "_astro/use-reduced-motion.n2zLXpNJ.js",
+          "raw": 197,
+          "gz": 167
+        },
+        {
+          "f": "_astro/formatters.C-9pvD6N.js",
+          "raw": 371,
+          "gz": 231
+        },
+        {
+          "f": "_astro/car.CmznezJf.js",
+          "raw": 447,
+          "gz": 310
+        },
+        {
+          "f": "_astro/TopicGuideAccordion.urVq-Mmh.js",
+          "raw": 4708,
+          "gz": 2107
+        },
+        {
+          "f": "_astro/zap._FToVy9v.js",
+          "raw": 313,
+          "gz": 246
+        },
+        {
+          "f": "_astro/WebReferenceLink.DBg2N9R9.js",
+          "raw": 2386,
+          "gz": 1189
+        },
+        {
+          "f": "_astro/external-link.CAy5Qhn5.js",
+          "raw": 291,
+          "gz": 230
+        },
+        {
+          "f": "_astro/shield-check.DHkB8RdP.js",
+          "raw": 360,
+          "gz": 279
+        },
+        {
+          "f": "_astro/dist.ByrwBCcb.js",
+          "raw": 641,
+          "gz": 391
+        },
+        {
+          "f": "_astro/circle-check.C6GdmqOX.js",
+          "raw": 250,
+          "gz": 217
+        },
+        {
+          "f": "_astro/InfoTooltip._CKLsj_3.js",
+          "raw": 5825,
+          "gz": 2966
+        },
+        {
+          "f": "_astro/info.xaizh_mM.js",
+          "raw": 244,
+          "gz": 204
+        },
+        {
+          "f": "_astro/flame.BEo2Mxfx.js",
+          "raw": 239,
+          "gz": 206
+        },
+        {
+          "f": "_astro/graduation-cap.C3PJ1qc-.js",
+          "raw": 372,
+          "gz": 275
+        },
+        {
+          "f": "_astro/piggy-bank.DRBu9ksT.js",
+          "raw": 449,
+          "gz": 286
+        },
+        {
+          "f": "_astro/SliderControl.Dl2Hz5s6.js",
+          "raw": 5780,
+          "gz": 2316
+        },
+        {
+          "f": "_astro/PaymentPeriodToggle.D7-g92Ub.js",
+          "raw": 1624,
+          "gz": 929
+        },
+        {
+          "f": "_astro/NumberInput.BhqYeHr6.js",
+          "raw": 4746,
+          "gz": 1937
+        },
+        {
+          "f": "_astro/CategoricalChart.DOLsDhLY.js",
+          "raw": 304807,
+          "gz": 90221
+        },
+        {
+          "f": "_astro/react-dom.BUrlqAcn.js",
+          "raw": 3853,
+          "gz": 1382
+        },
+        {
+          "f": "_astro/tooltipContext.DRJc3EJn.js",
+          "raw": 513,
+          "gz": 274
+        },
+        {
+          "f": "_astro/BarChart.CzrPn_0y.js",
+          "raw": 20088,
+          "gz": 6776
+        },
+        {
+          "f": "_astro/CartesianChart.CuOzhI-b.js",
+          "raw": 28425,
+          "gz": 8300
+        },
+        {
+          "f": "_astro/ErrorBarContext.B_sH4tlG.js",
+          "raw": 675,
+          "gz": 423
+        },
+        {
+          "f": "_astro/graphicalItemSelectors.Ce9bKyPK.js",
+          "raw": 192,
+          "gz": 127
+        },
+        {
+          "f": "_astro/CartesianGrid.sE8lqsVM.js",
+          "raw": 6923,
+          "gz": 2498
+        },
+        {
+          "f": "_astro/statutory-links.DJ7jRrI-.js",
+          "raw": 36711,
+          "gz": 11832
+        },
+        {
+          "f": "_astro/teen-finance-data.4vDZsF_l.js",
+          "raw": 61716,
+          "gz": 19581
+        },
+        {
+          "f": "_astro/Badge.CbZgL8kF.js",
+          "raw": 1354,
+          "gz": 654
+        },
+        {
+          "f": "_astro/Tabs.KjENhTR-.js",
+          "raw": 2485,
+          "gz": 1342
+        },
+        {
+          "f": "_astro/SmartImage.DpN0WcBP.js",
+          "raw": 1180,
+          "gz": 693
+        },
+        {
+          "f": "_astro/ModulePrevNext.CVJwGQPj.js",
+          "raw": 3796,
+          "gz": 1305
+        },
+        {
+          "f": "_astro/arrow-left.BfhXphFw.js",
+          "raw": 205,
+          "gz": 188
+        },
+        {
+          "f": "_astro/arrow-right.C4414OgF.js",
+          "raw": 205,
+          "gz": 188
+        },
+        {
+          "f": "_astro/usePageTitle.Dli3XLjJ.js",
+          "raw": 192,
+          "gz": 175
+        },
+        {
+          "f": "_astro/car-driving.BdY9p02c.js",
+          "raw": 14937,
+          "gz": 6490
+        },
+        {
+          "f": "_astro/chart.B4YgnV1t.js",
+          "raw": 7690,
+          "gz": 3313
+        },
+        {
+          "f": "_astro/Footer.DDiY1TmU.js",
+          "raw": 18018,
+          "gz": 5706
+        },
+        {
+          "f": "_astro/activity.BZEZRUjE.js",
+          "raw": 274,
+          "gz": 230
+        },
+        {
+          "f": "_astro/refresh-cw.DmmFk8xH.js",
+          "raw": 361,
+          "gz": 252
+        },
+        {
+          "f": "_astro/Toaster.CUDxRbIE.js",
+          "raw": 595,
+          "gz": 386
+        },
+        {
+          "f": "_astro/dist.DPrgbPaa.js",
+          "raw": 33544,
+          "gz": 9318
+        },
+        {
+          "f": "_astro/client.DLrVKEOT.js",
+          "raw": 209191,
+          "gz": 65077
+        }
+      ]
+    },
+    {
+      "page": "/investing-shares/",
+      "htmlGz": 23634,
+      "cssGz": 26070,
+      "cssInlinedRaw": 2842,
+      "jsGz": 338309,
+      "jsRequests": 79,
+      "totalGz": 388013,
+      "jsFiles": [
+        {
+          "f": "_astro/ClientRouter.astro_astro_type_script_index_0_lang.C2AlSOH7.js",
+          "raw": 1634,
+          "gz": 812
+        },
+        {
+          "f": "_astro/client.CMnqbhkF.js",
+          "raw": 12358,
+          "gz": 4312
+        },
+        {
+          "f": "_astro/client.ChiJXsfH.js",
+          "raw": 24,
+          "gz": 44
+        },
+        {
+          "f": "_astro/prefetch.Ctgy7oyW.js",
+          "raw": 3122,
+          "gz": 1404
+        },
+        {
+          "f": "_astro/page.CuGKr0Yj.js",
+          "raw": 47,
+          "gz": 67
+        },
+        {
+          "f": "_astro/GlobalKeyboardShortcuts.astro_astro_type_script_index_0_lang.DAGWLJDN.js",
+          "raw": 956,
+          "gz": 520
+        },
+        {
+          "f": "_astro/Navbar.BAmQEyKl.js",
+          "raw": 25314,
+          "gz": 8170
+        },
+        {
+          "f": "_astro/react.DB-4Zxce.js",
+          "raw": 8529,
+          "gz": 3302
+        },
+        {
+          "f": "_astro/jsx-runtime.DdU6g033.js",
+          "raw": 593,
+          "gz": 398
+        },
+        {
+          "f": "_astro/react.DPfJpc42.js",
+          "raw": 123386,
+          "gz": 39689
+        },
+        {
+          "f": "_astro/AnimatePresence.Duky30po.js",
+          "raw": 4272,
+          "gz": 1961
+        },
+        {
+          "f": "_astro/animations.C5i1DvKL.js",
+          "raw": 436,
+          "gz": 184
+        },
+        {
+          "f": "_astro/createLucideIcon.BcSSw_Hq.js",
+          "raw": 6246,
+          "gz": 2533
+        },
+        {
+          "f": "_astro/utils.DOQQTBMN.js",
+          "raw": 27630,
+          "gz": 8657
+        },
+        {
+          "f": "_astro/book-open.CAqXpR2Y.js",
+          "raw": 329,
+          "gz": 250
+        },
+        {
+          "f": "_astro/calculator.CHYsHMMC.js",
+          "raw": 570,
+          "gz": 308
+        },
+        {
+          "f": "_astro/check.CgMgmewM.js",
+          "raw": 164,
+          "gz": 167
+        },
+        {
+          "f": "_astro/chevron-down.zsspu0at.js",
+          "raw": 168,
+          "gz": 165
+        },
+        {
+          "f": "_astro/map-pin.CN5AImeU.js",
+          "raw": 299,
+          "gz": 251
+        },
+        {
+          "f": "_astro/moon.DkIUIgig.js",
+          "raw": 257,
+          "gz": 227
+        },
+        {
+          "f": "_astro/search.CGVXpBqC.js",
+          "raw": 214,
+          "gz": 194
+        },
+        {
+          "f": "_astro/sparkles.C3JCpR6Z.js",
+          "raw": 552,
+          "gz": 318
+        },
+        {
+          "f": "_astro/user.BXZ3QGE8.js",
+          "raw": 236,
+          "gz": 208
+        },
+        {
+          "f": "_astro/x.BabufJsr.js",
+          "raw": 194,
+          "gz": 177
+        },
+        {
+          "f": "_astro/sound-synthesizer.D-p-Us6B.js",
+          "raw": 3416,
+          "gz": 1106
+        },
+        {
+          "f": "_astro/nav-modules.Djz_G4xk.js",
+          "raw": 3140,
+          "gz": 1327
+        },
+        {
+          "f": "_astro/TeenProfileContext.Cj1pifPp.js",
+          "raw": 1048,
+          "gz": 632
+        },
+        {
+          "f": "_astro/preload-helper.B3nfOi5I.js",
+          "raw": 1364,
+          "gz": 743
+        },
+        {
+          "f": "_astro/prefetch.Q0-hnUtA.js",
+          "raw": 8752,
+          "gz": 3353
+        },
+        {
+          "f": "_astro/InvestingShares.jB3bBb5w.js",
+          "raw": 49868,
+          "gz": 14959
+        },
+        {
+          "f": "_astro/StatCard.C2jrfF_p.js",
+          "raw": 15747,
+          "gz": 6537
+        },
+        {
+          "f": "_astro/use-reduced-motion.n2zLXpNJ.js",
+          "raw": 197,
+          "gz": 167
+        },
+        {
+          "f": "_astro/formatters.C-9pvD6N.js",
+          "raw": 371,
+          "gz": 231
+        },
+        {
+          "f": "_astro/briefcase.BZGGPki3.js",
+          "raw": 260,
+          "gz": 225
+        },
+        {
+          "f": "_astro/calendar-days.BJ6HEyec.js",
+          "raw": 532,
+          "gz": 293
+        },
+        {
+          "f": "_astro/TopicGuideAccordion.urVq-Mmh.js",
+          "raw": 4708,
+          "gz": 2107
+        },
+        {
+          "f": "_astro/zap._FToVy9v.js",
+          "raw": 313,
+          "gz": 246
+        },
+        {
+          "f": "_astro/WebReferenceLink.DBg2N9R9.js",
+          "raw": 2386,
+          "gz": 1189
+        },
+        {
+          "f": "_astro/external-link.CAy5Qhn5.js",
+          "raw": 291,
+          "gz": 230
+        },
+        {
+          "f": "_astro/shield-check.DHkB8RdP.js",
+          "raw": 360,
+          "gz": 279
+        },
+        {
+          "f": "_astro/dist.ByrwBCcb.js",
+          "raw": 641,
+          "gz": 391
+        },
+        {
+          "f": "_astro/graduation-cap.C3PJ1qc-.js",
+          "raw": 372,
+          "gz": 275
+        },
+        {
+          "f": "_astro/layers.CPxgCIZU.js",
+          "raw": 482,
+          "gz": 279
+        },
+        {
+          "f": "_astro/piggy-bank.DRBu9ksT.js",
+          "raw": 449,
+          "gz": 286
+        },
+        {
+          "f": "_astro/receipt.D_bh0PUV.js",
+          "raw": 694,
+          "gz": 310
+        },
+        {
+          "f": "_astro/rocket.BQ9ciGnf.js",
+          "raw": 492,
+          "gz": 331
+        },
+        {
+          "f": "_astro/shield-alert.C6ppDoZP.js",
+          "raw": 393,
+          "gz": 289
+        },
+        {
+          "f": "_astro/trending-up.D9_iRsJp.js",
+          "raw": 215,
+          "gz": 196
+        },
+        {
+          "f": "_astro/triangle-alert.KqnJl4oL.js",
+          "raw": 332,
+          "gz": 253
+        },
+        {
+          "f": "_astro/SliderControl.Dl2Hz5s6.js",
+          "raw": 5780,
+          "gz": 2316
+        },
+        {
+          "f": "_astro/PaymentPeriodToggle.D7-g92Ub.js",
+          "raw": 1624,
+          "gz": 929
+        },
+        {
+          "f": "_astro/NumberInput.BhqYeHr6.js",
+          "raw": 4746,
+          "gz": 1937
+        },
+        {
+          "f": "_astro/constants.DmGeGOZm.js",
+          "raw": 380,
+          "gz": 250
+        },
+        {
+          "f": "_astro/CategoricalChart.DOLsDhLY.js",
+          "raw": 304807,
+          "gz": 90221
+        },
+        {
+          "f": "_astro/react-dom.BUrlqAcn.js",
+          "raw": 3853,
+          "gz": 1382
+        },
+        {
+          "f": "_astro/BarChart.CzrPn_0y.js",
+          "raw": 20088,
+          "gz": 6776
+        },
+        {
+          "f": "_astro/tooltipContext.DRJc3EJn.js",
+          "raw": 513,
+          "gz": 274
+        },
+        {
+          "f": "_astro/CartesianChart.CuOzhI-b.js",
+          "raw": 28425,
+          "gz": 8300
+        },
+        {
+          "f": "_astro/ErrorBarContext.B_sH4tlG.js",
+          "raw": 675,
+          "gz": 423
+        },
+        {
+          "f": "_astro/graphicalItemSelectors.Ce9bKyPK.js",
+          "raw": 192,
+          "gz": 127
+        },
+        {
+          "f": "_astro/CartesianGrid.sE8lqsVM.js",
+          "raw": 6923,
+          "gz": 2498
+        },
+        {
+          "f": "_astro/LineChart.rha_phKT.js",
+          "raw": 11977,
+          "gz": 4571
+        },
+        {
+          "f": "_astro/getRadiusAndStrokeWidthFromDot.Dyn11JoZ.js",
+          "raw": 5168,
+          "gz": 1771
+        },
+        {
+          "f": "_astro/statutory-links.DJ7jRrI-.js",
+          "raw": 36711,
+          "gz": 11832
+        },
+        {
+          "f": "_astro/Badge.CbZgL8kF.js",
+          "raw": 1354,
+          "gz": 654
+        },
+        {
+          "f": "_astro/SmartImage.DpN0WcBP.js",
+          "raw": 1180,
+          "gz": 693
+        },
+        {
+          "f": "_astro/ModulePrevNext.CVJwGQPj.js",
+          "raw": 3796,
+          "gz": 1305
+        },
+        {
+          "f": "_astro/arrow-left.BfhXphFw.js",
+          "raw": 205,
+          "gz": 188
+        },
+        {
+          "f": "_astro/arrow-right.C4414OgF.js",
+          "raw": 205,
+          "gz": 188
+        },
+        {
+          "f": "_astro/usePageTitle.Dli3XLjJ.js",
+          "raw": 192,
+          "gz": 175
+        },
+        {
+          "f": "_astro/chart.B4YgnV1t.js",
+          "raw": 7690,
+          "gz": 3313
+        },
+        {
+          "f": "_astro/investing-shares.B1dOeSNq.js",
+          "raw": 15312,
+          "gz": 6448
+        },
+        {
+          "f": "_astro/Footer.DDiY1TmU.js",
+          "raw": 18018,
+          "gz": 5706
+        },
+        {
+          "f": "_astro/activity.BZEZRUjE.js",
+          "raw": 274,
+          "gz": 230
+        },
+        {
+          "f": "_astro/circle-check.C6GdmqOX.js",
+          "raw": 250,
+          "gz": 217
+        },
+        {
+          "f": "_astro/refresh-cw.DmmFk8xH.js",
+          "raw": 361,
+          "gz": 252
+        },
+        {
+          "f": "_astro/Toaster.CUDxRbIE.js",
+          "raw": 595,
+          "gz": 386
+        },
+        {
+          "f": "_astro/dist.DPrgbPaa.js",
+          "raw": 33544,
+          "gz": 9318
+        },
+        {
+          "f": "_astro/client.DLrVKEOT.js",
+          "raw": 209191,
+          "gz": 65077
+        }
+      ]
+    },
+    {
+      "page": "/teen-budgeting/",
+      "htmlGz": 19075,
+      "cssGz": 26070,
+      "cssInlinedRaw": 2670,
+      "jsGz": 338789,
+      "jsRequests": 72,
+      "totalGz": 383934,
+      "jsFiles": [
+        {
+          "f": "_astro/ClientRouter.astro_astro_type_script_index_0_lang.C2AlSOH7.js",
+          "raw": 1634,
+          "gz": 812
+        },
+        {
+          "f": "_astro/client.CMnqbhkF.js",
+          "raw": 12358,
+          "gz": 4312
+        },
+        {
+          "f": "_astro/client.ChiJXsfH.js",
+          "raw": 24,
+          "gz": 44
+        },
+        {
+          "f": "_astro/prefetch.Ctgy7oyW.js",
+          "raw": 3122,
+          "gz": 1404
+        },
+        {
+          "f": "_astro/page.CuGKr0Yj.js",
+          "raw": 47,
+          "gz": 67
+        },
+        {
+          "f": "_astro/GlobalKeyboardShortcuts.astro_astro_type_script_index_0_lang.DAGWLJDN.js",
+          "raw": 956,
+          "gz": 520
+        },
+        {
+          "f": "_astro/Navbar.BAmQEyKl.js",
+          "raw": 25314,
+          "gz": 8170
+        },
+        {
+          "f": "_astro/react.DB-4Zxce.js",
+          "raw": 8529,
+          "gz": 3302
+        },
+        {
+          "f": "_astro/jsx-runtime.DdU6g033.js",
+          "raw": 593,
+          "gz": 398
+        },
+        {
+          "f": "_astro/react.DPfJpc42.js",
+          "raw": 123386,
+          "gz": 39689
+        },
+        {
+          "f": "_astro/AnimatePresence.Duky30po.js",
+          "raw": 4272,
+          "gz": 1961
+        },
+        {
+          "f": "_astro/animations.C5i1DvKL.js",
+          "raw": 436,
+          "gz": 184
+        },
+        {
+          "f": "_astro/createLucideIcon.BcSSw_Hq.js",
+          "raw": 6246,
+          "gz": 2533
+        },
+        {
+          "f": "_astro/utils.DOQQTBMN.js",
+          "raw": 27630,
+          "gz": 8657
+        },
+        {
+          "f": "_astro/book-open.CAqXpR2Y.js",
+          "raw": 329,
+          "gz": 250
+        },
+        {
+          "f": "_astro/calculator.CHYsHMMC.js",
+          "raw": 570,
+          "gz": 308
+        },
+        {
+          "f": "_astro/check.CgMgmewM.js",
+          "raw": 164,
+          "gz": 167
+        },
+        {
+          "f": "_astro/chevron-down.zsspu0at.js",
+          "raw": 168,
+          "gz": 165
+        },
+        {
+          "f": "_astro/map-pin.CN5AImeU.js",
+          "raw": 299,
+          "gz": 251
+        },
+        {
+          "f": "_astro/moon.DkIUIgig.js",
+          "raw": 257,
+          "gz": 227
+        },
+        {
+          "f": "_astro/search.CGVXpBqC.js",
+          "raw": 214,
+          "gz": 194
+        },
+        {
+          "f": "_astro/sparkles.C3JCpR6Z.js",
+          "raw": 552,
+          "gz": 318
+        },
+        {
+          "f": "_astro/user.BXZ3QGE8.js",
+          "raw": 236,
+          "gz": 208
+        },
+        {
+          "f": "_astro/x.BabufJsr.js",
+          "raw": 194,
+          "gz": 177
+        },
+        {
+          "f": "_astro/sound-synthesizer.D-p-Us6B.js",
+          "raw": 3416,
+          "gz": 1106
+        },
+        {
+          "f": "_astro/nav-modules.Djz_G4xk.js",
+          "raw": 3140,
+          "gz": 1327
+        },
+        {
+          "f": "_astro/TeenProfileContext.Cj1pifPp.js",
+          "raw": 1048,
+          "gz": 632
+        },
+        {
+          "f": "_astro/preload-helper.B3nfOi5I.js",
+          "raw": 1364,
+          "gz": 743
+        },
+        {
+          "f": "_astro/prefetch.Q0-hnUtA.js",
+          "raw": 8752,
+          "gz": 3353
+        },
+        {
+          "f": "_astro/TeenBudgeting.CnyN3wCl.js",
+          "raw": 28010,
+          "gz": 9018
+        },
+        {
+          "f": "_astro/StatCard.C2jrfF_p.js",
+          "raw": 15747,
+          "gz": 6537
+        },
+        {
+          "f": "_astro/use-reduced-motion.n2zLXpNJ.js",
+          "raw": 197,
+          "gz": 167
+        },
+        {
+          "f": "_astro/formatters.C-9pvD6N.js",
+          "raw": 371,
+          "gz": 231
+        },
+        {
+          "f": "_astro/PaymentPeriodToggle.D7-g92Ub.js",
+          "raw": 1624,
+          "gz": 929
+        },
+        {
+          "f": "_astro/chart-pie.DT1dQr8K.js",
+          "raw": 335,
+          "gz": 263
+        },
+        {
+          "f": "_astro/TopicGuideAccordion.urVq-Mmh.js",
+          "raw": 4708,
+          "gz": 2107
+        },
+        {
+          "f": "_astro/zap._FToVy9v.js",
+          "raw": 313,
+          "gz": 246
+        },
+        {
+          "f": "_astro/WebReferenceLink.DBg2N9R9.js",
+          "raw": 2386,
+          "gz": 1189
+        },
+        {
+          "f": "_astro/external-link.CAy5Qhn5.js",
+          "raw": 291,
+          "gz": 230
+        },
+        {
+          "f": "_astro/shield-check.DHkB8RdP.js",
+          "raw": 360,
+          "gz": 279
+        },
+        {
+          "f": "_astro/dist.ByrwBCcb.js",
+          "raw": 641,
+          "gz": 391
+        },
+        {
+          "f": "_astro/InfoTooltip._CKLsj_3.js",
+          "raw": 5825,
+          "gz": 2966
+        },
+        {
+          "f": "_astro/info.xaizh_mM.js",
+          "raw": 244,
+          "gz": 204
+        },
+        {
+          "f": "_astro/layers.CPxgCIZU.js",
+          "raw": 482,
+          "gz": 279
+        },
+        {
+          "f": "_astro/wallet.OttRr6ef.js",
+          "raw": 326,
+          "gz": 236
+        },
+        {
+          "f": "_astro/SliderControl.Dl2Hz5s6.js",
+          "raw": 5780,
+          "gz": 2316
+        },
+        {
+          "f": "_astro/NumberInput.BhqYeHr6.js",
+          "raw": 4746,
+          "gz": 1937
+        },
+        {
+          "f": "_astro/CategoricalChart.DOLsDhLY.js",
+          "raw": 304807,
+          "gz": 90221
+        },
+        {
+          "f": "_astro/react-dom.BUrlqAcn.js",
+          "raw": 3853,
+          "gz": 1382
+        },
+        {
+          "f": "_astro/tooltipContext.DRJc3EJn.js",
+          "raw": 513,
+          "gz": 274
+        },
+        {
+          "f": "_astro/PieChart.CNgH7N9Y.js",
+          "raw": 17427,
+          "gz": 5571
+        },
+        {
+          "f": "_astro/statutory-links.DJ7jRrI-.js",
+          "raw": 36711,
+          "gz": 11832
+        },
+        {
+          "f": "_astro/Badge.CbZgL8kF.js",
+          "raw": 1354,
+          "gz": 654
+        },
+        {
+          "f": "_astro/SmartImage.DpN0WcBP.js",
+          "raw": 1180,
+          "gz": 693
+        },
+        {
+          "f": "_astro/ModulePrevNext.CVJwGQPj.js",
+          "raw": 3796,
+          "gz": 1305
+        },
+        {
+          "f": "_astro/arrow-left.BfhXphFw.js",
+          "raw": 205,
+          "gz": 188
+        },
+        {
+          "f": "_astro/arrow-right.C4414OgF.js",
+          "raw": 205,
+          "gz": 188
+        },
+        {
+          "f": "_astro/usePageTitle.Dli3XLjJ.js",
+          "raw": 192,
+          "gz": 175
+        },
+        {
+          "f": "_astro/chart.B4YgnV1t.js",
+          "raw": 7690,
+          "gz": 3313
+        },
+        {
+          "f": "_astro/SavingsGoalsPlanner.Db7LzkTx.js",
+          "raw": 16872,
+          "gz": 6142
+        },
+        {
+          "f": "_astro/clock.BeZny__M.js",
+          "raw": 209,
+          "gz": 191
+        },
+        {
+          "f": "_astro/target.CXZeMgA1.js",
+          "raw": 266,
+          "gz": 188
+        },
+        {
+          "f": "_astro/trending-up.D9_iRsJp.js",
+          "raw": 215,
+          "gz": 196
+        },
+        {
+          "f": "_astro/teen-finance-data.4vDZsF_l.js",
+          "raw": 61716,
+          "gz": 19581
+        },
+        {
+          "f": "_astro/teen-budgeting.CZM16SIc.js",
+          "raw": 10529,
+          "gz": 4505
+        },
+        {
+          "f": "_astro/Footer.DDiY1TmU.js",
+          "raw": 18018,
+          "gz": 5706
+        },
+        {
+          "f": "_astro/activity.BZEZRUjE.js",
+          "raw": 274,
+          "gz": 230
+        },
+        {
+          "f": "_astro/circle-check.C6GdmqOX.js",
+          "raw": 250,
+          "gz": 217
+        },
+        {
+          "f": "_astro/refresh-cw.DmmFk8xH.js",
+          "raw": 361,
+          "gz": 252
+        },
+        {
+          "f": "_astro/Toaster.CUDxRbIE.js",
+          "raw": 595,
+          "gz": 386
+        },
+        {
+          "f": "_astro/dist.DPrgbPaa.js",
+          "raw": 33544,
+          "gz": 9318
+        },
+        {
+          "f": "_astro/client.DLrVKEOT.js",
+          "raw": 209191,
+          "gz": 65077
+        }
+      ]
+    },
+    {
+      "page": "/tax-guide/",
+      "htmlGz": 17829,
+      "cssGz": 26070,
+      "cssInlinedRaw": 2540,
+      "jsGz": 333447,
+      "jsRequests": 69,
+      "totalGz": 377346,
+      "jsFiles": [
+        {
+          "f": "_astro/ClientRouter.astro_astro_type_script_index_0_lang.C2AlSOH7.js",
+          "raw": 1634,
+          "gz": 812
+        },
+        {
+          "f": "_astro/client.CMnqbhkF.js",
+          "raw": 12358,
+          "gz": 4312
+        },
+        {
+          "f": "_astro/client.ChiJXsfH.js",
+          "raw": 24,
+          "gz": 44
+        },
+        {
+          "f": "_astro/prefetch.Ctgy7oyW.js",
+          "raw": 3122,
+          "gz": 1404
+        },
+        {
+          "f": "_astro/page.CuGKr0Yj.js",
+          "raw": 47,
+          "gz": 67
+        },
+        {
+          "f": "_astro/GlobalKeyboardShortcuts.astro_astro_type_script_index_0_lang.DAGWLJDN.js",
+          "raw": 956,
+          "gz": 520
+        },
+        {
+          "f": "_astro/Navbar.BAmQEyKl.js",
+          "raw": 25314,
+          "gz": 8170
+        },
+        {
+          "f": "_astro/react.DB-4Zxce.js",
+          "raw": 8529,
+          "gz": 3302
+        },
+        {
+          "f": "_astro/jsx-runtime.DdU6g033.js",
+          "raw": 593,
+          "gz": 398
+        },
+        {
+          "f": "_astro/react.DPfJpc42.js",
+          "raw": 123386,
+          "gz": 39689
+        },
+        {
+          "f": "_astro/AnimatePresence.Duky30po.js",
+          "raw": 4272,
+          "gz": 1961
+        },
+        {
+          "f": "_astro/animations.C5i1DvKL.js",
+          "raw": 436,
+          "gz": 184
+        },
+        {
+          "f": "_astro/createLucideIcon.BcSSw_Hq.js",
+          "raw": 6246,
+          "gz": 2533
+        },
+        {
+          "f": "_astro/utils.DOQQTBMN.js",
+          "raw": 27630,
+          "gz": 8657
+        },
+        {
+          "f": "_astro/book-open.CAqXpR2Y.js",
+          "raw": 329,
+          "gz": 250
+        },
+        {
+          "f": "_astro/calculator.CHYsHMMC.js",
+          "raw": 570,
+          "gz": 308
+        },
+        {
+          "f": "_astro/check.CgMgmewM.js",
+          "raw": 164,
+          "gz": 167
+        },
+        {
+          "f": "_astro/chevron-down.zsspu0at.js",
+          "raw": 168,
+          "gz": 165
+        },
+        {
+          "f": "_astro/map-pin.CN5AImeU.js",
+          "raw": 299,
+          "gz": 251
+        },
+        {
+          "f": "_astro/moon.DkIUIgig.js",
+          "raw": 257,
+          "gz": 227
+        },
+        {
+          "f": "_astro/search.CGVXpBqC.js",
+          "raw": 214,
+          "gz": 194
+        },
+        {
+          "f": "_astro/sparkles.C3JCpR6Z.js",
+          "raw": 552,
+          "gz": 318
+        },
+        {
+          "f": "_astro/user.BXZ3QGE8.js",
+          "raw": 236,
+          "gz": 208
+        },
+        {
+          "f": "_astro/x.BabufJsr.js",
+          "raw": 194,
+          "gz": 177
+        },
+        {
+          "f": "_astro/sound-synthesizer.D-p-Us6B.js",
+          "raw": 3416,
+          "gz": 1106
+        },
+        {
+          "f": "_astro/nav-modules.Djz_G4xk.js",
+          "raw": 3140,
+          "gz": 1327
+        },
+        {
+          "f": "_astro/TeenProfileContext.Cj1pifPp.js",
+          "raw": 1048,
+          "gz": 632
+        },
+        {
+          "f": "_astro/preload-helper.B3nfOi5I.js",
+          "raw": 1364,
+          "gz": 743
+        },
+        {
+          "f": "_astro/prefetch.Q0-hnUtA.js",
+          "raw": 8752,
+          "gz": 3353
+        },
+        {
+          "f": "_astro/TaxGuide.DWa9OUYO.js",
+          "raw": 32637,
+          "gz": 11592
+        },
+        {
+          "f": "_astro/StatCard.C2jrfF_p.js",
+          "raw": 15747,
+          "gz": 6537
+        },
+        {
+          "f": "_astro/use-reduced-motion.n2zLXpNJ.js",
+          "raw": 197,
+          "gz": 167
+        },
+        {
+          "f": "_astro/formatters.C-9pvD6N.js",
+          "raw": 371,
+          "gz": 231
+        },
+        {
+          "f": "_astro/arrow-right.C4414OgF.js",
+          "raw": 205,
+          "gz": 188
+        },
+        {
+          "f": "_astro/TopicGuideAccordion.urVq-Mmh.js",
+          "raw": 4708,
+          "gz": 2107
+        },
+        {
+          "f": "_astro/zap._FToVy9v.js",
+          "raw": 313,
+          "gz": 246
+        },
+        {
+          "f": "_astro/WebReferenceLink.DBg2N9R9.js",
+          "raw": 2386,
+          "gz": 1189
+        },
+        {
+          "f": "_astro/external-link.CAy5Qhn5.js",
+          "raw": 291,
+          "gz": 230
+        },
+        {
+          "f": "_astro/shield-check.DHkB8RdP.js",
+          "raw": 360,
+          "gz": 279
+        },
+        {
+          "f": "_astro/dist.ByrwBCcb.js",
+          "raw": 641,
+          "gz": 391
+        },
+        {
+          "f": "_astro/circle-check.C6GdmqOX.js",
+          "raw": 250,
+          "gz": 217
+        },
+        {
+          "f": "_astro/InfoTooltip._CKLsj_3.js",
+          "raw": 5825,
+          "gz": 2966
+        },
+        {
+          "f": "_astro/info.xaizh_mM.js",
+          "raw": 244,
+          "gz": 204
+        },
+        {
+          "f": "_astro/dollar-sign.DaGowH08.js",
+          "raw": 259,
+          "gz": 219
+        },
+        {
+          "f": "_astro/receipt-text.rblsqUzp.js",
+          "raw": 703,
+          "gz": 308
+        },
+        {
+          "f": "_astro/shield-alert.C6ppDoZP.js",
+          "raw": 393,
+          "gz": 289
+        },
+        {
+          "f": "_astro/NumberInput.BhqYeHr6.js",
+          "raw": 4746,
+          "gz": 1937
+        },
+        {
+          "f": "_astro/PaymentPeriodToggle.D7-g92Ub.js",
+          "raw": 1624,
+          "gz": 929
+        },
+        {
+          "f": "_astro/constants.DmGeGOZm.js",
+          "raw": 380,
+          "gz": 250
+        },
+        {
+          "f": "_astro/CategoricalChart.DOLsDhLY.js",
+          "raw": 304807,
+          "gz": 90221
+        },
+        {
+          "f": "_astro/react-dom.BUrlqAcn.js",
+          "raw": 3853,
+          "gz": 1382
+        },
+        {
+          "f": "_astro/tooltipContext.DRJc3EJn.js",
+          "raw": 513,
+          "gz": 274
+        },
+        {
+          "f": "_astro/PieChart.CNgH7N9Y.js",
+          "raw": 17427,
+          "gz": 5571
+        },
+        {
+          "f": "_astro/statutory-links.DJ7jRrI-.js",
+          "raw": 36711,
+          "gz": 11832
+        },
+        {
+          "f": "_astro/teen-finance-data.4vDZsF_l.js",
+          "raw": 61716,
+          "gz": 19581
+        },
+        {
+          "f": "_astro/Badge.CbZgL8kF.js",
+          "raw": 1354,
+          "gz": 654
+        },
+        {
+          "f": "_astro/SmartImage.DpN0WcBP.js",
+          "raw": 1180,
+          "gz": 693
+        },
+        {
+          "f": "_astro/ModulePrevNext.CVJwGQPj.js",
+          "raw": 3796,
+          "gz": 1305
+        },
+        {
+          "f": "_astro/arrow-left.BfhXphFw.js",
+          "raw": 205,
+          "gz": 188
+        },
+        {
+          "f": "_astro/usePageTitle.Dli3XLjJ.js",
+          "raw": 192,
+          "gz": 175
+        },
+        {
+          "f": "_astro/tax-brackets.BR9eHyIp.js",
+          "raw": 752,
+          "gz": 387
+        },
+        {
+          "f": "_astro/chart.B4YgnV1t.js",
+          "raw": 7690,
+          "gz": 3313
+        },
+        {
+          "f": "_astro/tax-guide.-079FTrD.js",
+          "raw": 12113,
+          "gz": 4947
+        },
+        {
+          "f": "_astro/Footer.DDiY1TmU.js",
+          "raw": 18018,
+          "gz": 5706
+        },
+        {
+          "f": "_astro/activity.BZEZRUjE.js",
+          "raw": 274,
+          "gz": 230
+        },
+        {
+          "f": "_astro/refresh-cw.DmmFk8xH.js",
+          "raw": 361,
+          "gz": 252
+        },
+        {
+          "f": "_astro/Toaster.CUDxRbIE.js",
+          "raw": 595,
+          "gz": 386
+        },
+        {
+          "f": "_astro/dist.DPrgbPaa.js",
+          "raw": 33544,
+          "gz": 9318
+        },
+        {
+          "f": "_astro/client.DLrVKEOT.js",
+          "raw": 209191,
+          "gz": 65077
+        }
+      ]
+    },
+    {
+      "page": "/super-retirement/",
+      "htmlGz": 16947,
+      "cssGz": 26070,
+      "cssInlinedRaw": 2612,
+      "jsGz": 324262,
+      "jsRequests": 71,
+      "totalGz": 367279,
+      "jsFiles": [
+        {
+          "f": "_astro/ClientRouter.astro_astro_type_script_index_0_lang.C2AlSOH7.js",
+          "raw": 1634,
+          "gz": 812
+        },
+        {
+          "f": "_astro/client.CMnqbhkF.js",
+          "raw": 12358,
+          "gz": 4312
+        },
+        {
+          "f": "_astro/client.ChiJXsfH.js",
+          "raw": 24,
+          "gz": 44
+        },
+        {
+          "f": "_astro/prefetch.Ctgy7oyW.js",
+          "raw": 3122,
+          "gz": 1404
+        },
+        {
+          "f": "_astro/page.CuGKr0Yj.js",
+          "raw": 47,
+          "gz": 67
+        },
+        {
+          "f": "_astro/GlobalKeyboardShortcuts.astro_astro_type_script_index_0_lang.DAGWLJDN.js",
+          "raw": 956,
+          "gz": 520
+        },
+        {
+          "f": "_astro/Navbar.BAmQEyKl.js",
+          "raw": 25314,
+          "gz": 8170
+        },
+        {
+          "f": "_astro/react.DB-4Zxce.js",
+          "raw": 8529,
+          "gz": 3302
+        },
+        {
+          "f": "_astro/jsx-runtime.DdU6g033.js",
+          "raw": 593,
+          "gz": 398
+        },
+        {
+          "f": "_astro/react.DPfJpc42.js",
+          "raw": 123386,
+          "gz": 39689
+        },
+        {
+          "f": "_astro/AnimatePresence.Duky30po.js",
+          "raw": 4272,
+          "gz": 1961
+        },
+        {
+          "f": "_astro/animations.C5i1DvKL.js",
+          "raw": 436,
+          "gz": 184
+        },
+        {
+          "f": "_astro/createLucideIcon.BcSSw_Hq.js",
+          "raw": 6246,
+          "gz": 2533
+        },
+        {
+          "f": "_astro/utils.DOQQTBMN.js",
+          "raw": 27630,
+          "gz": 8657
+        },
+        {
+          "f": "_astro/book-open.CAqXpR2Y.js",
+          "raw": 329,
+          "gz": 250
+        },
+        {
+          "f": "_astro/calculator.CHYsHMMC.js",
+          "raw": 570,
+          "gz": 308
+        },
+        {
+          "f": "_astro/check.CgMgmewM.js",
+          "raw": 164,
+          "gz": 167
+        },
+        {
+          "f": "_astro/chevron-down.zsspu0at.js",
+          "raw": 168,
+          "gz": 165
+        },
+        {
+          "f": "_astro/map-pin.CN5AImeU.js",
+          "raw": 299,
+          "gz": 251
+        },
+        {
+          "f": "_astro/moon.DkIUIgig.js",
+          "raw": 257,
+          "gz": 227
+        },
+        {
+          "f": "_astro/search.CGVXpBqC.js",
+          "raw": 214,
+          "gz": 194
+        },
+        {
+          "f": "_astro/sparkles.C3JCpR6Z.js",
+          "raw": 552,
+          "gz": 318
+        },
+        {
+          "f": "_astro/user.BXZ3QGE8.js",
+          "raw": 236,
+          "gz": 208
+        },
+        {
+          "f": "_astro/x.BabufJsr.js",
+          "raw": 194,
+          "gz": 177
+        },
+        {
+          "f": "_astro/sound-synthesizer.D-p-Us6B.js",
+          "raw": 3416,
+          "gz": 1106
+        },
+        {
+          "f": "_astro/nav-modules.Djz_G4xk.js",
+          "raw": 3140,
+          "gz": 1327
+        },
+        {
+          "f": "_astro/TeenProfileContext.Cj1pifPp.js",
+          "raw": 1048,
+          "gz": 632
+        },
+        {
+          "f": "_astro/preload-helper.B3nfOi5I.js",
+          "raw": 1364,
+          "gz": 743
+        },
+        {
+          "f": "_astro/prefetch.Q0-hnUtA.js",
+          "raw": 8752,
+          "gz": 3353
+        },
+        {
+          "f": "_astro/SuperRetirement.CkW8Sema.js",
+          "raw": 36361,
+          "gz": 12875
+        },
+        {
+          "f": "_astro/StatCard.C2jrfF_p.js",
+          "raw": 15747,
+          "gz": 6537
+        },
+        {
+          "f": "_astro/use-reduced-motion.n2zLXpNJ.js",
+          "raw": 197,
+          "gz": 167
+        },
+        {
+          "f": "_astro/formatters.C-9pvD6N.js",
+          "raw": 371,
+          "gz": 231
+        },
+        {
+          "f": "_astro/award.PUH2YJzu.js",
+          "raw": 314,
+          "gz": 254
+        },
+        {
+          "f": "_astro/TopicGuideAccordion.urVq-Mmh.js",
+          "raw": 4708,
+          "gz": 2107
+        },
+        {
+          "f": "_astro/zap._FToVy9v.js",
+          "raw": 313,
+          "gz": 246
+        },
+        {
+          "f": "_astro/WebReferenceLink.DBg2N9R9.js",
+          "raw": 2386,
+          "gz": 1189
+        },
+        {
+          "f": "_astro/external-link.CAy5Qhn5.js",
+          "raw": 291,
+          "gz": 230
+        },
+        {
+          "f": "_astro/shield-check.DHkB8RdP.js",
+          "raw": 360,
+          "gz": 279
+        },
+        {
+          "f": "_astro/dist.ByrwBCcb.js",
+          "raw": 641,
+          "gz": 391
+        },
+        {
+          "f": "_astro/InfoTooltip._CKLsj_3.js",
+          "raw": 5825,
+          "gz": 2966
+        },
+        {
+          "f": "_astro/info.xaizh_mM.js",
+          "raw": 244,
+          "gz": 204
+        },
+        {
+          "f": "_astro/scale.DTokleeg.js",
+          "raw": 372,
+          "gz": 251
+        },
+        {
+          "f": "_astro/shield-alert.C6ppDoZP.js",
+          "raw": 393,
+          "gz": 289
+        },
+        {
+          "f": "_astro/SliderControl.Dl2Hz5s6.js",
+          "raw": 5780,
+          "gz": 2316
+        },
+        {
+          "f": "_astro/PaymentPeriodToggle.D7-g92Ub.js",
+          "raw": 1624,
+          "gz": 929
+        },
+        {
+          "f": "_astro/NumberInput.BhqYeHr6.js",
+          "raw": 4746,
+          "gz": 1937
+        },
+        {
+          "f": "_astro/CategoricalChart.DOLsDhLY.js",
+          "raw": 304807,
+          "gz": 90221
+        },
+        {
+          "f": "_astro/react-dom.BUrlqAcn.js",
+          "raw": 3853,
+          "gz": 1382
+        },
+        {
+          "f": "_astro/getRadiusAndStrokeWidthFromDot.Dyn11JoZ.js",
+          "raw": 5168,
+          "gz": 1771
+        },
+        {
+          "f": "_astro/CartesianChart.CuOzhI-b.js",
+          "raw": 28425,
+          "gz": 8300
+        },
+        {
+          "f": "_astro/CartesianGrid.sE8lqsVM.js",
+          "raw": 6923,
+          "gz": 2498
+        },
+        {
+          "f": "_astro/graphicalItemSelectors.Ce9bKyPK.js",
+          "raw": 192,
+          "gz": 127
+        },
+        {
+          "f": "_astro/statutory-links.DJ7jRrI-.js",
+          "raw": 36711,
+          "gz": 11832
+        },
+        {
+          "f": "_astro/Badge.CbZgL8kF.js",
+          "raw": 1354,
+          "gz": 654
+        },
+        {
+          "f": "_astro/SmartImage.DpN0WcBP.js",
+          "raw": 1180,
+          "gz": 693
+        },
+        {
+          "f": "_astro/ModulePrevNext.CVJwGQPj.js",
+          "raw": 3796,
+          "gz": 1305
+        },
+        {
+          "f": "_astro/arrow-left.BfhXphFw.js",
+          "raw": 205,
+          "gz": 188
+        },
+        {
+          "f": "_astro/arrow-right.C4414OgF.js",
+          "raw": 205,
+          "gz": 188
+        },
+        {
+          "f": "_astro/usePageTitle.Dli3XLjJ.js",
+          "raw": 192,
+          "gz": 175
+        },
+        {
+          "f": "_astro/tax-brackets.BR9eHyIp.js",
+          "raw": 752,
+          "gz": 387
+        },
+        {
+          "f": "_astro/chart.B4YgnV1t.js",
+          "raw": 7690,
+          "gz": 3313
+        },
+        {
+          "f": "_astro/super-rules.DP7zDdx6.js",
+          "raw": 889,
+          "gz": 431
+        },
+        {
+          "f": "_astro/super-retirement.DkJunnck.js",
+          "raw": 11868,
+          "gz": 4734
+        },
+        {
+          "f": "_astro/Footer.DDiY1TmU.js",
+          "raw": 18018,
+          "gz": 5706
+        },
+        {
+          "f": "_astro/activity.BZEZRUjE.js",
+          "raw": 274,
+          "gz": 230
+        },
+        {
+          "f": "_astro/circle-check.C6GdmqOX.js",
+          "raw": 250,
+          "gz": 217
+        },
+        {
+          "f": "_astro/refresh-cw.DmmFk8xH.js",
+          "raw": 361,
+          "gz": 252
+        },
+        {
+          "f": "_astro/Toaster.CUDxRbIE.js",
+          "raw": 595,
+          "gz": 386
+        },
+        {
+          "f": "_astro/dist.DPrgbPaa.js",
+          "raw": 33544,
+          "gz": 9318
+        },
+        {
+          "f": "_astro/client.DLrVKEOT.js",
+          "raw": 209191,
+          "gz": 65077
+        }
+      ]
+    },
+    {
+      "page": "/dealing-with-debt/",
+      "htmlGz": 17296,
+      "cssGz": 26070,
+      "cssInlinedRaw": 2540,
+      "jsGz": 320233,
+      "jsRequests": 68,
+      "totalGz": 363599,
+      "jsFiles": [
+        {
+          "f": "_astro/ClientRouter.astro_astro_type_script_index_0_lang.C2AlSOH7.js",
+          "raw": 1634,
+          "gz": 812
+        },
+        {
+          "f": "_astro/client.CMnqbhkF.js",
+          "raw": 12358,
+          "gz": 4312
+        },
+        {
+          "f": "_astro/client.ChiJXsfH.js",
+          "raw": 24,
+          "gz": 44
+        },
+        {
+          "f": "_astro/prefetch.Ctgy7oyW.js",
+          "raw": 3122,
+          "gz": 1404
+        },
+        {
+          "f": "_astro/page.CuGKr0Yj.js",
+          "raw": 47,
+          "gz": 67
+        },
+        {
+          "f": "_astro/GlobalKeyboardShortcuts.astro_astro_type_script_index_0_lang.DAGWLJDN.js",
+          "raw": 956,
+          "gz": 520
+        },
+        {
+          "f": "_astro/Navbar.BAmQEyKl.js",
+          "raw": 25314,
+          "gz": 8170
+        },
+        {
+          "f": "_astro/react.DB-4Zxce.js",
+          "raw": 8529,
+          "gz": 3302
+        },
+        {
+          "f": "_astro/jsx-runtime.DdU6g033.js",
+          "raw": 593,
+          "gz": 398
+        },
+        {
+          "f": "_astro/react.DPfJpc42.js",
+          "raw": 123386,
+          "gz": 39689
+        },
+        {
+          "f": "_astro/AnimatePresence.Duky30po.js",
+          "raw": 4272,
+          "gz": 1961
+        },
+        {
+          "f": "_astro/animations.C5i1DvKL.js",
+          "raw": 436,
+          "gz": 184
+        },
+        {
+          "f": "_astro/createLucideIcon.BcSSw_Hq.js",
+          "raw": 6246,
+          "gz": 2533
+        },
+        {
+          "f": "_astro/utils.DOQQTBMN.js",
+          "raw": 27630,
+          "gz": 8657
+        },
+        {
+          "f": "_astro/book-open.CAqXpR2Y.js",
+          "raw": 329,
+          "gz": 250
+        },
+        {
+          "f": "_astro/calculator.CHYsHMMC.js",
+          "raw": 570,
+          "gz": 308
+        },
+        {
+          "f": "_astro/check.CgMgmewM.js",
+          "raw": 164,
+          "gz": 167
+        },
+        {
+          "f": "_astro/chevron-down.zsspu0at.js",
+          "raw": 168,
+          "gz": 165
+        },
+        {
+          "f": "_astro/map-pin.CN5AImeU.js",
+          "raw": 299,
+          "gz": 251
+        },
+        {
+          "f": "_astro/moon.DkIUIgig.js",
+          "raw": 257,
+          "gz": 227
+        },
+        {
+          "f": "_astro/search.CGVXpBqC.js",
+          "raw": 214,
+          "gz": 194
+        },
+        {
+          "f": "_astro/sparkles.C3JCpR6Z.js",
+          "raw": 552,
+          "gz": 318
+        },
+        {
+          "f": "_astro/user.BXZ3QGE8.js",
+          "raw": 236,
+          "gz": 208
+        },
+        {
+          "f": "_astro/x.BabufJsr.js",
+          "raw": 194,
+          "gz": 177
+        },
+        {
+          "f": "_astro/sound-synthesizer.D-p-Us6B.js",
+          "raw": 3416,
+          "gz": 1106
+        },
+        {
+          "f": "_astro/nav-modules.Djz_G4xk.js",
+          "raw": 3140,
+          "gz": 1327
+        },
+        {
+          "f": "_astro/TeenProfileContext.Cj1pifPp.js",
+          "raw": 1048,
+          "gz": 632
+        },
+        {
+          "f": "_astro/preload-helper.B3nfOi5I.js",
+          "raw": 1364,
+          "gz": 743
+        },
+        {
+          "f": "_astro/prefetch.Q0-hnUtA.js",
+          "raw": 8752,
+          "gz": 3353
+        },
+        {
+          "f": "_astro/DealingWithDebt.BzJmiwCc.js",
+          "raw": 17683,
+          "gz": 6571
+        },
+        {
+          "f": "_astro/StatCard.C2jrfF_p.js",
+          "raw": 15747,
+          "gz": 6537
+        },
+        {
+          "f": "_astro/use-reduced-motion.n2zLXpNJ.js",
+          "raw": 197,
+          "gz": 167
+        },
+        {
+          "f": "_astro/formatters.C-9pvD6N.js",
+          "raw": 371,
+          "gz": 231
+        },
+        {
+          "f": "_astro/TopicGuideAccordion.urVq-Mmh.js",
+          "raw": 4708,
+          "gz": 2107
+        },
+        {
+          "f": "_astro/zap._FToVy9v.js",
+          "raw": 313,
+          "gz": 246
+        },
+        {
+          "f": "_astro/WebReferenceLink.DBg2N9R9.js",
+          "raw": 2386,
+          "gz": 1189
+        },
+        {
+          "f": "_astro/external-link.CAy5Qhn5.js",
+          "raw": 291,
+          "gz": 230
+        },
+        {
+          "f": "_astro/shield-check.DHkB8RdP.js",
+          "raw": 360,
+          "gz": 279
+        },
+        {
+          "f": "_astro/dist.ByrwBCcb.js",
+          "raw": 641,
+          "gz": 391
+        },
+        {
+          "f": "_astro/flame.BEo2Mxfx.js",
+          "raw": 239,
+          "gz": 206
+        },
+        {
+          "f": "_astro/shield-alert.C6ppDoZP.js",
+          "raw": 393,
+          "gz": 289
+        },
+        {
+          "f": "_astro/SliderControl.Dl2Hz5s6.js",
+          "raw": 5780,
+          "gz": 2316
+        },
+        {
+          "f": "_astro/PaymentPeriodToggle.D7-g92Ub.js",
+          "raw": 1624,
+          "gz": 929
+        },
+        {
+          "f": "_astro/NumberInput.BhqYeHr6.js",
+          "raw": 4746,
+          "gz": 1937
+        },
+        {
+          "f": "_astro/CategoricalChart.DOLsDhLY.js",
+          "raw": 304807,
+          "gz": 90221
+        },
+        {
+          "f": "_astro/react-dom.BUrlqAcn.js",
+          "raw": 3853,
+          "gz": 1382
+        },
+        {
+          "f": "_astro/BarChart.CzrPn_0y.js",
+          "raw": 20088,
+          "gz": 6776
+        },
+        {
+          "f": "_astro/tooltipContext.DRJc3EJn.js",
+          "raw": 513,
+          "gz": 274
+        },
+        {
+          "f": "_astro/CartesianChart.CuOzhI-b.js",
+          "raw": 28425,
+          "gz": 8300
+        },
+        {
+          "f": "_astro/ErrorBarContext.B_sH4tlG.js",
+          "raw": 675,
+          "gz": 423
+        },
+        {
+          "f": "_astro/graphicalItemSelectors.Ce9bKyPK.js",
+          "raw": 192,
+          "gz": 127
+        },
+        {
+          "f": "_astro/CartesianGrid.sE8lqsVM.js",
+          "raw": 6923,
+          "gz": 2498
+        },
+        {
+          "f": "_astro/statutory-links.DJ7jRrI-.js",
+          "raw": 36711,
+          "gz": 11832
+        },
+        {
+          "f": "_astro/Badge.CbZgL8kF.js",
+          "raw": 1354,
+          "gz": 654
+        },
+        {
+          "f": "_astro/SmartImage.DpN0WcBP.js",
+          "raw": 1180,
+          "gz": 693
+        },
+        {
+          "f": "_astro/ModulePrevNext.CVJwGQPj.js",
+          "raw": 3796,
+          "gz": 1305
+        },
+        {
+          "f": "_astro/arrow-left.BfhXphFw.js",
+          "raw": 205,
+          "gz": 188
+        },
+        {
+          "f": "_astro/arrow-right.C4414OgF.js",
+          "raw": 205,
+          "gz": 188
+        },
+        {
+          "f": "_astro/usePageTitle.Dli3XLjJ.js",
+          "raw": 192,
+          "gz": 175
+        },
+        {
+          "f": "_astro/chart.B4YgnV1t.js",
+          "raw": 7690,
+          "gz": 3313
+        },
+        {
+          "f": "_astro/dealing-with-debt.CLwOxP03.js",
+          "raw": 13483,
+          "gz": 5594
+        },
+        {
+          "f": "_astro/Footer.DDiY1TmU.js",
+          "raw": 18018,
+          "gz": 5706
+        },
+        {
+          "f": "_astro/activity.BZEZRUjE.js",
+          "raw": 274,
+          "gz": 230
+        },
+        {
+          "f": "_astro/circle-check.C6GdmqOX.js",
+          "raw": 250,
+          "gz": 217
+        },
+        {
+          "f": "_astro/refresh-cw.DmmFk8xH.js",
+          "raw": 361,
+          "gz": 252
+        },
+        {
+          "f": "_astro/Toaster.CUDxRbIE.js",
+          "raw": 595,
+          "gz": 386
+        },
+        {
+          "f": "_astro/dist.DPrgbPaa.js",
+          "raw": 33544,
+          "gz": 9318
+        },
+        {
+          "f": "_astro/client.DLrVKEOT.js",
+          "raw": 209191,
+          "gz": 65077
+        }
+      ]
+    },
+    {
+      "page": "/hecs-payoff/",
+      "htmlGz": 15629,
+      "cssGz": 26070,
+      "cssInlinedRaw": 2944,
+      "jsGz": 309442,
+      "jsRequests": 64,
+      "totalGz": 351141,
+      "jsFiles": [
+        {
+          "f": "_astro/ClientRouter.astro_astro_type_script_index_0_lang.C2AlSOH7.js",
+          "raw": 1634,
+          "gz": 812
+        },
+        {
+          "f": "_astro/client.CMnqbhkF.js",
+          "raw": 12358,
+          "gz": 4312
+        },
+        {
+          "f": "_astro/client.ChiJXsfH.js",
+          "raw": 24,
+          "gz": 44
+        },
+        {
+          "f": "_astro/prefetch.Ctgy7oyW.js",
+          "raw": 3122,
+          "gz": 1404
+        },
+        {
+          "f": "_astro/page.CuGKr0Yj.js",
+          "raw": 47,
+          "gz": 67
+        },
+        {
+          "f": "_astro/GlobalKeyboardShortcuts.astro_astro_type_script_index_0_lang.DAGWLJDN.js",
+          "raw": 956,
+          "gz": 520
+        },
+        {
+          "f": "_astro/Navbar.BAmQEyKl.js",
+          "raw": 25314,
+          "gz": 8170
+        },
+        {
+          "f": "_astro/react.DB-4Zxce.js",
+          "raw": 8529,
+          "gz": 3302
+        },
+        {
+          "f": "_astro/jsx-runtime.DdU6g033.js",
+          "raw": 593,
+          "gz": 398
+        },
+        {
+          "f": "_astro/react.DPfJpc42.js",
+          "raw": 123386,
+          "gz": 39689
+        },
+        {
+          "f": "_astro/AnimatePresence.Duky30po.js",
+          "raw": 4272,
+          "gz": 1961
+        },
+        {
+          "f": "_astro/animations.C5i1DvKL.js",
+          "raw": 436,
+          "gz": 184
+        },
+        {
+          "f": "_astro/createLucideIcon.BcSSw_Hq.js",
+          "raw": 6246,
+          "gz": 2533
+        },
+        {
+          "f": "_astro/utils.DOQQTBMN.js",
+          "raw": 27630,
+          "gz": 8657
+        },
+        {
+          "f": "_astro/book-open.CAqXpR2Y.js",
+          "raw": 329,
+          "gz": 250
+        },
+        {
+          "f": "_astro/calculator.CHYsHMMC.js",
+          "raw": 570,
+          "gz": 308
+        },
+        {
+          "f": "_astro/check.CgMgmewM.js",
+          "raw": 164,
+          "gz": 167
+        },
+        {
+          "f": "_astro/chevron-down.zsspu0at.js",
+          "raw": 168,
+          "gz": 165
+        },
+        {
+          "f": "_astro/map-pin.CN5AImeU.js",
+          "raw": 299,
+          "gz": 251
+        },
+        {
+          "f": "_astro/moon.DkIUIgig.js",
+          "raw": 257,
+          "gz": 227
+        },
+        {
+          "f": "_astro/search.CGVXpBqC.js",
+          "raw": 214,
+          "gz": 194
+        },
+        {
+          "f": "_astro/sparkles.C3JCpR6Z.js",
+          "raw": 552,
+          "gz": 318
+        },
+        {
+          "f": "_astro/user.BXZ3QGE8.js",
+          "raw": 236,
+          "gz": 208
+        },
+        {
+          "f": "_astro/x.BabufJsr.js",
+          "raw": 194,
+          "gz": 177
+        },
+        {
+          "f": "_astro/sound-synthesizer.D-p-Us6B.js",
+          "raw": 3416,
+          "gz": 1106
+        },
+        {
+          "f": "_astro/nav-modules.Djz_G4xk.js",
+          "raw": 3140,
+          "gz": 1327
+        },
+        {
+          "f": "_astro/TeenProfileContext.Cj1pifPp.js",
+          "raw": 1048,
+          "gz": 632
+        },
+        {
+          "f": "_astro/preload-helper.B3nfOi5I.js",
+          "raw": 1364,
+          "gz": 743
+        },
+        {
+          "f": "_astro/prefetch.Q0-hnUtA.js",
+          "raw": 8752,
+          "gz": 3353
+        },
+        {
+          "f": "_astro/HECSPayoff.DqOyAPEU.js",
+          "raw": 42019,
+          "gz": 12555
+        },
+        {
+          "f": "_astro/arrow-left.BfhXphFw.js",
+          "raw": 205,
+          "gz": 188
+        },
+        {
+          "f": "_astro/TopicGuideAccordion.urVq-Mmh.js",
+          "raw": 4708,
+          "gz": 2107
+        },
+        {
+          "f": "_astro/zap._FToVy9v.js",
+          "raw": 313,
+          "gz": 246
+        },
+        {
+          "f": "_astro/WebReferenceLink.DBg2N9R9.js",
+          "raw": 2386,
+          "gz": 1189
+        },
+        {
+          "f": "_astro/external-link.CAy5Qhn5.js",
+          "raw": 291,
+          "gz": 230
+        },
+        {
+          "f": "_astro/shield-check.DHkB8RdP.js",
+          "raw": 360,
+          "gz": 279
+        },
+        {
+          "f": "_astro/dist.ByrwBCcb.js",
+          "raw": 641,
+          "gz": 391
+        },
+        {
+          "f": "_astro/PrintResultButton.JaFaJB4O.js",
+          "raw": 5039,
+          "gz": 2476
+        },
+        {
+          "f": "_astro/printer.Hkq3nJai.js",
+          "raw": 359,
+          "gz": 263
+        },
+        {
+          "f": "_astro/dist.DPrgbPaa.js",
+          "raw": 33544,
+          "gz": 9318
+        },
+        {
+          "f": "_astro/react-dom.BUrlqAcn.js",
+          "raw": 3853,
+          "gz": 1382
+        },
+        {
+          "f": "_astro/gauge.BT5Un7Av.js",
+          "raw": 216,
+          "gz": 195
+        },
+        {
+          "f": "_astro/graduation-cap.C3PJ1qc-.js",
+          "raw": 372,
+          "gz": 275
+        },
+        {
+          "f": "_astro/formatters.C-9pvD6N.js",
+          "raw": 371,
+          "gz": 231
+        },
+        {
+          "f": "_astro/constants.DmGeGOZm.js",
+          "raw": 380,
+          "gz": 250
+        },
+        {
+          "f": "_astro/Disclaimer.C1NirYBM.js",
+          "raw": 968,
+          "gz": 617
+        },
+        {
+          "f": "_astro/Legend.CSHhEE_z.js",
+          "raw": 14292,
+          "gz": 4802
+        },
+        {
+          "f": "_astro/CategoricalChart.DOLsDhLY.js",
+          "raw": 304807,
+          "gz": 90221
+        },
+        {
+          "f": "_astro/BarChart.CzrPn_0y.js",
+          "raw": 20088,
+          "gz": 6776
+        },
+        {
+          "f": "_astro/tooltipContext.DRJc3EJn.js",
+          "raw": 513,
+          "gz": 274
+        },
+        {
+          "f": "_astro/CartesianChart.CuOzhI-b.js",
+          "raw": 28425,
+          "gz": 8300
+        },
+        {
+          "f": "_astro/ErrorBarContext.B_sH4tlG.js",
+          "raw": 675,
+          "gz": 423
+        },
+        {
+          "f": "_astro/graphicalItemSelectors.Ce9bKyPK.js",
+          "raw": 192,
+          "gz": 127
+        },
+        {
+          "f": "_astro/CartesianGrid.sE8lqsVM.js",
+          "raw": 6923,
+          "gz": 2498
+        },
+        {
+          "f": "_astro/LineChart.rha_phKT.js",
+          "raw": 11977,
+          "gz": 4571
+        },
+        {
+          "f": "_astro/getRadiusAndStrokeWidthFromDot.Dyn11JoZ.js",
+          "raw": 5168,
+          "gz": 1771
+        },
+        {
+          "f": "_astro/OdometerCounter.BcW6NMWu.js",
+          "raw": 1506,
+          "gz": 827
+        },
+        {
+          "f": "_astro/chart.B4YgnV1t.js",
+          "raw": 7690,
+          "gz": 3313
+        },
+        {
+          "f": "_astro/Footer.DDiY1TmU.js",
+          "raw": 18018,
+          "gz": 5706
+        },
+        {
+          "f": "_astro/activity.BZEZRUjE.js",
+          "raw": 274,
+          "gz": 230
+        },
+        {
+          "f": "_astro/circle-check.C6GdmqOX.js",
+          "raw": 250,
+          "gz": 217
+        },
+        {
+          "f": "_astro/refresh-cw.DmmFk8xH.js",
+          "raw": 361,
+          "gz": 252
+        },
+        {
+          "f": "_astro/Toaster.CUDxRbIE.js",
+          "raw": 595,
+          "gz": 386
+        },
+        {
+          "f": "_astro/client.DLrVKEOT.js",
+          "raw": 209191,
+          "gz": 65077
+        }
+      ]
+    },
+    {
+      "page": "/direct-vs-debt-recycling/",
+      "htmlGz": 14719,
+      "cssGz": 26070,
+      "cssInlinedRaw": 2416,
+      "jsGz": 300352,
+      "jsRequests": 55,
+      "totalGz": 341141,
+      "jsFiles": [
+        {
+          "f": "_astro/ClientRouter.astro_astro_type_script_index_0_lang.C2AlSOH7.js",
+          "raw": 1634,
+          "gz": 812
+        },
+        {
+          "f": "_astro/client.CMnqbhkF.js",
+          "raw": 12358,
+          "gz": 4312
+        },
+        {
+          "f": "_astro/client.ChiJXsfH.js",
+          "raw": 24,
+          "gz": 44
+        },
+        {
+          "f": "_astro/prefetch.Ctgy7oyW.js",
+          "raw": 3122,
+          "gz": 1404
+        },
+        {
+          "f": "_astro/page.CuGKr0Yj.js",
+          "raw": 47,
+          "gz": 67
+        },
+        {
+          "f": "_astro/GlobalKeyboardShortcuts.astro_astro_type_script_index_0_lang.DAGWLJDN.js",
+          "raw": 956,
+          "gz": 520
+        },
+        {
+          "f": "_astro/Navbar.BAmQEyKl.js",
+          "raw": 25314,
+          "gz": 8170
+        },
+        {
+          "f": "_astro/react.DB-4Zxce.js",
+          "raw": 8529,
+          "gz": 3302
+        },
+        {
+          "f": "_astro/jsx-runtime.DdU6g033.js",
+          "raw": 593,
+          "gz": 398
+        },
+        {
+          "f": "_astro/react.DPfJpc42.js",
+          "raw": 123386,
+          "gz": 39689
+        },
+        {
+          "f": "_astro/AnimatePresence.Duky30po.js",
+          "raw": 4272,
+          "gz": 1961
+        },
+        {
+          "f": "_astro/animations.C5i1DvKL.js",
+          "raw": 436,
+          "gz": 184
+        },
+        {
+          "f": "_astro/createLucideIcon.BcSSw_Hq.js",
+          "raw": 6246,
+          "gz": 2533
+        },
+        {
+          "f": "_astro/utils.DOQQTBMN.js",
+          "raw": 27630,
+          "gz": 8657
+        },
+        {
+          "f": "_astro/book-open.CAqXpR2Y.js",
+          "raw": 329,
+          "gz": 250
+        },
+        {
+          "f": "_astro/calculator.CHYsHMMC.js",
+          "raw": 570,
+          "gz": 308
+        },
+        {
+          "f": "_astro/check.CgMgmewM.js",
+          "raw": 164,
+          "gz": 167
+        },
+        {
+          "f": "_astro/chevron-down.zsspu0at.js",
+          "raw": 168,
+          "gz": 165
+        },
+        {
+          "f": "_astro/map-pin.CN5AImeU.js",
+          "raw": 299,
+          "gz": 251
+        },
+        {
+          "f": "_astro/moon.DkIUIgig.js",
+          "raw": 257,
+          "gz": 227
+        },
+        {
+          "f": "_astro/search.CGVXpBqC.js",
+          "raw": 214,
+          "gz": 194
+        },
+        {
+          "f": "_astro/sparkles.C3JCpR6Z.js",
+          "raw": 552,
+          "gz": 318
+        },
+        {
+          "f": "_astro/user.BXZ3QGE8.js",
+          "raw": 236,
+          "gz": 208
+        },
+        {
+          "f": "_astro/x.BabufJsr.js",
+          "raw": 194,
+          "gz": 177
+        },
+        {
+          "f": "_astro/sound-synthesizer.D-p-Us6B.js",
+          "raw": 3416,
+          "gz": 1106
+        },
+        {
+          "f": "_astro/nav-modules.Djz_G4xk.js",
+          "raw": 3140,
+          "gz": 1327
+        },
+        {
+          "f": "_astro/TeenProfileContext.Cj1pifPp.js",
+          "raw": 1048,
+          "gz": 632
+        },
+        {
+          "f": "_astro/preload-helper.B3nfOi5I.js",
+          "raw": 1364,
+          "gz": 743
+        },
+        {
+          "f": "_astro/prefetch.Q0-hnUtA.js",
+          "raw": 8752,
+          "gz": 3353
+        },
+        {
+          "f": "_astro/DirectVsDR.BRPMAP_E.js",
+          "raw": 34501,
+          "gz": 12315
+        },
+        {
+          "f": "_astro/StatCard.C2jrfF_p.js",
+          "raw": 15747,
+          "gz": 6537
+        },
+        {
+          "f": "_astro/use-reduced-motion.n2zLXpNJ.js",
+          "raw": 197,
+          "gz": 167
+        },
+        {
+          "f": "_astro/formatters.C-9pvD6N.js",
+          "raw": 371,
+          "gz": 231
+        },
+        {
+          "f": "_astro/useUrlParams.BBQEm3Go.js",
+          "raw": 592,
+          "gz": 393
+        },
+        {
+          "f": "_astro/SliderControl.Dl2Hz5s6.js",
+          "raw": 5780,
+          "gz": 2316
+        },
+        {
+          "f": "_astro/PaymentPeriodToggle.D7-g92Ub.js",
+          "raw": 1624,
+          "gz": 929
+        },
+        {
+          "f": "_astro/NumberInput.BhqYeHr6.js",
+          "raw": 4746,
+          "gz": 1937
+        },
+        {
+          "f": "_astro/constants.DmGeGOZm.js",
+          "raw": 380,
+          "gz": 250
+        },
+        {
+          "f": "_astro/Disclaimer.C1NirYBM.js",
+          "raw": 968,
+          "gz": 617
+        },
+        {
+          "f": "_astro/CategoricalChart.DOLsDhLY.js",
+          "raw": 304807,
+          "gz": 90221
+        },
+        {
+          "f": "_astro/react-dom.BUrlqAcn.js",
+          "raw": 3853,
+          "gz": 1382
+        },
+        {
+          "f": "_astro/Legend.CSHhEE_z.js",
+          "raw": 14292,
+          "gz": 4802
+        },
+        {
+          "f": "_astro/CartesianChart.CuOzhI-b.js",
+          "raw": 28425,
+          "gz": 8300
+        },
+        {
+          "f": "_astro/LineChart.rha_phKT.js",
+          "raw": 11977,
+          "gz": 4571
+        },
+        {
+          "f": "_astro/getRadiusAndStrokeWidthFromDot.Dyn11JoZ.js",
+          "raw": 5168,
+          "gz": 1771
+        },
+        {
+          "f": "_astro/ErrorBarContext.B_sH4tlG.js",
+          "raw": 675,
+          "gz": 423
+        },
+        {
+          "f": "_astro/Footer.DDiY1TmU.js",
+          "raw": 18018,
+          "gz": 5706
+        },
+        {
+          "f": "_astro/activity.BZEZRUjE.js",
+          "raw": 274,
+          "gz": 230
+        },
+        {
+          "f": "_astro/circle-check.C6GdmqOX.js",
+          "raw": 250,
+          "gz": 217
+        },
+        {
+          "f": "_astro/refresh-cw.DmmFk8xH.js",
+          "raw": 361,
+          "gz": 252
+        },
+        {
+          "f": "_astro/shield-check.DHkB8RdP.js",
+          "raw": 360,
+          "gz": 279
+        },
+        {
+          "f": "_astro/zap._FToVy9v.js",
+          "raw": 313,
+          "gz": 246
+        },
+        {
+          "f": "_astro/Toaster.CUDxRbIE.js",
+          "raw": 595,
+          "gz": 386
+        },
+        {
+          "f": "_astro/dist.DPrgbPaa.js",
+          "raw": 33544,
+          "gz": 9318
+        },
+        {
+          "f": "_astro/client.DLrVKEOT.js",
+          "raw": 209191,
+          "gz": 65077
+        }
+      ]
+    },
+    {
+      "page": "/",
+      "htmlGz": 58125,
+      "cssGz": 26070,
+      "cssInlinedRaw": 2416,
+      "jsGz": 227852,
+      "jsRequests": 66,
+      "totalGz": 312047,
+      "jsFiles": [
+        {
+          "f": "_astro/ClientRouter.astro_astro_type_script_index_0_lang.C2AlSOH7.js",
+          "raw": 1634,
+          "gz": 812
+        },
+        {
+          "f": "_astro/client.CMnqbhkF.js",
+          "raw": 12358,
+          "gz": 4312
+        },
+        {
+          "f": "_astro/client.ChiJXsfH.js",
+          "raw": 24,
+          "gz": 44
+        },
+        {
+          "f": "_astro/prefetch.Ctgy7oyW.js",
+          "raw": 3122,
+          "gz": 1404
+        },
+        {
+          "f": "_astro/page.CuGKr0Yj.js",
+          "raw": 47,
+          "gz": 67
+        },
+        {
+          "f": "_astro/GlobalKeyboardShortcuts.astro_astro_type_script_index_0_lang.DAGWLJDN.js",
+          "raw": 956,
+          "gz": 520
+        },
+        {
+          "f": "_astro/Navbar.BAmQEyKl.js",
+          "raw": 25314,
+          "gz": 8170
+        },
+        {
+          "f": "_astro/react.DB-4Zxce.js",
+          "raw": 8529,
+          "gz": 3302
+        },
+        {
+          "f": "_astro/jsx-runtime.DdU6g033.js",
+          "raw": 593,
+          "gz": 398
+        },
+        {
+          "f": "_astro/react.DPfJpc42.js",
+          "raw": 123386,
+          "gz": 39689
+        },
+        {
+          "f": "_astro/AnimatePresence.Duky30po.js",
+          "raw": 4272,
+          "gz": 1961
+        },
+        {
+          "f": "_astro/animations.C5i1DvKL.js",
+          "raw": 436,
+          "gz": 184
+        },
+        {
+          "f": "_astro/createLucideIcon.BcSSw_Hq.js",
+          "raw": 6246,
+          "gz": 2533
+        },
+        {
+          "f": "_astro/utils.DOQQTBMN.js",
+          "raw": 27630,
+          "gz": 8657
+        },
+        {
+          "f": "_astro/book-open.CAqXpR2Y.js",
+          "raw": 329,
+          "gz": 250
+        },
+        {
+          "f": "_astro/calculator.CHYsHMMC.js",
+          "raw": 570,
+          "gz": 308
+        },
+        {
+          "f": "_astro/check.CgMgmewM.js",
+          "raw": 164,
+          "gz": 167
+        },
+        {
+          "f": "_astro/chevron-down.zsspu0at.js",
+          "raw": 168,
+          "gz": 165
+        },
+        {
+          "f": "_astro/map-pin.CN5AImeU.js",
+          "raw": 299,
+          "gz": 251
+        },
+        {
+          "f": "_astro/moon.DkIUIgig.js",
+          "raw": 257,
+          "gz": 227
+        },
+        {
+          "f": "_astro/search.CGVXpBqC.js",
+          "raw": 214,
+          "gz": 194
+        },
+        {
+          "f": "_astro/sparkles.C3JCpR6Z.js",
+          "raw": 552,
+          "gz": 318
+        },
+        {
+          "f": "_astro/user.BXZ3QGE8.js",
+          "raw": 236,
+          "gz": 208
+        },
+        {
+          "f": "_astro/x.BabufJsr.js",
+          "raw": 194,
+          "gz": 177
+        },
+        {
+          "f": "_astro/sound-synthesizer.D-p-Us6B.js",
+          "raw": 3416,
+          "gz": 1106
+        },
+        {
+          "f": "_astro/nav-modules.Djz_G4xk.js",
+          "raw": 3140,
+          "gz": 1327
+        },
+        {
+          "f": "_astro/TeenProfileContext.Cj1pifPp.js",
+          "raw": 1048,
+          "gz": 632
+        },
+        {
+          "f": "_astro/preload-helper.B3nfOi5I.js",
+          "raw": 1364,
+          "gz": 743
+        },
+        {
+          "f": "_astro/prefetch.Q0-hnUtA.js",
+          "raw": 8752,
+          "gz": 3353
+        },
+        {
+          "f": "_astro/Landing.BdQkjYt2.js",
+          "raw": 82449,
+          "gz": 25332
+        },
+        {
+          "f": "_astro/StatCard.C2jrfF_p.js",
+          "raw": 15747,
+          "gz": 6537
+        },
+        {
+          "f": "_astro/use-reduced-motion.n2zLXpNJ.js",
+          "raw": 197,
+          "gz": 167
+        },
+        {
+          "f": "_astro/formatters.C-9pvD6N.js",
+          "raw": 371,
+          "gz": 231
+        },
+        {
+          "f": "_astro/useUrlParams.BBQEm3Go.js",
+          "raw": 592,
+          "gz": 393
+        },
+        {
+          "f": "_astro/arrow-right.C4414OgF.js",
+          "raw": 205,
+          "gz": 188
+        },
+        {
+          "f": "_astro/briefcase.BZGGPki3.js",
+          "raw": 260,
+          "gz": 225
+        },
+        {
+          "f": "_astro/car.CmznezJf.js",
+          "raw": 447,
+          "gz": 310
+        },
+        {
+          "f": "_astro/coins.BaryVhy9.js",
+          "raw": 325,
+          "gz": 254
+        },
+        {
+          "f": "_astro/external-link.CAy5Qhn5.js",
+          "raw": 291,
+          "gz": 230
+        },
+        {
+          "f": "_astro/file-text.2zNDvYoh.js",
+          "raw": 425,
+          "gz": 278
+        },
+        {
+          "f": "_astro/graduation-cap.C3PJ1qc-.js",
+          "raw": 372,
+          "gz": 275
+        },
+        {
+          "f": "_astro/search-storage.Bq0zGD1B.js",
+          "raw": 1025,
+          "gz": 610
+        },
+        {
+          "f": "_astro/shield-alert.C6ppDoZP.js",
+          "raw": 393,
+          "gz": 289
+        },
+        {
+          "f": "_astro/wallet.OttRr6ef.js",
+          "raw": 326,
+          "gz": 236
+        },
+        {
+          "f": "_astro/zap._FToVy9v.js",
+          "raw": 313,
+          "gz": 246
+        },
+        {
+          "f": "_astro/SliderControl.Dl2Hz5s6.js",
+          "raw": 5780,
+          "gz": 2316
+        },
+        {
+          "f": "_astro/PaymentPeriodToggle.D7-g92Ub.js",
+          "raw": 1624,
+          "gz": 929
+        },
+        {
+          "f": "_astro/constants.DmGeGOZm.js",
+          "raw": 380,
+          "gz": 250
+        },
+        {
+          "f": "_astro/teen-finance-data.4vDZsF_l.js",
+          "raw": 61716,
+          "gz": 19581
+        },
+        {
+          "f": "_astro/Badge.CbZgL8kF.js",
+          "raw": 1354,
+          "gz": 654
+        },
+        {
+          "f": "_astro/dist.ByrwBCcb.js",
+          "raw": 641,
+          "gz": 391
+        },
+        {
+          "f": "_astro/SpotlightCard.BiztPRLQ.js",
+          "raw": 2007,
+          "gz": 1091
+        },
+        {
+          "f": "_astro/SmartImage.DpN0WcBP.js",
+          "raw": 1180,
+          "gz": 693
+        },
+        {
+          "f": "_astro/usePageTitle.Dli3XLjJ.js",
+          "raw": 192,
+          "gz": 175
+        },
+        {
+          "f": "_astro/tax-brackets.BR9eHyIp.js",
+          "raw": 752,
+          "gz": 387
+        },
+        {
+          "f": "_astro/OdometerCounter.BcW6NMWu.js",
+          "raw": 1506,
+          "gz": 827
+        },
+        {
+          "f": "_astro/super-rules.DP7zDdx6.js",
+          "raw": 889,
+          "gz": 431
+        },
+        {
+          "f": "_astro/Footer.DDiY1TmU.js",
+          "raw": 18018,
+          "gz": 5706
+        },
+        {
+          "f": "_astro/activity.BZEZRUjE.js",
+          "raw": 274,
+          "gz": 230
+        },
+        {
+          "f": "_astro/circle-check.C6GdmqOX.js",
+          "raw": 250,
+          "gz": 217
+        },
+        {
+          "f": "_astro/refresh-cw.DmmFk8xH.js",
+          "raw": 361,
+          "gz": 252
+        },
+        {
+          "f": "_astro/shield-check.DHkB8RdP.js",
+          "raw": 360,
+          "gz": 279
+        },
+        {
+          "f": "_astro/Toaster.CUDxRbIE.js",
+          "raw": 595,
+          "gz": 386
+        },
+        {
+          "f": "_astro/dist.DPrgbPaa.js",
+          "raw": 33544,
+          "gz": 9318
+        },
+        {
+          "f": "_astro/react-dom.BUrlqAcn.js",
+          "raw": 3853,
+          "gz": 1382
+        },
+        {
+          "f": "_astro/client.DLrVKEOT.js",
+          "raw": 209191,
+          "gz": 65077
+        }
+      ]
+    },
+    {
+      "page": "/careers-employment/",
+      "htmlGz": 18574,
+      "cssGz": 26070,
+      "cssInlinedRaw": 2416,
+      "jsGz": 258361,
+      "jsRequests": 75,
+      "totalGz": 303005,
+      "jsFiles": [
+        {
+          "f": "_astro/ClientRouter.astro_astro_type_script_index_0_lang.C2AlSOH7.js",
+          "raw": 1634,
+          "gz": 812
+        },
+        {
+          "f": "_astro/client.CMnqbhkF.js",
+          "raw": 12358,
+          "gz": 4312
+        },
+        {
+          "f": "_astro/client.ChiJXsfH.js",
+          "raw": 24,
+          "gz": 44
+        },
+        {
+          "f": "_astro/prefetch.Ctgy7oyW.js",
+          "raw": 3122,
+          "gz": 1404
+        },
+        {
+          "f": "_astro/page.CuGKr0Yj.js",
+          "raw": 47,
+          "gz": 67
+        },
+        {
+          "f": "_astro/GlobalKeyboardShortcuts.astro_astro_type_script_index_0_lang.DAGWLJDN.js",
+          "raw": 956,
+          "gz": 520
+        },
+        {
+          "f": "_astro/Navbar.BAmQEyKl.js",
+          "raw": 25314,
+          "gz": 8170
+        },
+        {
+          "f": "_astro/react.DB-4Zxce.js",
+          "raw": 8529,
+          "gz": 3302
+        },
+        {
+          "f": "_astro/jsx-runtime.DdU6g033.js",
+          "raw": 593,
+          "gz": 398
+        },
+        {
+          "f": "_astro/react.DPfJpc42.js",
+          "raw": 123386,
+          "gz": 39689
+        },
+        {
+          "f": "_astro/AnimatePresence.Duky30po.js",
+          "raw": 4272,
+          "gz": 1961
+        },
+        {
+          "f": "_astro/animations.C5i1DvKL.js",
+          "raw": 436,
+          "gz": 184
+        },
+        {
+          "f": "_astro/createLucideIcon.BcSSw_Hq.js",
+          "raw": 6246,
+          "gz": 2533
+        },
+        {
+          "f": "_astro/utils.DOQQTBMN.js",
+          "raw": 27630,
+          "gz": 8657
+        },
+        {
+          "f": "_astro/book-open.CAqXpR2Y.js",
+          "raw": 329,
+          "gz": 250
+        },
+        {
+          "f": "_astro/calculator.CHYsHMMC.js",
+          "raw": 570,
+          "gz": 308
+        },
+        {
+          "f": "_astro/check.CgMgmewM.js",
+          "raw": 164,
+          "gz": 167
+        },
+        {
+          "f": "_astro/chevron-down.zsspu0at.js",
+          "raw": 168,
+          "gz": 165
+        },
+        {
+          "f": "_astro/map-pin.CN5AImeU.js",
+          "raw": 299,
+          "gz": 251
+        },
+        {
+          "f": "_astro/moon.DkIUIgig.js",
+          "raw": 257,
+          "gz": 227
+        },
+        {
+          "f": "_astro/search.CGVXpBqC.js",
+          "raw": 214,
+          "gz": 194
+        },
+        {
+          "f": "_astro/sparkles.C3JCpR6Z.js",
+          "raw": 552,
+          "gz": 318
+        },
+        {
+          "f": "_astro/user.BXZ3QGE8.js",
+          "raw": 236,
+          "gz": 208
+        },
+        {
+          "f": "_astro/x.BabufJsr.js",
+          "raw": 194,
+          "gz": 177
+        },
+        {
+          "f": "_astro/sound-synthesizer.D-p-Us6B.js",
+          "raw": 3416,
+          "gz": 1106
+        },
+        {
+          "f": "_astro/nav-modules.Djz_G4xk.js",
+          "raw": 3140,
+          "gz": 1327
+        },
+        {
+          "f": "_astro/TeenProfileContext.Cj1pifPp.js",
+          "raw": 1048,
+          "gz": 632
+        },
+        {
+          "f": "_astro/preload-helper.B3nfOi5I.js",
+          "raw": 1364,
+          "gz": 743
+        },
+        {
+          "f": "_astro/prefetch.Q0-hnUtA.js",
+          "raw": 8752,
+          "gz": 3353
+        },
+        {
+          "f": "_astro/CareersEmployment.CpNJGNi2.js",
+          "raw": 93021,
+          "gz": 26682
+        },
+        {
+          "f": "_astro/StatCard.C2jrfF_p.js",
+          "raw": 15747,
+          "gz": 6537
+        },
+        {
+          "f": "_astro/use-reduced-motion.n2zLXpNJ.js",
+          "raw": 197,
+          "gz": 167
+        },
+        {
+          "f": "_astro/formatters.C-9pvD6N.js",
+          "raw": 371,
+          "gz": 231
+        },
+        {
+          "f": "_astro/useUrlParams.BBQEm3Go.js",
+          "raw": 592,
+          "gz": 393
+        },
+        {
+          "f": "_astro/award.PUH2YJzu.js",
+          "raw": 314,
+          "gz": 254
+        },
+        {
+          "f": "_astro/briefcase.BZGGPki3.js",
+          "raw": 260,
+          "gz": 225
+        },
+        {
+          "f": "_astro/TopicGuideAccordion.urVq-Mmh.js",
+          "raw": 4708,
+          "gz": 2107
+        },
+        {
+          "f": "_astro/zap._FToVy9v.js",
+          "raw": 313,
+          "gz": 246
+        },
+        {
+          "f": "_astro/WebReferenceLink.DBg2N9R9.js",
+          "raw": 2386,
+          "gz": 1189
+        },
+        {
+          "f": "_astro/external-link.CAy5Qhn5.js",
+          "raw": 291,
+          "gz": 230
+        },
+        {
+          "f": "_astro/shield-check.DHkB8RdP.js",
+          "raw": 360,
+          "gz": 279
+        },
+        {
+          "f": "_astro/dist.ByrwBCcb.js",
+          "raw": 641,
+          "gz": 391
+        },
+        {
+          "f": "_astro/circle-alert.CkkKJON6.js",
+          "raw": 315,
+          "gz": 227
+        },
+        {
+          "f": "_astro/circle-check.C6GdmqOX.js",
+          "raw": 250,
+          "gz": 217
+        },
+        {
+          "f": "_astro/clock.BeZny__M.js",
+          "raw": 209,
+          "gz": 191
+        },
+        {
+          "f": "_astro/compass.BaWRZj9I.js",
+          "raw": 291,
+          "gz": 236
+        },
+        {
+          "f": "_astro/file-text.2zNDvYoh.js",
+          "raw": 425,
+          "gz": 278
+        },
+        {
+          "f": "_astro/flame.BEo2Mxfx.js",
+          "raw": 239,
+          "gz": 206
+        },
+        {
+          "f": "_astro/info.xaizh_mM.js",
+          "raw": 244,
+          "gz": 204
+        },
+        {
+          "f": "_astro/message-square.BVczM3My.js",
+          "raw": 273,
+          "gz": 232
+        },
+        {
+          "f": "_astro/printer.Hkq3nJai.js",
+          "raw": 359,
+          "gz": 263
+        },
+        {
+          "f": "_astro/shield-alert.C6ppDoZP.js",
+          "raw": 393,
+          "gz": 289
+        },
+        {
+          "f": "_astro/SliderControl.Dl2Hz5s6.js",
+          "raw": 5780,
+          "gz": 2316
+        },
+        {
+          "f": "_astro/PaymentPeriodToggle.D7-g92Ub.js",
+          "raw": 1624,
+          "gz": 929
+        },
+        {
+          "f": "_astro/NumberInput.BhqYeHr6.js",
+          "raw": 4746,
+          "gz": 1937
+        },
+        {
+          "f": "_astro/statutory-links.DJ7jRrI-.js",
+          "raw": 36711,
+          "gz": 11832
+        },
+        {
+          "f": "_astro/teen-finance-data.4vDZsF_l.js",
+          "raw": 61716,
+          "gz": 19581
+        },
+        {
+          "f": "_astro/Badge.CbZgL8kF.js",
+          "raw": 1354,
+          "gz": 654
+        },
+        {
+          "f": "_astro/SmartImage.DpN0WcBP.js",
+          "raw": 1180,
+          "gz": 693
+        },
+        {
+          "f": "_astro/ModulePrevNext.CVJwGQPj.js",
+          "raw": 3796,
+          "gz": 1305
+        },
+        {
+          "f": "_astro/arrow-left.BfhXphFw.js",
+          "raw": 205,
+          "gz": 188
+        },
+        {
+          "f": "_astro/arrow-right.C4414OgF.js",
+          "raw": 205,
+          "gz": 188
+        },
+        {
+          "f": "_astro/usePageTitle.Dli3XLjJ.js",
+          "raw": 192,
+          "gz": 175
+        },
+        {
+          "f": "_astro/careers-employment.DGFQ6AuB.js",
+          "raw": 10985,
+          "gz": 4494
+        },
+        {
+          "f": "_astro/super-rules.DP7zDdx6.js",
+          "raw": 889,
+          "gz": 431
+        },
+        {
+          "f": "_astro/FifteenYearOldRoadmap.U1LrmLj5.js",
+          "raw": 3915,
+          "gz": 1756
+        },
+        {
+          "f": "_astro/circle.CyKdmNZl.js",
+          "raw": 170,
+          "gz": 162
+        },
+        {
+          "f": "_astro/CelebrationRing.DttWLSf5.js",
+          "raw": 15733,
+          "gz": 6616
+        },
+        {
+          "f": "_astro/Footer.DDiY1TmU.js",
+          "raw": 18018,
+          "gz": 5706
+        },
+        {
+          "f": "_astro/activity.BZEZRUjE.js",
+          "raw": 274,
+          "gz": 230
+        },
+        {
+          "f": "_astro/refresh-cw.DmmFk8xH.js",
+          "raw": 361,
+          "gz": 252
+        },
+        {
+          "f": "_astro/Toaster.CUDxRbIE.js",
+          "raw": 595,
+          "gz": 386
+        },
+        {
+          "f": "_astro/dist.DPrgbPaa.js",
+          "raw": 33544,
+          "gz": 9318
+        },
+        {
+          "f": "_astro/react-dom.BUrlqAcn.js",
+          "raw": 3853,
+          "gz": 1382
+        },
+        {
+          "f": "_astro/client.DLrVKEOT.js",
+          "raw": 209191,
+          "gz": 65077
+        }
+      ]
+    },
+    {
+      "page": "/spending-saving/",
+      "htmlGz": 26545,
+      "cssGz": 26070,
+      "cssInlinedRaw": 2416,
+      "jsGz": 231994,
+      "jsRequests": 65,
+      "totalGz": 284609,
+      "jsFiles": [
+        {
+          "f": "_astro/ClientRouter.astro_astro_type_script_index_0_lang.C2AlSOH7.js",
+          "raw": 1634,
+          "gz": 812
+        },
+        {
+          "f": "_astro/client.CMnqbhkF.js",
+          "raw": 12358,
+          "gz": 4312
+        },
+        {
+          "f": "_astro/client.ChiJXsfH.js",
+          "raw": 24,
+          "gz": 44
+        },
+        {
+          "f": "_astro/prefetch.Ctgy7oyW.js",
+          "raw": 3122,
+          "gz": 1404
+        },
+        {
+          "f": "_astro/page.CuGKr0Yj.js",
+          "raw": 47,
+          "gz": 67
+        },
+        {
+          "f": "_astro/GlobalKeyboardShortcuts.astro_astro_type_script_index_0_lang.DAGWLJDN.js",
+          "raw": 956,
+          "gz": 520
+        },
+        {
+          "f": "_astro/Navbar.BAmQEyKl.js",
+          "raw": 25314,
+          "gz": 8170
+        },
+        {
+          "f": "_astro/react.DB-4Zxce.js",
+          "raw": 8529,
+          "gz": 3302
+        },
+        {
+          "f": "_astro/jsx-runtime.DdU6g033.js",
+          "raw": 593,
+          "gz": 398
+        },
+        {
+          "f": "_astro/react.DPfJpc42.js",
+          "raw": 123386,
+          "gz": 39689
+        },
+        {
+          "f": "_astro/AnimatePresence.Duky30po.js",
+          "raw": 4272,
+          "gz": 1961
+        },
+        {
+          "f": "_astro/animations.C5i1DvKL.js",
+          "raw": 436,
+          "gz": 184
+        },
+        {
+          "f": "_astro/createLucideIcon.BcSSw_Hq.js",
+          "raw": 6246,
+          "gz": 2533
+        },
+        {
+          "f": "_astro/utils.DOQQTBMN.js",
+          "raw": 27630,
+          "gz": 8657
+        },
+        {
+          "f": "_astro/book-open.CAqXpR2Y.js",
+          "raw": 329,
+          "gz": 250
+        },
+        {
+          "f": "_astro/calculator.CHYsHMMC.js",
+          "raw": 570,
+          "gz": 308
+        },
+        {
+          "f": "_astro/check.CgMgmewM.js",
+          "raw": 164,
+          "gz": 167
+        },
+        {
+          "f": "_astro/chevron-down.zsspu0at.js",
+          "raw": 168,
+          "gz": 165
+        },
+        {
+          "f": "_astro/map-pin.CN5AImeU.js",
+          "raw": 299,
+          "gz": 251
+        },
+        {
+          "f": "_astro/moon.DkIUIgig.js",
+          "raw": 257,
+          "gz": 227
+        },
+        {
+          "f": "_astro/search.CGVXpBqC.js",
+          "raw": 214,
+          "gz": 194
+        },
+        {
+          "f": "_astro/sparkles.C3JCpR6Z.js",
+          "raw": 552,
+          "gz": 318
+        },
+        {
+          "f": "_astro/user.BXZ3QGE8.js",
+          "raw": 236,
+          "gz": 208
+        },
+        {
+          "f": "_astro/x.BabufJsr.js",
+          "raw": 194,
+          "gz": 177
+        },
+        {
+          "f": "_astro/sound-synthesizer.D-p-Us6B.js",
+          "raw": 3416,
+          "gz": 1106
+        },
+        {
+          "f": "_astro/nav-modules.Djz_G4xk.js",
+          "raw": 3140,
+          "gz": 1327
+        },
+        {
+          "f": "_astro/TeenProfileContext.Cj1pifPp.js",
+          "raw": 1048,
+          "gz": 632
+        },
+        {
+          "f": "_astro/preload-helper.B3nfOi5I.js",
+          "raw": 1364,
+          "gz": 743
+        },
+        {
+          "f": "_astro/prefetch.Q0-hnUtA.js",
+          "raw": 8752,
+          "gz": 3353
+        },
+        {
+          "f": "_astro/SpendingSavingRealWorld.BhHKzbIr.js",
+          "raw": 10956,
+          "gz": 4015
+        },
+        {
+          "f": "_astro/bus.C6HGYU2z.js",
+          "raw": 492,
+          "gz": 314
+        },
+        {
+          "f": "_astro/TopicGuideAccordion.urVq-Mmh.js",
+          "raw": 4708,
+          "gz": 2107
+        },
+        {
+          "f": "_astro/zap._FToVy9v.js",
+          "raw": 313,
+          "gz": 246
+        },
+        {
+          "f": "_astro/WebReferenceLink.DBg2N9R9.js",
+          "raw": 2386,
+          "gz": 1189
+        },
+        {
+          "f": "_astro/external-link.CAy5Qhn5.js",
+          "raw": 291,
+          "gz": 230
+        },
+        {
+          "f": "_astro/shield-check.DHkB8RdP.js",
+          "raw": 360,
+          "gz": 279
+        },
+        {
+          "f": "_astro/dist.ByrwBCcb.js",
+          "raw": 641,
+          "gz": 391
+        },
+        {
+          "f": "_astro/circle-check.C6GdmqOX.js",
+          "raw": 250,
+          "gz": 217
+        },
+        {
+          "f": "_astro/circle.CyKdmNZl.js",
+          "raw": 170,
+          "gz": 162
+        },
+        {
+          "f": "_astro/smartphone.DmMY73Xo.js",
+          "raw": 237,
+          "gz": 211
+        },
+        {
+          "f": "_astro/statutory-links.DJ7jRrI-.js",
+          "raw": 36711,
+          "gz": 11832
+        },
+        {
+          "f": "_astro/teen-finance-data.4vDZsF_l.js",
+          "raw": 61716,
+          "gz": 19581
+        },
+        {
+          "f": "_astro/Badge.CbZgL8kF.js",
+          "raw": 1354,
+          "gz": 654
+        },
+        {
+          "f": "_astro/ModulePrevNext.CVJwGQPj.js",
+          "raw": 3796,
+          "gz": 1305
+        },
+        {
+          "f": "_astro/arrow-left.BfhXphFw.js",
+          "raw": 205,
+          "gz": 188
+        },
+        {
+          "f": "_astro/arrow-right.C4414OgF.js",
+          "raw": 205,
+          "gz": 188
+        },
+        {
+          "f": "_astro/usePageTitle.Dli3XLjJ.js",
+          "raw": 192,
+          "gz": 175
+        },
+        {
+          "f": "_astro/spending-saving.CFk0hmhJ.js",
+          "raw": 14120,
+          "gz": 6046
+        },
+        {
+          "f": "_astro/SavingsGoalsPlanner.Db7LzkTx.js",
+          "raw": 16872,
+          "gz": 6142
+        },
+        {
+          "f": "_astro/StatCard.C2jrfF_p.js",
+          "raw": 15747,
+          "gz": 6537
+        },
+        {
+          "f": "_astro/use-reduced-motion.n2zLXpNJ.js",
+          "raw": 197,
+          "gz": 167
+        },
+        {
+          "f": "_astro/formatters.C-9pvD6N.js",
+          "raw": 371,
+          "gz": 231
+        },
+        {
+          "f": "_astro/clock.BeZny__M.js",
+          "raw": 209,
+          "gz": 191
+        },
+        {
+          "f": "_astro/target.CXZeMgA1.js",
+          "raw": 266,
+          "gz": 188
+        },
+        {
+          "f": "_astro/trending-up.D9_iRsJp.js",
+          "raw": 215,
+          "gz": 196
+        },
+        {
+          "f": "_astro/SliderControl.Dl2Hz5s6.js",
+          "raw": 5780,
+          "gz": 2316
+        },
+        {
+          "f": "_astro/PaymentPeriodToggle.D7-g92Ub.js",
+          "raw": 1624,
+          "gz": 929
+        },
+        {
+          "f": "_astro/NumberInput.BhqYeHr6.js",
+          "raw": 4746,
+          "gz": 1937
+        },
+        {
+          "f": "_astro/Footer.DDiY1TmU.js",
+          "raw": 18018,
+          "gz": 5706
+        },
+        {
+          "f": "_astro/activity.BZEZRUjE.js",
+          "raw": 274,
+          "gz": 230
+        },
+        {
+          "f": "_astro/refresh-cw.DmmFk8xH.js",
+          "raw": 361,
+          "gz": 252
+        },
+        {
+          "f": "_astro/Toaster.CUDxRbIE.js",
+          "raw": 595,
+          "gz": 386
+        },
+        {
+          "f": "_astro/dist.DPrgbPaa.js",
+          "raw": 33544,
+          "gz": 9318
+        },
+        {
+          "f": "_astro/react-dom.BUrlqAcn.js",
+          "raw": 3853,
+          "gz": 1382
+        },
+        {
+          "f": "_astro/client.DLrVKEOT.js",
+          "raw": 209191,
+          "gz": 65077
+        }
+      ]
+    },
+    {
+      "page": "/profile/",
+      "htmlGz": 18966,
+      "cssGz": 26070,
+      "cssInlinedRaw": 2416,
+      "jsGz": 234200,
+      "jsRequests": 65,
+      "totalGz": 279236,
+      "jsFiles": [
+        {
+          "f": "_astro/ClientRouter.astro_astro_type_script_index_0_lang.C2AlSOH7.js",
+          "raw": 1634,
+          "gz": 812
+        },
+        {
+          "f": "_astro/client.CMnqbhkF.js",
+          "raw": 12358,
+          "gz": 4312
+        },
+        {
+          "f": "_astro/client.ChiJXsfH.js",
+          "raw": 24,
+          "gz": 44
+        },
+        {
+          "f": "_astro/prefetch.Ctgy7oyW.js",
+          "raw": 3122,
+          "gz": 1404
+        },
+        {
+          "f": "_astro/page.CuGKr0Yj.js",
+          "raw": 47,
+          "gz": 67
+        },
+        {
+          "f": "_astro/GlobalKeyboardShortcuts.astro_astro_type_script_index_0_lang.DAGWLJDN.js",
+          "raw": 956,
+          "gz": 520
+        },
+        {
+          "f": "_astro/Navbar.BAmQEyKl.js",
+          "raw": 25314,
+          "gz": 8170
+        },
+        {
+          "f": "_astro/react.DB-4Zxce.js",
+          "raw": 8529,
+          "gz": 3302
+        },
+        {
+          "f": "_astro/jsx-runtime.DdU6g033.js",
+          "raw": 593,
+          "gz": 398
+        },
+        {
+          "f": "_astro/react.DPfJpc42.js",
+          "raw": 123386,
+          "gz": 39689
+        },
+        {
+          "f": "_astro/AnimatePresence.Duky30po.js",
+          "raw": 4272,
+          "gz": 1961
+        },
+        {
+          "f": "_astro/animations.C5i1DvKL.js",
+          "raw": 436,
+          "gz": 184
+        },
+        {
+          "f": "_astro/createLucideIcon.BcSSw_Hq.js",
+          "raw": 6246,
+          "gz": 2533
+        },
+        {
+          "f": "_astro/utils.DOQQTBMN.js",
+          "raw": 27630,
+          "gz": 8657
+        },
+        {
+          "f": "_astro/book-open.CAqXpR2Y.js",
+          "raw": 329,
+          "gz": 250
+        },
+        {
+          "f": "_astro/calculator.CHYsHMMC.js",
+          "raw": 570,
+          "gz": 308
+        },
+        {
+          "f": "_astro/check.CgMgmewM.js",
+          "raw": 164,
+          "gz": 167
+        },
+        {
+          "f": "_astro/chevron-down.zsspu0at.js",
+          "raw": 168,
+          "gz": 165
+        },
+        {
+          "f": "_astro/map-pin.CN5AImeU.js",
+          "raw": 299,
+          "gz": 251
+        },
+        {
+          "f": "_astro/moon.DkIUIgig.js",
+          "raw": 257,
+          "gz": 227
+        },
+        {
+          "f": "_astro/search.CGVXpBqC.js",
+          "raw": 214,
+          "gz": 194
+        },
+        {
+          "f": "_astro/sparkles.C3JCpR6Z.js",
+          "raw": 552,
+          "gz": 318
+        },
+        {
+          "f": "_astro/user.BXZ3QGE8.js",
+          "raw": 236,
+          "gz": 208
+        },
+        {
+          "f": "_astro/x.BabufJsr.js",
+          "raw": 194,
+          "gz": 177
+        },
+        {
+          "f": "_astro/sound-synthesizer.D-p-Us6B.js",
+          "raw": 3416,
+          "gz": 1106
+        },
+        {
+          "f": "_astro/nav-modules.Djz_G4xk.js",
+          "raw": 3140,
+          "gz": 1327
+        },
+        {
+          "f": "_astro/TeenProfileContext.Cj1pifPp.js",
+          "raw": 1048,
+          "gz": 632
+        },
+        {
+          "f": "_astro/preload-helper.B3nfOi5I.js",
+          "raw": 1364,
+          "gz": 743
+        },
+        {
+          "f": "_astro/prefetch.Q0-hnUtA.js",
+          "raw": 8752,
+          "gz": 3353
+        },
+        {
+          "f": "_astro/TeenProfile.Dn235xyN.js",
+          "raw": 36985,
+          "gz": 11902
+        },
+        {
+          "f": "_astro/StatCard.C2jrfF_p.js",
+          "raw": 15747,
+          "gz": 6537
+        },
+        {
+          "f": "_astro/use-reduced-motion.n2zLXpNJ.js",
+          "raw": 197,
+          "gz": 167
+        },
+        {
+          "f": "_astro/formatters.C-9pvD6N.js",
+          "raw": 371,
+          "gz": 231
+        },
+        {
+          "f": "_astro/activity.BZEZRUjE.js",
+          "raw": 274,
+          "gz": 230
+        },
+        {
+          "f": "_astro/arrow-right.C4414OgF.js",
+          "raw": 205,
+          "gz": 188
+        },
+        {
+          "f": "_astro/briefcase.BZGGPki3.js",
+          "raw": 260,
+          "gz": 225
+        },
+        {
+          "f": "_astro/chart-pie.DT1dQr8K.js",
+          "raw": 335,
+          "gz": 263
+        },
+        {
+          "f": "_astro/compass.BaWRZj9I.js",
+          "raw": 291,
+          "gz": 236
+        },
+        {
+          "f": "_astro/piggy-bank.DRBu9ksT.js",
+          "raw": 449,
+          "gz": 286
+        },
+        {
+          "f": "_astro/receipt.D_bh0PUV.js",
+          "raw": 694,
+          "gz": 310
+        },
+        {
+          "f": "_astro/refresh-cw.DmmFk8xH.js",
+          "raw": 361,
+          "gz": 252
+        },
+        {
+          "f": "_astro/shield-check.DHkB8RdP.js",
+          "raw": 360,
+          "gz": 279
+        },
+        {
+          "f": "_astro/target.CXZeMgA1.js",
+          "raw": 266,
+          "gz": 188
+        },
+        {
+          "f": "_astro/wallet.OttRr6ef.js",
+          "raw": 326,
+          "gz": 236
+        },
+        {
+          "f": "_astro/zap._FToVy9v.js",
+          "raw": 313,
+          "gz": 246
+        },
+        {
+          "f": "_astro/SliderControl.Dl2Hz5s6.js",
+          "raw": 5780,
+          "gz": 2316
+        },
+        {
+          "f": "_astro/PaymentPeriodToggle.D7-g92Ub.js",
+          "raw": 1624,
+          "gz": 929
+        },
+        {
+          "f": "_astro/NumberInput.BhqYeHr6.js",
+          "raw": 4746,
+          "gz": 1937
+        },
+        {
+          "f": "_astro/teen-finance-data.4vDZsF_l.js",
+          "raw": 61716,
+          "gz": 19581
+        },
+        {
+          "f": "_astro/Badge.CbZgL8kF.js",
+          "raw": 1354,
+          "gz": 654
+        },
+        {
+          "f": "_astro/dist.ByrwBCcb.js",
+          "raw": 641,
+          "gz": 391
+        },
+        {
+          "f": "_astro/SpotlightCard.BiztPRLQ.js",
+          "raw": 2007,
+          "gz": 1091
+        },
+        {
+          "f": "_astro/usePageTitle.Dli3XLjJ.js",
+          "raw": 192,
+          "gz": 175
+        },
+        {
+          "f": "_astro/CelebrationRing.DttWLSf5.js",
+          "raw": 15733,
+          "gz": 6616
+        },
+        {
+          "f": "_astro/FifteenYearOldRoadmap.U1LrmLj5.js",
+          "raw": 3915,
+          "gz": 1756
+        },
+        {
+          "f": "_astro/circle-check.C6GdmqOX.js",
+          "raw": 250,
+          "gz": 217
+        },
+        {
+          "f": "_astro/circle.CyKdmNZl.js",
+          "raw": 170,
+          "gz": 162
+        },
+        {
+          "f": "_astro/statutory-links.DJ7jRrI-.js",
+          "raw": 36711,
+          "gz": 11832
+        },
+        {
+          "f": "_astro/WebReferenceLink.DBg2N9R9.js",
+          "raw": 2386,
+          "gz": 1189
+        },
+        {
+          "f": "_astro/external-link.CAy5Qhn5.js",
+          "raw": 291,
+          "gz": 230
+        },
+        {
+          "f": "_astro/Footer.DDiY1TmU.js",
+          "raw": 18018,
+          "gz": 5706
+        },
+        {
+          "f": "_astro/Toaster.CUDxRbIE.js",
+          "raw": 595,
+          "gz": 386
+        },
+        {
+          "f": "_astro/dist.DPrgbPaa.js",
+          "raw": 33544,
+          "gz": 9318
+        },
+        {
+          "f": "_astro/react-dom.BUrlqAcn.js",
+          "raw": 3853,
+          "gz": 1382
+        },
+        {
+          "f": "_astro/client.DLrVKEOT.js",
+          "raw": 209191,
+          "gz": 65077
+        }
+      ]
+    },
+    {
+      "page": "/interest-products/",
+      "htmlGz": 19097,
+      "cssGz": 26070,
+      "cssInlinedRaw": 2416,
+      "jsGz": 222387,
+      "jsRequests": 59,
+      "totalGz": 267554,
+      "jsFiles": [
+        {
+          "f": "_astro/ClientRouter.astro_astro_type_script_index_0_lang.C2AlSOH7.js",
+          "raw": 1634,
+          "gz": 812
+        },
+        {
+          "f": "_astro/client.CMnqbhkF.js",
+          "raw": 12358,
+          "gz": 4312
+        },
+        {
+          "f": "_astro/client.ChiJXsfH.js",
+          "raw": 24,
+          "gz": 44
+        },
+        {
+          "f": "_astro/prefetch.Ctgy7oyW.js",
+          "raw": 3122,
+          "gz": 1404
+        },
+        {
+          "f": "_astro/page.CuGKr0Yj.js",
+          "raw": 47,
+          "gz": 67
+        },
+        {
+          "f": "_astro/GlobalKeyboardShortcuts.astro_astro_type_script_index_0_lang.DAGWLJDN.js",
+          "raw": 956,
+          "gz": 520
+        },
+        {
+          "f": "_astro/Navbar.BAmQEyKl.js",
+          "raw": 25314,
+          "gz": 8170
+        },
+        {
+          "f": "_astro/react.DB-4Zxce.js",
+          "raw": 8529,
+          "gz": 3302
+        },
+        {
+          "f": "_astro/jsx-runtime.DdU6g033.js",
+          "raw": 593,
+          "gz": 398
+        },
+        {
+          "f": "_astro/react.DPfJpc42.js",
+          "raw": 123386,
+          "gz": 39689
+        },
+        {
+          "f": "_astro/AnimatePresence.Duky30po.js",
+          "raw": 4272,
+          "gz": 1961
+        },
+        {
+          "f": "_astro/animations.C5i1DvKL.js",
+          "raw": 436,
+          "gz": 184
+        },
+        {
+          "f": "_astro/createLucideIcon.BcSSw_Hq.js",
+          "raw": 6246,
+          "gz": 2533
+        },
+        {
+          "f": "_astro/utils.DOQQTBMN.js",
+          "raw": 27630,
+          "gz": 8657
+        },
+        {
+          "f": "_astro/book-open.CAqXpR2Y.js",
+          "raw": 329,
+          "gz": 250
+        },
+        {
+          "f": "_astro/calculator.CHYsHMMC.js",
+          "raw": 570,
+          "gz": 308
+        },
+        {
+          "f": "_astro/check.CgMgmewM.js",
+          "raw": 164,
+          "gz": 167
+        },
+        {
+          "f": "_astro/chevron-down.zsspu0at.js",
+          "raw": 168,
+          "gz": 165
+        },
+        {
+          "f": "_astro/map-pin.CN5AImeU.js",
+          "raw": 299,
+          "gz": 251
+        },
+        {
+          "f": "_astro/moon.DkIUIgig.js",
+          "raw": 257,
+          "gz": 227
+        },
+        {
+          "f": "_astro/search.CGVXpBqC.js",
+          "raw": 214,
+          "gz": 194
+        },
+        {
+          "f": "_astro/sparkles.C3JCpR6Z.js",
+          "raw": 552,
+          "gz": 318
+        },
+        {
+          "f": "_astro/user.BXZ3QGE8.js",
+          "raw": 236,
+          "gz": 208
+        },
+        {
+          "f": "_astro/x.BabufJsr.js",
+          "raw": 194,
+          "gz": 177
+        },
+        {
+          "f": "_astro/sound-synthesizer.D-p-Us6B.js",
+          "raw": 3416,
+          "gz": 1106
+        },
+        {
+          "f": "_astro/nav-modules.Djz_G4xk.js",
+          "raw": 3140,
+          "gz": 1327
+        },
+        {
+          "f": "_astro/TeenProfileContext.Cj1pifPp.js",
+          "raw": 1048,
+          "gz": 632
+        },
+        {
+          "f": "_astro/preload-helper.B3nfOi5I.js",
+          "raw": 1364,
+          "gz": 743
+        },
+        {
+          "f": "_astro/prefetch.Q0-hnUtA.js",
+          "raw": 8752,
+          "gz": 3353
+        },
+        {
+          "f": "_astro/InterestFinancialProducts.DngmqT4P.js",
+          "raw": 29299,
+          "gz": 8671
+        },
+        {
+          "f": "_astro/TopicGuideAccordion.urVq-Mmh.js",
+          "raw": 4708,
+          "gz": 2107
+        },
+        {
+          "f": "_astro/zap._FToVy9v.js",
+          "raw": 313,
+          "gz": 246
+        },
+        {
+          "f": "_astro/WebReferenceLink.DBg2N9R9.js",
+          "raw": 2386,
+          "gz": 1189
+        },
+        {
+          "f": "_astro/external-link.CAy5Qhn5.js",
+          "raw": 291,
+          "gz": 230
+        },
+        {
+          "f": "_astro/shield-check.DHkB8RdP.js",
+          "raw": 360,
+          "gz": 279
+        },
+        {
+          "f": "_astro/dist.ByrwBCcb.js",
+          "raw": 641,
+          "gz": 391
+        },
+        {
+          "f": "_astro/circle-check.C6GdmqOX.js",
+          "raw": 250,
+          "gz": 217
+        },
+        {
+          "f": "_astro/landmark.OWI0QqZI.js",
+          "raw": 425,
+          "gz": 275
+        },
+        {
+          "f": "_astro/smartphone.DmMY73Xo.js",
+          "raw": 237,
+          "gz": 211
+        },
+        {
+          "f": "_astro/target.CXZeMgA1.js",
+          "raw": 266,
+          "gz": 188
+        },
+        {
+          "f": "_astro/trending-up.D9_iRsJp.js",
+          "raw": 215,
+          "gz": 196
+        },
+        {
+          "f": "_astro/triangle-alert.KqnJl4oL.js",
+          "raw": 332,
+          "gz": 253
+        },
+        {
+          "f": "_astro/NumberInput.BhqYeHr6.js",
+          "raw": 4746,
+          "gz": 1937
+        },
+        {
+          "f": "_astro/PaymentPeriodToggle.D7-g92Ub.js",
+          "raw": 1624,
+          "gz": 929
+        },
+        {
+          "f": "_astro/statutory-links.DJ7jRrI-.js",
+          "raw": 36711,
+          "gz": 11832
+        },
+        {
+          "f": "_astro/teen-finance-data.4vDZsF_l.js",
+          "raw": 61716,
+          "gz": 19581
+        },
+        {
+          "f": "_astro/Badge.CbZgL8kF.js",
+          "raw": 1354,
+          "gz": 654
+        },
+        {
+          "f": "_astro/ModulePrevNext.CVJwGQPj.js",
+          "raw": 3796,
+          "gz": 1305
+        },
+        {
+          "f": "_astro/arrow-left.BfhXphFw.js",
+          "raw": 205,
+          "gz": 188
+        },
+        {
+          "f": "_astro/arrow-right.C4414OgF.js",
+          "raw": 205,
+          "gz": 188
+        },
+        {
+          "f": "_astro/usePageTitle.Dli3XLjJ.js",
+          "raw": 192,
+          "gz": 175
+        },
+        {
+          "f": "_astro/interest-products.D5tRnDXa.js",
+          "raw": 17263,
+          "gz": 7315
+        },
+        {
+          "f": "_astro/Footer.DDiY1TmU.js",
+          "raw": 18018,
+          "gz": 5706
+        },
+        {
+          "f": "_astro/activity.BZEZRUjE.js",
+          "raw": 274,
+          "gz": 230
+        },
+        {
+          "f": "_astro/refresh-cw.DmmFk8xH.js",
+          "raw": 361,
+          "gz": 252
+        },
+        {
+          "f": "_astro/Toaster.CUDxRbIE.js",
+          "raw": 595,
+          "gz": 386
+        },
+        {
+          "f": "_astro/dist.DPrgbPaa.js",
+          "raw": 33544,
+          "gz": 9318
+        },
+        {
+          "f": "_astro/react-dom.BUrlqAcn.js",
+          "raw": 3853,
+          "gz": 1382
+        },
+        {
+          "f": "_astro/client.DLrVKEOT.js",
+          "raw": 209191,
+          "gz": 65077
+        }
+      ]
+    },
+    {
+      "page": "/money-and-you/",
+      "htmlGz": 17708,
+      "cssGz": 26070,
+      "cssInlinedRaw": 2416,
+      "jsGz": 219949,
+      "jsRequests": 59,
+      "totalGz": 263727,
+      "jsFiles": [
+        {
+          "f": "_astro/ClientRouter.astro_astro_type_script_index_0_lang.C2AlSOH7.js",
+          "raw": 1634,
+          "gz": 812
+        },
+        {
+          "f": "_astro/client.CMnqbhkF.js",
+          "raw": 12358,
+          "gz": 4312
+        },
+        {
+          "f": "_astro/client.ChiJXsfH.js",
+          "raw": 24,
+          "gz": 44
+        },
+        {
+          "f": "_astro/prefetch.Ctgy7oyW.js",
+          "raw": 3122,
+          "gz": 1404
+        },
+        {
+          "f": "_astro/page.CuGKr0Yj.js",
+          "raw": 47,
+          "gz": 67
+        },
+        {
+          "f": "_astro/GlobalKeyboardShortcuts.astro_astro_type_script_index_0_lang.DAGWLJDN.js",
+          "raw": 956,
+          "gz": 520
+        },
+        {
+          "f": "_astro/Navbar.BAmQEyKl.js",
+          "raw": 25314,
+          "gz": 8170
+        },
+        {
+          "f": "_astro/react.DB-4Zxce.js",
+          "raw": 8529,
+          "gz": 3302
+        },
+        {
+          "f": "_astro/jsx-runtime.DdU6g033.js",
+          "raw": 593,
+          "gz": 398
+        },
+        {
+          "f": "_astro/react.DPfJpc42.js",
+          "raw": 123386,
+          "gz": 39689
+        },
+        {
+          "f": "_astro/AnimatePresence.Duky30po.js",
+          "raw": 4272,
+          "gz": 1961
+        },
+        {
+          "f": "_astro/animations.C5i1DvKL.js",
+          "raw": 436,
+          "gz": 184
+        },
+        {
+          "f": "_astro/createLucideIcon.BcSSw_Hq.js",
+          "raw": 6246,
+          "gz": 2533
+        },
+        {
+          "f": "_astro/utils.DOQQTBMN.js",
+          "raw": 27630,
+          "gz": 8657
+        },
+        {
+          "f": "_astro/book-open.CAqXpR2Y.js",
+          "raw": 329,
+          "gz": 250
+        },
+        {
+          "f": "_astro/calculator.CHYsHMMC.js",
+          "raw": 570,
+          "gz": 308
+        },
+        {
+          "f": "_astro/check.CgMgmewM.js",
+          "raw": 164,
+          "gz": 167
+        },
+        {
+          "f": "_astro/chevron-down.zsspu0at.js",
+          "raw": 168,
+          "gz": 165
+        },
+        {
+          "f": "_astro/map-pin.CN5AImeU.js",
+          "raw": 299,
+          "gz": 251
+        },
+        {
+          "f": "_astro/moon.DkIUIgig.js",
+          "raw": 257,
+          "gz": 227
+        },
+        {
+          "f": "_astro/search.CGVXpBqC.js",
+          "raw": 214,
+          "gz": 194
+        },
+        {
+          "f": "_astro/sparkles.C3JCpR6Z.js",
+          "raw": 552,
+          "gz": 318
+        },
+        {
+          "f": "_astro/user.BXZ3QGE8.js",
+          "raw": 236,
+          "gz": 208
+        },
+        {
+          "f": "_astro/x.BabufJsr.js",
+          "raw": 194,
+          "gz": 177
+        },
+        {
+          "f": "_astro/sound-synthesizer.D-p-Us6B.js",
+          "raw": 3416,
+          "gz": 1106
+        },
+        {
+          "f": "_astro/nav-modules.Djz_G4xk.js",
+          "raw": 3140,
+          "gz": 1327
+        },
+        {
+          "f": "_astro/TeenProfileContext.Cj1pifPp.js",
+          "raw": 1048,
+          "gz": 632
+        },
+        {
+          "f": "_astro/preload-helper.B3nfOi5I.js",
+          "raw": 1364,
+          "gz": 743
+        },
+        {
+          "f": "_astro/prefetch.Q0-hnUtA.js",
+          "raw": 8752,
+          "gz": 3353
+        },
+        {
+          "f": "_astro/MoneyAndYou.DzhvsVpV.js",
+          "raw": 8234,
+          "gz": 3294
+        },
+        {
+          "f": "_astro/TopicGuideAccordion.urVq-Mmh.js",
+          "raw": 4708,
+          "gz": 2107
+        },
+        {
+          "f": "_astro/zap._FToVy9v.js",
+          "raw": 313,
+          "gz": 246
+        },
+        {
+          "f": "_astro/WebReferenceLink.DBg2N9R9.js",
+          "raw": 2386,
+          "gz": 1189
+        },
+        {
+          "f": "_astro/external-link.CAy5Qhn5.js",
+          "raw": 291,
+          "gz": 230
+        },
+        {
+          "f": "_astro/shield-check.DHkB8RdP.js",
+          "raw": 360,
+          "gz": 279
+        },
+        {
+          "f": "_astro/dist.ByrwBCcb.js",
+          "raw": 641,
+          "gz": 391
+        },
+        {
+          "f": "_astro/refresh-cw.DmmFk8xH.js",
+          "raw": 361,
+          "gz": 252
+        },
+        {
+          "f": "_astro/trophy.DZEUVir2.js",
+          "raw": 545,
+          "gz": 316
+        },
+        {
+          "f": "_astro/Badge.CbZgL8kF.js",
+          "raw": 1354,
+          "gz": 654
+        },
+        {
+          "f": "_astro/SmartImage.DpN0WcBP.js",
+          "raw": 1180,
+          "gz": 693
+        },
+        {
+          "f": "_astro/ModulePrevNext.CVJwGQPj.js",
+          "raw": 3796,
+          "gz": 1305
+        },
+        {
+          "f": "_astro/arrow-left.BfhXphFw.js",
+          "raw": 205,
+          "gz": 188
+        },
+        {
+          "f": "_astro/arrow-right.C4414OgF.js",
+          "raw": 205,
+          "gz": 188
+        },
+        {
+          "f": "_astro/usePageTitle.Dli3XLjJ.js",
+          "raw": 192,
+          "gz": 175
+        },
+        {
+          "f": "_astro/FifteenYearOldRoadmap.U1LrmLj5.js",
+          "raw": 3915,
+          "gz": 1756
+        },
+        {
+          "f": "_astro/circle-check.C6GdmqOX.js",
+          "raw": 250,
+          "gz": 217
+        },
+        {
+          "f": "_astro/circle.CyKdmNZl.js",
+          "raw": 170,
+          "gz": 162
+        },
+        {
+          "f": "_astro/compass.BaWRZj9I.js",
+          "raw": 291,
+          "gz": 236
+        },
+        {
+          "f": "_astro/statutory-links.DJ7jRrI-.js",
+          "raw": 36711,
+          "gz": 11832
+        },
+        {
+          "f": "_astro/teen-finance-data.4vDZsF_l.js",
+          "raw": 61716,
+          "gz": 19581
+        },
+        {
+          "f": "_astro/CelebrationRing.DttWLSf5.js",
+          "raw": 15733,
+          "gz": 6616
+        },
+        {
+          "f": "_astro/use-reduced-motion.n2zLXpNJ.js",
+          "raw": 197,
+          "gz": 167
+        },
+        {
+          "f": "_astro/money-and-you.lHZa0BAf.js",
+          "raw": 9421,
+          "gz": 4297
+        },
+        {
+          "f": "_astro/Footer.DDiY1TmU.js",
+          "raw": 18018,
+          "gz": 5706
+        },
+        {
+          "f": "_astro/activity.BZEZRUjE.js",
+          "raw": 274,
+          "gz": 230
+        },
+        {
+          "f": "_astro/Toaster.CUDxRbIE.js",
+          "raw": 595,
+          "gz": 386
+        },
+        {
+          "f": "_astro/dist.DPrgbPaa.js",
+          "raw": 33544,
+          "gz": 9318
+        },
+        {
+          "f": "_astro/react-dom.BUrlqAcn.js",
+          "raw": 3853,
+          "gz": 1382
+        },
+        {
+          "f": "_astro/client.DLrVKEOT.js",
+          "raw": 209191,
+          "gz": 65077
+        }
+      ]
+    },
+    {
+      "page": "/super-drawdown/",
+      "htmlGz": 16849,
+      "cssGz": 26070,
+      "cssInlinedRaw": 2416,
+      "jsGz": 186621,
+      "jsRequests": 53,
+      "totalGz": 229540,
+      "jsFiles": [
+        {
+          "f": "_astro/ClientRouter.astro_astro_type_script_index_0_lang.C2AlSOH7.js",
+          "raw": 1634,
+          "gz": 812
+        },
+        {
+          "f": "_astro/client.CMnqbhkF.js",
+          "raw": 12358,
+          "gz": 4312
+        },
+        {
+          "f": "_astro/client.ChiJXsfH.js",
+          "raw": 24,
+          "gz": 44
+        },
+        {
+          "f": "_astro/prefetch.Ctgy7oyW.js",
+          "raw": 3122,
+          "gz": 1404
+        },
+        {
+          "f": "_astro/page.CuGKr0Yj.js",
+          "raw": 47,
+          "gz": 67
+        },
+        {
+          "f": "_astro/GlobalKeyboardShortcuts.astro_astro_type_script_index_0_lang.DAGWLJDN.js",
+          "raw": 956,
+          "gz": 520
+        },
+        {
+          "f": "_astro/Navbar.BAmQEyKl.js",
+          "raw": 25314,
+          "gz": 8170
+        },
+        {
+          "f": "_astro/react.DB-4Zxce.js",
+          "raw": 8529,
+          "gz": 3302
+        },
+        {
+          "f": "_astro/jsx-runtime.DdU6g033.js",
+          "raw": 593,
+          "gz": 398
+        },
+        {
+          "f": "_astro/react.DPfJpc42.js",
+          "raw": 123386,
+          "gz": 39689
+        },
+        {
+          "f": "_astro/AnimatePresence.Duky30po.js",
+          "raw": 4272,
+          "gz": 1961
+        },
+        {
+          "f": "_astro/animations.C5i1DvKL.js",
+          "raw": 436,
+          "gz": 184
+        },
+        {
+          "f": "_astro/createLucideIcon.BcSSw_Hq.js",
+          "raw": 6246,
+          "gz": 2533
+        },
+        {
+          "f": "_astro/utils.DOQQTBMN.js",
+          "raw": 27630,
+          "gz": 8657
+        },
+        {
+          "f": "_astro/book-open.CAqXpR2Y.js",
+          "raw": 329,
+          "gz": 250
+        },
+        {
+          "f": "_astro/calculator.CHYsHMMC.js",
+          "raw": 570,
+          "gz": 308
+        },
+        {
+          "f": "_astro/check.CgMgmewM.js",
+          "raw": 164,
+          "gz": 167
+        },
+        {
+          "f": "_astro/chevron-down.zsspu0at.js",
+          "raw": 168,
+          "gz": 165
+        },
+        {
+          "f": "_astro/map-pin.CN5AImeU.js",
+          "raw": 299,
+          "gz": 251
+        },
+        {
+          "f": "_astro/moon.DkIUIgig.js",
+          "raw": 257,
+          "gz": 227
+        },
+        {
+          "f": "_astro/search.CGVXpBqC.js",
+          "raw": 214,
+          "gz": 194
+        },
+        {
+          "f": "_astro/sparkles.C3JCpR6Z.js",
+          "raw": 552,
+          "gz": 318
+        },
+        {
+          "f": "_astro/user.BXZ3QGE8.js",
+          "raw": 236,
+          "gz": 208
+        },
+        {
+          "f": "_astro/x.BabufJsr.js",
+          "raw": 194,
+          "gz": 177
+        },
+        {
+          "f": "_astro/sound-synthesizer.D-p-Us6B.js",
+          "raw": 3416,
+          "gz": 1106
+        },
+        {
+          "f": "_astro/nav-modules.Djz_G4xk.js",
+          "raw": 3140,
+          "gz": 1327
+        },
+        {
+          "f": "_astro/TeenProfileContext.Cj1pifPp.js",
+          "raw": 1048,
+          "gz": 632
+        },
+        {
+          "f": "_astro/preload-helper.B3nfOi5I.js",
+          "raw": 1364,
+          "gz": 743
+        },
+        {
+          "f": "_astro/prefetch.Q0-hnUtA.js",
+          "raw": 8752,
+          "gz": 3353
+        },
+        {
+          "f": "_astro/SuperDrawdown.CwVm_swK.js",
+          "raw": 39393,
+          "gz": 12573
+        },
+        {
+          "f": "_astro/arrow-left.BfhXphFw.js",
+          "raw": 205,
+          "gz": 188
+        },
+        {
+          "f": "_astro/TopicGuideAccordion.urVq-Mmh.js",
+          "raw": 4708,
+          "gz": 2107
+        },
+        {
+          "f": "_astro/zap._FToVy9v.js",
+          "raw": 313,
+          "gz": 246
+        },
+        {
+          "f": "_astro/WebReferenceLink.DBg2N9R9.js",
+          "raw": 2386,
+          "gz": 1189
+        },
+        {
+          "f": "_astro/external-link.CAy5Qhn5.js",
+          "raw": 291,
+          "gz": 230
+        },
+        {
+          "f": "_astro/shield-check.DHkB8RdP.js",
+          "raw": 360,
+          "gz": 279
+        },
+        {
+          "f": "_astro/dist.ByrwBCcb.js",
+          "raw": 641,
+          "gz": 391
+        },
+        {
+          "f": "_astro/coins.BaryVhy9.js",
+          "raw": 325,
+          "gz": 254
+        },
+        {
+          "f": "_astro/PrintResultButton.JaFaJB4O.js",
+          "raw": 5039,
+          "gz": 2476
+        },
+        {
+          "f": "_astro/printer.Hkq3nJai.js",
+          "raw": 359,
+          "gz": 263
+        },
+        {
+          "f": "_astro/dist.DPrgbPaa.js",
+          "raw": 33544,
+          "gz": 9318
+        },
+        {
+          "f": "_astro/react-dom.BUrlqAcn.js",
+          "raw": 3853,
+          "gz": 1382
+        },
+        {
+          "f": "_astro/triangle-alert.KqnJl4oL.js",
+          "raw": 332,
+          "gz": 253
+        },
+        {
+          "f": "_astro/Disclaimer.C1NirYBM.js",
+          "raw": 968,
+          "gz": 617
+        },
+        {
+          "f": "_astro/constants.DmGeGOZm.js",
+          "raw": 380,
+          "gz": 250
+        },
+        {
+          "f": "_astro/OdometerCounter.BcW6NMWu.js",
+          "raw": 1506,
+          "gz": 827
+        },
+        {
+          "f": "_astro/super-rules.DP7zDdx6.js",
+          "raw": 889,
+          "gz": 431
+        },
+        {
+          "f": "_astro/Footer.DDiY1TmU.js",
+          "raw": 18018,
+          "gz": 5706
+        },
+        {
+          "f": "_astro/activity.BZEZRUjE.js",
+          "raw": 274,
+          "gz": 230
+        },
+        {
+          "f": "_astro/circle-check.C6GdmqOX.js",
+          "raw": 250,
+          "gz": 217
+        },
+        {
+          "f": "_astro/refresh-cw.DmmFk8xH.js",
+          "raw": 361,
+          "gz": 252
+        },
+        {
+          "f": "_astro/Toaster.CUDxRbIE.js",
+          "raw": 595,
+          "gz": 386
+        },
+        {
+          "f": "_astro/client.DLrVKEOT.js",
+          "raw": 209191,
+          "gz": 65077
+        }
+      ]
+    },
+    {
+      "page": "/cgt-engine/",
+      "htmlGz": 15430,
+      "cssGz": 26070,
+      "cssInlinedRaw": 2416,
+      "jsGz": 184948,
+      "jsRequests": 56,
+      "totalGz": 226448,
+      "jsFiles": [
+        {
+          "f": "_astro/ClientRouter.astro_astro_type_script_index_0_lang.C2AlSOH7.js",
+          "raw": 1634,
+          "gz": 812
+        },
+        {
+          "f": "_astro/client.CMnqbhkF.js",
+          "raw": 12358,
+          "gz": 4312
+        },
+        {
+          "f": "_astro/client.ChiJXsfH.js",
+          "raw": 24,
+          "gz": 44
+        },
+        {
+          "f": "_astro/prefetch.Ctgy7oyW.js",
+          "raw": 3122,
+          "gz": 1404
+        },
+        {
+          "f": "_astro/page.CuGKr0Yj.js",
+          "raw": 47,
+          "gz": 67
+        },
+        {
+          "f": "_astro/GlobalKeyboardShortcuts.astro_astro_type_script_index_0_lang.DAGWLJDN.js",
+          "raw": 956,
+          "gz": 520
+        },
+        {
+          "f": "_astro/Navbar.BAmQEyKl.js",
+          "raw": 25314,
+          "gz": 8170
+        },
+        {
+          "f": "_astro/react.DB-4Zxce.js",
+          "raw": 8529,
+          "gz": 3302
+        },
+        {
+          "f": "_astro/jsx-runtime.DdU6g033.js",
+          "raw": 593,
+          "gz": 398
+        },
+        {
+          "f": "_astro/react.DPfJpc42.js",
+          "raw": 123386,
+          "gz": 39689
+        },
+        {
+          "f": "_astro/AnimatePresence.Duky30po.js",
+          "raw": 4272,
+          "gz": 1961
+        },
+        {
+          "f": "_astro/animations.C5i1DvKL.js",
+          "raw": 436,
+          "gz": 184
+        },
+        {
+          "f": "_astro/createLucideIcon.BcSSw_Hq.js",
+          "raw": 6246,
+          "gz": 2533
+        },
+        {
+          "f": "_astro/utils.DOQQTBMN.js",
+          "raw": 27630,
+          "gz": 8657
+        },
+        {
+          "f": "_astro/book-open.CAqXpR2Y.js",
+          "raw": 329,
+          "gz": 250
+        },
+        {
+          "f": "_astro/calculator.CHYsHMMC.js",
+          "raw": 570,
+          "gz": 308
+        },
+        {
+          "f": "_astro/check.CgMgmewM.js",
+          "raw": 164,
+          "gz": 167
+        },
+        {
+          "f": "_astro/chevron-down.zsspu0at.js",
+          "raw": 168,
+          "gz": 165
+        },
+        {
+          "f": "_astro/map-pin.CN5AImeU.js",
+          "raw": 299,
+          "gz": 251
+        },
+        {
+          "f": "_astro/moon.DkIUIgig.js",
+          "raw": 257,
+          "gz": 227
+        },
+        {
+          "f": "_astro/search.CGVXpBqC.js",
+          "raw": 214,
+          "gz": 194
+        },
+        {
+          "f": "_astro/sparkles.C3JCpR6Z.js",
+          "raw": 552,
+          "gz": 318
+        },
+        {
+          "f": "_astro/user.BXZ3QGE8.js",
+          "raw": 236,
+          "gz": 208
+        },
+        {
+          "f": "_astro/x.BabufJsr.js",
+          "raw": 194,
+          "gz": 177
+        },
+        {
+          "f": "_astro/sound-synthesizer.D-p-Us6B.js",
+          "raw": 3416,
+          "gz": 1106
+        },
+        {
+          "f": "_astro/nav-modules.Djz_G4xk.js",
+          "raw": 3140,
+          "gz": 1327
+        },
+        {
+          "f": "_astro/TeenProfileContext.Cj1pifPp.js",
+          "raw": 1048,
+          "gz": 632
+        },
+        {
+          "f": "_astro/preload-helper.B3nfOi5I.js",
+          "raw": 1364,
+          "gz": 743
+        },
+        {
+          "f": "_astro/prefetch.Q0-hnUtA.js",
+          "raw": 8752,
+          "gz": 3353
+        },
+        {
+          "f": "_astro/CGTEngine.lpWkTj9H.js",
+          "raw": 32854,
+          "gz": 10110
+        },
+        {
+          "f": "_astro/arrow-left.BfhXphFw.js",
+          "raw": 205,
+          "gz": 188
+        },
+        {
+          "f": "_astro/TopicGuideAccordion.urVq-Mmh.js",
+          "raw": 4708,
+          "gz": 2107
+        },
+        {
+          "f": "_astro/zap._FToVy9v.js",
+          "raw": 313,
+          "gz": 246
+        },
+        {
+          "f": "_astro/WebReferenceLink.DBg2N9R9.js",
+          "raw": 2386,
+          "gz": 1189
+        },
+        {
+          "f": "_astro/external-link.CAy5Qhn5.js",
+          "raw": 291,
+          "gz": 230
+        },
+        {
+          "f": "_astro/shield-check.DHkB8RdP.js",
+          "raw": 360,
+          "gz": 279
+        },
+        {
+          "f": "_astro/dist.ByrwBCcb.js",
+          "raw": 641,
+          "gz": 391
+        },
+        {
+          "f": "_astro/circle-alert.CkkKJON6.js",
+          "raw": 315,
+          "gz": 227
+        },
+        {
+          "f": "_astro/circle-check.C6GdmqOX.js",
+          "raw": 250,
+          "gz": 217
+        },
+        {
+          "f": "_astro/PrintResultButton.JaFaJB4O.js",
+          "raw": 5039,
+          "gz": 2476
+        },
+        {
+          "f": "_astro/printer.Hkq3nJai.js",
+          "raw": 359,
+          "gz": 263
+        },
+        {
+          "f": "_astro/dist.DPrgbPaa.js",
+          "raw": 33544,
+          "gz": 9318
+        },
+        {
+          "f": "_astro/react-dom.BUrlqAcn.js",
+          "raw": 3853,
+          "gz": 1382
+        },
+        {
+          "f": "_astro/file-text.2zNDvYoh.js",
+          "raw": 425,
+          "gz": 278
+        },
+        {
+          "f": "_astro/house.CQzjA81_.js",
+          "raw": 338,
+          "gz": 253
+        },
+        {
+          "f": "_astro/landmark.OWI0QqZI.js",
+          "raw": 425,
+          "gz": 275
+        },
+        {
+          "f": "_astro/receipt-text.rblsqUzp.js",
+          "raw": 703,
+          "gz": 308
+        },
+        {
+          "f": "_astro/Disclaimer.C1NirYBM.js",
+          "raw": 968,
+          "gz": 617
+        },
+        {
+          "f": "_astro/constants.DmGeGOZm.js",
+          "raw": 380,
+          "gz": 250
+        },
+        {
+          "f": "_astro/tax-brackets.BR9eHyIp.js",
+          "raw": 752,
+          "gz": 387
+        },
+        {
+          "f": "_astro/OdometerCounter.BcW6NMWu.js",
+          "raw": 1506,
+          "gz": 827
+        },
+        {
+          "f": "_astro/Footer.DDiY1TmU.js",
+          "raw": 18018,
+          "gz": 5706
+        },
+        {
+          "f": "_astro/activity.BZEZRUjE.js",
+          "raw": 274,
+          "gz": 230
+        },
+        {
+          "f": "_astro/refresh-cw.DmmFk8xH.js",
+          "raw": 361,
+          "gz": 252
+        },
+        {
+          "f": "_astro/Toaster.CUDxRbIE.js",
+          "raw": 595,
+          "gz": 386
+        },
+        {
+          "f": "_astro/client.DLrVKEOT.js",
+          "raw": 209191,
+          "gz": 65077
+        }
+      ]
+    },
+    {
+      "page": "/financial-stress-test/",
+      "htmlGz": 14797,
+      "cssGz": 26070,
+      "cssInlinedRaw": 2416,
+      "jsGz": 185046,
+      "jsRequests": 55,
+      "totalGz": 225913,
+      "jsFiles": [
+        {
+          "f": "_astro/ClientRouter.astro_astro_type_script_index_0_lang.C2AlSOH7.js",
+          "raw": 1634,
+          "gz": 812
+        },
+        {
+          "f": "_astro/client.CMnqbhkF.js",
+          "raw": 12358,
+          "gz": 4312
+        },
+        {
+          "f": "_astro/client.ChiJXsfH.js",
+          "raw": 24,
+          "gz": 44
+        },
+        {
+          "f": "_astro/prefetch.Ctgy7oyW.js",
+          "raw": 3122,
+          "gz": 1404
+        },
+        {
+          "f": "_astro/page.CuGKr0Yj.js",
+          "raw": 47,
+          "gz": 67
+        },
+        {
+          "f": "_astro/GlobalKeyboardShortcuts.astro_astro_type_script_index_0_lang.DAGWLJDN.js",
+          "raw": 956,
+          "gz": 520
+        },
+        {
+          "f": "_astro/Navbar.BAmQEyKl.js",
+          "raw": 25314,
+          "gz": 8170
+        },
+        {
+          "f": "_astro/react.DB-4Zxce.js",
+          "raw": 8529,
+          "gz": 3302
+        },
+        {
+          "f": "_astro/jsx-runtime.DdU6g033.js",
+          "raw": 593,
+          "gz": 398
+        },
+        {
+          "f": "_astro/react.DPfJpc42.js",
+          "raw": 123386,
+          "gz": 39689
+        },
+        {
+          "f": "_astro/AnimatePresence.Duky30po.js",
+          "raw": 4272,
+          "gz": 1961
+        },
+        {
+          "f": "_astro/animations.C5i1DvKL.js",
+          "raw": 436,
+          "gz": 184
+        },
+        {
+          "f": "_astro/createLucideIcon.BcSSw_Hq.js",
+          "raw": 6246,
+          "gz": 2533
+        },
+        {
+          "f": "_astro/utils.DOQQTBMN.js",
+          "raw": 27630,
+          "gz": 8657
+        },
+        {
+          "f": "_astro/book-open.CAqXpR2Y.js",
+          "raw": 329,
+          "gz": 250
+        },
+        {
+          "f": "_astro/calculator.CHYsHMMC.js",
+          "raw": 570,
+          "gz": 308
+        },
+        {
+          "f": "_astro/check.CgMgmewM.js",
+          "raw": 164,
+          "gz": 167
+        },
+        {
+          "f": "_astro/chevron-down.zsspu0at.js",
+          "raw": 168,
+          "gz": 165
+        },
+        {
+          "f": "_astro/map-pin.CN5AImeU.js",
+          "raw": 299,
+          "gz": 251
+        },
+        {
+          "f": "_astro/moon.DkIUIgig.js",
+          "raw": 257,
+          "gz": 227
+        },
+        {
+          "f": "_astro/search.CGVXpBqC.js",
+          "raw": 214,
+          "gz": 194
+        },
+        {
+          "f": "_astro/sparkles.C3JCpR6Z.js",
+          "raw": 552,
+          "gz": 318
+        },
+        {
+          "f": "_astro/user.BXZ3QGE8.js",
+          "raw": 236,
+          "gz": 208
+        },
+        {
+          "f": "_astro/x.BabufJsr.js",
+          "raw": 194,
+          "gz": 177
+        },
+        {
+          "f": "_astro/sound-synthesizer.D-p-Us6B.js",
+          "raw": 3416,
+          "gz": 1106
+        },
+        {
+          "f": "_astro/nav-modules.Djz_G4xk.js",
+          "raw": 3140,
+          "gz": 1327
+        },
+        {
+          "f": "_astro/TeenProfileContext.Cj1pifPp.js",
+          "raw": 1048,
+          "gz": 632
+        },
+        {
+          "f": "_astro/preload-helper.B3nfOi5I.js",
+          "raw": 1364,
+          "gz": 743
+        },
+        {
+          "f": "_astro/prefetch.Q0-hnUtA.js",
+          "raw": 8752,
+          "gz": 3353
+        },
+        {
+          "f": "_astro/FinancialStressTest.BsDdZFye.js",
+          "raw": 36823,
+          "gz": 11154
+        },
+        {
+          "f": "_astro/arrow-left.BfhXphFw.js",
+          "raw": 205,
+          "gz": 188
+        },
+        {
+          "f": "_astro/TopicGuideAccordion.urVq-Mmh.js",
+          "raw": 4708,
+          "gz": 2107
+        },
+        {
+          "f": "_astro/zap._FToVy9v.js",
+          "raw": 313,
+          "gz": 246
+        },
+        {
+          "f": "_astro/WebReferenceLink.DBg2N9R9.js",
+          "raw": 2386,
+          "gz": 1189
+        },
+        {
+          "f": "_astro/external-link.CAy5Qhn5.js",
+          "raw": 291,
+          "gz": 230
+        },
+        {
+          "f": "_astro/shield-check.DHkB8RdP.js",
+          "raw": 360,
+          "gz": 279
+        },
+        {
+          "f": "_astro/dist.ByrwBCcb.js",
+          "raw": 641,
+          "gz": 391
+        },
+        {
+          "f": "_astro/circle-check.C6GdmqOX.js",
+          "raw": 250,
+          "gz": 217
+        },
+        {
+          "f": "_astro/PrintResultButton.JaFaJB4O.js",
+          "raw": 5039,
+          "gz": 2476
+        },
+        {
+          "f": "_astro/printer.Hkq3nJai.js",
+          "raw": 359,
+          "gz": 263
+        },
+        {
+          "f": "_astro/dist.DPrgbPaa.js",
+          "raw": 33544,
+          "gz": 9318
+        },
+        {
+          "f": "_astro/react-dom.BUrlqAcn.js",
+          "raw": 3853,
+          "gz": 1382
+        },
+        {
+          "f": "_astro/flame.BEo2Mxfx.js",
+          "raw": 239,
+          "gz": 206
+        },
+        {
+          "f": "_astro/gauge.BT5Un7Av.js",
+          "raw": 216,
+          "gz": 195
+        },
+        {
+          "f": "_astro/layers.CPxgCIZU.js",
+          "raw": 482,
+          "gz": 279
+        },
+        {
+          "f": "_astro/shield-alert.C6ppDoZP.js",
+          "raw": 393,
+          "gz": 289
+        },
+        {
+          "f": "_astro/triangle-alert.KqnJl4oL.js",
+          "raw": 332,
+          "gz": 253
+        },
+        {
+          "f": "_astro/Disclaimer.C1NirYBM.js",
+          "raw": 968,
+          "gz": 617
+        },
+        {
+          "f": "_astro/constants.DmGeGOZm.js",
+          "raw": 380,
+          "gz": 250
+        },
+        {
+          "f": "_astro/tax-brackets.BR9eHyIp.js",
+          "raw": 752,
+          "gz": 387
+        },
+        {
+          "f": "_astro/Footer.DDiY1TmU.js",
+          "raw": 18018,
+          "gz": 5706
+        },
+        {
+          "f": "_astro/activity.BZEZRUjE.js",
+          "raw": 274,
+          "gz": 230
+        },
+        {
+          "f": "_astro/refresh-cw.DmmFk8xH.js",
+          "raw": 361,
+          "gz": 252
+        },
+        {
+          "f": "_astro/Toaster.CUDxRbIE.js",
+          "raw": 595,
+          "gz": 386
+        },
+        {
+          "f": "_astro/client.DLrVKEOT.js",
+          "raw": 209191,
+          "gz": 65077
+        }
+      ]
+    },
+    {
+      "page": "/ev-novated-lease/",
+      "htmlGz": 14362,
+      "cssGz": 26070,
+      "cssInlinedRaw": 2416,
+      "jsGz": 182122,
+      "jsRequests": 52,
+      "totalGz": 222554,
+      "jsFiles": [
+        {
+          "f": "_astro/ClientRouter.astro_astro_type_script_index_0_lang.C2AlSOH7.js",
+          "raw": 1634,
+          "gz": 812
+        },
+        {
+          "f": "_astro/client.CMnqbhkF.js",
+          "raw": 12358,
+          "gz": 4312
+        },
+        {
+          "f": "_astro/client.ChiJXsfH.js",
+          "raw": 24,
+          "gz": 44
+        },
+        {
+          "f": "_astro/prefetch.Ctgy7oyW.js",
+          "raw": 3122,
+          "gz": 1404
+        },
+        {
+          "f": "_astro/page.CuGKr0Yj.js",
+          "raw": 47,
+          "gz": 67
+        },
+        {
+          "f": "_astro/GlobalKeyboardShortcuts.astro_astro_type_script_index_0_lang.DAGWLJDN.js",
+          "raw": 956,
+          "gz": 520
+        },
+        {
+          "f": "_astro/Navbar.BAmQEyKl.js",
+          "raw": 25314,
+          "gz": 8170
+        },
+        {
+          "f": "_astro/react.DB-4Zxce.js",
+          "raw": 8529,
+          "gz": 3302
+        },
+        {
+          "f": "_astro/jsx-runtime.DdU6g033.js",
+          "raw": 593,
+          "gz": 398
+        },
+        {
+          "f": "_astro/react.DPfJpc42.js",
+          "raw": 123386,
+          "gz": 39689
+        },
+        {
+          "f": "_astro/AnimatePresence.Duky30po.js",
+          "raw": 4272,
+          "gz": 1961
+        },
+        {
+          "f": "_astro/animations.C5i1DvKL.js",
+          "raw": 436,
+          "gz": 184
+        },
+        {
+          "f": "_astro/createLucideIcon.BcSSw_Hq.js",
+          "raw": 6246,
+          "gz": 2533
+        },
+        {
+          "f": "_astro/utils.DOQQTBMN.js",
+          "raw": 27630,
+          "gz": 8657
+        },
+        {
+          "f": "_astro/book-open.CAqXpR2Y.js",
+          "raw": 329,
+          "gz": 250
+        },
+        {
+          "f": "_astro/calculator.CHYsHMMC.js",
+          "raw": 570,
+          "gz": 308
+        },
+        {
+          "f": "_astro/check.CgMgmewM.js",
+          "raw": 164,
+          "gz": 167
+        },
+        {
+          "f": "_astro/chevron-down.zsspu0at.js",
+          "raw": 168,
+          "gz": 165
+        },
+        {
+          "f": "_astro/map-pin.CN5AImeU.js",
+          "raw": 299,
+          "gz": 251
+        },
+        {
+          "f": "_astro/moon.DkIUIgig.js",
+          "raw": 257,
+          "gz": 227
+        },
+        {
+          "f": "_astro/search.CGVXpBqC.js",
+          "raw": 214,
+          "gz": 194
+        },
+        {
+          "f": "_astro/sparkles.C3JCpR6Z.js",
+          "raw": 552,
+          "gz": 318
+        },
+        {
+          "f": "_astro/user.BXZ3QGE8.js",
+          "raw": 236,
+          "gz": 208
+        },
+        {
+          "f": "_astro/x.BabufJsr.js",
+          "raw": 194,
+          "gz": 177
+        },
+        {
+          "f": "_astro/sound-synthesizer.D-p-Us6B.js",
+          "raw": 3416,
+          "gz": 1106
+        },
+        {
+          "f": "_astro/nav-modules.Djz_G4xk.js",
+          "raw": 3140,
+          "gz": 1327
+        },
+        {
+          "f": "_astro/TeenProfileContext.Cj1pifPp.js",
+          "raw": 1048,
+          "gz": 632
+        },
+        {
+          "f": "_astro/preload-helper.B3nfOi5I.js",
+          "raw": 1364,
+          "gz": 743
+        },
+        {
+          "f": "_astro/prefetch.Q0-hnUtA.js",
+          "raw": 8752,
+          "gz": 3353
+        },
+        {
+          "f": "_astro/EVNovatedLease.D7t2Au92.js",
+          "raw": 27096,
+          "gz": 8315
+        },
+        {
+          "f": "_astro/arrow-left.BfhXphFw.js",
+          "raw": 205,
+          "gz": 188
+        },
+        {
+          "f": "_astro/car.CmznezJf.js",
+          "raw": 447,
+          "gz": 310
+        },
+        {
+          "f": "_astro/TopicGuideAccordion.urVq-Mmh.js",
+          "raw": 4708,
+          "gz": 2107
+        },
+        {
+          "f": "_astro/zap._FToVy9v.js",
+          "raw": 313,
+          "gz": 246
+        },
+        {
+          "f": "_astro/WebReferenceLink.DBg2N9R9.js",
+          "raw": 2386,
+          "gz": 1189
+        },
+        {
+          "f": "_astro/external-link.CAy5Qhn5.js",
+          "raw": 291,
+          "gz": 230
+        },
+        {
+          "f": "_astro/shield-check.DHkB8RdP.js",
+          "raw": 360,
+          "gz": 279
+        },
+        {
+          "f": "_astro/dist.ByrwBCcb.js",
+          "raw": 641,
+          "gz": 391
+        },
+        {
+          "f": "_astro/PrintResultButton.JaFaJB4O.js",
+          "raw": 5039,
+          "gz": 2476
+        },
+        {
+          "f": "_astro/printer.Hkq3nJai.js",
+          "raw": 359,
+          "gz": 263
+        },
+        {
+          "f": "_astro/dist.DPrgbPaa.js",
+          "raw": 33544,
+          "gz": 9318
+        },
+        {
+          "f": "_astro/react-dom.BUrlqAcn.js",
+          "raw": 3853,
+          "gz": 1382
+        },
+        {
+          "f": "_astro/Disclaimer.C1NirYBM.js",
+          "raw": 968,
+          "gz": 617
+        },
+        {
+          "f": "_astro/constants.DmGeGOZm.js",
+          "raw": 380,
+          "gz": 250
+        },
+        {
+          "f": "_astro/tax-brackets.BR9eHyIp.js",
+          "raw": 752,
+          "gz": 387
+        },
+        {
+          "f": "_astro/OdometerCounter.BcW6NMWu.js",
+          "raw": 1506,
+          "gz": 827
+        },
+        {
+          "f": "_astro/Footer.DDiY1TmU.js",
+          "raw": 18018,
+          "gz": 5706
+        },
+        {
+          "f": "_astro/activity.BZEZRUjE.js",
+          "raw": 274,
+          "gz": 230
+        },
+        {
+          "f": "_astro/circle-check.C6GdmqOX.js",
+          "raw": 250,
+          "gz": 217
+        },
+        {
+          "f": "_astro/refresh-cw.DmmFk8xH.js",
+          "raw": 361,
+          "gz": 252
+        },
+        {
+          "f": "_astro/Toaster.CUDxRbIE.js",
+          "raw": 595,
+          "gz": 386
+        },
+        {
+          "f": "_astro/client.DLrVKEOT.js",
+          "raw": 209191,
+          "gz": 65077
+        }
+      ]
+    },
+    {
+      "page": "/calculators/",
+      "htmlGz": 14397,
+      "cssGz": 26070,
+      "cssInlinedRaw": 2416,
+      "jsGz": 170972,
+      "jsRequests": 48,
+      "totalGz": 211439,
+      "jsFiles": [
+        {
+          "f": "_astro/ClientRouter.astro_astro_type_script_index_0_lang.C2AlSOH7.js",
+          "raw": 1634,
+          "gz": 812
+        },
+        {
+          "f": "_astro/client.CMnqbhkF.js",
+          "raw": 12358,
+          "gz": 4312
+        },
+        {
+          "f": "_astro/client.ChiJXsfH.js",
+          "raw": 24,
+          "gz": 44
+        },
+        {
+          "f": "_astro/prefetch.Ctgy7oyW.js",
+          "raw": 3122,
+          "gz": 1404
+        },
+        {
+          "f": "_astro/page.CuGKr0Yj.js",
+          "raw": 47,
+          "gz": 67
+        },
+        {
+          "f": "_astro/GlobalKeyboardShortcuts.astro_astro_type_script_index_0_lang.DAGWLJDN.js",
+          "raw": 956,
+          "gz": 520
+        },
+        {
+          "f": "_astro/Navbar.BAmQEyKl.js",
+          "raw": 25314,
+          "gz": 8170
+        },
+        {
+          "f": "_astro/react.DB-4Zxce.js",
+          "raw": 8529,
+          "gz": 3302
+        },
+        {
+          "f": "_astro/jsx-runtime.DdU6g033.js",
+          "raw": 593,
+          "gz": 398
+        },
+        {
+          "f": "_astro/react.DPfJpc42.js",
+          "raw": 123386,
+          "gz": 39689
+        },
+        {
+          "f": "_astro/AnimatePresence.Duky30po.js",
+          "raw": 4272,
+          "gz": 1961
+        },
+        {
+          "f": "_astro/animations.C5i1DvKL.js",
+          "raw": 436,
+          "gz": 184
+        },
+        {
+          "f": "_astro/createLucideIcon.BcSSw_Hq.js",
+          "raw": 6246,
+          "gz": 2533
+        },
+        {
+          "f": "_astro/utils.DOQQTBMN.js",
+          "raw": 27630,
+          "gz": 8657
+        },
+        {
+          "f": "_astro/book-open.CAqXpR2Y.js",
+          "raw": 329,
+          "gz": 250
+        },
+        {
+          "f": "_astro/calculator.CHYsHMMC.js",
+          "raw": 570,
+          "gz": 308
+        },
+        {
+          "f": "_astro/check.CgMgmewM.js",
+          "raw": 164,
+          "gz": 167
+        },
+        {
+          "f": "_astro/chevron-down.zsspu0at.js",
+          "raw": 168,
+          "gz": 165
+        },
+        {
+          "f": "_astro/map-pin.CN5AImeU.js",
+          "raw": 299,
+          "gz": 251
+        },
+        {
+          "f": "_astro/moon.DkIUIgig.js",
+          "raw": 257,
+          "gz": 227
+        },
+        {
+          "f": "_astro/search.CGVXpBqC.js",
+          "raw": 214,
+          "gz": 194
+        },
+        {
+          "f": "_astro/sparkles.C3JCpR6Z.js",
+          "raw": 552,
+          "gz": 318
+        },
+        {
+          "f": "_astro/user.BXZ3QGE8.js",
+          "raw": 236,
+          "gz": 208
+        },
+        {
+          "f": "_astro/x.BabufJsr.js",
+          "raw": 194,
+          "gz": 177
+        },
+        {
+          "f": "_astro/sound-synthesizer.D-p-Us6B.js",
+          "raw": 3416,
+          "gz": 1106
+        },
+        {
+          "f": "_astro/nav-modules.Djz_G4xk.js",
+          "raw": 3140,
+          "gz": 1327
+        },
+        {
+          "f": "_astro/TeenProfileContext.Cj1pifPp.js",
+          "raw": 1048,
+          "gz": 632
+        },
+        {
+          "f": "_astro/preload-helper.B3nfOi5I.js",
+          "raw": 1364,
+          "gz": 743
+        },
+        {
+          "f": "_astro/prefetch.Q0-hnUtA.js",
+          "raw": 8752,
+          "gz": 3353
+        },
+        {
+          "f": "_astro/CalculatorsHub.C5ob5O_Q.js",
+          "raw": 10651,
+          "gz": 4324
+        },
+        {
+          "f": "_astro/arrow-right.C4414OgF.js",
+          "raw": 205,
+          "gz": 188
+        },
+        {
+          "f": "_astro/building.Bbu9KWoj.js",
+          "raw": 603,
+          "gz": 310
+        },
+        {
+          "f": "_astro/coins.BaryVhy9.js",
+          "raw": 325,
+          "gz": 254
+        },
+        {
+          "f": "_astro/file-text.2zNDvYoh.js",
+          "raw": 425,
+          "gz": 278
+        },
+        {
+          "f": "_astro/graduation-cap.C3PJ1qc-.js",
+          "raw": 372,
+          "gz": 275
+        },
+        {
+          "f": "_astro/piggy-bank.DRBu9ksT.js",
+          "raw": 449,
+          "gz": 286
+        },
+        {
+          "f": "_astro/shield-alert.C6ppDoZP.js",
+          "raw": 393,
+          "gz": 289
+        },
+        {
+          "f": "_astro/trending-up.D9_iRsJp.js",
+          "raw": 215,
+          "gz": 196
+        },
+        {
+          "f": "_astro/zap._FToVy9v.js",
+          "raw": 313,
+          "gz": 246
+        },
+        {
+          "f": "_astro/Footer.DDiY1TmU.js",
+          "raw": 18018,
+          "gz": 5706
+        },
+        {
+          "f": "_astro/activity.BZEZRUjE.js",
+          "raw": 274,
+          "gz": 230
+        },
+        {
+          "f": "_astro/circle-check.C6GdmqOX.js",
+          "raw": 250,
+          "gz": 217
+        },
+        {
+          "f": "_astro/refresh-cw.DmmFk8xH.js",
+          "raw": 361,
+          "gz": 252
+        },
+        {
+          "f": "_astro/shield-check.DHkB8RdP.js",
+          "raw": 360,
+          "gz": 279
+        },
+        {
+          "f": "_astro/Toaster.CUDxRbIE.js",
+          "raw": 595,
+          "gz": 386
+        },
+        {
+          "f": "_astro/dist.DPrgbPaa.js",
+          "raw": 33544,
+          "gz": 9318
+        },
+        {
+          "f": "_astro/react-dom.BUrlqAcn.js",
+          "raw": 3853,
+          "gz": 1382
+        },
+        {
+          "f": "_astro/client.DLrVKEOT.js",
+          "raw": 209191,
+          "gz": 65077
+        }
+      ]
+    },
+    {
+      "page": "/404",
+      "htmlGz": 11010,
+      "cssGz": 26070,
+      "cssInlinedRaw": 2416,
+      "jsGz": 166934,
+      "jsRequests": 43,
+      "totalGz": 204014,
+      "jsFiles": [
+        {
+          "f": "_astro/ClientRouter.astro_astro_type_script_index_0_lang.C2AlSOH7.js",
+          "raw": 1634,
+          "gz": 812
+        },
+        {
+          "f": "_astro/client.CMnqbhkF.js",
+          "raw": 12358,
+          "gz": 4312
+        },
+        {
+          "f": "_astro/client.ChiJXsfH.js",
+          "raw": 24,
+          "gz": 44
+        },
+        {
+          "f": "_astro/prefetch.Ctgy7oyW.js",
+          "raw": 3122,
+          "gz": 1404
+        },
+        {
+          "f": "_astro/page.CuGKr0Yj.js",
+          "raw": 47,
+          "gz": 67
+        },
+        {
+          "f": "_astro/GlobalKeyboardShortcuts.astro_astro_type_script_index_0_lang.DAGWLJDN.js",
+          "raw": 956,
+          "gz": 520
+        },
+        {
+          "f": "_astro/Navbar.BAmQEyKl.js",
+          "raw": 25314,
+          "gz": 8170
+        },
+        {
+          "f": "_astro/react.DB-4Zxce.js",
+          "raw": 8529,
+          "gz": 3302
+        },
+        {
+          "f": "_astro/jsx-runtime.DdU6g033.js",
+          "raw": 593,
+          "gz": 398
+        },
+        {
+          "f": "_astro/react.DPfJpc42.js",
+          "raw": 123386,
+          "gz": 39689
+        },
+        {
+          "f": "_astro/AnimatePresence.Duky30po.js",
+          "raw": 4272,
+          "gz": 1961
+        },
+        {
+          "f": "_astro/animations.C5i1DvKL.js",
+          "raw": 436,
+          "gz": 184
+        },
+        {
+          "f": "_astro/createLucideIcon.BcSSw_Hq.js",
+          "raw": 6246,
+          "gz": 2533
+        },
+        {
+          "f": "_astro/utils.DOQQTBMN.js",
+          "raw": 27630,
+          "gz": 8657
+        },
+        {
+          "f": "_astro/book-open.CAqXpR2Y.js",
+          "raw": 329,
+          "gz": 250
+        },
+        {
+          "f": "_astro/calculator.CHYsHMMC.js",
+          "raw": 570,
+          "gz": 308
+        },
+        {
+          "f": "_astro/check.CgMgmewM.js",
+          "raw": 164,
+          "gz": 167
+        },
+        {
+          "f": "_astro/chevron-down.zsspu0at.js",
+          "raw": 168,
+          "gz": 165
+        },
+        {
+          "f": "_astro/map-pin.CN5AImeU.js",
+          "raw": 299,
+          "gz": 251
+        },
+        {
+          "f": "_astro/moon.DkIUIgig.js",
+          "raw": 257,
+          "gz": 227
+        },
+        {
+          "f": "_astro/search.CGVXpBqC.js",
+          "raw": 214,
+          "gz": 194
+        },
+        {
+          "f": "_astro/sparkles.C3JCpR6Z.js",
+          "raw": 552,
+          "gz": 318
+        },
+        {
+          "f": "_astro/user.BXZ3QGE8.js",
+          "raw": 236,
+          "gz": 208
+        },
+        {
+          "f": "_astro/x.BabufJsr.js",
+          "raw": 194,
+          "gz": 177
+        },
+        {
+          "f": "_astro/sound-synthesizer.D-p-Us6B.js",
+          "raw": 3416,
+          "gz": 1106
+        },
+        {
+          "f": "_astro/nav-modules.Djz_G4xk.js",
+          "raw": 3140,
+          "gz": 1327
+        },
+        {
+          "f": "_astro/TeenProfileContext.Cj1pifPp.js",
+          "raw": 1048,
+          "gz": 632
+        },
+        {
+          "f": "_astro/preload-helper.B3nfOi5I.js",
+          "raw": 1364,
+          "gz": 743
+        },
+        {
+          "f": "_astro/prefetch.Q0-hnUtA.js",
+          "raw": 8752,
+          "gz": 3353
+        },
+        {
+          "f": "_astro/NotFound.DyZLogYZ.js",
+          "raw": 5138,
+          "gz": 1698
+        },
+        {
+          "f": "_astro/compass.BaWRZj9I.js",
+          "raw": 291,
+          "gz": 236
+        },
+        {
+          "f": "_astro/house.CQzjA81_.js",
+          "raw": 338,
+          "gz": 253
+        },
+        {
+          "f": "_astro/usePageTitle.Dli3XLjJ.js",
+          "raw": 192,
+          "gz": 175
+        },
+        {
+          "f": "_astro/Footer.DDiY1TmU.js",
+          "raw": 18018,
+          "gz": 5706
+        },
+        {
+          "f": "_astro/activity.BZEZRUjE.js",
+          "raw": 274,
+          "gz": 230
+        },
+        {
+          "f": "_astro/circle-check.C6GdmqOX.js",
+          "raw": 250,
+          "gz": 217
+        },
+        {
+          "f": "_astro/refresh-cw.DmmFk8xH.js",
+          "raw": 361,
+          "gz": 252
+        },
+        {
+          "f": "_astro/shield-check.DHkB8RdP.js",
+          "raw": 360,
+          "gz": 279
+        },
+        {
+          "f": "_astro/zap._FToVy9v.js",
+          "raw": 313,
+          "gz": 246
+        },
+        {
+          "f": "_astro/Toaster.CUDxRbIE.js",
+          "raw": 595,
+          "gz": 386
+        },
+        {
+          "f": "_astro/dist.DPrgbPaa.js",
+          "raw": 33544,
+          "gz": 9318
+        },
+        {
+          "f": "_astro/react-dom.BUrlqAcn.js",
+          "raw": 3853,
+          "gz": 1382
+        },
+        {
+          "f": "_astro/client.DLrVKEOT.js",
+          "raw": 209191,
+          "gz": 65077
+        }
+      ]
+    },
+    {
+      "page": "/offset-vs-debt-recycling/",
+      "htmlGz": 223,
+      "cssGz": 0,
+      "cssInlinedRaw": 0,
+      "jsGz": 0,
+      "jsRequests": 0,
+      "totalGz": 223,
+      "jsFiles": []
+    },
+    {
+      "page": "/house-affordability/",
+      "htmlGz": 216,
+      "cssGz": 0,
+      "cssInlinedRaw": 0,
+      "jsGz": 0,
+      "jsRequests": 0,
+      "totalGz": 216,
+      "jsFiles": []
+    },
+    {
+      "page": "/investment-compare/",
+      "htmlGz": 215,
+      "cssGz": 0,
+      "cssInlinedRaw": 0,
+      "jsGz": 0,
+      "jsRequests": 0,
+      "totalGz": 215,
+      "jsFiles": []
+    },
+    {
+      "page": "/property-research/",
+      "htmlGz": 215,
+      "cssGz": 0,
+      "cssInlinedRaw": 0,
+      "jsGz": 0,
+      "jsRequests": 0,
+      "totalGz": 215,
+      "jsFiles": []
+    },
+    {
+      "page": "/wealth-property/",
+      "htmlGz": 213,
+      "cssGz": 0,
+      "cssInlinedRaw": 0,
+      "jsGz": 0,
+      "jsRequests": 0,
+      "totalGz": 213,
+      "jsFiles": []
+    },
+    {
+      "page": "/savings-rate/",
+      "htmlGz": 211,
+      "cssGz": 0,
+      "cssInlinedRaw": 0,
+      "jsGz": 0,
+      "jsRequests": 0,
+      "totalGz": 211,
+      "jsFiles": []
+    },
+    {
+      "page": "/fire/",
+      "htmlGz": 208,
+      "cssGz": 0,
+      "cssInlinedRaw": 0,
+      "jsGz": 0,
+      "jsRequests": 0,
+      "totalGz": 208,
+      "jsFiles": []
+    },
+    {
+      "page": "/tax-savings/",
+      "htmlGz": 206,
+      "cssGz": 0,
+      "cssInlinedRaw": 0,
+      "jsGz": 0,
+      "jsRequests": 0,
+      "totalGz": 206,
+      "jsFiles": []
+    },
+    {
+      "page": "/portfolio/",
+      "htmlGz": 205,
+      "cssGz": 0,
+      "cssInlinedRaw": 0,
+      "jsGz": 0,
+      "jsRequests": 0,
+      "totalGz": 205,
+      "jsFiles": []
+    }
+  ],
+  "totals": {
+    "html": 421879,
+    "css": 547470,
+    "js": 5443758,
+    "total": 6413107,
+    "requests": 1326
+  }
+}

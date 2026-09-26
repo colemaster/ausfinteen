@@ -20,6 +20,8 @@
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
+    "erasableSyntaxOnly": true,
+    "verbatimModuleSyntax": true,
     "paths": {
       "@/*": ["./src/*"]
     }

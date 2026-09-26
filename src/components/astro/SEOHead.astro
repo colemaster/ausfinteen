@@ -56,9 +56,8 @@ const siteTitle = title.includes('AusFinance') ? title : `${title} | AusFinance 
 <link rel="manifest" href="/manifest.webmanifest" />
 <link rel="apple-touch-icon" href="/favicon.svg" />
 
-<!-- DNS Prefetch for performance -->
-<link rel="dns-prefetch" href="https://fonts.googleapis.com" />
-<link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+<!-- Preconnect to origin for self-hosted font loading -->
+<link rel="preconnect" href="/" crossorigin />
 
 <!-- Schema.org JSON-LD Structured Data (WebApplication + WebSite with SearchAction) -->
 <script type="application/ld+json" set:html={JSON.stringify([
@@ -152,6 +151,15 @@ const siteTitle = title.includes('AusFinance') ? title : `${title} | AusFinance 
     applyThemeAndPreferences();
     document.addEventListener('astro:after-swap', applyThemeAndPreferences);
   })();
+</script>
+
+<!-- PWA Service Worker Registration for Instant Offline Repeat Loads -->
+<script is:inline>
+  if ('serviceWorker' in navigator && (window.location.protocol === 'https:' || window.location.hostname === 'localhost')) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('/sw.js').catch(function() {});
+    });
+  }
 </script>
 
 <!-- Astro View Transitions ClientRouter with Swap Fallback -->

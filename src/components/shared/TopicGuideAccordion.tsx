@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from '@/lib/router';
 import { Card } from '@/components/ui/Card';
-import { TopicGuide } from '@/data/mandy-topics';
+import type { TopicGuide } from '@/data/mandy-topics';
 import { WebReferenceLink } from '@/components/shared/WebReferenceLink';
 import { ActionStepBadge } from '@/components/shared/ActionStepBadge';
 import { ChevronDown, ChevronUp, Sparkles } from 'lucide-react';

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
 import { ArrowRight, CalendarDays, CheckCircle2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Link } from '@/lib/router';
-import { MANDY_MODULES } from '@/data/mandy-topics';
+import { NAV_MODULES } from '@/data/nav-modules';
 import { cn } from '@/lib/utils';
 
 interface JourneyMonth {
@@ -20,22 +20,22 @@ interface JourneyMonth {
   detail: string;
   /** The single action for the month. */
   action: string;
-  /** MANDY_MODULES id used to resolve the deep-link route. */
+  /** NAV_MODULES id used to resolve the deep-link route. */
   moduleId: string;
   /** CTA label for the deep link. */
   linkLabel: string;
 }
 
 /**
- * Resolve a MANDY_MODULES route by id. Falls back to '/' if unknown,
+ * Resolve a NAV_MODULES route by id. Falls back to '/' if unknown,
  * so links never break if module ids change.
  */
 function moduleRoute(moduleId: string): string {
-  return MANDY_MODULES.find((m) => m.id === moduleId)?.route ?? '/';
+  return NAV_MODULES.find((m) => m.id === moduleId)?.route ?? '/';
 }
 
 function moduleTitle(moduleId: string): string {
-  return MANDY_MODULES.find((m) => m.id === moduleId)?.title ?? 'Guide';
+  return NAV_MODULES.find((m) => m.id === moduleId)?.title ?? 'Guide';
 }
 
 const JOURNEY_MAP: ReadonlyArray<JourneyMonth> = [

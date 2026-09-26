@@ -28,8 +28,8 @@ import {
   YAxis,
   Tooltip,
   Cell,
-} from 'recharts';
-import { DETAILED_BRISBANE_UNIS, DetailedBrisbaneUni, UniCourse } from '@/data/brisbane-data';
+} from '@/components/charts';
+import { DETAILED_BRISBANE_UNIS, type DetailedBrisbaneUni, type UniCourse } from '@/data/brisbane-data';
 import { cn } from '@/lib/utils';
 
 const FIELD_COLORS: Record<string, string> = {

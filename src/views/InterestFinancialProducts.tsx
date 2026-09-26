@@ -1,4 +1,4 @@
-import { MANDY_MODULES } from '@/data/mandy-topics';
+import { interestProductsModule as moduleData } from '@/data/modules/interest-products';
 import { TopicGuideAccordion } from '@/components/shared/TopicGuideAccordion';
 import { TeenSavingsAccountFinder } from '@/calculators/teen-savings/TeenSavingsAccountFinder';
 import { ModulePrevNext } from '@/components/shared/ModulePrevNext';
@@ -9,7 +9,6 @@ import { usePageTitle } from '@/hooks/usePageTitle';
 
 export function InterestFinancialProducts() {
   usePageTitle('Interest & Financial Products · 5%+ HISA');
-  const moduleData = MANDY_MODULES.find(m => m.id === 'interest-products')!;
 
   return (
     <div className="space-y-8 animate-fade-in">

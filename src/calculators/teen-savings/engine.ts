@@ -76,3 +76,90 @@ export function savingsWithSimpleInterest(
     endingBalance: totalDeposited + interest,
   };
 }
+
+export interface GoalProjection {
+  targetAmount: number;
+  startingBalance: number;
+  monthlyDeposit: number;
+  annualRatePct: number;
+  monthsToReach: number;
+  weeksToReach: number;
+  totalDeposited: number;
+  interestEarned: number;
+  finalBalance: number;
+}
+
+/**
+ * Calculates the number of months required to reach a specific target savings goal
+ * with monthly compounding interest and monthly deposits.
+ */
+export function calcMonthsToReachGoal(
+  startingBalance: number,
+  targetAmount: number,
+  monthlyDeposit: number,
+  annualRatePct: number
+): GoalProjection {
+  const start = Math.max(startingBalance, 0);
+  const target = Math.max(targetAmount, start);
+  const deposit = Math.max(monthlyDeposit, 0);
+  const monthlyRate = Math.max(annualRatePct, 0) / 100 / 12;
+
+  if (start >= target) {
+    return {
+      targetAmount: target,
+      startingBalance: start,
+      monthlyDeposit: deposit,
+      annualRatePct,
+      monthsToReach: 0,
+      weeksToReach: 0,
+      totalDeposited: 0,
+      interestEarned: 0,
+      finalBalance: start,
+    };
+  }
+
+  // If savings cannot grow toward target: zero deposits and zero balance or zero rate
+  if (deposit <= 0 && (start <= 0 || monthlyRate <= 0)) {
+    return {
+      targetAmount: target,
+      startingBalance: start,
+      monthlyDeposit: 0,
+      annualRatePct,
+      monthsToReach: Infinity,
+      weeksToReach: Infinity,
+      totalDeposited: 0,
+      interestEarned: 0,
+      finalBalance: start,
+    };
+  }
+
+  let balance = start;
+  let months = 0;
+  let totalDeposits = 0;
+  let totalInterest = 0;
+  const maxMonths = 1200; // 100-year guard
+
+  while (balance < target && months < maxMonths) {
+    months++;
+    balance += deposit;
+    totalDeposits += deposit;
+    const interest = balance * monthlyRate;
+    balance += interest;
+    totalInterest += interest;
+  }
+
+  const reached = balance >= target;
+  const weeks = reached ? Math.round((months * 52) / 12) : Infinity;
+
+  return {
+    targetAmount: target,
+    startingBalance: start,
+    monthlyDeposit: deposit,
+    annualRatePct,
+    monthsToReach: reached ? months : Infinity,
+    weeksToReach: weeks,
+    totalDeposited: totalDeposits,
+    interestEarned: totalInterest,
+    finalBalance: balance,
+  };
+}

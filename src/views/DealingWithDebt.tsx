@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import { MANDY_MODULES } from '@/data/mandy-topics';
+import { dealingWithDebtModule as moduleData } from '@/data/modules/dealing-with-debt';
 import { TopicGuideAccordion } from '@/components/shared/TopicGuideAccordion';
 import { BNPLDebtTrapVisualizer } from '@/calculators/teen-debt/BNPLDebtTrapVisualizer';
 import { ModulePrevNext } from '@/components/shared/ModulePrevNext';
@@ -11,7 +11,6 @@ import { usePageTitle } from '@/hooks/usePageTitle';
 
 export function DealingWithDebt() {
   usePageTitle('Dealing With Debt · BNPL & Credit Scores');
-  const moduleData = MANDY_MODULES.find(m => m.id === 'dealing-with-debt')!;
 
   return (
     <div className="space-y-8 animate-fade-in">

@@ -69,7 +69,7 @@ export function NegativeGearing() {
       </div>
 
       <p className="text-[10px] text-[var(--muted-foreground)]">
-        Depreciation is a non-cash deduction (included in taxable loss but not in net cash position). Based on 2024-25 ATO rates.
+        Depreciation is a non-cash deduction (included in taxable loss but not in net cash position). Based on 2026-27 ATO rates.
       </p>
     </div>
   );

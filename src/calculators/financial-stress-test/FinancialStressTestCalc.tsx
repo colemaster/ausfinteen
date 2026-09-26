@@ -13,7 +13,7 @@ import {
   Gauge,
   Layers,
 } from 'lucide-react';
-import { toast } from 'sonner';
+import { toast } from '@/lib/toast';
 
 const SCENARIO_PRESETS = [
   { id: 'none', label: 'No shocks', rateRisePct: 0, jobLossMonths: 0, expenseShockPct: 0 },

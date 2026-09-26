@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from 'motion/react';
 import { useSearchParams } from '@/lib/router';
-import { MANDY_MODULES } from '@/data/mandy-topics';
+import { careersEmploymentModule as moduleData } from '@/data/modules/careers-employment';
 import { TopicGuideAccordion } from '@/components/shared/TopicGuideAccordion';
 import { PayslipAnalyzer } from '@/calculators/teen-job/PayslipAnalyzer';
 import { PenaltyShiftCalculatorWidget } from '@/components/career/PenaltyShiftCalculatorWidget';
@@ -38,7 +38,6 @@ function readTab(searchParams: URLSearchParams): TabId {
 
 export function CareersEmployment() {
   usePageTitle('Careers & Employment · First Job Pay');
-  const moduleData = MANDY_MODULES.find(m => m.id === 'careers-employment')!;
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab = readTab(searchParams);
 

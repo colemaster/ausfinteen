@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import { MANDY_MODULES } from '@/data/mandy-topics';
+import { investingSharesModule as moduleData } from '@/data/modules/investing-shares';
 import { TopicGuideAccordion } from '@/components/shared/TopicGuideAccordion';
 import { TeenCompoundGrowthCalc } from '@/calculators/teen-investing/TeenCompoundGrowthCalc';
 import { ASXETFExplorer } from '@/calculators/teen-investing/ASXETFExplorer';
@@ -32,7 +32,6 @@ const INVESTING_WEB_SOURCES = [
 
 export function InvestingShares() {
   usePageTitle('Investing & Shares · ASX ETFs');
-  const moduleData = MANDY_MODULES.find(m => m.id === 'investing-shares')!;
 
   return (
     <div className="space-y-8 animate-fade-in">

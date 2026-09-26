@@ -52,7 +52,7 @@ export function CGTEngine() {
         <PrintResultButton />
       </div>
 
-      <div className="max-w-5xl mx-auto space-y-6">
+      <div className="max-w-5xl mx-auto space-y-6 content-auto">
         <TopicGuideAccordion
           topics={CGT_TOPICS}
           title="Australian Capital Gains Tax & ITAA 1997 Rules Guide"

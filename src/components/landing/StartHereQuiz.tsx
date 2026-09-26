@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 import { Link } from '@/lib/router';
 import { useTeenProfile } from '@/context/TeenProfileContext';
-import { MANDY_MODULES } from '@/data/mandy-topics';
+import { NAV_MODULES } from '@/data/nav-modules';
 import { cn } from '@/lib/utils';
 
 /** Q1 — teen age band. `18+` maps to the age-18 preset. */
@@ -178,7 +178,7 @@ export function StartHereQuiz() {
   const recommendation = useMemo(() => {
     if (age === null || goal === null || situation === null) return null;
     const decision = resolveDecision(goal, situation, age);
-    const module = MANDY_MODULES.find(m => m.id === decision.moduleId) ?? MANDY_MODULES[0];
+    const module = NAV_MODULES.find(m => m.id === decision.moduleId) ?? NAV_MODULES[0];
     if (!module) return null;
     return { module, reason: decision.reason };
   }, [age, goal, situation]);

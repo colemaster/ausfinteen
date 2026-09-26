@@ -1,79 +1,11 @@
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { ArrowRight, ChevronLeft, ChevronRight, Sparkles } from 'lucide-react';
 import { Link } from '@/lib/router';
-import { MANDY_MODULES, type MandyModule, type TopicGuide } from '@/data/mandy-topics';
+import { RESOLVED_SPOTLIGHTS as SPOTLIGHTS, type ResolvedSpotlight } from '@/data/spotlight-topics';
+import type { TopicGuide } from '@/data/modules/types';
 
 /** 6s auto-rotation interval. */
 const ROTATE_INTERVAL_MS = 6000;
-
-/** High-value topic ids, in display order. */
-const SPOTLIGHT_TOPIC_IDS: readonly string[] = [
-  'tg-13', // $1k standard deduction
-  'sr-13', // Payday Super
-  'bq-13', // QTAC playbook
-  'is-14', // CGT discount ends 2027
-  'ss-14', // Up 5.35%
-  'ce-13', // Cleaning Award, no junior rates
-];
-
-/**
- * Fallback module per spotlight slot, used when the topic id is missing
- * from the dataset — resolves to the first topic of that module.
- */
-const SPOTLIGHT_FALLBACK_MODULE_IDS: readonly string[] = [
-  'tax-guide',
-  'super-retirement',
-  'brisbane-qld',
-  'investing-shares',
-  'spending-saving',
-  'careers-employment',
-];
-
-interface ResolvedSpotlight {
-  topic: TopicGuide;
-  route: string;
-  moduleLabel: string;
-  moduleEmoji: string;
-}
-
-/** Find a topic anywhere in MANDY_MODULES by id. */
-function findTopicById(id: string): TopicGuide | undefined {
-  for (const mod of MANDY_MODULES) {
-    const found: TopicGuide | undefined = mod.topics.find((t: TopicGuide): boolean => t.id === id);
-    if (found !== undefined) return found;
-  }
-  return undefined;
-}
-
-/** Find the parent module for a topic (by its moduleId). */
-function findModuleForTopic(topic: TopicGuide): MandyModule | undefined {
-  return MANDY_MODULES.find((m: MandyModule): boolean => m.id === topic.moduleId);
-}
-
-/**
- * Resolve the 6 spotlight entries. Missing ids fall back to the first
- * topic of the corresponding fallback module; slots with no data are dropped.
- */
-function resolveSpotlights(): readonly ResolvedSpotlight[] {
-  const resolved: ResolvedSpotlight[] = [];
-  SPOTLIGHT_TOPIC_IDS.forEach((id: string, index: number): void => {
-    const topic: TopicGuide | undefined =
-      findTopicById(id) ??
-      MANDY_MODULES.find((m: MandyModule): boolean => m.id === SPOTLIGHT_FALLBACK_MODULE_IDS[index])
-        ?.topics[0];
-    if (topic === undefined) return;
-    const parent: MandyModule | undefined = findModuleForTopic(topic);
-    resolved.push({
-      topic,
-      route: parent?.route ?? '/',
-      moduleLabel: parent?.title ?? topic.moduleTitle,
-      moduleEmoji: parent?.emoji ?? '',
-    });
-  });
-  return resolved;
-}
-
-const SPOTLIGHTS: readonly ResolvedSpotlight[] = resolveSpotlights();
 
 /** Observe the prefers-reduced-motion media query (autorotate stays off when set). */
 function usePrefersReducedMotion(): boolean {

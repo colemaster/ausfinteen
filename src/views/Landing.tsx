@@ -1,16 +1,13 @@
-import { useEffect, useRef, useState } from 'react';
+import { lazy, Suspense } from 'react';
 import { Link } from '@/lib/router';
-import { MANDY_MODULES } from '@/data/mandy-topics';
+import { NAV_MODULES } from '@/data/nav-modules';
 import { Badge } from '@/components/ui/Badge';
 import { HolographicTiltCard } from '@/components/ui/HolographicTiltCard';
 import { SmartImage } from '@/components/ui/SmartImage';
 import { ScenarioSplitterWidget } from '@/components/ui/ScenarioSplitterWidget';
 import {
-  Sparkles,
   ArrowRight,
   Zap,
-  ChevronDown,
-  Check,
   GraduationCap,
   Coins,
   FileText,
@@ -32,25 +29,31 @@ import { QLD_STAMP_DUTY } from '@/data/stamp-duty-tables';
 import { TickerMarquee, type TickerItem } from '@/components/ui/TickerMarquee';
 import { usePageTitle } from '@/hooks/usePageTitle';
 import { sound } from '@/lib/sound-synthesizer';
+import { prefetchRoute } from '@/utils/prefetch';
+
+// Above-the-fold components — eagerly loaded for instant FCP/LCP
 import { Hero15yo } from '@/components/landing/Hero15yo';
 import { ParallaxHeroArt } from '@/components/landing/ParallaxHeroArt';
 import { LiveMoneyCounters } from '@/components/landing/LiveMoneyCounters';
 import { StatsBand } from '@/components/landing/StatsBand';
-import { StartHereQuiz } from '@/components/landing/StartHereQuiz';
 import { AgeJourneyRail } from '@/components/landing/AgeJourneyRail';
 import { FirstPaycheckWidget } from '@/components/landing/FirstPaycheckWidget';
-import { HisaShowdown } from '@/components/landing/HisaShowdown';
-import { PenaltyPayBooster } from '@/components/landing/PenaltyPayBooster';
-import { FiftyCentWins } from '@/components/landing/FiftyCentWins';
-import { CompoundRocket } from '@/components/landing/CompoundRocket';
-import { SchoolSpotlight } from '@/components/landing/SchoolSpotlight';
-import { UniPathways } from '@/components/landing/UniPathways';
-import { JourneyMap } from '@/components/landing/JourneyMap';
-import { TopicSpotlight } from '@/components/landing/TopicSpotlight';
-import { MoneyMyths } from '@/components/landing/MoneyMyths';
-import { ScamShield } from '@/components/landing/ScamShield';
-import { TrustStrip } from '@/components/landing/TrustStrip';
-import { SeoFaq } from '@/components/landing/SeoFaq';
+
+// Below-the-fold components — lazy-loaded for ~300+ KB savings on initial bundle
+const StartHereQuiz       = lazy(() => import('@/components/landing/StartHereQuiz').then(m => ({ default: m.StartHereQuiz })));
+const HisaShowdown        = lazy(() => import('@/components/landing/HisaShowdown').then(m => ({ default: m.HisaShowdown })));
+const PenaltyPayBooster   = lazy(() => import('@/components/landing/PenaltyPayBooster').then(m => ({ default: m.PenaltyPayBooster })));
+const FiftyCentWins       = lazy(() => import('@/components/landing/FiftyCentWins').then(m => ({ default: m.FiftyCentWins })));
+const CompoundRocket      = lazy(() => import('@/components/landing/CompoundRocket').then(m => ({ default: m.CompoundRocket })));
+const SchoolSpotlight     = lazy(() => import('@/components/landing/SchoolSpotlight').then(m => ({ default: m.SchoolSpotlight })));
+const UniPathways         = lazy(() => import('@/components/landing/UniPathways').then(m => ({ default: m.UniPathways })));
+const JourneyMap          = lazy(() => import('@/components/landing/JourneyMap').then(m => ({ default: m.JourneyMap })));
+const TopicSpotlight      = lazy(() => import('@/components/landing/TopicSpotlight').then(m => ({ default: m.TopicSpotlight })));
+const WhatWillILearnPreview = lazy(() => import('@/components/landing/WhatWillILearnPreview').then(m => ({ default: m.WhatWillILearnPreview })));
+const MoneyMyths          = lazy(() => import('@/components/landing/MoneyMyths').then(m => ({ default: m.MoneyMyths })));
+const ScamShield          = lazy(() => import('@/components/landing/ScamShield').then(m => ({ default: m.ScamShield })));
+const TrustStrip          = lazy(() => import('@/components/landing/TrustStrip').then(m => ({ default: m.TrustStrip })));
+const SeoFaq              = lazy(() => import('@/components/landing/SeoFaq').then(m => ({ default: m.SeoFaq })));
 
 // ─── Landing enhancements: module categories, fast paths, featured calculators ───
 
@@ -190,108 +193,6 @@ const FEATURED_CALCULATORS: ReadonlyArray<{
   },
 ];
 
-function ModuleSelector({ value, onChange }: { value: string; onChange: (id: string) => void }) {
-  const [open, setOpen] = useState(false);
-  const [activeIdx, setActiveIdx] = useState(0);
-  const wrapRef = useRef<HTMLDivElement>(null);
-  const listRef = useRef<HTMLDivElement>(null);
-
-  const selected = MANDY_MODULES.find(m => m.id === value) ?? MANDY_MODULES[1];
-
-  useEffect(() => {
-    const onPointerDown = (e: PointerEvent) => {
-      if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) setOpen(false);
-    };
-    document.addEventListener('pointerdown', onPointerDown);
-    return () => document.removeEventListener('pointerdown', onPointerDown);
-  }, []);
-
-  useEffect(() => {
-    if (!open) return;
-    listRef.current?.querySelector<HTMLButtonElement>(`[data-idx="${activeIdx}"]`)?.scrollIntoView({ block: 'nearest' });
-  }, [activeIdx, open]);
-
-  const select = (id: string) => {
-    onChange(id);
-    setOpen(false);
-  };
-
-  const onKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
-    if (!open) {
-      if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        setActiveIdx(Math.max(0, MANDY_MODULES.findIndex(m => m.id === value)));
-        setOpen(true);
-      }
-      return;
-    }
-    if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      setActiveIdx(i => Math.min(i + 1, MANDY_MODULES.length - 1));
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      setActiveIdx(i => Math.max(i - 1, 0));
-    } else if (e.key === 'Enter') {
-      e.preventDefault();
-      const m = MANDY_MODULES[activeIdx];
-      if (m) select(m.id);
-    } else if (e.key === 'Escape') {
-      setOpen(false);
-    }
-  };
-
-  return (
-    <div ref={wrapRef} className="relative w-full sm:w-auto">
-      <button
-        type="button"
-        onClick={() => setOpen(o => !o)}
-        onKeyDown={onKeyDown}
-        aria-haspopup="listbox"
-        aria-expanded={open}
-        aria-label="Choose a module"
-        className="flex items-center gap-2 w-full sm:w-auto px-3.5 py-2.5 rounded-xl bg-muted/60 border border-border hover:border-primary/40 hover:bg-muted transition-all"
-      >
-        <span className="text-lg leading-none">{selected.emoji}</span>
-        <span className="text-xs font-bold text-foreground truncate max-w-44">{selected.title}</span>
-        <ChevronDown className={`w-3.5 h-3.5 text-muted-foreground shrink-0 transition-transform ${open ? 'rotate-180' : ''}`} />
-      </button>
-
-      {open && (
-        <div
-          ref={listRef}
-          role="listbox"
-          aria-label="Modules"
-          className="absolute left-0 sm:left-auto sm:right-0 top-full mt-2 w-full sm:w-80 max-h-80 overflow-y-auto rounded-2xl border border-border bg-card/95 backdrop-blur-xl shadow-2xl shadow-black/5 dark:shadow-black/40 z-50 p-1.5"
-        >
-          {MANDY_MODULES.map((m, i) => (
-            <button
-              key={m.id}
-              type="button"
-              role="option"
-              data-idx={i}
-              aria-selected={m.id === value}
-              onClick={() => select(m.id)}
-              onMouseEnter={() => setActiveIdx(i)}
-              className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-left transition-colors ${
-                i === activeIdx ? 'bg-primary/10' : ''
-              } ${m.id === value ? 'bg-primary/5' : ''}`}
-            >
-              <span className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/15 via-purple-500/10 to-amber-500/15 border border-primary/10 flex items-center justify-center text-base shrink-0">
-                {m.emoji}
-              </span>
-              <span className="flex-1 min-w-0">
-                <span className="block text-xs font-bold text-foreground truncate">{m.title}</span>
-                <span className="block text-[10px] text-muted-foreground truncate">{m.topics.length} topics</span>
-              </span>
-              {m.id === value && <Check className="w-3.5 h-3.5 text-primary shrink-0" />}
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
 function CategoryChips({ value, onChange }: { value: string; onChange: (id: string) => void }) {
   return (
     <LayoutGroup id="landing-category-chips">
@@ -313,17 +214,15 @@ function CategoryChips({ value, onChange }: { value: string; onChange: (id: stri
                 onChange(filter.id);
               }}
               className={cn(
-                'relative shrink-0 px-3 py-1.5 rounded-full text-xs font-bold border transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60',
-                active
-                  ? 'border-primary/50 text-primary'
-                  : 'border-border text-muted-foreground hover:text-foreground hover:border-primary/30'
+                'relative px-3.5 py-1.5 rounded-xl text-xs font-bold transition-colors whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60',
+                active ? 'text-primary-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-muted'
               )}
             >
               {active && (
                 <motion.span
-                  layoutId="category-pill"
-                  className="absolute inset-0 rounded-full bg-primary/10"
-                  transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                  layoutId="activeCategoryChip"
+                  className="absolute inset-0 rounded-xl bg-primary shadow-md shadow-primary/20"
+                  transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                 />
               )}
               <span className="relative z-10">{filter.label}</span>
@@ -339,30 +238,21 @@ function CompactToggle({ compact, onChange }: { compact: boolean; onChange: (v: 
   return (
     <button
       type="button"
-      role="switch"
-      aria-checked={compact}
-      aria-label="Compact view"
-      title="Compact view — fewer, tighter cards (shareable via ?compact=1)"
       onClick={() => {
         sound.playClick();
         onChange(!compact);
       }}
-      className="inline-flex items-center gap-2 text-[11px] font-bold text-muted-foreground hover:text-foreground transition-colors cursor-pointer shrink-0"
+      aria-label={compact ? 'Switch to detailed card view' : 'Switch to compact grid view'}
+      className={cn(
+        'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition-all',
+        compact
+          ? 'bg-primary/10 text-primary border-primary/30'
+          : 'bg-card border-border text-muted-foreground hover:text-foreground hover:bg-muted'
+      )}
     >
       <LayoutGrid className="w-3.5 h-3.5" />
-      <span>Compact view</span>
-      <span
-        className={cn(
-          'relative inline-flex h-4 w-7 items-center rounded-full p-0.5 transition-colors',
-          compact ? 'bg-primary' : 'bg-muted border border-border'
-        )}
-      >
-        <span
-          className={cn(
-            'inline-block h-3 w-3 rounded-full bg-white shadow-sm transition-transform duration-200',
-            compact ? 'translate-x-3' : 'translate-x-0'
-          )}
-        />
+      <span className="hidden sm:inline">
+        {compact ? 'Compact View' : 'Detailed View'}
       </span>
     </button>
   );
@@ -371,13 +261,11 @@ function CompactToggle({ compact, onChange }: { compact: boolean; onChange: (v: 
 export function Landing() {
   usePageTitle('AusFinance Suite — 2030 Australian Personal Finance Intelligence & Calculators');
   const [{ cat, compact }, setParams] = useUrlParams<{ cat: string; compact: boolean }>({ cat: 'all', compact: false });
-  const [selectedModuleId, setSelectedModuleId] = useState<string>('careers-employment');
-  const selectedModule = MANDY_MODULES.find(m => m.id === selectedModuleId) || MANDY_MODULES[1];
 
   const filteredModules =
     cat === 'all'
-      ? MANDY_MODULES
-      : MANDY_MODULES.filter(m => MODULE_CATEGORIES[m.id]?.includes(cat as ModuleCategory) ?? false);
+      ? NAV_MODULES
+      : NAV_MODULES.filter(m => MODULE_CATEGORIES[m.id]?.includes(cat as ModuleCategory) ?? false);
 
   const tickerItems: TickerItem[] = [
     { label: 'HELP 2026-27 Threshold', value: '$69,528' },
@@ -408,7 +296,7 @@ export function Landing() {
 
       {/* Start-here recommender */}
       <section className="calculator-section" aria-label="Find your starting point">
-        <StartHereQuiz />
+        <Suspense fallback={null}><StartHereQuiz /></Suspense>
       </section>
 
       {/* 15→18 journey rail */}
@@ -444,6 +332,7 @@ export function Landing() {
             <motion.div key={fp.id} variants={fadeInUp}>
               <Link
                 to={fp.route}
+                onMouseEnter={() => prefetchRoute(fp.route)}
                 onClick={() => sound.playClick()}
                 className="group block h-full p-4 rounded-2xl border border-border bg-card hover:border-primary/40 hover:shadow-xl hover:shadow-primary/10 hover:-translate-y-0.5 transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
               >
@@ -481,6 +370,7 @@ export function Landing() {
           </div>
           <Link
             to="/calculators"
+            onMouseEnter={() => prefetchRoute('/calculators')}
             onClick={() => sound.playClick()}
             className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline shrink-0 justify-center"
           >
@@ -500,6 +390,7 @@ export function Landing() {
             <motion.div key={calc.id} variants={fadeInUp} className="h-full">
               <Link
                 to={calc.route}
+                onMouseEnter={() => prefetchRoute(calc.route)}
                 onClick={() => sound.playClick()}
                 className="block h-full rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
               >
@@ -533,19 +424,19 @@ export function Landing() {
 
       {/* Youth money widgets: HISA showdown, penalty pay, 50c fares, compounding */}
       <section className="calculator-section" aria-label="Youth savings and pay boosters">
-        <HisaShowdown />
+        <Suspense fallback={null}><HisaShowdown /></Suspense>
       </section>
 
       <section className="calculator-section" aria-label="Weekend penalty pay booster">
-        <PenaltyPayBooster />
+        <Suspense fallback={null}><PenaltyPayBooster /></Suspense>
       </section>
 
       <section className="calculator-section" aria-label="50 cent fare savings">
-        <FiftyCentWins />
+        <Suspense fallback={null}><FiftyCentWins /></Suspense>
       </section>
 
       <section className="calculator-section" aria-label="Compound growth from 15">
-        <CompoundRocket />
+        <Suspense fallback={null}><CompoundRocket /></Suspense>
       </section>
 
       {/* 2026 Top Calculators Bento Showcase */}
@@ -565,6 +456,7 @@ export function Landing() {
 
           <Link
             to="/calculators"
+            onMouseEnter={() => prefetchRoute('/calculators')}
             onClick={() => sound.playClick()}
             className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline shrink-0"
           >
@@ -632,6 +524,7 @@ export function Landing() {
             <Link
               key={tool.route}
               to={tool.route}
+              onMouseEnter={() => prefetchRoute(tool.route)}
               onClick={() => sound.playClick()}
               className="group p-5 rounded-3xl bg-card border border-border hover:border-primary/40 hover:shadow-xl transition-all duration-300 flex flex-col justify-between space-y-3 hover:-translate-y-1"
             >
@@ -681,19 +574,19 @@ export function Landing() {
 
       {/* Schools, uni pathways, year map, topic spotlight */}
       <section className="calculator-section" aria-label="Find your high school">
-        <SchoolSpotlight />
+        <Suspense fallback={null}><SchoolSpotlight /></Suspense>
       </section>
 
       <section className="calculator-section" aria-label="University pathways and QTAC dates">
-        <UniPathways />
+        <Suspense fallback={null}><UniPathways /></Suspense>
       </section>
 
       <section className="calculator-section" aria-label="Your money year map">
-        <JourneyMap />
+        <Suspense fallback={null}><JourneyMap /></Suspense>
       </section>
 
       <section className="calculator-section" aria-label="Featured money guides">
-        <TopicSpotlight />
+        <Suspense fallback={null}><TopicSpotlight /></Suspense>
       </section>
 
       {/* 11 Mandy Money Modules Grid */}
@@ -720,7 +613,7 @@ export function Landing() {
             <CategoryChips value={cat} onChange={id => setParams({ cat: id })} />
           </div>
           <p className="text-[11px] text-muted-foreground text-center sm:text-left" aria-live="polite">
-            Showing {filteredModules.length} of {MANDY_MODULES.length} modules
+            Showing {filteredModules.length} of {NAV_MODULES.length} modules
             {cat !== 'all' && ' — filtered by category'} · filter is shareable via ?cat= URL param
           </p>
         </div>
@@ -740,6 +633,7 @@ export function Landing() {
             <motion.div key={module.id} variants={fadeInUp}>
               <Link
                 to={module.route}
+                onMouseEnter={() => prefetchRoute(module.route)}
                 onClick={() => sound.playClick()}
                 className="block group rounded-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2"
               >
@@ -771,7 +665,7 @@ export function Landing() {
                       )}
                     </div>
                     <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-muted text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary transition-colors">
-                      {module.topics.length} topics
+                      {module.topicsCount} topics
                     </span>
                   </div>
                   <h3 className={cn('font-bold text-foreground group-hover:text-primary transition-colors', compact ? 'text-base' : 'text-lg')}>
@@ -791,56 +685,24 @@ export function Landing() {
         </motion.div>
       </section>
 
-      {/* "What Will I Learn?" Topic Selector */}
-      <section className="p-6 sm:p-8 rounded-3xl bg-card border border-border space-y-6 calculator-section">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-4">
-          <div>
-            <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-amber-500" />
-              <span>What Will I Learn Preview</span>
-            </h2>
-            <p className="text-xs text-muted-foreground">
-              Select a module to see exact real-world questions answered inside!
-            </p>
-          </div>
-
-          <ModuleSelector value={selectedModuleId} onChange={setSelectedModuleId} />
-        </div>
-
-        <div className={cn('grid grid-cols-1 gap-3', compact ? 'md:grid-cols-3' : 'md:grid-cols-2')}>
-          {selectedModule.topics.map(t => (
-            <div key={t.id} className="p-3.5 rounded-xl bg-muted/50 border border-border/60 text-xs space-y-1">
-              <span className="font-bold text-foreground block">{t.question}</span>
-              <p className="text-muted-foreground line-clamp-2">{t.answer}</p>
-            </div>
-          ))}
-        </div>
-
-        <div className="pt-2 text-center">
-          <Link
-            to={selectedModule.route}
-            onClick={() => sound.playClick()}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground font-bold text-xs hover:opacity-90 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-0.5 transition-all"
-          >
-            <span>Open Full {selectedModule.title} Module</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
-        </div>
-      </section>
+      {/* "What Will I Learn?" Topic Selector — Lazy Loaded */}
+      <Suspense fallback={null}>
+        <WhatWillILearnPreview compact={compact} />
+      </Suspense>
 
       {/* Money myths, scam shield, trust, FAQ */}
       <section className="calculator-section" aria-label="Money myths debunked">
-        <MoneyMyths />
+        <Suspense fallback={null}><MoneyMyths /></Suspense>
       </section>
 
       <section className="calculator-section" aria-label="Scam defence quiz">
-        <ScamShield />
+        <Suspense fallback={null}><ScamShield /></Suspense>
       </section>
 
-      <TrustStrip />
+      <Suspense fallback={null}><TrustStrip /></Suspense>
 
       <section className="calculator-section" aria-label="Frequently asked questions">
-        <SeoFaq />
+        <Suspense fallback={null}><SeoFaq /></Suspense>
       </section>
     </div>
   );

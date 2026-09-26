@@ -139,7 +139,7 @@ export function SuperSalarySacrifice({ grossSalary, onGrossSalaryChange }: Props
           </tbody>
         </table>
       </div>
-      <p className="text-[10px] text-[var(--muted-foreground)]">Based on 2024-25 ATO rates. Concessional cap: {formatCurrency(SUPER_RULES.concessionalCap)}.</p>
+      <p className="text-[10px] text-[var(--muted-foreground)]">Based on 2026-27 ATO rates. Concessional cap: {formatCurrency(SUPER_RULES.concessionalCap)}.</p>
     </div>
   );
 }

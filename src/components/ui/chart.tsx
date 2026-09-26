@@ -1,5 +1,5 @@
 import * as React from "react";
-import * as RechartsPrimitive from "recharts";
+import { Legend, ResponsiveContainer, Tooltip } from "@/components/charts";
 import { cn } from "@/lib/utils";
 import { formatCompact, formatCurrency } from "@/utils/formatters";
 
@@ -60,7 +60,7 @@ const ChartContainer = React.forwardRef<
     config: ChartConfig;
     moneyFormat?: MoneyFormat;
     children: React.ComponentProps<
-      typeof RechartsPrimitive.ResponsiveContainer
+      typeof ResponsiveContainer
     >["children"];
   }
 >(({ id, className, children, config, moneyFormat, ...props }, ref) => {
@@ -91,9 +91,9 @@ const ChartContainer = React.forwardRef<
         {...props}
       >
         <ChartStyle id={chartId} config={config} />
-        <RechartsPrimitive.ResponsiveContainer>
+        <ResponsiveContainer>
           {children}
-        </RechartsPrimitive.ResponsiveContainer>
+        </ResponsiveContainer>
       </div>
     </ChartContext.Provider>
   );
@@ -132,7 +132,7 @@ ${colorConfig
   );
 };
 
-const ChartTooltip = RechartsPrimitive.Tooltip;
+const ChartTooltip = Tooltip;
 
 const ChartTooltipContent = React.forwardRef<
   HTMLDivElement,
@@ -300,7 +300,7 @@ const ChartTooltipContent = React.forwardRef<
 );
 ChartTooltipContent.displayName = "ChartTooltipContent";
 
-const ChartLegend = RechartsPrimitive.Legend;
+const ChartLegend = Legend;
 
 const ChartLegendContent = React.forwardRef<
   HTMLDivElement,

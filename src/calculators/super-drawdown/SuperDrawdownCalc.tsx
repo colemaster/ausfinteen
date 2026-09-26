@@ -18,7 +18,7 @@ import {
   X,
   AlertTriangle,
 } from 'lucide-react';
-import { toast } from 'sonner';
+import { toast } from '@/lib/toast';
 
 const MONTE_CARLO_SIMS = 40;
 const MONTE_CARLO_VOLATILITY = 0.12;

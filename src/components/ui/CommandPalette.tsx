@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Command } from 'cmdk';
 import { useNavigate } from '@/lib/router';
-import { MANDY_MODULES } from '@/data/mandy-topics';
+import { NAV_MODULES } from '@/data/nav-modules';
 import { Calculator, User, FileText, ShieldAlert, MessageSquare, Award } from 'lucide-react';
 
 export function CommandPalette() {
@@ -100,7 +100,7 @@ export function CommandPalette() {
           </Command.Group>
 
           <Command.Group heading="Real-World Money Modules" className="px-2 py-1.5 text-xs font-bold text-muted-foreground">
-            {MANDY_MODULES.map((module) => (
+            {NAV_MODULES.map((module) => (
               <Command.Item
                 key={module.id}
                 onSelect={() => runCommand(() => navigate(module.route))}

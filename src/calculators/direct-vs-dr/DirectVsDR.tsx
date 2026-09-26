@@ -25,7 +25,7 @@ import {
   Legend,
   ResponsiveContainer,
   ReferenceLine,
-} from 'recharts';
+} from '@/components/charts';
 import { usePortfolio } from '../../context/PortfolioContext';
 
 const DEFAULTS = {

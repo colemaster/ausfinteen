@@ -52,7 +52,7 @@ export function SuperDrawdown() {
         <PrintResultButton />
       </div>
 
-      <div className="max-w-5xl mx-auto space-y-6">
+      <div className="max-w-5xl mx-auto space-y-6 content-auto">
         <TopicGuideAccordion
           topics={SUPER_DRAWDOWN_TOPICS}
           title="Retirement Phase & Centrelink Means Test Masterclass"

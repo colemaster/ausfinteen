@@ -29,22 +29,36 @@ export function getJuniorRatePct(age: number, awardName: AwardName): JuniorRateL
   const last = bands[bands.length - 1];
   if (!first || !last) return { pct: 1, label: '100% (Adult Rate)' };
 
-  if (age < 16) return { pct: first.pct, label: first.label };
+  // Dynamically check youngest band threshold (e.g. "Under 16", "Under 17")
+  const underMatch = first.age.match(/^Under\s+(\d+)/i);
+  const minThreshold = underMatch ? Number(underMatch[1]) : 16;
+  if (age < minThreshold) return { pct: first.pct, label: first.label };
   if (age >= 21) return { pct: last.pct, label: last.label };
 
+  // Check for range match like "16–20 years" or "16-20 years"
+  const rangeMatch = bands.find(b => {
+    const rm = b.age.match(/^(\d+)[\u2013\-](\d+)\s+years?/i);
+    if (!rm) return false;
+    const start = Number(rm[1]);
+    const end = Number(rm[2]);
+    return age >= start && age <= end;
+  });
+  if (rangeMatch) return { pct: rangeMatch.pct, label: rangeMatch.label };
+
+  // Direct match for single age: "16 years", "20+ years", "19+ years"
   const match = bands.find(b => {
-    const m = b.age.match(/^(\d+) years?/);
+    const m = b.age.match(/^(\d+)(?:\+|\s+years|\+\s*years)/i);
     return m ? Number(m[1]) === age : false;
   });
   if (match) return { pct: match.pct, label: match.label };
 
-  // Fallback: highest band whose age is at or below the worker's age (handles “20 years (≤6 months)” variants)
+  // Fallback: highest band whose starting age is at or below the worker's age (handles “20 years (≤6 months)” variants)
   // For duplicate age entries (e.g. two 20-year bands for ≤6mo vs >6mo), return the first (lowest tenure) rate.
   let fallback: JuniorRateLookup | null = null;
   let fallbackAge = -1;
   for (const band of bands) {
-    if (/^Under/i.test(band.age)) continue; // handled by early return for <16
-    const m = band.age.match(/^(\d+) years?/);
+    if (/^Under/i.test(band.age)) continue;
+    const m = band.age.match(/^(\d+)/);
     if (!m) continue;
     const num = Number(m[1]);
     if (num <= age && num > fallbackAge) {

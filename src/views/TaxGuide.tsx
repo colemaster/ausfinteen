@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import { MANDY_MODULES } from '@/data/mandy-topics';
+import { taxGuideModule as moduleData } from '@/data/modules/tax-guide';
 import { TopicGuideAccordion } from '@/components/shared/TopicGuideAccordion';
 import { TeenTaxCalculator } from '@/calculators/teen-tax/TeenTaxCalculator';
 import { FirstTaxReturnGuide } from '@/components/teen/FirstTaxReturnGuide';
@@ -12,7 +12,6 @@ import { usePageTitle } from '@/hooks/usePageTitle';
 
 export function TaxGuide() {
   usePageTitle('Tax & Tax Returns · $18.2k Tax-Free');
-  const moduleData = MANDY_MODULES.find(m => m.id === 'tax-guide')!;
 
   return (
     <div className="space-y-8 animate-fade-in">

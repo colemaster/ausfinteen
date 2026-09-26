@@ -52,7 +52,7 @@ export function FinancialStressTest() {
         <PrintResultButton />
       </div>
 
-      <div className="max-w-5xl mx-auto space-y-6">
+      <div className="max-w-5xl mx-auto space-y-6 content-auto">
         <TopicGuideAccordion
           topics={STRESS_TEST_TOPICS}
           title="Emergency Runway & Macroeconomic Stress Resilience Guide"

@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import { MANDY_MODULES } from '@/data/mandy-topics';
+import { superRetirementModule as moduleData } from '@/data/modules/super-retirement';
 import { TopicGuideAccordion } from '@/components/shared/TopicGuideAccordion';
 import { TeenSuperCalculator } from '@/calculators/teen-super/TeenSuperCalculator';
 import { ModulePrevNext } from '@/components/shared/ModulePrevNext';
@@ -11,7 +11,6 @@ import { usePageTitle } from '@/hooks/usePageTitle';
 
 export function SuperRetirement() {
   usePageTitle('Super & Retirement');
-  const moduleData = MANDY_MODULES.find(m => m.id === 'super-retirement')!;
 
   return (
     <div className="space-y-8 animate-fade-in">

@@ -1,4 +1,4 @@
-import { MANDY_MODULES } from '@/data/mandy-topics';
+import { moneyAndYouModule as moduleData } from '@/data/modules/money-and-you';
 import { TopicGuideAccordion } from '@/components/shared/TopicGuideAccordion';
 import { FifteenYearOldRoadmap } from '@/components/teen/FifteenYearOldRoadmap';
 import { MoneyMindsetQuiz } from '@/components/shared/MoneyMindsetQuiz';
@@ -9,7 +9,6 @@ import { usePageTitle } from '@/hooks/usePageTitle';
 
 export function MoneyAndYou() {
   usePageTitle('Money & You · Mindset & Identity');
-  const moduleData = MANDY_MODULES.find(m => m.id === 'money-and-you')!;
 
   return (
     <div className="space-y-8 animate-fade-in pb-12">

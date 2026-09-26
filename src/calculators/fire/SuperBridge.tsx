@@ -7,7 +7,7 @@ import { calculateSuperBridge, PRESERVATION_AGE, netSuperContribution } from './
 import { formatCurrency, formatCompact } from '../../utils/formatters';
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, ReferenceLine,
-} from 'recharts';
+} from '@/components/charts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent } from '@/components/ui/chart';
 import { superBridgeConfig } from '@/lib/chart-configs';
 

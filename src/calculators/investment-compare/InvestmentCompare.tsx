@@ -12,7 +12,7 @@ import { runAllScenarios, SCENARIO_COLORS, applyCrashToSeries, feeDrag, cgtAdjus
 import { formatCurrency, formatCompact, formatPct } from '../../utils/formatters';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid,
-} from 'recharts';
+} from '@/components/charts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent } from '@/components/ui/chart';
 import { buildInvestmentCompareConfig } from '@/lib/chart-configs';
 import { usePortfolio } from '../../context/PortfolioContext';

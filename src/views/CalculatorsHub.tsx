@@ -15,6 +15,7 @@ import {
   Search,
 } from 'lucide-react';
 import { sound } from '@/lib/sound-synthesizer';
+import { prefetchRoute } from '@/utils/prefetch';
 
 interface CalcCard {
   id: string;
@@ -239,6 +240,7 @@ export function CalculatorsHub() {
             <Link
               key={card.id}
               to={card.route}
+              onMouseEnter={() => prefetchRoute(card.route)}
               onClick={() => sound.playClick()}
               className="group p-6 rounded-3xl bg-card border border-border hover:border-primary/40 shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between space-y-4 hover:-translate-y-1 relative overflow-hidden"
             >

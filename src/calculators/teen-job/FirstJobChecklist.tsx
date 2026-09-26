@@ -15,17 +15,19 @@ export interface FirstJobChecklistItem {
 
 const FIRST_JOB_CHECKLIST: FirstJobChecklistItem[] = [
   { id: 'tfn', title: 'Apply for a Tax File Number (TFN)', detail: 'Free via Australia Post / ATO online — bring your Birth Certificate + Student ID.' },
-  { id: 'bank', title: 'Open a fee-free 5.0%+ youth bank account', detail: 'Providing your TFN to the bank stops 47% withholding tax on your savings interest.' },
+  { id: 'bank', title: 'Open a fee-free 5.0%+ youth bank account', detail: 'At 15 you can open independently without parents at CBA, Westpac, BOQ, or Great Southern Bank. Get a debit card with Apple/Google Pay for everyday Blow, and a separate cardless HISA for Mojo/Grow.' },
+  { id: 'tfn_bank', title: 'Link your TFN to your bank account (s 202D)', detail: 'Under Tax Administration Act 1953 s 202D, quoting your TFN stops 47% withholding tax on savings interest (triggered above $420/yr under 16, or $120/yr at 16–17).' },
   { id: 'medicare', title: 'Claim your own green Medicare card (Age 15+)', detail: 'Submit Services Australia Form MS011 / MS004 for independent doctor visits, confidential medical care, and bulk billing.' },
-  { id: 'super', title: 'Choose your super fund & complete NAT 13080', detail: 'Staple your super fund so 12.0% SG lands in one account (mandatory when working >30h/wk under 18).' },
-  { id: 'threshold', title: 'Claim the $18,200 tax-free threshold (NAT 3092)', detail: 'Select YES to Question 9 on Form NAT 3092 on day one so zero tax is withheld on your first $350/week.' },
-  { id: 'payslip', title: 'Check your first payslip carefully', detail: 'Gross pay, tax withheld, super and award rate must all appear as legal line items.' },
-  { id: 'award', title: 'Verify your junior award rate on Fair Work PACT', detail: 'At 15 you earn 40% of adult base ($11.12/hr) + 25% casual loading = $13.90/hr.' },
-  { id: 'min_shift', title: 'Enforce the 3-hour minimum shift rule', detail: 'Under Fast Food and Retail Awards, employers MUST pay at least 3 hours per casual shift.' },
+  { id: 'super', title: 'Choose your super fund & complete NAT 13080', detail: 'Staple your super fund so 12.0% SG lands in one account (compulsory when working >30h/wk under 18; 3% fee cap on <$6k).' },
+  { id: 'threshold', title: 'Claim the $22,575 effective tax-free threshold (NAT 3092)', detail: 'Select YES to Question 8 on Form NAT 3092 on day one. Combined with the $700 LITO, you pay $0 tax up to $22,575/year.' },
+  { id: 'trial', title: 'Know the 1-hour unpaid trial shift limit', detail: 'Unpaid trials are ONLY legal for a brief skills check (1 hour max). Full shifts, customer service, or commercial work MUST be paid.' },
+  { id: 'award', title: 'Verify your junior award rate on Fair Work PACT', detail: 'At 15 you earn 40% of adult base ($11.12/hr) + 25% casual loading = $13.90/hr in Fast Food, or 45% ($15.64/hr) in Retail.' },
+  { id: 'min_shift', title: 'Enforce the 3-hour minimum shift rule', detail: 'Under Fast Food and Retail Awards, employers MUST pay at least 3 hours per casual shift even if sent home early.' },
   { id: 'breaks', title: 'Take your mandatory paid 10-min rest breaks', detail: 'Shifts 4–5 hrs get 1 paid 10-min pause; shifts 5+ hrs get paid pause + 30-min meal break.' },
-  { id: 'shifts', title: 'Learn your penalty rates', detail: 'Saturday (+25% to +50%), Sunday (+50% to +100%), and public holidays (2.25x) pay higher rates.' },
+  { id: 'shifts', title: 'Learn your weekend & public holiday penalty rates', detail: 'Saturday (+25% to +50%), Sunday (+50% to +75%), and public holidays (250%–275% casual) pay higher rates.' },
   { id: 'hours', title: 'Check your rosters & school hours limits', detail: 'Max 12 hours per week during school terms in QLD and VIC; work during school hours is illegal.' },
-  { id: 'budget', title: 'Set up auto-transfers on payday', detail: 'Move your Mojo emergency buffer ($500+) and Save goal before you spend a single dollar.' },
+  { id: 'payslip', title: 'Check your first payslip within 1 working day', detail: 'Gross pay, tax withheld, super and award rate must all appear as legal line items on every payslip.' },
+  { id: 'budget', title: 'Set up T+0 auto-transfers on payday', detail: 'Move your Mojo emergency buffer ($500) and Grow savings goal before you spend a single dollar on everyday wants.' },
 ];
 
 function parseDone(raw: string): number[] {

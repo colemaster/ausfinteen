@@ -54,7 +54,7 @@ export function FifteenYearOldRoadmap() {
             <h2 className="text-xl font-bold text-foreground">The 15-Year-Old Australian Independence Roadmap</h2>
           </div>
           <p className="text-xs text-muted-foreground">
-            Your 6 essential financial independence milestones: TFN, High-Interest Banking, Medicare, First Casual Job, Ls Prep, and Student Perks.
+            Your 8 essential financial independence milestones: TFN, High-Interest Banking, Medicare, First Casual Job, Effective Tax-Free Threshold, Paycheck Automation, Ls Prep, and Student Perks.
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -68,8 +68,8 @@ export function FifteenYearOldRoadmap() {
         </div>
       </div>
 
-      {/* 6 Interactive Milestone Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {/* 8 Interactive Milestone Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {FIFTEEN_YO_ROADMAP_MILESTONES.map(item => {
           const isDone = completedSteps.includes(item.step);
           const linkObj = OFFICIAL_WEB_LINKS[item.linkKey as keyof typeof OFFICIAL_WEB_LINKS];

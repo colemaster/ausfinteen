@@ -27,7 +27,7 @@ const ASSUMPTIONS = [
   'Super Bridge assumes super cannot be accessed before preservation age.',
   'Coast FIRE: no further contributions needed after reaching coast number.',
   'Barista FIRE: part-time income covers daily expenses; portfolio covers the gap.',
-  'Based on 2024-25 ATO rates.',
+  'Based on 2026-27 ATO rates.',
 ];
 
 export function FIREDashboard() {

@@ -20,7 +20,7 @@ const TABS = [
 
 const ASSUMPTIONS: Record<string, string[]> = {
   super: [
-    'Based on 2024-25 concessional contribution cap of $30,000.',
+    'Based on 2026-27 concessional contribution cap of $30,000.',
     'Division 293 applies when taxable income + concessional contributions > $250,000.',
     'Carry-forward unused cap available only if total super balance < $500,000.',
     'Projected balance uses annual compounding on employer SG + actual sacrifice (after 15% tax).',
@@ -29,19 +29,19 @@ const ASSUMPTIONS: Record<string, string[]> = {
   dr: [
     'Investment loan is interest-only; balance stays constant.',
     'Annual deduction = loan balance × rate × marginal tax rate.',
-    'Based on 2024-25 ATO rates.',
+    'Based on 2026-27 ATO rates.',
   ],
   negear: [
     'Mortgage interest calculated on property value × LVR.',
     'Property management fee applied to gross rental income.',
     'Depreciation is a non-cash deduction (reduces taxable income but not cash outflow).',
     'Positive gearing means rental income exceeds all deductible expenses.',
-    'Based on 2024-25 ATO rates.',
+    'Based on 2026-27 ATO rates.',
   ],
   brackets: [
     'Stage 3 tax cuts apply from 1 July 2024.',
     'Medicare levy: 2% flat rate (with low-income reduction below $26,000).',
-    'HELP repayment based on 2024-25 ATO repayment thresholds.',
+    'HELP repayment based on 2026-27 ATO repayment thresholds.',
     'LMITO (Low and Middle Income Tax Offset) ended 30 June 2022.',
   ],
 };
@@ -72,7 +72,7 @@ export function TaxSavingsGuide() {
         </h1>
         <p className="text-xs text-[var(--muted-foreground)] mt-1">
           Australian tax strategies: super salary sacrifice, debt recycling deductions, negative gearing, and tax bracket visualisation.
-          Based on 2024-25 ATO rates.
+          Based on 2026-27 ATO rates.
         </p>
       </div>
 

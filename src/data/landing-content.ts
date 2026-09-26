@@ -12,7 +12,7 @@ import {
   QLD_TAFE,
   BRISBANE_SUBURBS,
 } from '@/data/brisbane-data';
-import { MANDY_MODULES } from '@/data/mandy-topics';
+import { NAV_MODULES } from '@/data/nav-modules';
 import {
   HELP_REPAYMENT_THRESHOLDS_2026_27,
   NATIONAL_MINIMUM_WAGE_2026,
@@ -61,9 +61,9 @@ const TOP_HISA_BANK: string =
   TEEN_SAVINGS_ACCOUNTS.find((account) => account.maxRate === TOP_HISA_RATE)?.bank ??
   'youth savings account';
 
-const TOTAL_GUIDE_COUNT: number = MANDY_MODULES.reduce((sum, mod) => sum + mod.topics.length, 0);
+const TOTAL_GUIDE_COUNT: number = NAV_MODULES.reduce((sum, mod) => sum + mod.topicsCount, 0);
 
-const MODULE_COUNT: number = MANDY_MODULES.length;
+const MODULE_COUNT: number = NAV_MODULES.length;
 
 const SCHOOL_COUNT: number = QLD_HIGH_SCHOOLS.length;
 
@@ -88,7 +88,7 @@ const NMW_HOURLY: string = NATIONAL_MINIMUM_WAGE_2026.hourly.toFixed(2);
 const ADULT_L1_BASE: string = NATIONAL_MINIMUM_WAGE_2026.retailFastFoodL1Base.toFixed(2);
 
 function moduleRoute(moduleId: string): string {
-  return MANDY_MODULES.find((mod) => mod.id === moduleId)?.route ?? '/';
+  return NAV_MODULES.find((mod) => mod.id === moduleId)?.route ?? '/';
 }
 
 // ─── HERO_STATS ──────────────────────────────────────────────────────────────

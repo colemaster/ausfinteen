@@ -19,6 +19,12 @@ const ROUTE_IMPORTS: Record<string, () => Promise<unknown>> = {
   '/dealing-with-debt': () => import('../views/DealingWithDebt'),
   '/car-driving': () => import('../views/CarDriving'),
   '/brisbane-qld': () => import('../views/BrisbaneQLD'),
+  '/calculators': () => import('../views/CalculatorsHub'),
+  '/hecs-payoff': () => import('../views/HECSPayoff'),
+  '/super-drawdown': () => import('../views/SuperDrawdown'),
+  '/ev-novated-lease': () => import('../views/EVNovatedLease'),
+  '/cgt-engine': () => import('../views/CGTEngine'),
+  '/financial-stress-test': () => import('../views/FinancialStressTest'),
 };
 
 export function prefetchRoute(path: string): void {

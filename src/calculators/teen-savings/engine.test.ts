@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { savingsWithMonthlyCompound, savingsWithSimpleInterest } from './engine';
+import { savingsWithMonthlyCompound, savingsWithSimpleInterest, calcMonthsToReachGoal } from './engine';
 
 describe('savingsWithMonthlyCompound', () => {
   it('projects 12 months of growth with monthly deposits at 5.25% p.a.', () => {
@@ -54,5 +54,51 @@ describe('savingsWithSimpleInterest', () => {
   it('handles zero balance and guards month count', () => {
     expect(savingsWithSimpleInterest(0, 6, 12, 0).endingBalance).toBe(0);
     expect(savingsWithSimpleInterest(1000, 6, -2, 0).months).toBe(1);
+  });
+});
+
+describe('calcMonthsToReachGoal', () => {
+  it('calculates time to reach $500 Mojo buffer with $100 monthly deposits', () => {
+    // Starting $150, target $500, deposit $100/mo, 5.80% rate
+    const res = calcMonthsToReachGoal(150, 500, 100, 5.80);
+    expect(res.monthsToReach).toBe(4);
+    expect(res.weeksToReach).toBe(17);
+    expect(res.finalBalance).toBeGreaterThanOrEqual(500);
+    expect(res.totalDeposited).toBe(400);
+    expect(res.interestEarned).toBeGreaterThan(0);
+  });
+
+  it('returns 0 months if starting balance is already at or above target', () => {
+    const res = calcMonthsToReachGoal(500, 500, 50, 5.00);
+    expect(res.monthsToReach).toBe(0);
+    expect(res.weeksToReach).toBe(0);
+    expect(res.finalBalance).toBe(500);
+    expect(res.interestEarned).toBe(0);
+  });
+
+  it('calculates time to reach $5,000 first car goal at 5.75%', () => {
+    // Starting $500, target $5,000, deposit $200/mo, 5.75% rate
+    const res = calcMonthsToReachGoal(500, 5000, 200, 5.75);
+    expect(res.monthsToReach).toBeGreaterThan(15);
+    expect(res.monthsToReach).toBeLessThan(24);
+    expect(res.finalBalance).toBeGreaterThanOrEqual(5000);
+    expect(res.interestEarned).toBeGreaterThan(100);
+  });
+
+  it('handles zero deposit and zero rate gracefully', () => {
+    const res = calcMonthsToReachGoal(100, 500, 0, 0);
+    expect(res.monthsToReach).toBe(Infinity);
+  });
+
+  it('returns Infinity when zero deposit and zero starting balance cannot grow', () => {
+    const res = calcMonthsToReachGoal(0, 500, 0, 5.00);
+    expect(res.monthsToReach).toBe(Infinity);
+    expect(res.weeksToReach).toBe(Infinity);
+  });
+
+  it('returns Infinity when goal is unreachable within maxMonths', () => {
+    const res = calcMonthsToReachGoal(1, 10_000_000, 0.01, 0.01);
+    expect(res.monthsToReach).toBe(Infinity);
+    expect(res.weeksToReach).toBe(Infinity);
   });
 });

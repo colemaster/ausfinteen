@@ -13,7 +13,7 @@ import { formatCurrency, formatCompact, formatPercent } from '../../utils/format
 import {
   LineChart, Line, XAxis, YAxis,
   ReferenceLine, BarChart, Bar, Cell, CartesianGrid,
-} from 'recharts';
+} from '@/components/charts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent, type ChartConfig } from '@/components/ui/chart';
 import { savingsRateConfig } from '@/lib/chart-configs';
 import { usePortfolio } from '../../context/PortfolioContext';

@@ -10,7 +10,7 @@ import { OFFICIAL_WEB_LINKS } from '@/data/teen-finance-data';
 import { WebReferenceLink } from '@/components/shared/WebReferenceLink';
 import { Sparkles, Info, ShieldCheck, Scale } from 'lucide-react';
 import { useTeenProfile } from '@/context/TeenProfileContext';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip } from '@/components/charts';
 import { ChartContainer, ChartTooltipContent } from '@/components/ui/chart';
 import { compoundGrowthWithFees, superComparison, teenMarginalRate } from './engine';
 import { SUPER_RULES } from '@/data/super-rules';

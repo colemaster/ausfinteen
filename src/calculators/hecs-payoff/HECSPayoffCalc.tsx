@@ -9,7 +9,7 @@ import {
 import { OdometerCounter } from '@/components/shared/OdometerCounter';
 import { sound } from '@/lib/sound-synthesizer';
 import { exportToCSV, encodePlanToHash, generateSimpleQRCodeSVG } from '@/lib/share-state';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, LineChart, Line, Legend } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, LineChart, Line, Legend } from '@/components/charts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from '@/components/ui/chart';
 import { formatCurrency, formatCompact } from '../../utils/formatters';
 import {
@@ -20,7 +20,7 @@ import {
   X,
   Gauge,
 } from 'lucide-react';
-import { toast } from 'sonner';
+import { toast } from '@/lib/toast';
 
 const SPLIT_CONFIG = {
   compulsory: { label: 'Compulsory', color: 'var(--chart-2)' },

@@ -8,7 +8,7 @@ import {
   type ASXETF,
 } from '@/data/asx-etf-data';
 import { asxEtfYieldConfig } from '@/lib/chart-configs';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, BarChart, Bar, Tooltip } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, BarChart, Bar, Tooltip } from '@/components/charts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, useReducedMotion } from '@/components/ui/chart';
 import { TrendingUp, ExternalLink, CalendarDays, PiggyBank } from 'lucide-react';
 import { cn } from '@/lib/utils';

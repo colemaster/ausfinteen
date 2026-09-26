@@ -3,14 +3,12 @@ import { useNavigate } from '@/lib/router';
 import { Search, Sparkles, ExternalLink, ArrowRight, X, Calculator, FileText, LayoutGrid, RotateCcw } from 'lucide-react';
 import { motion, useReducedMotion } from 'motion/react';
 import {
-  searchSite,
   POPULAR_SEARCHES,
   addRecentSearch,
   getRecentSearches,
   clearRecentSearches,
-  type SearchHit,
-  type SearchResultType,
-} from '@/lib/site-search';
+} from '@/lib/search-storage';
+import type { SearchHit, SearchResultType } from '@/lib/site-search';
 import { cn } from '@/lib/utils';
 
 const DEBOUNCE_MS = 120;
@@ -68,10 +66,16 @@ export function SiteSearchBar() {
   const [open, setOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const [recent, setRecent] = useState<string[]>(() => getRecentSearches());
+  const [searchResults, setSearchResults] = useState<{ groups: { type: SearchResultType; label: string; hits: SearchHit[] }[]; total: number }>({ groups: [], total: 0 });
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const isMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform);
+
+  // Preload search engine on user intent (focus or hover)
+  const preloadSearch = () => {
+    import('@/lib/site-search');
+  };
 
   // Refresh the session search history every time the dropdown opens
   useEffect(() => {
@@ -87,6 +91,23 @@ export function SiteSearchBar() {
     setActiveIndex(0);
   }, [debounced]);
 
+  // Dynamically query Fuse.js search engine when query changes
+  useEffect(() => {
+    if (!debounced.trim()) {
+      setSearchResults({ groups: [], total: 0 });
+      return;
+    }
+    let cancelled = false;
+    import('@/lib/site-search').then(({ searchSite }) => {
+      if (!cancelled) {
+        setSearchResults(searchSite(debounced));
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [debounced]);
+
   // Close on outside click
   useEffect(() => {
     const onPointerDown = (e: MouseEvent) => {
@@ -98,7 +119,7 @@ export function SiteSearchBar() {
     return () => document.removeEventListener('pointerdown', onPointerDown);
   }, []);
 
-  const { groups, total } = useMemo(() => searchSite(debounced), [debounced]);
+  const { groups, total } = searchResults;
   const flatHits = useMemo(() => groups.flatMap(g => g.hits), [groups]);
 
   const go = (hit: SearchHit) => {
@@ -158,7 +179,11 @@ export function SiteSearchBar() {
             setQuery(e.target.value);
             setOpen(true);
           }}
-          onFocus={() => setOpen(true)}
+          onFocus={() => {
+            setOpen(true);
+            preloadSearch();
+          }}
+          onMouseEnter={preloadSearch}
           onKeyDown={onKeyDown}
           className="w-full h-14 sm:h-16 pl-12 pr-16 rounded-[14px] bg-card/80 backdrop-blur-xl text-sm sm:text-[15px] text-foreground placeholder:text-muted-foreground/70 focus:outline-none focus:ring-0"
         />

@@ -1,5 +1,5 @@
 import { Link } from '@/lib/router';
-import { MANDY_MODULES } from '@/data/mandy-topics';
+import { NAV_MODULES } from '@/data/nav-modules';
 import { usePageTitle } from '@/hooks/usePageTitle';
 import { Compass, Home, Search, Calculator } from 'lucide-react';
 
@@ -78,7 +78,7 @@ export function NotFound() {
       </div>
 
       <div className="pt-6 grid grid-cols-1 sm:grid-cols-2 gap-3 text-left">
-        {MANDY_MODULES.slice(0, 4).map(m => (
+        {NAV_MODULES.slice(0, 4).map(m => (
           <Link
             key={m.id}
             to={m.route}
@@ -91,7 +91,7 @@ export function NotFound() {
               <span className="block text-xs font-bold text-foreground truncate group-hover:text-primary transition-colors">
                 {m.title}
               </span>
-              <span className="block text-[11px] text-muted-foreground truncate">{m.topics.length} Q&A guides</span>
+              <span className="block text-[11px] text-muted-foreground truncate">{m.topicsCount} Q&A guides</span>
             </span>
             <Compass className="w-4 h-4 text-muted-foreground ml-auto shrink-0 group-hover:text-primary transition-colors" />
           </Link>

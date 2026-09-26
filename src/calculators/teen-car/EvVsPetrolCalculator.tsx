@@ -8,7 +8,7 @@ import { OFFICIAL_WEB_LINKS } from '@/data/teen-finance-data';
 import { EV_VS_PETROL_DEFAULTS } from '@/data/car-data';
 import { evVsPetrolRunningCost } from './engine';
 import { Zap, Fuel } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip, Cell } from '@/components/charts';
 import { ChartContainer, ChartTooltipContent } from '@/components/ui/chart';
 
 export function EvVsPetrolCalculator() {

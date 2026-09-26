@@ -52,7 +52,7 @@ export function EVNovatedLease() {
         <PrintResultButton />
       </div>
 
-      <div className="max-w-5xl mx-auto space-y-6">
+      <div className="max-w-5xl mx-auto space-y-6 content-auto">
         <TopicGuideAccordion
           topics={EV_LEASE_TOPICS}
           title="Electric Vehicle Novated Leasing & FBT Exemption Guide"

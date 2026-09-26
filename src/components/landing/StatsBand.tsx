@@ -1,9 +1,5 @@
 import { AnimatedNumber, type AnimatedNumberFormat } from '@/components/ui/AnimatedNumber';
-import { QLD_ATAR_CUTOFFS_2026, QLD_HIGH_SCHOOLS, QLD_TAFE } from '@/data/brisbane-data';
-import { HELP_REPAYMENT_THRESHOLDS_2026_27 } from '@/data/constants';
-import { MANDY_MODULES } from '@/data/mandy-topics';
-import { SUPER_RULES } from '@/data/super-rules';
-import { TEEN_SAVINGS_ACCOUNTS } from '@/data/teen-finance-data';
+import { LANDING_STATS } from '@/data/landing-stats';
 
 interface StatChip {
   id: string;
@@ -16,31 +12,22 @@ interface StatChip {
 /**
  * StatsBand — infinite CSS marquee band of 8 headline teen-money stats.
  *
- * All figures are computed inline from data imports (no hardcoded counts):
- * - QLD schools = QLD_HIGH_SCHOOLS.length
- * - Money guides = total topics across MANDY_MODULES
- * - Fee-free TAFE courses = QLD_TAFE.feeFreeCourses2026.length
- * - ATAR cut-offs = QLD_ATAR_CUTOFFS_2026.length
- * - Top youth HISA = max of TEEN_SAVINGS_ACCOUNTS.maxRate
- * - Super guarantee = SUPER_RULES.sgRate (as a percent)
- * - HELP threshold = HELP_REPAYMENT_THRESHOLDS_2026_27[0].max
- * - Flat fares = QLD TransLink 50c flat fare (statewide policy figure)
+ * Pre-computed constants from LANDING_STATS avoid pulling 350+ KB of deep datasets into
+ * the critical rendering path, ensuring instantaneous above-the-fold paint.
  *
  * Motion: CSS-only loop (duplicate list, seamless -50% translate) reusing the
  * global `.animate-ticker` / `.mask-fade-edges` utilities — pauses on hover,
  * disabled under prefers-reduced-motion (global kill-switch + motion-reduce).
  */
 export function StatsBand(): React.JSX.Element {
-  const schoolCount: number = QLD_HIGH_SCHOOLS.length;
-  const guideCount: number = MANDY_MODULES.reduce((sum, mod) => sum + mod.topics.length, 0);
-  const feeFreeCount: number = QLD_TAFE.feeFreeCourses2026.length;
-  const atarCutoffCount: number = QLD_ATAR_CUTOFFS_2026.length;
-  const topHisaRate: number = Math.max(...TEEN_SAVINGS_ACCOUNTS.map((account) => account.maxRate));
-  const sgPercent: number = SUPER_RULES.sgRate * 100;
-  const helpThreshold: number = HELP_REPAYMENT_THRESHOLDS_2026_27[0].max;
-
-  /** QLD TransLink statewide flat fare in cents (50c policy fare). */
-  const FLAT_FARE_CENTS: number = 50;
+  const schoolCount = LANDING_STATS.schoolCount;
+  const guideCount = LANDING_STATS.guideCount;
+  const feeFreeCount = LANDING_STATS.feeFreeCount;
+  const atarCutoffCount = LANDING_STATS.atarCutoffCount;
+  const topHisaRate = LANDING_STATS.topHisaRate;
+  const sgPercent = LANDING_STATS.sgPercent;
+  const helpThreshold = LANDING_STATS.helpThreshold;
+  const FLAT_FARE_CENTS = LANDING_STATS.flatFareCents;
 
   const stats: StatChip[] = [
     { id: 'schools', value: schoolCount, format: 'number', label: 'QLD schools', emoji: '🏫' },

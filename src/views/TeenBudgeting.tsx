@@ -1,7 +1,8 @@
 import { motion } from 'motion/react';
-import { MANDY_MODULES } from '@/data/mandy-topics';
+import { teenBudgetingModule as moduleData } from '@/data/modules/teen-budgeting';
 import { TopicGuideAccordion } from '@/components/shared/TopicGuideAccordion';
 import { FirstPaycheckSplitter } from '@/calculators/teen-budget/FirstPaycheckSplitter';
+import { SavingsGoalsPlanner } from '@/components/teen/SavingsGoalsPlanner';
 import { ModulePrevNext } from '@/components/shared/ModulePrevNext';
 import { Wallet, PieChart, Layers } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
@@ -11,7 +12,6 @@ import { usePageTitle } from '@/hooks/usePageTitle';
 
 export function TeenBudgeting() {
   usePageTitle('Teen Budgeting · 50/30/20 Paycheck Plan');
-  const moduleData = MANDY_MODULES.find(m => m.id === 'teen-budgeting')!;
 
   return (
     <div className="space-y-8 animate-fade-in">
@@ -54,6 +54,9 @@ export function TeenBudgeting() {
 
       {/* Interactive Tool */}
       <FirstPaycheckSplitter />
+
+      {/* Interactive Teen Savings Goals & Sinking Funds Planner */}
+      <SavingsGoalsPlanner />
 
       {/* Highlights Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

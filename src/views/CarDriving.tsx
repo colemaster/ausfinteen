@@ -1,4 +1,4 @@
-import { MANDY_MODULES } from '@/data/mandy-topics';
+import { carDrivingModule as moduleData } from '@/data/modules/car-driving';
 import { TopicGuideAccordion } from '@/components/shared/TopicGuideAccordion';
 import { FirstCarCostCalculator } from '@/calculators/teen-car/FirstCarCostCalculator';
 import { EvVsPetrolCalculator } from '@/calculators/teen-car/EvVsPetrolCalculator';
@@ -60,7 +60,6 @@ function sumLicenceFees() {
 
 export function CarDriving() {
   usePageTitle('Cars & Driving · QLD Licence');
-  const moduleData = MANDY_MODULES.find(m => m.id === 'car-driving')!;
   const [searchParams, setSearchParams] = useSearchParams();
   const tab = readCarTab(searchParams);
 

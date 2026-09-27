@@ -4,6 +4,10 @@
 <script>
   import { navigate } from 'astro:transitions/client';
 
+  /* Loaded on demand: the shortcuts modal and command palette are the only consumers, and
+     importing them statically would put the overlay loader on every page's critical path. */
+  const loadOverlay = () => import('@/lib/overlay-loader');
+
   let gPressedAt = 0;
 
   function isTypingTarget(t: EventTarget | null): boolean {
@@ -18,6 +22,8 @@
 
   function handleKeyDown(e: KeyboardEvent) {
     if (e.key === 'Escape') {
+      // The overlays own their own Escape handling once mounted; these events are
+      // harmless no-ops before then, which is what lets them load on demand.
       document.dispatchEvent(new CustomEvent('close-command-palette'));
       document.dispatchEvent(new CustomEvent('close-shortcuts-modal'));
       return;
@@ -26,7 +32,13 @@
 
     if (e.key === '?' || (e.shiftKey && e.key === '/')) {
       e.preventDefault();
-      document.dispatchEvent(new CustomEvent('toggle-shortcuts-modal'));
+      // Previously this was a bare event dispatch and the modal was always mounted.
+      // Now it lazily fetches React the first time the shortcut is used. Once the host is
+      // mounted the overlay toggles itself, so re-dispatch instead of re-mounting.
+      void loadOverlay().then((m) => {
+        if (m.isOverlayHostMounted()) document.dispatchEvent(new CustomEvent('toggle-shortcuts-modal'));
+        else void m.toggleShortcutsModal();
+      });
       return;
     }
 
@@ -40,9 +52,15 @@
       return;
     }
 
-    // Theme toggle with 't' (outside of 'g' sequence)
-    if (e.key === 't' && !e.ctrlKey && !e.metaKey && !e.altKey && gPressedAt === 0) {
-      // Intentionally not handling here — defer to the theme toggle component
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+      // The palette toggles itself from its own listener once mounted, so only preload
+      // and open while it is absent.
+      void loadOverlay().then((m) => {
+        if (m.isOverlayHostMounted()) return;
+        e.preventDefault();
+        void m.openCommandPalette();
+      });
+      return;
     }
 
     const key = e.key.toLowerCase();
@@ -67,5 +85,12 @@
     }
   }
 
-  document.addEventListener('keydown', handleKeyDown);
+  /* This component is re-evaluated by Astro's ClientRouter on every navigation, so the
+     keydown listener is bound exactly once. Without the guard each navigation would leave
+     another live listener behind and a single keypress would fire N handlers. */
+  const wired = window as unknown as Record<string, boolean | undefined>;
+  if (!wired.__ausShortcutsWired) {
+    wired.__ausShortcutsWired = true;
+    document.addEventListener('keydown', handleKeyDown);
+  }
 </script>

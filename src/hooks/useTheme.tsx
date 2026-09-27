@@ -1,96 +1,31 @@
 import { useState, useEffect, useCallback } from 'react';
 import { cn } from '@/lib/utils';
+import {
+  ACCENT_OPTIONS,
+  getInitialTheme,
+  getInitialAccent,
+  getInitialFontScale,
+  getInitialContrast,
+  toggleTheme as coreToggleTheme,
+  setAccent as coreSetAccent,
+  setFontScale as coreSetFontScale,
+  setContrast as coreSetContrast,
+  type Theme,
+  type Accent,
+  type FontScale,
+  type Contrast,
+} from '@/lib/theme-core';
 
-export type Theme = 'dark' | 'light';
-export type Accent = 'emerald' | 'violet' | 'amber' | 'rose' | 'cyan' | 'default';
-export type FontScale = 'sm' | 'md' | 'lg';
-export type Contrast = 'normal' | 'high';
-
-export const ACCENT_OPTIONS: { value: Accent; label: string; swatch: string }[] = [
-  { value: 'emerald', label: 'Emerald', swatch: '#059669' },
-  { value: 'violet', label: 'Violet', swatch: '#8b5cf6' },
-  { value: 'amber', label: 'Amber', swatch: '#f59e0b' },
-  { value: 'rose', label: 'Rose', swatch: '#e11d48' },
-  { value: 'cyan', label: 'Cyan', swatch: '#0891b2' },
-  { value: 'default', label: 'Default', swatch: 'oklch(0.6 0.1 250)' },
-];
-
-function getInitialTheme(): Theme {
-  if (typeof window === 'undefined') return 'dark';
-  try {
-    const urlTheme = new URLSearchParams(window.location.search).get('theme');
-    if (urlTheme === 'dark' || urlTheme === 'light') return urlTheme;
-    const stored = localStorage.getItem('theme');
-    if (stored === 'dark' || stored === 'light') return stored;
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-  } catch {
-    return 'dark';
-  }
-}
-
-function getInitialAccent(): Accent {
-  if (typeof window === 'undefined') return 'default';
-  try {
-    const urlAccent = new URLSearchParams(window.location.search).get('accent');
-    if (
-      urlAccent === 'emerald' ||
-      urlAccent === 'violet' ||
-      urlAccent === 'amber' ||
-      urlAccent === 'rose' ||
-      urlAccent === 'cyan' ||
-      urlAccent === 'default'
-    ) {
-      return urlAccent;
-    }
-  } catch {}
-  return 'default';
-}
-
-function getInitialFontScale(): FontScale {
-  if (typeof window === 'undefined') return 'sm';
-  try {
-    const urlScale = new URLSearchParams(window.location.search).get('scale');
-    if (urlScale === 'sm' || urlScale === 'md' || urlScale === 'lg') return urlScale;
-  } catch {}
-  return 'sm';
-}
-
-function getInitialContrast(): Contrast {
-  if (typeof window === 'undefined') return 'normal';
-  try {
-    const urlContrast = new URLSearchParams(window.location.search).get('contrast');
-    if (urlContrast === 'normal' || urlContrast === 'high') return urlContrast;
-  } catch {}
-  return 'normal';
-}
+export type { Theme, Accent, FontScale, Contrast };
+export { ACCENT_OPTIONS };
 
 /**
- * Persist a preference via URL search params only (history.replaceState).
- * Pass null to remove the param (used when a preference is back at its default).
+ * React bindings over the framework-free appearance core in `@/lib/theme-core`.
+ *
+ * The actual state lives in the DOM (`<html>` class + `data-*` attributes), so this
+ * hook is intentionally thin — it just keeps React trees in sync with what the vanilla
+ * Navbar island also mutates. Logic lives in the core so the two cannot drift.
  */
-function updateUrlParam(key: string, value: string | null): void {
-  if (typeof window === 'undefined') return;
-  try {
-    const url = new URL(window.location.href);
-    if (value === null) {
-      url.searchParams.delete(key);
-    } else {
-      url.searchParams.set(key, value);
-    }
-    window.history.replaceState(null, '', url);
-  } catch {}
-}
-
-function applyDataAttribute(key: 'accent' | 'scale' | 'contrast', value: string | null): void {
-  if (typeof document === 'undefined') return;
-  const el = document.documentElement;
-  if (value === null) {
-    delete el.dataset[key];
-  } else {
-    el.dataset[key] = value;
-  }
-}
-
 export function useTheme(): [Theme, () => void] {
   const [theme, setTheme] = useState<Theme>(getInitialTheme);
 
@@ -103,35 +38,8 @@ export function useTheme(): [Theme, () => void] {
   }, [theme]);
 
   const toggle = useCallback(() => {
-    const next: Theme = theme === 'dark' ? 'light' : 'dark';
-    const applyTheme = () => {
-      document.documentElement.classList.toggle('dark', next === 'dark');
-      try {
-        localStorage.setItem('theme', next);
-      } catch {}
-      setTheme(next);
-    };
-
-    if (typeof document !== 'undefined' && 'startViewTransition' in document) {
-      try {
-        const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        if (reduced) {
-          applyTheme();
-          return;
-        }
-        const transition = (document as unknown as { startViewTransition: (fn: () => void) => { finished?: Promise<void> } }).startViewTransition(applyTheme);
-        if (transition && transition.finished) {
-          transition.finished.catch(() => {});
-        }
-        return;
-      } catch {
-        applyTheme();
-        return;
-      }
-    }
-
-    applyTheme();
-  }, [theme]);
+    setTheme(coreToggleTheme());
+  }, []);
 
   return [theme, toggle];
 }
@@ -140,12 +48,16 @@ export function useAccent(): [Accent, (accent: Accent) => void] {
   const [accent, setAccentState] = useState<Accent>(getInitialAccent);
 
   useEffect(() => {
-    applyDataAttribute('accent', accent === 'default' ? null : accent);
+    if (accent !== 'default') {
+      document.documentElement.dataset.accent = accent;
+    } else {
+      delete document.documentElement.dataset.accent;
+    }
   }, [accent]);
 
   const setAccent = useCallback((next: Accent) => {
     setAccentState(next);
-    updateUrlParam('accent', next === 'default' ? null : next);
+    coreSetAccent(next);
   }, []);
 
   return [accent, setAccent];
@@ -155,27 +67,35 @@ export function useFontScale(): [FontScale, (scale: FontScale) => void] {
   const [scale, setScaleState] = useState<FontScale>(getInitialFontScale);
 
   useEffect(() => {
-    applyDataAttribute('scale', scale === 'sm' ? null : scale);
+    if (scale !== 'sm') {
+      document.documentElement.dataset.scale = scale;
+    } else {
+      delete document.documentElement.dataset.scale;
+    }
   }, [scale]);
 
-  const setScale = useCallback((next: FontScale) => {
+  const setFontScale = useCallback((next: FontScale) => {
     setScaleState(next);
-    updateUrlParam('scale', next === 'sm' ? null : next);
+    coreSetFontScale(next);
   }, []);
 
-  return [scale, setScale];
+  return [scale, setFontScale];
 }
 
 export function useContrast(): [Contrast, (contrast: Contrast) => void] {
   const [contrast, setContrastState] = useState<Contrast>(getInitialContrast);
 
   useEffect(() => {
-    applyDataAttribute('contrast', contrast === 'normal' ? null : contrast);
+    if (contrast !== 'normal') {
+      document.documentElement.dataset.contrast = contrast;
+    } else {
+      delete document.documentElement.dataset.contrast;
+    }
   }, [contrast]);
 
   const setContrast = useCallback((next: Contrast) => {
     setContrastState(next);
-    updateUrlParam('contrast', next === 'normal' ? null : next);
+    coreSetContrast(next);
   }, []);
 
   return [contrast, setContrast];
@@ -192,6 +112,7 @@ export function AccentSwitcher() {
           title={option.label}
           aria-label={option.label}
           aria-pressed={accent === option.value}
+          data-accent-value={option.value}
           onClick={() => setAccent(option.value)}
           className={cn(
             'h-5 w-5 shrink-0 cursor-pointer rounded-full transition-transform duration-200 hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',

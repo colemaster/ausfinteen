@@ -6,9 +6,8 @@ import SkipLink from '@/components/astro/SkipLink.astro';
 import ScrollProgress from '@/components/astro/ScrollProgress.astro';
 import GlobalKeyboardShortcuts from '@/components/astro/GlobalKeyboardShortcuts.astro';
 import AuraBackground from '@/components/astro/AuraBackground.astro';
-import { Navbar } from '@/components/layout/Navbar';
-import { Footer } from '@/components/layout/Footer';
-import { Toaster } from '@/components/ui/Toaster';
+import Navbar from '@/components/astro/Navbar.astro';
+import Footer from '@/components/astro/Footer.astro';
 
 interface Props {
   title?: string;
@@ -37,8 +36,8 @@ const {
     <!-- Top Viewport Scroll Progress (CSS scroll-driven animation with JS fallback) -->
     <ScrollProgress />
 
-    <!-- Navigation Bar Island with ClientRouter persistence -->
-    <Navbar client:idle transition:persist />
+    <!-- Navigation Bar: static markup + a small vanilla script (no React) -->
+    <Navbar />
 
     <!-- Page Content Container with Ambient Chromatic Aura -->
     <div class={`relative flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 py-6 ${className}`}>
@@ -48,11 +47,8 @@ const {
       </main>
     </div>
 
-    <!-- Footer with viewport-visible lazy hydration -->
-    <Footer client:visible />
-
-    <!-- Toast Notifications with transition persistence -->
-    <Toaster client:idle transition:persist />
+    <!-- Footer: static markup + a small vanilla script (no React) -->
+    <Footer />
 
     <!-- Zero-runtime Global Keyboard Shortcuts with ClientRouter navigate -->
     <GlobalKeyboardShortcuts />

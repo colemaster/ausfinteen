@@ -17,7 +17,15 @@ const getThemeSnapshot = (): 'dark' | 'light' => {
 
 const getServerSnapshot = (): 'dark' | 'light' => 'dark';
 
-export function Toaster() {
+/**
+ * Minimal React host for the Sonner toast viewport.
+ *
+ * Deliberately separate from `OverlayHost`: a toast is triggered by an ordinary interaction
+ * (saving a goal, toggling a setting) and should not have to download the command palette,
+ * `motion` and the search index to render. This host is mounted the first time `toast(...)` is
+ * actually called — see `ensureToastHost` in `src/lib/overlay-loader.ts`.
+ */
+export function ToastHost() {
   const theme = useSyncExternalStore(subscribeToTheme, getThemeSnapshot, getServerSnapshot);
   // Sonner renders into a fixed-position portal, so suspending on null has no
   // layout cost while keeping the toast library out of the critical path.

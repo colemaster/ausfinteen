@@ -1,0 +1,735 @@
+---
+import Icon from '@/components/astro/Icon.astro';
+import { NAV_MODULES } from '@/data/nav-modules';
+
+const CALCS = [
+  { route: '/hecs-payoff', emoji: '🎓', title: 'HECS-HELP vs Investing' },
+  { route: '/super-drawdown', emoji: '⭐️', title: 'Super Drawdown & Pension' },
+  { route: '/ev-novated-lease', emoji: '⚡️', title: 'EV Novated Lease vs Loan' },
+  { route: '/cgt-engine', emoji: '🏡', title: 'CGT & 6-Year Exemption' },
+  { route: '/financial-stress-test', emoji: '🛡️', title: 'Emergency Runway & Stress' },
+];
+
+const ACCENTS = [
+  { value: 'emerald', label: 'Emerald', swatch: '#059669' },
+  { value: 'violet', label: 'Violet', swatch: '#8b5cf6' },
+  { value: 'amber', label: 'Amber', swatch: '#f59e0b' },
+  { value: 'rose', label: 'Rose', swatch: '#e11d48' },
+  { value: 'cyan', label: 'Cyan', swatch: '#0891b2' },
+  { value: 'default', label: 'Default', swatch: 'oklch(0.6 0.1 250)' },
+];
+
+const ACTIVE_INDICATOR =
+  'text-primary font-bold bg-primary/10 after:absolute after:inset-x-3 after:bottom-1 after:h-[2px] after:rounded-full after:bg-gradient-to-r after:from-primary after:to-success after:content-[""]';
+
+const navLinkClasses = (active: boolean): string =>
+  `nav-link relative flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold transition-all duration-200 ${
+    active
+      ? ACTIVE_INDICATOR
+      : 'text-muted-foreground hover:text-foreground hover:bg-muted/60'
+  }`;
+
+const dropdownItemClasses = (active: boolean): string =>
+  `nav-link relative flex items-center gap-2 px-3 py-2 rounded-xl text-xs transition-all ${
+    active ? ACTIVE_INDICATOR : 'text-foreground hover:bg-muted'
+  }`;
+
+const CALC_ROUTES = [
+  '/calculators',
+  '/hecs-payoff',
+  '/super-drawdown',
+  '/ev-novated-lease',
+  '/cgt-engine',
+  '/financial-stress-test',
+];
+
+// Server-rendered path so the first paint already shows the correct active item,
+// with no flash of an unstyled/inactive link before JS runs.
+const path = Astro.url.pathname.replace(/\/index\.html$/, '/') || '/';
+const isCalcsActive = CALC_ROUTES.includes(path);
+const isModulesActive = path !== '/' && path !== '/profile' && !path.startsWith('/calculators');
+---
+
+<header class="sticky top-0 z-40 w-full glass-nav" data-navbar>
+  <div class="h-[3px] w-full bg-gradient-to-r from-primary via-violet-500 to-warning" aria-hidden="true"></div>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+      <a
+        href="/"
+        data-sound="click"
+        data-astro-prefetch="hover"
+        class="flex items-center gap-2.5 group"
+      >
+        <div class="p-2 rounded-xl bg-gradient-to-tr from-amber-500 to-primary text-white shadow-xs group-hover:scale-105 transition-transform">
+          <Icon name="sparkles" class="w-5 h-5" />
+        </div>
+        <div>
+          <span class="font-extrabold text-base sm:text-lg text-foreground tracking-tight block leading-tight">
+            AusFinance Suite
+          </span>
+          <span class="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider block">
+            2030 Pro Edition ⚡️
+          </span>
+        </div>
+      </a>
+
+      <nav class="hidden md:flex items-center gap-1.5 text-xs font-semibold" aria-label="Primary">
+        <div class="relative" data-dropdown="calcs">
+          <button
+            type="button"
+            data-dropdown-toggle="calcs"
+            data-sound="click"
+            aria-haspopup="menu"
+            aria-expanded="false"
+            class={navLinkClasses(isCalcsActive)}
+          >
+            <Icon name="calculator" class="w-3.5 h-3.5 text-primary" />
+            <span>⚡️ 2026 Calculators</span>
+            <Icon name="chevron-down" class="w-3 h-3 transition-transform" data-chevron />
+          </button>
+
+          <div
+            role="menu"
+            aria-label="Calculators"
+            data-dropdown-panel="calcs"
+            hidden
+            class="absolute top-full left-0 mt-2 w-80 p-2 rounded-2xl bg-card border border-border shadow-xl grid grid-cols-1 gap-1 z-50 animate-in fade-in slide-in-from-top-4 zoom-in-98 duration-200"
+          >
+            <a
+              role="menuitem"
+              href="/calculators"
+              data-astro-prefetch="hover"
+              data-sound="click"
+              data-close-dropdown
+              class="p-2 rounded-xl bg-primary/10 text-primary font-bold flex items-center justify-between text-xs mb-1"
+            >
+              <span>⚡️ Browse All Calculators</span>
+              <span class="text-[10px] uppercase font-mono">Hub →</span>
+            </a>
+
+            {CALCS.map(c => (
+              <a
+                role="menuitem"
+                href={c.route}
+                data-astro-prefetch="hover"
+                data-sound="click"
+                data-close-dropdown
+                class={dropdownItemClasses(path === c.route)}
+              >
+                <span class="text-base">{c.emoji}</span>
+                <span class="truncate">{c.title}</span>
+              </a>
+            ))}
+          </div>
+        </div>
+
+        <div class="relative" data-dropdown="modules">
+          <button
+            type="button"
+            data-dropdown-toggle="modules"
+            data-sound="click"
+            aria-haspopup="menu"
+            aria-expanded="false"
+            aria-label="11 Real-World Modules"
+            class={navLinkClasses(isModulesActive)}
+          >
+            <Icon name="book-open" class="w-3.5 h-3.5" />
+            <span>11 Learning Modules</span>
+            <Icon name="chevron-down" class="w-3 h-3 transition-transform" data-chevron />
+          </button>
+
+          <div
+            role="menu"
+            aria-label="11 Real-World Modules"
+            data-dropdown-panel="modules"
+            hidden
+            class="absolute top-full left-0 mt-2 w-72 max-h-[70vh] overflow-y-auto p-2 rounded-2xl bg-card border border-border shadow-xl grid grid-cols-1 gap-1 z-50 animate-in fade-in slide-in-from-top-4 zoom-in-98 duration-200"
+          >
+            {NAV_MODULES.map(m => (
+              <a
+                role="menuitem"
+                href={m.route}
+                data-astro-prefetch="hover"
+                data-sound="click"
+                data-close-dropdown
+                data-module-route={m.route}
+                class={dropdownItemClasses(path === m.route)}
+              >
+                <span class="text-base">{m.emoji}</span>
+                <span class="truncate">{m.title}</span>
+              </a>
+            ))}
+          </div>
+        </div>
+
+        <a
+          href="/profile"
+          data-astro-prefetch="hover"
+          data-sound="click"
+          data-nav-route="/profile"
+          class={navLinkClasses(path === '/profile')}
+        >
+          <Icon name="user" class="w-3.5 h-3.5" />
+          <span>Profile (<span data-profile-age>15</span>yo)</span>
+        </a>
+
+        <a
+          href="/brisbane-qld"
+          data-astro-prefetch="hover"
+          data-sound="click"
+          data-nav-route="/brisbane-qld"
+          class={navLinkClasses(path === '/brisbane-qld')}
+          title="Change your location in My Profile"
+        >
+          <Icon name="map-pin" class="w-3.5 h-3.5" />
+          <span data-profile-location>Brisbane, QLD</span>
+        </a>
+      </nav>
+
+      <div class="flex items-center gap-1.5">
+        <a
+          href="https://github.com/colemaster/ausfinteen/releases"
+          target="_blank"
+          rel="noreferrer"
+          title="What's new in v7.2.0 — changelog"
+          aria-label="What's new in v7.2.0 — changelog"
+          class="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border border-border bg-muted/40 text-muted-foreground hover:text-primary hover:border-primary/40 transition-all text-[10px] font-bold"
+        >
+          <span class="relative flex h-2 w-2" aria-hidden="true">
+            <span class="inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+          </span>
+          v7.2.0
+        </a>
+
+        <button
+          type="button"
+          data-open-palette
+          data-sound="click"
+          aria-label="Open command palette (Ctrl+K)"
+          title="Command Center (Ctrl+K)"
+          class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted transition-all"
+        >
+          <Icon name="search" class="w-4 h-4" />
+          <kbd class="hidden sm:inline font-mono text-[10px] font-bold">⌘K</kbd>
+        </button>
+
+        <button
+          type="button"
+          data-sound-toggle
+          aria-label="Mute sound effects"
+          title="Mute sound effects"
+          class="p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted transition-all"
+        >
+          <Icon name="volume-2" class="w-4 h-4 text-primary" data-icon-sound-on />
+          <Icon name="volume-x" class="w-4 h-4 opacity-60 hidden" data-icon-sound-off />
+        </button>
+
+        <button
+          type="button"
+          data-theme-toggle
+          aria-label="Switch to Light Mode"
+          title="Switch to Light Mode"
+          class="p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted transition-all"
+        >
+          <Icon name="sun" class="w-4 h-4 text-amber-400" data-icon-theme-dark />
+          <Icon name="moon" class="w-4 h-4 text-slate-700 hidden" data-icon-theme-light />
+        </button>
+
+        <div class="relative" data-dropdown="appearance">
+          <button
+            type="button"
+            data-dropdown-toggle="appearance"
+            data-sound="click"
+            aria-label="Appearance settings (accent colour and font size)"
+            aria-expanded="false"
+            aria-controls="appearance-popover"
+            title="Appearance"
+            class="p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted transition-all"
+          >
+            <Icon name="palette" class="w-4 h-4" />
+          </button>
+          <div
+            id="appearance-popover"
+            data-dropdown-panel="appearance"
+            hidden
+            class="absolute right-0 top-full mt-2 z-50 w-64 rounded-2xl border border-border bg-card shadow-xl shadow-black/10 p-4 space-y-4"
+          >
+            <div class="space-y-2">
+              <p class="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                <Icon name="palette" class="w-3 h-3" /> Accent colour
+              </p>
+              <div class="flex items-center gap-1.5" role="group" aria-label="Accent colour">
+                {ACCENTS.map(a => (
+                  <button
+                    type="button"
+                    title={a.label}
+                    aria-label={a.label}
+                    aria-pressed="false"
+                    data-accent-value={a.value}
+                    class="h-5 w-5 shrink-0 cursor-pointer rounded-full transition-transform duration-200 hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ring-1 ring-inset ring-border/60"
+                    style={`background-color: ${a.swatch}`}
+                  ></button>
+                ))}
+              </div>
+            </div>
+            <div class="space-y-2">
+              <p class="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                <Icon name="check" class="w-3 h-3" /> Text size
+              </p>
+              <div class="flex items-center gap-1" role="group" aria-label="Font size">
+                <button
+                  type="button"
+                  data-font-scale-down
+                  aria-label="Decrease font size"
+                  class="flex h-6 w-6 cursor-pointer items-center justify-center rounded-md border border-border text-xs font-bold text-foreground transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:opacity-40"
+                  >A−</button
+                >
+                <button
+                  type="button"
+                  data-font-scale-up
+                  aria-label="Increase font size"
+                  class="flex h-6 w-6 cursor-pointer items-center justify-center rounded-md border border-border text-sm font-bold text-foreground transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:opacity-40"
+                  >A+</button
+                >
+              </div>
+            </div>
+            <p class="text-[10px] leading-relaxed text-muted-foreground/80">
+              Choices are saved in the page URL — share the link to share your look.
+            </p>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          data-mobile-toggle
+          data-sound="click"
+          aria-label="Open menu"
+          aria-expanded="false"
+          aria-controls="mobile-nav-drawer"
+          class="md:hidden p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted transition-all"
+        >
+          <Icon name="menu" class="w-5 h-5" data-icon-menu-open />
+          <Icon name="x" class="w-5 h-5 hidden" data-icon-menu-close />
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div
+    id="mobile-nav-drawer"
+    data-mobile-drawer
+    hidden
+    class="md:hidden border-t border-border bg-card/95 backdrop-blur-xl px-4 py-4 space-y-2 max-h-[80vh] overflow-y-auto"
+  >
+    <a
+      href="/calculators"
+      data-astro-prefetch="hover"
+      data-sound="click"
+      data-close-mobile
+      class="flex items-center gap-2 p-2.5 rounded-xl bg-primary/10 text-primary font-bold text-xs"
+    >
+      <Icon name="calculator" class="w-4 h-4" />
+      <span>⚡️ 2026 Financial Calculators Suite</span>
+    </a>
+
+    <a
+      href="/profile"
+      data-astro-prefetch="hover"
+      data-sound="click"
+      data-close-mobile
+      class="flex items-center gap-2 p-2.5 rounded-xl bg-muted text-foreground font-bold text-xs"
+    >
+      <Icon name="user" class="w-4 h-4" />
+      <span>My Profile (<span data-profile-name>Issy</span>, <span data-profile-age>15</span>yo)</span>
+    </a>
+
+    <div class="pt-2 text-[11px] font-bold text-muted-foreground uppercase tracking-wider px-2">
+      Next-Gen Calculators
+    </div>
+    {CALCS.map(c => (
+      <a
+        href={c.route}
+        data-astro-prefetch="hover"
+        data-sound="click"
+        data-close-mobile
+        class="flex items-center gap-2.5 p-2 rounded-xl text-xs text-foreground hover:bg-muted"
+      >
+        <span class="text-base">{c.emoji}</span>
+        <span>{c.title}</span>
+      </a>
+    ))}
+
+    <div class="pt-2 text-[11px] font-bold text-muted-foreground uppercase tracking-wider px-2">
+      11 Real-World Learning Modules
+    </div>
+    {NAV_MODULES.map(m => (
+      <a
+        href={m.route}
+        data-astro-prefetch="hover"
+        data-sound="click"
+        data-close-mobile
+        class="flex items-center gap-2.5 p-2 rounded-xl text-xs text-foreground hover:bg-muted"
+      >
+        <span class="text-base">{m.emoji}</span>
+        <span>{m.title}</span>
+      </a>
+    ))}
+  </div>
+</header>
+
+<script>
+  import { getInitialAccent, getInitialFontScale, toggleTheme, setAccent, setFontScale, type Accent, type FontScale } from '@/lib/theme-core';
+
+  const doc = document.documentElement;
+
+  /* `overlay-loader` and `sound-synthesizer` are imported dynamically rather than statically.
+     Both are pure interaction affordances — a command palette and UI click sounds — so keeping
+     them out of the static graph stops them blocking the Navbar script on every page. */
+  const loadOverlay = () => import('@/lib/overlay-loader');
+
+  let soundMod: typeof import('@/lib/sound-synthesizer') | null = null;
+  let soundPending: Promise<void> | null = null;
+  const getSound = () => soundMod?.sound ?? null;
+  /** Fetch the audio synth once, on the first interaction that actually needs it. */
+  function ensureSound(): Promise<void> {
+    soundPending ??= import('@/lib/sound-synthesizer').then((m) => {
+      soundMod = m;
+    });
+    return soundPending;
+  }
+
+  const playClick = () => void ensureSound().then(() => getSound()?.playClick());
+
+  type NavRoot = HTMLElement & {
+    __closeAll?: () => void;
+    __closeOutside?: (target: Node) => void;
+    __applyTheme?: () => void;
+    __paintProfile?: () => void;
+  };
+
+  const liveRoot = (): NavRoot | null => document.querySelector<NavRoot>('[data-navbar]');
+
+  const ACTIVE_INDICATOR =
+    'text-primary font-bold bg-primary/10 after:absolute after:inset-x-3 after:bottom-1 after:h-[2px] after:rounded-full after:bg-gradient-to-r after:from-primary after:to-success';
+  const INACTIVE_INDICATOR = 'text-muted-foreground hover:text-foreground hover:bg-muted/60';
+
+  const CALC_ROUTES = [
+    '/calculators',
+    '/hecs-payoff',
+    '/super-drawdown',
+    '/ev-novated-lease',
+    '/cgt-engine',
+    '/financial-stress-test',
+  ];
+
+  /**
+   * Wire up the header currently in the document.
+   *
+   * Astro's ClientRouter swaps the document without a reload, so this runs again on every
+   * navigation and `root` is a brand new element each time. Guarded per element so a repeat
+   * call on the same node is a no-op, and every listener is attached to elements inside
+   * `root` (which is discarded on swap) rather than to `document` — see the once-bound
+   * block at the bottom for the handful of listeners that genuinely need `document`.
+   */
+  function init(root: NavRoot) {
+    if (root.dataset.navReady === '1') return;
+    root.dataset.navReady = '1';
+
+    /* ---------------------------------------------------------------- dropdowns */
+
+    const dropdowns = new Map<string, { button: HTMLButtonElement; panel: HTMLElement }>();
+    for (const button of root.querySelectorAll<HTMLButtonElement>('[data-dropdown-toggle]')) {
+      const key = button.dataset.dropdownToggle!;
+      const panel = root.querySelector<HTMLElement>(`[data-dropdown-panel="${key}"]`);
+      if (panel) dropdowns.set(key, { button, panel });
+    }
+
+    const closeDropdown = (key: string) => {
+      const entry = dropdowns.get(key);
+      if (!entry) return;
+      entry.panel.hidden = true;
+      entry.button.setAttribute('aria-expanded', 'false');
+      entry.button.querySelector('[data-chevron]')?.classList.remove('rotate-180');
+    };
+
+    const closeAllDropdowns = (except?: string) => {
+      for (const key of dropdowns.keys()) if (key !== except) closeDropdown(key);
+    };
+
+    for (const [key, { button, panel }] of dropdowns) {
+      button.addEventListener('click', () => {
+        const willOpen = panel.hidden;
+        closeAllDropdowns(key);
+        panel.hidden = !willOpen;
+        button.setAttribute('aria-expanded', String(willOpen));
+        button.querySelector('[data-chevron]')?.classList.toggle('rotate-180', willOpen);
+      });
+    }
+
+    for (const el of root.querySelectorAll('[data-close-dropdown]')) {
+      el.addEventListener('click', () => closeAllDropdowns());
+    }
+
+    /* ------------------------------------------------------------- mobile drawer */
+
+    const mobileButton = root.querySelector<HTMLButtonElement>('[data-mobile-toggle]');
+    const mobileDrawer = root.querySelector<HTMLElement>('[data-mobile-drawer]');
+    const iconMenuOpen = root.querySelector('[data-icon-menu-open]');
+    const iconMenuClose = root.querySelector('[data-icon-menu-close]');
+
+    const setMobileOpen = (open: boolean) => {
+      if (!mobileButton || !mobileDrawer) return;
+      mobileDrawer.hidden = !open;
+      mobileButton.setAttribute('aria-expanded', String(open));
+      mobileButton.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+      iconMenuOpen?.classList.toggle('hidden', open);
+      iconMenuClose?.classList.toggle('hidden', !open);
+    };
+
+    mobileButton?.addEventListener('click', () => setMobileOpen(!!mobileDrawer?.hidden));
+    for (const el of root.querySelectorAll('[data-close-mobile]')) {
+      el.addEventListener('click', () => setMobileOpen(false));
+    }
+
+    // Handlers for the once-bound document listeners, resolved lazily so a stale header
+    // swapped out by ClientRouter is never touched.
+    root.__closeAll = () => {
+      closeAllDropdowns();
+      setMobileOpen(false);
+    };
+    root.__closeOutside = (target: Node) => {
+      for (const [key, { button, panel }] of dropdowns) {
+        if (panel.hidden) continue;
+        if (!button.contains(target) && !panel.contains(target)) closeDropdown(key);
+      }
+    };
+
+    /* -------------------------------------------------------------- theme toggle */
+
+    const themeButton = root.querySelector<HTMLButtonElement>('[data-theme-toggle]');
+    const iconThemeDark = root.querySelector('[data-icon-theme-dark]');
+    const iconThemeLight = root.querySelector('[data-icon-theme-light]');
+
+    const paintThemeButton = () => {
+      const dark = doc.classList.contains('dark');
+      const label = `Switch to ${dark ? 'Light' : 'Dark'} Mode`;
+      themeButton?.setAttribute('aria-label', label);
+      themeButton?.setAttribute('title', label);
+      iconThemeDark?.classList.toggle('hidden', !dark);
+      iconThemeLight?.classList.toggle('hidden', dark);
+    };
+
+    const applyTheme = () => {
+      toggleTheme();
+      paintThemeButton();
+    };
+
+    themeButton?.addEventListener('click', () => {
+      playClick();
+      applyTheme();
+    });
+    root.__applyTheme = applyTheme;
+
+    paintThemeButton();
+
+    /* -------------------------------------------------------------------- accent */
+
+    const accentButtons = [...root.querySelectorAll<HTMLButtonElement>('[data-accent-value]')];
+
+    const paintAccent = () => {
+      const current = getInitialAccent();
+      for (const button of accentButtons) {
+        const selected = button.dataset.accentValue === current;
+        button.setAttribute('aria-pressed', String(selected));
+        button.classList.toggle('scale-110', selected);
+        button.classList.toggle('ring-2', selected);
+        button.classList.toggle('ring-foreground', selected);
+        button.classList.toggle('ring-offset-2', selected);
+        button.classList.toggle('ring-offset-background', selected);
+        button.classList.toggle('ring-1', !selected);
+      }
+    };
+
+    for (const button of accentButtons) {
+      button.addEventListener('click', () => {
+        playClick();
+        setAccent(button.dataset.accentValue as Accent);
+        paintAccent();
+      });
+    }
+
+    paintAccent();
+
+    /* ----------------------------------------------------------------- font scale */
+
+    const scaleDown = root.querySelector<HTMLButtonElement>('[data-font-scale-down]');
+    const scaleUp = root.querySelector<HTMLButtonElement>('[data-font-scale-up]');
+    const ORDER: FontScale[] = ['sm', 'md', 'lg'];
+
+    const paintFontScale = () => {
+      const i = ORDER.indexOf(getInitialFontScale());
+      if (scaleDown) scaleDown.disabled = i <= 0;
+      if (scaleUp) scaleUp.disabled = i === ORDER.length - 1;
+    };
+
+    scaleDown?.addEventListener('click', () => {
+      const i = ORDER.indexOf(getInitialFontScale());
+      if (i > 0) {
+        setFontScale(ORDER[i - 1]);
+        paintFontScale();
+      }
+    });
+
+    scaleUp?.addEventListener('click', () => {
+      const i = ORDER.indexOf(getInitialFontScale());
+      if (i < ORDER.length - 1) {
+        setFontScale(ORDER[i + 1]);
+        paintFontScale();
+      }
+    });
+
+    paintFontScale();
+
+    /* ---------------------------------------------------------------------- sound */
+
+    const soundButton = root.querySelector<HTMLButtonElement>('[data-sound-toggle]');
+    const iconSoundOn = root.querySelector('[data-icon-sound-on]');
+    const iconSoundOff = root.querySelector('[data-icon-sound-off]');
+
+    const paintSoundButton = () => {
+      const synth = getSound();
+      // Before the synth is fetched there is no persisted mute state to read, so present the
+      // button as muted; the first interaction loads it and repaints with the truth.
+      const muted = synth ? synth.getIsMuted() : true;
+      const label = muted ? 'Unmute sound effects' : 'Mute sound effects';
+      soundButton?.setAttribute('aria-label', label);
+      soundButton?.setAttribute('title', label);
+      iconSoundOn?.classList.toggle('hidden', muted);
+      iconSoundOff?.classList.toggle('hidden', !muted);
+    };
+
+    soundButton?.addEventListener('click', () => {
+      void ensureSound().then(() => {
+        const synth = getSound();
+        if (!synth) return;
+        if (!synth.toggleMute()) synth.playSuccess();
+        paintSoundButton();
+      });
+    });
+
+    // Delegated so every [data-sound] element works without a per-element listener.
+    root.addEventListener('click', (e) => {
+      if ((e.target as HTMLElement).closest('[data-sound]')) playClick();
+    });
+
+    paintSoundButton();
+
+    /* -------------------------------------------------------------- profile patch */
+
+    // The profile lives in localStorage, so server-rendered defaults are patched on load.
+    // Kept in sync with src/context/TeenProfileContext.tsx.
+    const paintProfile = () => {
+      let profile: { name?: string; age?: number; location?: string } = {};
+      try {
+        const raw = localStorage.getItem('aus_teen_profile');
+        if (raw) profile = JSON.parse(raw);
+      } catch {
+        profile = {};
+      }
+      if (profile.name) {
+        for (const el of root.querySelectorAll('[data-profile-name]')) el.textContent = profile.name;
+      }
+      if (typeof profile.age === 'number') {
+        for (const el of root.querySelectorAll('[data-profile-age]')) {
+          el.textContent = String(profile.age);
+        }
+      }
+      if (profile.location) {
+        for (const el of root.querySelectorAll('[data-profile-location]')) {
+          el.textContent = profile.location;
+        }
+      }
+    };
+
+    paintProfile();
+    root.__paintProfile = paintProfile;
+
+    /* ---------------------------------------------------------- active link state */
+
+    const paintActiveLinks = () => {
+      const current = window.location.pathname || '/';
+      const calcsActive = CALC_ROUTES.includes(current);
+      const modulesActive =
+        current !== '/' && current !== '/profile' && !current.startsWith('/calculators');
+
+      const paint = (el: Element | null | undefined, active: boolean) => {
+        if (!el) return;
+        el.classList.toggle('text-primary', active);
+        el.classList.toggle('font-bold', active);
+        el.classList.toggle('bg-primary/10', active);
+        el.classList.toggle(ACTIVE_INDICATOR, active);
+        el.classList.toggle(INACTIVE_INDICATOR, !active);
+      };
+
+      paint(dropdowns.get('calcs')?.button, calcsActive);
+      paint(dropdowns.get('modules')?.button, modulesActive);
+
+      for (const link of root.querySelectorAll<HTMLAnchorElement>('[data-nav-route]')) {
+        const active = current === link.dataset.navRoute;
+        paint(link, active);
+        if (active) link.setAttribute('aria-current', 'page');
+        else link.removeAttribute('aria-current');
+      }
+
+      for (const link of root.querySelectorAll<HTMLAnchorElement>('[data-module-route]')) {
+        if (current === link.dataset.moduleRoute) link.setAttribute('aria-current', 'page');
+        else link.removeAttribute('aria-current');
+      }
+    };
+
+    paintActiveLinks();
+
+    /* ---------------------------------------------------------- command palette */
+
+    for (const button of root.querySelectorAll('[data-open-palette]')) {
+      button.addEventListener('click', () => {
+        void loadOverlay().then((m) => m.openCommandPalette());
+      });
+    }
+  }
+
+  const start = () => {
+    const root = liveRoot();
+    if (root) init(root);
+  };
+
+  start();
+
+  /* Bind the document-level listeners exactly once, no matter how many times this module is
+     evaluated across ClientRouter navigations, and always resolve the live header. Without
+     the guard they would stack up (one extra set per navigation) and each stale copy would
+     test a detached node. */
+  const wired = window as unknown as Record<string, boolean | undefined>;
+  if (!wired.__ausNavbarWired) {
+    wired.__ausNavbarWired = true;
+
+    document.addEventListener('pointerdown', (e) => {
+      liveRoot()?.__closeOutside?.(e.target as Node);
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') liveRoot()?.__closeAll?.();
+    });
+
+    // The React Navbar used to expose this document event for the global shortcut handler.
+    document.addEventListener('toggle-theme-request', () => liveRoot()?.__applyTheme?.());
+
+    // The profile can change on /profile while this Navbar persists across navigation.
+    document.addEventListener('aus:profile-change', () => liveRoot()?.__paintProfile?.());
+    document.addEventListener('storage', () => liveRoot()?.__paintProfile?.());
+
+    // Astro's ClientRouter swaps the document without a reload, so re-wire and repaint.
+    document.addEventListener('astro:page-load', start);
+  }
+</script>

@@ -362,7 +362,7 @@ export function SiteSearchBar() {
                         <span className="min-w-0 flex-1">
                           <span className="flex flex-wrap items-center gap-1.5">
                             <span className="text-xs font-bold text-foreground leading-snug">
-                              {hit.emoji ? <span className="mr-1">{hit.emoji}</span> : null}
+                              {hit.emoji ? <span className="mr-1" aria-hidden="true">{hit.emoji}</span> : null}
                               <Highlighted text={hit.title} indices={titleMatch?.indices} />
                             </span>
                             <span className={cn('px-1.5 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wide', TYPE_STYLES[hit.type])}>

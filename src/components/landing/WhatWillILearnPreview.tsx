@@ -66,7 +66,7 @@ function ModuleSelector({ value, onChange }: { value: string; onChange: (id: str
         aria-label="Choose a module"
         className="flex items-center gap-2 w-full sm:w-auto px-3.5 py-2.5 rounded-xl bg-muted/60 border border-border hover:border-primary/40 hover:bg-muted transition-all"
       >
-        <span className="text-lg leading-none">{selected.emoji}</span>
+        <span className="text-lg leading-none" aria-hidden="true">{selected.emoji}</span>
         <span className="text-xs font-bold text-foreground truncate max-w-44">{selected.title}</span>
         <ChevronDown className={`w-3.5 h-3.5 text-muted-foreground shrink-0 transition-transform ${open ? 'rotate-180' : ''}`} />
       </button>

@@ -337,7 +337,7 @@ export function Landing() {
                 className="group block h-full p-4 rounded-2xl border border-border bg-card hover:border-primary/40 hover:shadow-xl hover:shadow-primary/10 hover:-translate-y-0.5 transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
               >
                 <div className="flex items-start justify-between gap-2">
-                  <span className="text-2xl">{fp.emoji}</span>
+                  <span className="text-2xl" aria-hidden="true">{fp.emoji}</span>
                   <span className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground bg-muted px-2 py-0.5 rounded-full border border-border group-hover:bg-primary/10 group-hover:text-primary transition-colors">
                     {fp.tag}
                   </span>
@@ -396,7 +396,7 @@ export function Landing() {
               >
                 <SpotlightCard className="h-full p-5 flex flex-col gap-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-2xl">{calc.emoji}</span>
+                    <span className="text-2xl" aria-hidden="true">{calc.emoji}</span>
                     <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
                   </div>
                   <div className="space-y-0.5">

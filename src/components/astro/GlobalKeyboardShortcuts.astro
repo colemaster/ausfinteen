@@ -7,6 +7,7 @@
   /* Loaded on demand: the shortcuts modal and command palette are the only consumers, and
      importing them statically would put the overlay loader on every page's critical path. */
   const loadOverlay = () => import('@/lib/overlay-loader');
+  const motion = () => import('@/lib/motion-core');
 
   let gPressedAt = 0;
 
@@ -91,6 +92,47 @@
   const wired = window as unknown as Record<string, boolean | undefined>;
   if (!wired.__ausShortcutsWired) {
     wired.__ausShortcutsWired = true;
+
+    /* Resolve the OS-vs-override motion preference once and keep it in sync. Without
+     * this the `data-motion` attribute is never written, so the CSS motion overrides
+     * never activate for anyone who has not opened the appearance panel. */
+    void motion().then((m) => m.initMotionPreference());
+
     document.addEventListener('keydown', handleKeyDown);
+
+    /* --- Focus management across client-side navigation ---
+     * Astro's ClientRouter announces the new page through a live region but does not
+     * MOVE focus, so after a soft navigation focus is left on a detached element and the
+     * next Tab restarts from the top of the document. Moving focus to the new page's
+     * heading is the standard remedy.
+     *
+     * Skipped on first load: the browser has already placed focus sensibly, and stealing
+     * it would yank it away from someone who has only just tabbed to the address bar. */
+    let navigated = false;
+    document.addEventListener('astro:page-load', () => {
+      if (!navigated) {
+        navigated = true;
+        return;
+      }
+      const heading = document.querySelector<HTMLElement>('main h1') ?? document.querySelector<HTMLElement>('main');
+      heading?.focus();
+    });
+
+    /* In-page `#anchor` links do not trigger a ClientRouter navigation, so the router
+     * never runs and focus never lands on the target. Handle them explicitly. */
+    document.addEventListener('click', (e) => {
+      const link = (e.target as HTMLElement).closest<HTMLAnchorElement>('a[href^="#"]');
+      if (!link) return;
+      const hash = link.getAttribute('href');
+      if (!hash || hash === '#') return;
+      const target = document.querySelector<HTMLElement>(hash);
+      if (!target) return;
+      e.preventDefault();
+      if (!target.hasAttribute('tabindex')) target.setAttribute('tabindex', '-1');
+      target.focus();
+      // `auto` rather than `smooth`: a smooth scroll on every nav is a vestibular trigger.
+      target.scrollIntoView({ behavior: 'auto', block: 'start' });
+      history.pushState(null, '', hash);
+    });
   }
 </script>

@@ -106,7 +106,7 @@ export function CommandPalette() {
                 onSelect={() => runCommand(() => navigate(module.route))}
                 className="relative flex cursor-pointer select-none items-center rounded-xl px-3 py-2.5 text-xs font-medium text-foreground outline-none hover:bg-muted hover:text-primary transition-colors my-0.5"
               >
-                <span className="mr-2.5 text-lg">{module.emoji}</span>
+                <span className="mr-2.5 text-lg" aria-hidden="true">{module.emoji}</span>
                 <div className="flex flex-col">
                   <span className="font-bold">{module.title}</span>
                   <span className="text-[10px] text-muted-foreground truncate">{module.description}</span>

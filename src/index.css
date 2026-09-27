@@ -5,8 +5,18 @@
 @layer base {
   html {
     font-family: 'Inter Variable', system-ui, -apple-system, sans-serif;
-    font-feature-settings: "cv11", "ss01", "tnum";
-    font-variant-numeric: tabular-nums;
+    font-feature-settings: "cv11", "ss01";
+    /* Proportional figures by default. Tabular figures are for COLUMNS of numbers
+       (StatCard, ComparisonTable, money readouts); applying them to all prose
+       widens every glyph and hurts text density. Per-component rules below turn
+       them back on where they belong. */
+    font-variant-numeric: proportional-nums;
+    /* Inter ships an `opsz` axis (14-28) in the opsz variable file; this is a no-op
+       unless that file is the one loaded. */
+    font-optical-sizing: auto;
+    /* Never synthesise a bold that the family does not have — faux-bold on a
+       variable font looks noticeably worse than a real weight. */
+    font-synthesis-weight: none;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     interpolate-size: allow-keywords;
@@ -14,6 +24,15 @@
     accent-color: var(--primary);
     /* Keep anchor scroll targets (deep-linked topics) clear of the sticky navbar */
     scroll-padding-top: 6rem;
+  }
+
+  /* Columns of numbers line up; this is where tabular figures belong. */
+  table,
+  [data-numeric],
+  .font-mono,
+  .stat-value,
+  .tabular {
+    font-variant-numeric: tabular-nums;
   }
 
   /* Monospace numbers everywhere numeric */
@@ -28,11 +47,27 @@
     color-scheme: dark;
   }
 
-  /* 2027: accessible focus ring */
+  /* Focus indicator. An `outline` with an offset is used rather than an inset ring
+     because WCAG 2.4.13 measures the indicator's area against a 2px perimeter and
+     requires it to sit outside the box. */
   :where(a, button, input, select, textarea, [tabindex]):focus-visible {
     outline: 2px solid var(--ring);
     outline-offset: 2px;
     border-radius: 0.5rem;
+  }
+
+  /* WCAG 2.5.8 Target Size (Minimum) — 24px floor everywhere, raised to the
+     44px comfortable target on touch pointers, which is effectively every visit
+     from this audience. */
+  :where(button, a[href], [role='menuitem'], summary, input[type='checkbox'], input[type='radio']) {
+    min-block-size: 24px;
+    min-inline-size: 24px;
+  }
+  @media (pointer: coarse) {
+    :where(button, a[href], [role='menuitem'], summary, input[type='checkbox'], input[type='radio']) {
+      min-block-size: 44px;
+      min-inline-size: 44px;
+    }
   }
 
   /* 2027: subtle custom scrollbar — native CSS scrollbar styling */
@@ -75,14 +110,24 @@
   --color-card-foreground: var(--card-foreground);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
   --color-border: var(--border);
+  --color-border-input: var(--border-input);
   --color-ring: var(--ring);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-active: var(--primary-active);
+  --color-primary-wash: var(--primary-wash);
   --color-success: var(--success);
   --color-warning: var(--warning);
   --color-danger: var(--danger);
   --color-info: var(--info);
+  /* Reserved for result reveals and celebration — never behind body text or a
+     primary CTA. See the token definitions for the reasoning. */
+  --color-accent-pop: var(--accent-pop);
+  --color-accent-pop-foreground: var(--accent-pop-foreground);
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
@@ -92,156 +137,159 @@
   --color-chart-7: var(--chart-7);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
+
+  /* Motion scale, exposed to Tailwind so components can use
+     `duration-(--motion-base)` / `ease-(--ease-out)` and inherit the reduced-motion
+     override without hardcoding a millisecond value in 50 files. */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-exit: cubic-bezier(0.4, 0, 1, 1);
 }
 
 @layer base {
   :root {
+    /* Declared at :root (not only on .dark) so the UA paints the correct canvas before
+       any script runs. Without this a dark-mode visitor gets a white flash while the
+       theme class is still being applied. */
+    color-scheme: light dark;
+
+    /* --- Surfaces -------------------------------------------------------
+     * Four tiers, not two. Elevation INVERTS between modes: in light mode a raised
+     * surface is brighter than the page, in dark mode it is lighter than the page
+     * too, but the *direction* of the shadow is what sells it. Previously `--muted`
+     * doubled as both the recessed surface and the hover state, so modals and
+     * dropdowns had no tier of their own and visually merged with cards. */
     --background: oklch(0.98 0 0);
     --foreground: oklch(0.15 0 0);
     --card: oklch(1 0 0);
     --card-foreground: oklch(0.15 0 0);
-    --muted: oklch(0.95 0 0);
-    --muted-foreground: oklch(0.4 0 0);
+    --muted: oklch(0.955 0 0);
+    --muted-foreground: oklch(0.42 0 0);
+    --popover: oklch(1 0 0);
+    --popover-foreground: oklch(0.15 0 0);
     --border: oklch(0.9 0 0);
-    --ring: oklch(0.6 0.1 250);
-    --primary: oklch(0.6 0.1 250);
-    --primary-foreground: oklch(0.98 0 0);
-    --accent: oklch(0.92 0.02 250);
-    --accent-foreground: oklch(0.3 0.05 250);
-    --success: oklch(0.65 0.15 150);
-    --warning: oklch(0.7 0.15 70);
-    --danger: oklch(0.6 0.15 20);
-    --info: oklch(0.6 0.1 250);
+    /* Form-control boundaries need 3:1 (WCAG 1.4.11). Plain dividers do not, so they
+       are a separate token rather than one `--border` forced dark enough to look
+       heavier than it needs to. */
+    --border-input: oklch(0.74 0 0);
 
-    --chart-1: oklch(0.6 0.1 250);
-    --chart-2: oklch(0.65 0.15 150);
-    --chart-3: oklch(0.7 0.15 70);
-    --chart-4: oklch(0.6 0.15 20);
-    --chart-5: oklch(0.5 0.1 300);
-    --chart-6: oklch(0.7 0.1 200);
-    --chart-7: oklch(0.55 0.15 330);
+    /* --- Accent ---------------------------------------------------------
+     * Lightness and chroma are pinned to a band that was solved against WCAG 2.1
+     * relative luminance for the WORST-CASE hue in the accent set. Contrast in OKLCH
+     * depends on L, C and H, so a single L cannot be correct for every hue — capping
+     * chroma at 0.15 buys back the luminance that high-chroma rose/amber lose. Every
+     * preset below therefore only varies `--accent-h`, and AA holds structurally
+     * instead of depending on a per-hue audit. */
+    --accent-h: 250;
+    --accent-l: 0.48;
+    --accent-c: 0.15;
+
+    --ring: oklch(0.55 0.15 var(--accent-h));
+    --primary: oklch(var(--accent-l) var(--accent-c) var(--accent-h));
+    --primary-foreground: oklch(0.99 0 0);
+    --primary-hover: oklch(0.43 0.16 var(--accent-h));
+    --primary-active: oklch(0.39 0.16 var(--accent-h));
+    /* Tinted rather than pure grey/white: derived from the accent hue so button
+       labels feel designed instead of stamped on. */
+    --primary-wash: oklch(var(--accent-l) var(--accent-c) var(--accent-h) / 0.1);
+    --accent: oklch(0.94 0.03 var(--accent-h));
+    --accent-foreground: oklch(0.34 0.09 var(--accent-h));
+
+    --success: oklch(0.5 0.14 152);
+    --warning: oklch(0.52 0.13 70);
+    --danger: oklch(0.5 0.16 22);
+    --info: oklch(var(--accent-l) var(--accent-c) var(--accent-h));
+
+    /* A brighter accent reserved for result reveals and celebration. Deliberately
+       NOT used behind text or on primary buttons — a loud colour on a CTA creates
+       visual tension at the exact moment the reader wants reassurance. */
+    --accent-pop: oklch(0.72 0.19 var(--accent-h));
+    --accent-pop-foreground: oklch(0.16 0.03 var(--accent-h));
+
+    --chart-1: oklch(0.55 0.15 var(--accent-h));
+    --chart-2: oklch(0.55 0.14 152);
+    --chart-3: oklch(0.55 0.13 70);
+    --chart-4: oklch(0.52 0.16 22);
+    --chart-5: oklch(0.5 0.14 300);
+    --chart-6: oklch(0.52 0.12 210);
+    --chart-7: oklch(0.5 0.15 330);
   }
   .dark {
+    color-scheme: dark;
+
     --background: oklch(0.13 0.005 270);
     --foreground: oklch(0.95 0 0);
     --card: oklch(0.18 0.005 270);
     --card-foreground: oklch(0.95 0 0);
     --muted: oklch(0.23 0.005 270);
-    --muted-foreground: oklch(0.6 0 0);
-    --border: oklch(0.28 0.01 270);
-    --ring: oklch(0.65 0.12 250);
-    --primary: oklch(0.65 0.12 250);
-    --primary-foreground: oklch(0.98 0 0);
-    --accent: oklch(0.22 0.02 250);
-    --accent-foreground: oklch(0.85 0.05 250);
-    --success: oklch(0.65 0.15 150);
-    --warning: oklch(0.7 0.15 70);
-    --danger: oklch(0.6 0.15 20);
-    --info: oklch(0.65 0.12 250);
+    /* Was 0.60, which measured 4.28:1 on --muted and failed AA. */
+    --muted-foreground: oklch(0.65 0.0 270);
+    --popover: oklch(0.22 0.007 270);
+    --popover-foreground: oklch(0.95 0 0);
+    /* Alpha borders work across all four dark surface tiers automatically; a solid
+       mid-grey only works against one of them. Shadows are invisible on a dark
+       surface, so borders do the work elevation normally would. */
+    --border: oklch(1 0 0 / 0.13);
+    --border-input: oklch(1 0 0 / 0.26);
 
-    --chart-1: oklch(0.65 0.12 250);
-    --chart-2: oklch(0.65 0.15 150);
-    --chart-3: oklch(0.7 0.15 70);
-    --chart-4: oklch(0.6 0.15 20);
-    --chart-5: oklch(0.55 0.12 300);
-    --chart-6: oklch(0.7 0.1 200);
-    --chart-7: oklch(0.6 0.15 330);
+    --accent-l: 0.76;
+    --accent-c: 0.12;
+
+    --ring: oklch(0.75 0.13 var(--accent-h));
+    --primary: oklch(var(--accent-l) var(--accent-c) var(--accent-h));
+    /* Near-ink rather than near-white: in dark mode the fill is light, so a white
+       label on it would be the failing case. */
+    --primary-foreground: oklch(0.16 0.01 250);
+    --primary-hover: oklch(0.81 0.12 var(--accent-h));
+    --primary-active: oklch(0.85 0.11 var(--accent-h));
+    --primary-wash: oklch(var(--accent-l) var(--accent-c) var(--accent-h) / 0.14);
+    --accent: oklch(0.26 0.03 var(--accent-h));
+    --accent-foreground: oklch(0.88 0.05 var(--accent-h));
+
+    --success: oklch(0.72 0.14 152);
+    --warning: oklch(0.76 0.13 72);
+    --danger: oklch(0.68 0.16 22);
+    --info: oklch(var(--accent-l) var(--accent-c) var(--accent-h));
+
+    --accent-pop: oklch(0.8 0.17 var(--accent-h));
+    --accent-pop-foreground: oklch(0.18 0.04 var(--accent-h));
+
+    /* Chart hues are re-graded for dark rather than reusing the light values —
+       fully saturated light-mode hues visibly vibrate against a dark surface. */
+    --chart-1: oklch(0.72 0.13 var(--accent-h));
+    --chart-2: oklch(0.72 0.13 152);
+    --chart-3: oklch(0.75 0.12 72);
+    --chart-4: oklch(0.68 0.15 22);
+    --chart-5: oklch(0.7 0.13 300);
+    --chart-6: oklch(0.7 0.11 210);
+    --chart-7: oklch(0.68 0.14 330);
   }
 
-  /* --- Accent colour presets (applied via data-accent on <html>) --- */
-  :root[data-accent='emerald'] {
-    --primary: oklch(0.55 0.13 162);
-    --primary-foreground: oklch(0.98 0 0);
-    --ring: oklch(0.55 0.13 162);
-    --accent: oklch(0.93 0.05 162);
-    --accent-foreground: oklch(0.3 0.08 162);
-    --info: oklch(0.55 0.13 162);
-  }
-  .dark[data-accent='emerald'] {
-    --primary: oklch(0.62 0.13 162);
-    --primary-foreground: oklch(0.98 0 0);
-    --ring: oklch(0.62 0.13 162);
-    --accent: oklch(0.24 0.06 162);
-    --accent-foreground: oklch(0.85 0.07 162);
-    --info: oklch(0.62 0.13 162);
-  }
-  :root[data-accent='violet'] {
-    --primary: oklch(0.61 0.25 293);
-    --primary-foreground: oklch(0.98 0 0);
-    --ring: oklch(0.61 0.25 293);
-    --accent: oklch(0.94 0.05 293);
-    --accent-foreground: oklch(0.35 0.1 293);
-    --info: oklch(0.61 0.25 293);
-  }
-  .dark[data-accent='violet'] {
-    --primary: oklch(0.68 0.24 293);
-    --primary-foreground: oklch(0.98 0 0);
-    --ring: oklch(0.68 0.24 293);
-    --accent: oklch(0.26 0.08 293);
-    --accent-foreground: oklch(0.88 0.07 293);
-    --info: oklch(0.68 0.24 293);
-  }
-  :root[data-accent='amber'] {
-    --primary: oklch(0.77 0.19 70);
-    --primary-foreground: oklch(0.21 0.01 60);
-    --ring: oklch(0.77 0.19 70);
-    --accent: oklch(0.93 0.08 80);
-    --accent-foreground: oklch(0.32 0.07 70);
-    --info: oklch(0.77 0.19 70);
-  }
-  .dark[data-accent='amber'] {
-    --primary: oklch(0.82 0.17 80);
-    --primary-foreground: oklch(0.21 0.01 60);
-    --ring: oklch(0.82 0.17 80);
-    --accent: oklch(0.27 0.07 80);
-    --accent-foreground: oklch(0.85 0.08 80);
-    --info: oklch(0.82 0.17 80);
-  }
-  :root[data-accent='rose'] {
-    --primary: oklch(0.59 0.25 18);
-    --primary-foreground: oklch(0.98 0 0);
-    --ring: oklch(0.59 0.25 18);
-    --accent: oklch(0.94 0.06 18);
-    --accent-foreground: oklch(0.35 0.1 18);
-    --info: oklch(0.59 0.25 18);
-  }
-  .dark[data-accent='rose'] {
-    --primary: oklch(0.66 0.23 18);
-    --primary-foreground: oklch(0.98 0 0);
-    --ring: oklch(0.66 0.23 18);
-    --accent: oklch(0.26 0.08 18);
-    --accent-foreground: oklch(0.87 0.06 18);
-    --info: oklch(0.66 0.23 18);
-  }
-  :root[data-accent='cyan'] {
-    --primary: oklch(0.61 0.16 230);
-    --primary-foreground: oklch(0.98 0 0);
-    --ring: oklch(0.61 0.16 230);
-    --accent: oklch(0.94 0.04 230);
-    --accent-foreground: oklch(0.32 0.08 230);
-    --info: oklch(0.61 0.16 230);
-  }
-  .dark[data-accent='cyan'] {
-    --primary: oklch(0.68 0.15 230);
-    --primary-foreground: oklch(0.98 0 0);
-    --ring: oklch(0.68 0.15 230);
-    --accent: oklch(0.26 0.06 230);
-    --accent-foreground: oklch(0.88 0.05 230);
-    --info: oklch(0.68 0.15 230);
-  }
+  /* --- Accent colour presets (applied via data-accent on <html>) ---
+   * One line each. Only the hue changes: lightness and chroma stay pinned to the
+   * band that was solved for WCAG AA, so no preset can silently ship a failing
+   * contrast pair the way the previous hand-picked 5-colour blocks did. */
+  :root[data-accent='emerald'] { --accent-h: 162; }
+  :root[data-accent='violet']  { --accent-h: 293; }
+  :root[data-accent='amber']   { --accent-h: 70; }
+  :root[data-accent='rose']    { --accent-h: 18; }
+  :root[data-accent='cyan']    { --accent-h: 230; }
 
   /* --- High-contrast preset (applied via data-contrast on <html>) --- */
   :root[data-contrast='high'] {
     --foreground: oklch(0.1 0 0);
     --card-foreground: oklch(0.1 0 0);
     --muted-foreground: oklch(0.25 0 0);
-    --border: oklch(0.55 0 0);
+    --border: oklch(0.45 0 0);
+    --border-input: oklch(0.35 0 0);
   }
   .dark[data-contrast='high'] {
     --foreground: oklch(0.99 0 0);
     --card-foreground: oklch(0.99 0 0);
-    --muted-foreground: oklch(0.82 0 0);
-    --border: oklch(0.5 0.01 270);
+    --muted-foreground: oklch(0.88 0 0);
+    --border: oklch(0.6 0.01 270);
+    --border-input: oklch(0.72 0.01 270);
   }
 }
 
@@ -255,21 +303,37 @@
   }
 }
 
-/* 2027: page-enter animation using View Transitions API (progressive enhancement) */
+/* Page-enter animation using View Transitions API (progressive enhancement).
+
+   NOTE: these previously existed as two competing blocks — an `animation: none` on
+   `::view-transition-old(root)` and, further down, a separate
+   `animation-duration` on the same pseudo-elements. The later rule silently won, so
+   the intended fade-rise never applied to the root transition. They are now one
+   coherent block, and the route-enter timing is separated from the faster
+   theme-toggle wipe by the `data-theme-wipe` attribute set just before a theme flip. */
 ::view-transition-old(root) {
-  animation: none;
+  animation: vt-fade-out 0.18s cubic-bezier(0.4, 0, 1, 1) both;
 }
 ::view-transition-new(root) {
-  animation: fade-rise 0.35s ease both;
+  animation: vt-fade-in 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
-@keyframes fade-rise {
+@keyframes vt-fade-out {
+  to { opacity: 0; transform: translateY(-4px); }
+}
+@keyframes vt-fade-in {
   from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
 }
 
-/* 2027: cross-document View Transitions for MPA-like feel */
+/* Cross-document View Transitions for MPA-like feel. */
 @view-transition {
   navigation: auto;
+}
+
+/* The theme toggle reuses the same machinery for a quicker, symmetric cross-fade. */
+:root[data-theme-wipe] ::view-transition-old(root),
+:root[data-theme-wipe] ::view-transition-new(root) {
+  animation-duration: 0.22s;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* 2027: named view transitions for hero elements */
@@ -282,15 +346,6 @@
   animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* 2030: theme-toggle cross-fade via same-document View Transitions.
- * Snappy 220ms ease so the dark/light flip feels like a smooth wipe,
- * rather than the longer 350ms route enter. */
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation-duration: 0.22s;
-  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-}
-
 /* 2027: entry animation for first mount via @starting-style */
 @starting-style {
   .calc-stagger > * {
@@ -299,15 +354,34 @@
   }
 }
 
-/* Scroll-driven reveal (progressive enhancement — inert where unsupported) */
-.calc-section-reveal {
-  animation: reveal-up linear both;
-  animation-timeline: view();
-  animation-range: entry 0% entry 60%;
+/* Scroll-driven reveal.
+
+   Guarded by @supports on purpose. `animation-timeline` is still not shipped in
+   Firefox, and an unguarded `animation-timeline: view()` there falls back to the
+   document timeline, which turns an intentional scroll reveal into a page-load
+   animation (and, combined with `content-visibility: auto` sections, can leave
+   content stuck part-faded). The hidden state lives inside the keyframes so an
+   unsupported browser simply renders the final state. */
+@supports (animation-timeline: view()) {
+  .calc-section-reveal {
+    animation: reveal-up linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 60%;
+  }
 }
 @keyframes reveal-up {
   from { opacity: 0; transform: translateY(16px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* Staggered entry without hand-written nth-child index variables.
+   `sibling-index()` is Baseline 2026; the delay is inert elsewhere because the
+   animation is opt-in via the motion token below. */
+@supports (animation-delay: calc(sibling-index() * 1ms)) {
+  .stagger-children > * {
+    animation: reveal-up var(--motion-slow) cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: calc(sibling-index() * 45ms);
+  }
 }
 
 /* content-visibility for below-fold sections = huge render cost savings */
@@ -352,23 +426,226 @@
   }
 }
 
-/* Respect reduced-motion preferences (2027 accessibility standard) */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
+/* --- Motion system -------------------------------------------------------
+ * A single duration/easing scale so 50+ components stop hand-rolling
+ * `transition={{ duration: 0.3 }}` and drifting apart.
+ *
+ * Motion is OPT-IN and governed by three inputs:
+ *   1. the OS `prefers-reduced-motion` setting
+ *   2. the in-app tri-state override (`data-motion` = system | full | reduce)
+ *   3. the `--motion-*` tokens below, which collapse to 0ms when reduced
+ * This replaces the previous blanket `animation-duration: 0.01ms !important`
+ * block, which could still fire `animationend`/`transitionend` on animations that
+ * never really ran, and could not touch JS-driven animation at all (motion v13
+ * animates via WAAPI/inline styles, so a CSS duration override never reached it).
+ * The JS side of the override lives in `src/lib/motion-core.ts`.
+ */
+@layer base {
+  :root {
+    --motion-instant: 100ms;
+    --motion-fast: 150ms;
+    --motion-base: 200ms;
+    --motion-medium: 280ms;
+    --motion-slow: 400ms;
+    --motion-slower: 600ms;
+
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+    --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
+    --ease-exit: cubic-bezier(0.4, 0, 1, 1);
   }
-  .calc-section-reveal {
-    animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-instant: 0.01ms;
+    --motion-fast: 0.01ms;
+    --motion-base: 0.01ms;
+    --motion-medium: 0.01ms;
+    --motion-slow: 0.01ms;
+    --motion-slower: 0.01ms;
+  }
+  .calc-section-reveal,
+  .stagger-children > * {
+    animation: none !important;
   }
   ::view-transition-old(root),
-  ::view-transition-new(root) {
-    animation: none;
+  ::view-transition-new(root),
+  ::view-transition-old(hero),
+  ::view-transition-new(hero) {
+    animation: none !important;
   }
+  .aura-orb-1,
+  .aura-orb-2,
+  .animate-ticker,
+  .animate-text-shimmer,
+  .animate-border-beam,
+  .skeleton-shimmer {
+    animation: none !important;
+  }
+  html {
+    scroll-behavior: auto !important;
+  }
+}
+
+/* In-app override. The OS block above does not consult this, so a user who
+   explicitly chose "full motion" while the OS says "reduce" is honoured —
+   that is the point of offering the control at all. */
+:root[data-motion='reduce'] {
+  --motion-instant: 0.01ms;
+  --motion-fast: 0.01ms;
+  --motion-base: 0.01ms;
+  --motion-medium: 0.01ms;
+  --motion-slow: 0.01ms;
+  --motion-slower: 0.01ms;
+}
+:root[data-motion='reduce'] .calc-section-reveal,
+:root[data-motion='reduce'] .stagger-children > *,
+:root[data-motion='reduce'] .aura-orb-1,
+:root[data-motion='reduce'] .aura-orb-2,
+:root[data-motion='reduce'] .animate-ticker,
+:root[data-motion='reduce'] .animate-text-shimmer,
+:root[data-motion='reduce'] .animate-border-beam {
+  animation: none !important;
+}
+:root[data-motion='reduce'] ::view-transition-old(root),
+:root[data-motion='reduce'] ::view-transition-new(root) {
+  animation: none !important;
+}
+
+/* --- Fluid type scale ---------------------------------------------------
+ * Every step keeps a `rem` term in the preferred value. Pure `vw` type does not
+ * respond to browser zoom or a user's default font size, which fails WCAG 1.4.4.
+ * These also compose with the `data-scale` control, because `rem` scales with the
+ * root font size — so the appearance panel's text-size control still works.
+ *
+ * Fluid scaling is applied to display sizes only. A 2px delta on body text gains
+ * nothing and costs zoom responsiveness. */
+@layer base {
+  :root {
+    --text-display: clamp(2.5rem, 1.5rem + 4.2vw, 5.25rem);
+    --text-h1: clamp(2rem, 1.4rem + 2.6vw, 3.5rem);
+    --text-h2: clamp(1.6rem, 1.25rem + 1.5vw, 2.5rem);
+    --text-h3: clamp(1.3rem, 1.1rem + 0.9vw, 1.85rem);
+    --text-h4: clamp(1.1rem, 1rem + 0.5vw, 1.35rem);
+    --text-lead: clamp(1.02rem, 0.97rem + 0.35vw, 1.2rem);
+  }
+}
+
+@utility text-display {
+  font-size: var(--text-display);
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  font-weight: 800;
+}
+@utility text-h1-fluid {
+  font-size: var(--text-h1);
+  line-height: 1.06;
+  letter-spacing: -0.028em;
+  font-weight: 800;
+}
+@utility text-h2-fluid {
+  font-size: var(--text-h2);
+  line-height: 1.14;
+  letter-spacing: -0.022em;
+  font-weight: 750;
+}
+@utility text-h3-fluid {
+  font-size: var(--text-h3);
+  line-height: 1.2;
+  letter-spacing: -0.016em;
+  font-weight: 700;
+}
+@utility text-h4-fluid {
+  font-size: var(--text-h4);
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  font-weight: 650;
+}
+@utility text-lead {
+  font-size: var(--text-lead);
+  line-height: 1.6;
+}
+
+/* --- Elevation ----------------------------------------------------------
+ * Depth is carried by a tinted shadow in light mode and by a combination of
+ * surface lightness + a hairline border in dark mode, because a dark shadow on a
+ * dark surface is invisible and only makes the card look muddy. The two modes
+ * therefore get genuinely different recipes rather than one shadow being
+ * inverted, which is what produces the "screenshot-right, reading-wrong" look. */
+@layer base {
+  :root {
+    --shadow-color: 220 40% 12%;
+    --elevation-1: 0 1px 2px -1px hsl(var(--shadow-color) / 0.1),
+      0 1px 3px 0 hsl(var(--shadow-color) / 0.06);
+    --elevation-2: 0 2px 4px -2px hsl(var(--shadow-color) / 0.1),
+      0 4px 8px -2px hsl(var(--shadow-color) / 0.07);
+    --elevation-3: 0 4px 8px -4px hsl(var(--shadow-color) / 0.1),
+      0 12px 24px -6px hsl(var(--shadow-color) / 0.1);
+    --elevation-glow: 0 0 0 1px var(--primary-wash),
+      0 12px 32px -12px oklch(var(--accent-l) var(--accent-c) var(--accent-h) / 0.45);
+  }
+  .dark {
+    --shadow-color: 0 0% 2%;
+    --elevation-1: 0 1px 2px 0 hsl(var(--shadow-color) / 0.5);
+    --elevation-2: 0 2px 6px -1px hsl(var(--shadow-color) / 0.6),
+      0 0 0 1px oklch(1 0 0 / 0.05);
+    --elevation-3: 0 8px 24px -6px hsl(var(--shadow-color) / 0.7),
+      0 0 0 1px oklch(1 0 0 / 0.08);
+    --elevation-glow: 0 0 0 1px oklch(var(--accent-l) var(--accent-c) var(--accent-h) / 0.4),
+      0 12px 40px -10px oklch(var(--accent-l) var(--accent-c) var(--accent-h) / 0.4);
+  }
+}
+
+@utility elev-1 {
+  box-shadow: var(--elevation-1);
+}
+@utility elev-2 {
+  box-shadow: var(--elevation-2);
+}
+@utility elev-3 {
+  box-shadow: var(--elevation-3);
+}
+@utility elev-glow {
+  box-shadow: var(--elevation-glow);
+}
+
+/* --- Micro-interactions -------------------------------------------------
+ * Feedback has to land inside ~100ms or it stops reading as a reaction to the
+ * input. Each of these animates only `transform` / `opacity` / colour, so none of
+ * them trigger layout, and all of them collapse to 0ms under reduced motion
+ * because they read the shared `--motion-*` tokens. */
+@utility pressable {
+  transition: transform var(--motion-instant) var(--ease-out),
+    box-shadow var(--motion-fast) var(--ease-out);
+}
+@utility pressable-press {
+  transform: scale(0.97);
+}
+
+/* Interactive cards: a small lift plus an accent glow, never a scale above 1.02
+   on functional UI (oversized scaling makes a hit target look displaced). */
+@utility lift-card {
+  transition: transform var(--motion-base) var(--ease-out),
+    box-shadow var(--motion-base) var(--ease-out),
+    border-color var(--motion-base) var(--ease-out);
+}
+@utility lift-card-hover {
+  transform: translateY(-3px) scale(1.01);
+  box-shadow: var(--elevation-glow);
+  border-color: oklch(var(--accent-l) var(--accent-c) var(--accent-h) / 0.4);
+}
+
+/* Emoji that carries meaning also needs a text label beside it, so the meaning
+   never depends on recognising a glyph (WCAG 1.1.1 / 1.4.1). */
+@utility emoji-mark {
+  display: inline-block;
+  font-style: normal;
+  font-variant-emoji: emoji;
+  line-height: 1;
+  /* Sits on the text baseline grid instead of floating above it. */
+  vertical-align: -0.08em;
+  filter: saturate(1.05);
 }
 
 /* 2027: prefers-contrast support */
@@ -399,30 +676,96 @@
   animation: shimmer 1.6s linear infinite;
 }
 
-/* Glassmorphism for navbar + command palette */
+/* --- Glassmorphism -------------------------------------------------------
+ * `backdrop-filter` re-samples everything behind the element on every frame in
+ * which that backdrop moves, so a blurred sticky navbar over a scrolling page is
+ * the single most expensive thing in this stylesheet. Three rules keep it cheap:
+ *   1. an opaque background first, enhanced only where blur is actually supported
+ *   2. never animate the blur radius — animate a stable surface colour instead
+ *   3. `contain: paint` stops outside repaints from forcing a re-blur
+ * Capped at 2-3 blurred elements per viewport; modals deliberately use a plain
+ * translucent scrim instead of a full-surface blur. */
 .glass-nav {
-  background: color-mix(in oklab, var(--background) 72%, transparent);
-  backdrop-filter: blur(16px) saturate(160%);
-  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  background: color-mix(in oklab, var(--background) 94%, transparent);
+  contain: paint;
+  transition: background-color var(--motion-base) var(--ease-out);
+}
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass-nav {
+    background: color-mix(in oklab, var(--background) 72%, transparent);
+    -webkit-backdrop-filter: blur(16px) saturate(160%);
+    backdrop-filter: blur(16px) saturate(160%);
+  }
 }
 
-/* 2027: glassmorphism card variant */
 .glass-card {
-  background: color-mix(in oklab, var(--card) 65%, transparent);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border: 1px solid color-mix(in oklab, var(--border) 50%, transparent);
+  background: color-mix(in oklab, var(--card) 92%, transparent);
+  border: 1px solid color-mix(in oklab, var(--border) 70%, transparent);
+  contain: paint;
+  transition: background-color var(--motion-base) var(--ease-out),
+    border-color var(--motion-base) var(--ease-out);
+}
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass-card {
+    background: color-mix(in oklab, var(--card) 65%, transparent);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    backdrop-filter: blur(24px) saturate(180%);
+  }
 }
 
 /* 2027: smooth popover / dialog backdrop (pairs with Popover API) */
 ::backdrop {
-  background: oklch(0 0 0 / 0.5);
-  backdrop-filter: blur(4px);
+  background: oklch(0 0 0 / 0.55);
 }
 
-/* 2027: text-wrap balance for headings */
-h1, h2, h3 {
+/* Windows High Contrast / forced-colors: backdrop-filter and alpha borders are
+   exactly what breaks here, so hand control back to system colours. */
+@media (forced-colors: active) {
+  :where(a, button, input, select, textarea, [tabindex]):focus-visible {
+    outline: 2px solid CanvasText;
+  }
+  .glass-nav,
+  .glass-card {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: Canvas;
+    border: 1px solid CanvasText;
+  }
+  .aura-orb-1,
+  .aura-orb-2 {
+    display: none;
+  }
+}
+
+/* --- Animatable progress ring -------------------------------------------
+ * Registering the percentage turns it from a discrete token (which snaps at 50%)
+ * into a real interpolable value, so a conic-gradient progress ring animates with
+ * no SVG, no stroke-dasharray maths and no per-frame JS. */
+@property --ring-pct {
+  syntax: '<percentage>';
+  inherits: false;
+  initial-value: 0%;
+}
+
+.progress-ring {
+  --ring-pct: 0%;
+  background: conic-gradient(var(--ring-color, var(--primary)) var(--ring-pct), var(--muted) 0);
+  transition: --ring-pct var(--motion-slow) var(--ease-out);
+  /* Promote to its own layer so the gradient re-rasterises without repainting
+     the whole card. */
+  will-change: --ring-pct;
+}
+
+/* --- Text wrapping -------------------------------------------------------
+ * `balance` is scoped to unboxed headings. Applied to a heading that has a visible
+ * border/background, Chromium leaves a visibly ragged empty edge, which reads as a
+ * layout bug on a card-heavy interface. */
+h1, h2, h3, h4 {
   text-wrap: balance;
+  max-inline-size: 34ch;
+}
+h1 {
+  max-inline-size: 22ch;
 }
 p {
   text-wrap: pretty;

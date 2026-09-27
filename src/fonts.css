@@ -2,13 +2,22 @@
  * Replaces the full @fontsource-variable/inter index (7 subsets: cyrillic,
  * greek, vietnamese, etc.) with just the latin glyphs used across the AU site.
  * Shrinks the emitted font assets + PWA precache by ~188 KB pre-gzip.
+ *
+ * Deliberately the `opsz` file rather than the lighter `wght` one. The opsz build is a
+ * superset — it carries wght 100-900 AND optical size 14-28 — and Inter 4 folds its
+ * former "Inter Display" cut into that axis, so headings get genuinely tighter
+ * spacing and contrast instead of being a scaled-up text cut. Cost: 72,920 B vs 48,256 B
+ * raw. woff2 is already compressed so that is ~24.6 KB on the wire, paid once and then
+ * cached across every page, against ~583 KB removed from JavaScript in v7.4.0.
+ * `font-optical-sizing: auto` in index.css is what activates the axis; it is a no-op
+ * against the wght-only file.
  */
 @font-face {
   font-family: 'Inter Variable';
   font-style: normal;
   font-display: swap;
   font-weight: 100 900;
-  src: url('@fontsource-variable/inter/files/inter-latin-wght-normal.woff2')
+  src: url('@fontsource-variable/inter/files/inter-latin-opsz-normal.woff2')
     format('woff2-variations');
   unicode-range:
     U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,

@@ -60,7 +60,7 @@ export function CareersEmployment() {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
           <div className="md:col-span-8 space-y-3">
             <div className="flex items-center gap-3 mb-1">
-              <span className="text-4xl">{moduleData.emoji}</span>
+              <span className="text-4xl" aria-hidden="true">{moduleData.emoji}</span>
               <Badge variant="default" className="text-xs font-bold uppercase tracking-wider">
                 Module 2 • First Job & Career Super-Module
               </Badge>

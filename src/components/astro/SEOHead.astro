@@ -145,6 +145,20 @@ const siteTitle = title.includes('AusFinance') ? title : `${title} | AusFinance 
             document.documentElement.dataset.contrast = contrast;
           }
         }
+
+        /* Motion preference. Resolved here, pre-paint, so a visitor who chose "Calm"
+         * never sees a frame of full-strength animation on load. This mirrors
+         * `src/lib/motion-core.ts`, which owns the runtime behaviour — the duplication
+         * is deliberate because this block must stay dependency-free and inline to run
+         * before first paint. */
+        var MOTION = ['system', 'full', 'reduce'];
+        var storedMotion = localStorage.getItem('aus_motion');
+        var motionPref = MOTION.indexOf(storedMotion) !== -1 ? storedMotion : 'system';
+        var reduced = motionPref === 'reduce'
+          || (motionPref === 'system' && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+        var html = document.documentElement;
+        html.dataset.motion = motionPref;
+        if (reduced) html.dataset.motionReduce = ''; else delete html.dataset.motionReduce;
       } catch (e) {}
     }
 

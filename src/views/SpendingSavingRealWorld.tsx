@@ -16,7 +16,7 @@ export function SpendingSavingRealWorld() {
       {/* Hero Banner */}
       <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-blue-500/20 via-cyan-500/10 to-primary/20 p-6 sm:p-10 border border-blue-500/30">
         <div className="flex items-center gap-3 mb-3">
-          <span className="text-4xl">{moduleData.emoji}</span>
+          <span className="text-4xl" aria-hidden="true">{moduleData.emoji}</span>
           <Badge variant="default" className="text-xs font-bold uppercase tracking-wider">
             Module 6 • Real World Money
           </Badge>

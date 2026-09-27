@@ -79,7 +79,7 @@ export function BrisbaneQLD() {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
           <div className="md:col-span-8 space-y-3">
             <div className="flex items-center gap-3 mb-1 flex-wrap">
-              <span className="text-4xl">{moduleData.emoji}</span>
+              <span className="text-4xl" aria-hidden="true">{moduleData.emoji}</span>
               <Badge variant="default" className="text-xs font-bold uppercase tracking-wider">
                 Location Module • {moduleData.title}
               </Badge>
@@ -280,7 +280,7 @@ export function BrisbaneQLD() {
             {QLD_TEEN_RULES.map(rule => (
               <div key={rule.title} className="rounded-xl border border-border bg-card p-4 space-y-1.5">
                 <div className="flex items-center gap-2">
-                  <span className="text-xl">{rule.emoji}</span>
+                  <span className="text-xl" aria-hidden="true">{rule.emoji}</span>
                   <h3 className="font-bold text-foreground text-sm">{rule.title}</h3>
                 </div>
                 <p className="text-[11px] text-muted-foreground leading-relaxed">{rule.detail}</p>

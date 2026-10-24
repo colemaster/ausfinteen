@@ -1,7 +1,7 @@
 /**
  * On-demand loader for the React overlay host (command palette + shortcuts modal).
  *
- * Why this exists: `CommandPalette` pulls in React, `motion`, `cmdk` and `fuse.js`. Mounting it
+ * Why this exists: `CommandPalette` pulls in React, `cmdk` and `fuse.js`. Mounting it
  * as an Astro island put all of that on every page's critical path just so a keyboard shortcut
  * would work. Instead the Navbar (plain `.astro`, no framework) calls the functions below, and
  * React is only fetched the first time the user reaches for the palette.
@@ -43,7 +43,14 @@ function ensureHost(): Promise<void> {
       const { createElement } = await import('react');
       const { OverlayHost } = await import('@/components/OverlayHost');
 
+      // `render()` schedules work; the dialogs only subscribe to their open
+      // events from an effect. Wait for the host's ready event so the first
+      // open request cannot race the React commit.
+      const ready = new Promise<void>(resolve => {
+        document.addEventListener('overlay-host-ready', () => resolve(), { once: true });
+      });
       createRoot(hostContainer('overlay-host')).render(createElement(OverlayHost));
+      await ready;
       mounted = true;
     })().catch((error: unknown) => {
       // A failed load must not poison later attempts.
@@ -58,7 +65,7 @@ function ensureHost(): Promise<void> {
  * Mount just the toast viewport, without the command palette.
  *
  * Toasts are triggered by routine interactions, so pulling the palette's dependency graph
- * (motion, cmdk, fuse.js) in to render a "Saved!" message would be a poor trade.
+ * (cmdk, fuse.js) in to render a "Saved!" message would be a poor trade.
  */
 function ensureToastHost(): Promise<void> {
   if (!toastMountPromise) {

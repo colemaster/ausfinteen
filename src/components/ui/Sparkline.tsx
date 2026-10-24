@@ -1,5 +1,4 @@
 import { useState, useRef, useId } from 'react';
-import { motion, useReducedMotion } from 'motion/react';
 import { cn } from '@/lib/utils';
 
 export interface SparklineProps {
@@ -34,7 +33,6 @@ export function Sparkline({
 }: SparklineProps) {
   const [hoverIdx, setHoverIdx] = useState<number | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
-  const reducedMotion = useReducedMotion() ?? false;
   const gradientId = useId();
 
   if (!data || data.length < 2) return null;
@@ -102,25 +100,22 @@ export function Sparkline({
         </defs>
 
         {/* Gradient fill */}
-        <motion.path
+        <path
+          className="sparkline-area"
           d={areaD}
           fill={`url(#sparkline-fill-${gradientId})`}
-          initial={reducedMotion ? { opacity: 1 } : { opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
         />
 
-        {/* Main curve stroke */}
-        <motion.path
+        {/* Main curve stroke — drawn with a CSS dash-offset keyframe. */}
+        <path
+          className="sparkline-path"
           d={pathD}
           fill="none"
           stroke={strokeColor}
           strokeWidth={strokeWidth}
           strokeLinecap="round"
           strokeLinejoin="round"
-          initial={reducedMotion ? { pathLength: 1 } : { pathLength: 0 }}
-          animate={{ pathLength: 1 }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          pathLength={1}
         />
 
         {/* Min / Max indicators */}

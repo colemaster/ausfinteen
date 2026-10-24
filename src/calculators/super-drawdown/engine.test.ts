@@ -106,15 +106,15 @@ describe('Superannuation Drawdown & Age Pension Engine', () => {
 });
 
 describe('transferBalanceCapCheck', () => {
-  it('flags balances above the $1.9M cap', () => {
+  it('flags balances above the cap', () => {
     const check = transferBalanceCapCheck(2500000, 65);
     expect(check.overCap).toBe(true);
-    expect(check.excess).toBe(600000);
-    expect(check.cap).toBe(1900000);
+    expect(check.excess).toBe(400000);
+    expect(check.cap).toBe(2100000);
   });
 
   it('returns no excess at or below the cap', () => {
-    expect(transferBalanceCapCheck(1900000, 65).overCap).toBe(false);
+    expect(transferBalanceCapCheck(2100000, 65).overCap).toBe(false);
     expect(transferBalanceCapCheck(1500000, 65).excess).toBe(0);
   });
 

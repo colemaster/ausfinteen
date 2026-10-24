@@ -1,13 +1,47 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { Card } from '@/components/ui/Card';
 import { NumberInput } from '@/components/ui/NumberInput';
 import { Badge } from '@/components/ui/Badge';
+import { QuickPresetBar, type ScenarioPreset } from '@/components/ui/QuickPresetBar';
+import { CalculatorActions } from '@/components/shared/CalculatorActions';
 import { OFFICIAL_WEB_LINKS, TEEN_SAVINGS_ACCOUNTS } from '@/data/teen-finance-data';
 import { WebReferenceLink } from '@/components/shared/WebReferenceLink';
 import { Sparkles, TrendingUp, Target, ShieldCheck, CheckCircle2, AlertTriangle, Smartphone, Lock } from 'lucide-react';
 import { savingsWithMonthlyCompound, savingsWithSimpleInterest, calcMonthsToReachGoal } from './engine';
+import { formatCurrency } from '@/utils/formatters';
 
 type AgeFilter = 'all' | '15yo' | '16-17' | '18+';
+
+interface SavingsGoalPreset {
+  balance: number;
+  deposit: number;
+  goal: number;
+  age: AgeFilter;
+}
+
+const SAVINGS_PRESETS: ScenarioPreset<SavingsGoalPreset>[] = [
+  {
+    id: 'mojo',
+    label: '$500 Mojo Safety Net',
+    badge: 'Barefoot Step 1',
+    description: 'Foundational emergency fund in an account with NO debit card linked',
+    values: { balance: 150, deposit: 50, goal: 500, age: '15yo' },
+  },
+  {
+    id: 'car-fund',
+    label: '$3,000 First Car Fund',
+    badge: 'Car Goal',
+    description: 'Saving a reliable cash deposit for your first vehicle',
+    values: { balance: 800, deposit: 150, goal: 3000, age: '16-17' },
+  },
+  {
+    id: 'uni-tech',
+    label: '$1,500 Laptop / Tech',
+    badge: 'Study Goal',
+    description: 'Saving for a MacBook or PC for Year 11/12 or University studies',
+    values: { balance: 400, deposit: 100, goal: 1500, age: '16-17' },
+  },
+];
 
 export function TeenSavingsAccountFinder() {
   const [savingsBalance, setSavingsBalance] = useState<number>(1500);
@@ -16,6 +50,25 @@ export function TeenSavingsAccountFinder() {
   const [monthlyCompounding, setMonthlyCompounding] = useState<boolean>(true);
   const [ageFilter, setAgeFilter] = useState<AgeFilter>('15yo');
   const [goalTarget, setGoalTarget] = useState<number>(500);
+  const [activePreset, setActivePreset] = useState<string | undefined>();
+
+  const handleApplyPreset = (preset: ScenarioPreset<SavingsGoalPreset>) => {
+    setActivePreset(preset.id);
+    if (preset.values.balance !== undefined) setSavingsBalance(preset.values.balance);
+    if (preset.values.deposit !== undefined) setMonthlyDeposit(preset.values.deposit);
+    if (preset.values.goal !== undefined) setGoalTarget(preset.values.goal);
+    if (preset.values.age !== undefined) setAgeFilter(preset.values.age);
+  };
+
+  const handleReset = useCallback(() => {
+    setActivePreset(undefined);
+    setSavingsBalance(1500);
+    setMonthlyDeposit(50);
+    setMeetsConditions(true);
+    setMonthlyCompounding(true);
+    setAgeFilter('15yo');
+    setGoalTarget(500);
+  }, []);
 
   // Filter accounts based on selected age bracket
   const filteredAccounts = useMemo(() => {
@@ -45,6 +98,17 @@ export function TeenSavingsAccountFinder() {
     return calcMonthsToReachGoal(savingsBalance, goalTarget, monthlyDeposit, projectionRate);
   }, [savingsBalance, goalTarget, monthlyDeposit, projectionRate]);
 
+  const summaryText = useMemo(() => {
+    return [
+      '--- High-Interest Teen Savings Account Summary ---',
+      `Starting Balance: ${formatCurrency(savingsBalance)} | Monthly Deposit: ${formatCurrency(monthlyDeposit)}/mo`,
+      `Best Available Youth Rate: ${projectionRate.toFixed(2)}% p.a. (${meetsConditions ? 'Bonus rate conditions met' : 'Base rate only'})`,
+      `12-Month Projected Total: ${formatCurrency(projection.endingBalance)} (Interest Earned: +${formatCurrency(projection.interestEarned)})`,
+      `Target Goal ($${goalTarget.toLocaleString()}): Reached in ${goalProjection.monthsToReach} months (${goalProjection.weeksToReach} weeks)`,
+      `Calculated via AusFinTools Teen Savings Finder`,
+    ].join('\n');
+  }, [savingsBalance, monthlyDeposit, projectionRate, meetsConditions, projection, goalTarget, goalProjection]);
+
   return (
     <Card variant="glass" className="p-6 space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border pb-4">
@@ -66,6 +130,14 @@ export function TeenSavingsAccountFinder() {
           </Badge>
         </div>
       </div>
+
+      {/* Quick Savings Presets */}
+      <QuickPresetBar
+        presets={SAVINGS_PRESETS}
+        activePresetId={activePreset}
+        onSelect={handleApplyPreset}
+        title="Teen Savings Goal Benchmarks"
+      />
 
       {/* Age Eligibility Filter Tabs */}
       <div className="space-y-2">
@@ -411,6 +483,13 @@ export function TeenSavingsAccountFinder() {
           Scam Warning: Never let online strangers transfer money through your account. "Money muling" is a serious criminal money-laundering offence carrying up to 10–25 years imprisonment!
         </p>
       </div>
+
+      {/* Action buttons */}
+      <CalculatorActions
+        onReset={handleReset}
+        summaryText={summaryText}
+        summaryTitle="Youth Savings Analysis"
+      />
 
       <div className="pt-2 flex flex-wrap gap-2">
         <WebReferenceLink link={OFFICIAL_WEB_LINKS.apra_fcs} />

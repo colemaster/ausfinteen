@@ -1,15 +1,17 @@
 /**
- * Australian tax brackets and Medicare levy thresholds for 2024-2027.
+ * Australian tax brackets, offset and Medicare levy thresholds for 2024-27,
+ * with the legislated 2027-28 rates previewed.
  * Source: ATO — ato.gov.au/rates/individual-income-tax-rates/
  * Stage 3 legislated tax rates apply from 1 July 2024 and through 2026-27.
- * From 1 July 2026: second bracket rate reduced from 16% to 15%.
- * From 1 July 2027: second bracket rate reduced from 15% to 14%.
- * Medicare levy low-income thresholds increased 2.9% from 1 July 2025 (retroactive).
+ * From 1 July 2026: second bracket rate reduced from 16% to 15% (TAX_BRACKETS_2026_27).
+ * From 1 July 2027: second bracket rate reduced from 15% to 14% (TAX_BRACKETS_2027_28 preview; now law).
+ * Medicare levy low-income thresholds increased 2.9% from 1 July 2025 (retroactive); SAPTO thresholds per ATO.
  * MLS income thresholds indexed from 1 July 2026 (single $105k/$123k/$164k).
  * $1,000 standard deduction for work-related expenses introduced from 2026-27 (replaces $300 no-receipt threshold).
  * $20,000 instant asset write-off now permanent for businesses with turnover < $10M (from 1 July 2026).
  * Payday Super: employers must pay super with each pay run from 1 July 2026 (within 7 business days).
- * Verified against ATO rates pages, 5 Sept 2026.
+ * Division 6AA minor (unearned income) rates live in src/data/teen-finance-data.ts.
+ * Verified against ATO rates pages, 22 Oct 2026.
  */
 
 export interface TaxBracket {
@@ -31,6 +33,41 @@ export const TAX_BRACKETS_2026_27: TaxBracket[] = [
 /** @deprecated Use TAX_BRACKETS_2026_27 instead */
 export const TAX_BRACKETS_2024_25 = TAX_BRACKETS_2026_27;
 
+/**
+ * LEGISLATED PREVIEW — 2027-28 tax brackets (second bracket 15% → 14% from 1 July 2027;
+ * Treasury Laws Amendment (More Cost of Living Relief) Act 2025). The $250 Working Australians
+ * Tax Offset also starts in 2027-28 (see constants.ts). Base amounts are derived from the 14%
+ * second-bracket rate and match the published 2027-28 scale.
+ */
+export const TAX_BRACKETS_2027_28: TaxBracket[] = [
+  { min: 0,      max: 18200,   rate: 0,    baseTax: 0 },
+  { min: 18201,  max: 45000,   rate: 0.14, baseTax: 0 },
+  { min: 45001,  max: 135000,  rate: 0.30, baseTax: 3752 },
+  { min: 135001, max: 190000,  rate: 0.37, baseTax: 30752 },
+  { min: 190001, max: Infinity, rate: 0.45, baseTax: 51102 },
+];
+
+/**
+ * 2026-27 foreign resident tax rates — no tax-free threshold, no Medicare levy; 30% from $1.
+ * Rates unchanged from 2025-26. Source: ATO tax rates – foreign residents (updated 1 June 2026).
+ */
+export const FOREIGN_RESIDENT_TAX_BRACKETS_2026_27: TaxBracket[] = [
+  { min: 0,      max: 135000,   rate: 0.30, baseTax: 0 },
+  { min: 135001, max: 190000,   rate: 0.37, baseTax: 40500 },
+  { min: 190001, max: Infinity, rate: 0.45, baseTax: 60850 },
+];
+
+/**
+ * 2026-27 working holiday maker (subclass 417/462) tax rates — 15% on the first $45,000.
+ * Source: ATO Schedule 15 – Tax table for working holiday makers (published 17 June 2026).
+ */
+export const WORKING_HOLIDAY_MAKER_TAX_BRACKETS_2026_27: TaxBracket[] = [
+  { min: 0,      max: 45000,    rate: 0.15, baseTax: 0 },
+  { min: 45001,  max: 135000,   rate: 0.30, baseTax: 6750 },
+  { min: 135001, max: 190000,   rate: 0.37, baseTax: 33750 },
+  { min: 190001, max: Infinity, rate: 0.45, baseTax: 54100 },
+];
+
 export const MEDICARE_LEVY_RATE = 0.02;
 
 export const MEDICARE_LEVY_REDUCTION = {
@@ -39,6 +76,10 @@ export const MEDICARE_LEVY_REDUCTION = {
   shadeInRate: 0.10,       // 10% shade-in rate
   familyThreshold: 47238,  // Family low-income threshold 2025-26 (up from $45,907)
   familyChildBonus: 4338,  // Per dependent child uplift to lower threshold (upper uplift + $5,423)
+  saptoThreshold: 44268,   // Seniors and Pensioners Tax Offset (SAPTO) single threshold (up to $55,335 shade-in)
+  saptoPhaseOutThreshold: 55335,
+  saptoFamilyThreshold: 61623, // SAPTO family threshold (up to $77,028 shade-in)
+  saptoFamilyPhaseOutThreshold: 77028,
 };
 
 export const MEDICARE_LEVY_SURCHARGE = {

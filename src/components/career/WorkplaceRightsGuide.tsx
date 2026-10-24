@@ -20,6 +20,7 @@ export function WorkplaceRightsGuide() {
           </div>
           <p className="text-xs text-muted-foreground">
             Know your legal rights under the Fair Work Act — 3-hour minimum shifts, mandatory rest breaks, school-term hour limits, and WHS protections.
+            Includes 2026 updates: Payday super on payslips, Right to Disconnect (Aug 2024/2025), federal wage theft laws (Jan 2025), and casual conversion after 12 months.
           </p>
         </div>
         <Badge variant="danger">
@@ -38,7 +39,7 @@ export function WorkplaceRightsGuide() {
             <h3 className="font-bold text-sm text-foreground">Unpaid Trial Shift Rules</h3>
           </div>
           <p className="text-xs text-muted-foreground leading-relaxed">
-            An unpaid trial is ONLY legal if it is a brief skills evaluation (typically <strong>1 hour maximum</strong> for basic tasks like carrying trays or register navigation). If you are asked to work a full shift or perform unsupervised commercial work, it MUST be paid at your full legal award rate! Employers forcing teens onto an ABN to evade awards commit illegal <strong>sham contracting</strong> (Fair Work Act s 357 / s 15AA).
+            An unpaid trial is ONLY legal if it is a brief skills evaluation (typically <strong>1 hour maximum</strong> for basic tasks like carrying trays or register navigation). If you are asked to work a full shift or perform unsupervised commercial work, it MUST be paid at your full legal award rate! Employers forcing teens onto an ABN to evade awards commit illegal <strong>sham contracting</strong>. Also, casuals have a right to casual conversion (permanent employment) after 12 months.
           </p>
           <div className="p-2.5 rounded-xl bg-amber-500/10 text-[11px] text-amber-800 dark:text-amber-300 font-medium">
             💡 Rule: Anything beyond 1 hour of skill demonstration is illegal wage theft under Fair Work.
@@ -54,10 +55,10 @@ export function WorkplaceRightsGuide() {
             <h3 className="font-bold text-sm text-foreground">Cash-in-Hand Hazard</h3>
           </div>
           <p className="text-xs text-muted-foreground leading-relaxed">
-            Working cash-in-hand off the books strips away your legal rights: 1) You lose <strong>WorkCover injury insurance</strong>, 2) You get <strong>$0 super paid</strong>, and 3) Employers underpay you below legal minimum wage.
+            Working cash-in-hand off the books strips away your legal rights: 1) You lose <strong>WorkCover injury insurance</strong>, 2) You get <strong>$0 super paid</strong>, and 3) Employers underpay you below legal minimum wage. Wage theft was criminalised federally on 1 January 2025. Also, from 1 July 2026, payday super laws mean your payslip must show super contributions paid at the same time as wages.
           </p>
           <div className="p-2.5 rounded-xl bg-rose-500/10 text-[11px] text-rose-800 dark:text-rose-300 font-medium">
-            ⚠️ Danger: If you get hurt on the job while paid cash, you have no injury insurance!
+            ⚠️ Danger: If you get hurt on the job while paid cash, you have no injury insurance! Wage theft is now a federal crime.
           </div>
         </Card>
 
@@ -70,10 +71,10 @@ export function WorkplaceRightsGuide() {
             <h3 className="font-bold text-sm text-foreground">SafeWork WHS Rights</h3>
           </div>
           <p className="text-xs text-muted-foreground leading-relaxed">
-            Employers are legally required to provide proper safety induction, training, and PPE (aprons, gloves, earplugs). You have a legal right to <strong>refuse unsafe work</strong> without fear of losing your job!
+            Employers are legally required to provide proper safety induction, training, and PPE (aprons, gloves, earplugs). You have a legal right to <strong>refuse unsafe work</strong> without fear of losing your job! You also have a <strong>Right to Disconnect</strong> (refuse unreasonable out-of-hours contact), applicable to all businesses as of August 2025.
           </p>
           <div className="p-2.5 rounded-xl bg-blue-500/10 text-[11px] text-blue-800 dark:text-blue-300 font-medium">
-            🛡 Right: Casual status or age does NOT exclude you from WorkCover claims!
+            🛡 Right: Casual status or age does NOT exclude you from WorkCover claims or the Right to Disconnect!
           </div>
         </Card>
       </div>

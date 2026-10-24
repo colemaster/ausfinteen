@@ -1,11 +1,11 @@
-import { useMemo } from 'react';
-import { motion } from 'motion/react';
-import { fadeInUp } from '@/lib/animations';
+import { useMemo, useState, useCallback } from 'react';
 import { useUrlParams } from '../../hooks/useUrlParams';
 import { SliderControl } from '../../components/ui/SliderControl';
 import { NumberInput } from '../../components/ui/NumberInput';
 import { PortfolioField } from '../../components/ui/PortfolioField';
 import { StatCard } from '../../components/ui/StatCard';
+import { QuickPresetBar, type ScenarioPreset } from '../../components/ui/QuickPresetBar';
+import { CalculatorActions } from '../../components/shared/CalculatorActions';
 import { Assumptions } from '../../components/shared/Assumptions';
 import { Disclaimer } from '../../components/shared/Disclaimer';
 import { AboutCalc } from '../../components/shared/AboutCalc';
@@ -40,6 +40,68 @@ const DEFAULTS = {
   chartMode: 'afterTax',
 };
 
+interface DirectVsDRPreset {
+  amount: number;
+  etfReturn: number;
+  divYield: number;
+  mortgageRate: number;
+  margTax: number;
+  cgtDiscount: number;
+  years: number;
+  recycleFraction: number;
+}
+
+const PRESETS: ScenarioPreset<DirectVsDRPreset>[] = [
+  {
+    id: 'balanced-200k',
+    label: 'Balanced $200k Portfolio',
+    badge: '20 Yr Horizon',
+    description: '$200k lump sum, 8.0% ETF return, 6.0% mortgage rate, 34.5% marginal tax',
+    values: {
+      amount: 200000,
+      etfReturn: 8.0,
+      divYield: 2.0,
+      mortgageRate: 6.0,
+      margTax: 34.5,
+      cgtDiscount: 50,
+      years: 20,
+      recycleFraction: 1,
+    },
+  },
+  {
+    id: 'high-growth-100k',
+    label: 'High Growth Tilt ($100k)',
+    badge: '47% Tax Bracket',
+    description: '$100k lump sum, 9.5% ETF return, top tax bracket maximizing deductions',
+    values: {
+      amount: 100000,
+      etfReturn: 9.5,
+      divYield: 1.5,
+      mortgageRate: 5.8,
+      margTax: 47.0,
+      cgtDiscount: 50,
+      years: 15,
+      recycleFraction: 1,
+    },
+  },
+  {
+    id: 'gradual-300k',
+    label: 'Gradual Recycle ($300k)',
+    badge: '50% Recycle / yr',
+    description: '$300k lump sum, gradual 50% cycle speed into dividend-focused ETFs',
+    values: {
+      amount: 300000,
+      etfReturn: 7.0,
+      divYield: 3.0,
+      mortgageRate: 6.5,
+      margTax: 32.0,
+      cgtDiscount: 50,
+      years: 25,
+      recycleFraction: 0.5,
+    },
+  },
+];
+
 const ASSUMPTIONS = [
   'Both strategies start with the same lump sum.',
   'Direct investment: unlevered, no borrowing costs.',
@@ -63,6 +125,38 @@ export function DirectVsDR() {
     recycleFraction: DEFAULTS.recycleFraction,
     chartMode: DEFAULTS.chartMode,
   });
+
+  const [activePreset, setActivePreset] = useState<string | undefined>(undefined);
+
+  const handleApplyPreset = useCallback((preset: ScenarioPreset<DirectVsDRPreset>) => {
+    setActivePreset(preset.id);
+    if (!preset.values) return;
+    setParams({
+      amount: preset.values.amount ?? DEFAULTS.amount,
+      etfReturn: preset.values.etfReturn ?? DEFAULTS.etfReturn,
+      divYield: preset.values.divYield ?? DEFAULTS.divYield,
+      mortgageRate: preset.values.mortgageRate ?? DEFAULTS.mortgageRate,
+      margTax: preset.values.margTax ?? DEFAULTS.margTax,
+      cgtDiscount: preset.values.cgtDiscount ?? DEFAULTS.cgtDiscount,
+      years: preset.values.years ?? DEFAULTS.years,
+      recycleFraction: preset.values.recycleFraction ?? DEFAULTS.recycleFraction,
+    });
+  }, [setParams]);
+
+  const handleReset = useCallback(() => {
+    setActivePreset(undefined);
+    setParams({
+      amount: DEFAULTS.amount,
+      etfReturn: DEFAULTS.etfReturn,
+      divYield: DEFAULTS.divYield,
+      mortgageRate: DEFAULTS.mortgageRate,
+      margTax: DEFAULTS.margTax,
+      cgtDiscount: DEFAULTS.cgtDiscount,
+      years: DEFAULTS.years,
+      recycleFraction: DEFAULTS.recycleFraction,
+      chartMode: DEFAULTS.chartMode,
+    });
+  }, [setParams]);
 
   const cgtDiscountDecimal = params.cgtDiscount / 100;
 
@@ -128,17 +222,45 @@ export function DirectVsDR() {
   const drWins = dr.netWealthAfterCGT > direct.netWealthAfterCGT;
   const etfAboveBreakeven = effectiveEtfReturn > breakeven;
 
+  const summaryText = useMemo(() => {
+    const advantage = dr.netWealthAfterCGT - direct.netWealthAfterCGT;
+    return [
+      '--- Direct Investing vs Debt Recycling Summary ---',
+      `Investment Amount: ${formatCurrency(effectiveAmount)} over ${params.years} years`,
+      `ETF Return: ${formatPct(effectiveEtfReturn)} (Yield: ${params.divYield}%) | Mortgage Rate: ${formatPct(effectiveMortgageRate)}%`,
+      `Breakeven Return: ${formatPct(breakeven)} (After-tax borrowing cost: ${formatPct(effectiveMortgageRate * (1 - effectiveMargTax / 100))})`,
+      `Direct Net Wealth (Post-CGT): ${formatCurrency(direct.netWealthAfterCGT)}`,
+      `Debt Recycling Net Wealth (Post-CGT & Loan): ${formatCurrency(dr.netWealthAfterCGT)}`,
+      `Advantage: ${advantage >= 0 ? '+' : ''}${formatCurrency(advantage)} (${drWins ? 'Debt Recycling wins' : 'Direct Investing wins'})`,
+      `Calculated via AusFinTools Debt Recycling Suite`,
+    ].join('\n');
+  }, [effectiveAmount, params.years, effectiveEtfReturn, params.divYield, effectiveMortgageRate, breakeven, effectiveMargTax, direct.netWealthAfterCGT, dr.netWealthAfterCGT, drWins]);
+
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="border-b border-[var(--border)] pb-4">
-        <h1 className="text-xl font-extrabold text-[var(--foreground)] tracking-tight">
-          Direct Investing vs Debt Recycling
-        </h1>
-        <p className="text-xs text-[var(--muted-foreground)] mt-1">
-          Compare investing a lump sum directly (unlevered) vs using a tax-deductible investment loan.
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-[var(--border)] pb-4">
+        <div>
+          <h1 className="text-xl font-extrabold text-[var(--foreground)] tracking-tight">
+            Direct Investing vs Debt Recycling
+          </h1>
+          <p className="text-xs text-[var(--muted-foreground)] mt-1">
+            Compare investing a lump sum directly (unlevered) vs using a tax-deductible investment loan.
+          </p>
+        </div>
+        <CalculatorActions
+          onReset={handleReset}
+          summaryText={summaryText}
+          summaryTitle="Direct Investing vs Debt Recycling"
+        />
       </div>
+
+      <QuickPresetBar
+        presets={PRESETS}
+        activePresetId={activePreset}
+        onSelect={handleApplyPreset}
+        title="Comparison Strategies"
+      />
 
       <AboutCalc concepts={[
         {
@@ -248,7 +370,7 @@ export function DirectVsDR() {
       </div>
 
       {/* Breakeven Callout */}
-      <motion.div variants={fadeInUp} initial="hidden" animate="visible" className="space-y-6">
+      <div className="animate-rise-in space-y-6">
       <div
         className={`rounded-xl px-5 py-4 border text-sm font-medium ${etfAboveBreakeven ? 'bg-green-50 border-green-200 text-green-700 ' : 'bg-amber-50 border-amber-200 text-amber-700 ' }`}
       >
@@ -274,35 +396,47 @@ export function DirectVsDR() {
         <StatCard
           label={`Direct — Final Value (${params.years} yr)`}
           value={formatCompact(direct.finalValue)}
+          numericValue={direct.finalValue}
+          format="currency"
           color="green"
           subtext={`Net: ${formatCompact(direct.netWealthAfterCGT)} after CGT`}
         />
         <StatCard
           label={`Debt Recycling — Final Value (${params.years} yr)`}
           value={formatCompact(dr.finalValue)}
+          numericValue={dr.finalValue}
+          format="currency"
           color="blue"
           subtext={`Net: ${formatCompact(dr.netWealthAfterCGT)} after CGT & loan`}
         />
         <StatCard
           label="Debt Recycling Advantage (net wealth)"
           value={`${dr.netWealthAfterCGT >= direct.netWealthAfterCGT ? '+' : ''}${formatCompact(dr.netWealthAfterCGT - direct.netWealthAfterCGT)}`}
+          numericValue={dr.netWealthAfterCGT - direct.netWealthAfterCGT}
+          format="currency"
           color={drWins ? 'green' : 'red'}
           subtext={drWins ? 'DR wins' : 'Direct wins'}
         />
         <StatCard
           label="Debt Recycling Tax Deductions"
           value={formatCompact(dr.totalTaxDeductions)}
+          numericValue={dr.totalTaxDeductions}
+          format="currency"
           color="purple"
           subtext={`Net interest cost: ${formatCompact(dr.netInterestCost)}`}
         />
         <StatCard
           label="Direct Dividends Tax Paid"
           value={formatCompact(direct.totalDividendsTaxPaid)}
+          numericValue={direct.totalDividendsTaxPaid}
+          format="currency"
           color="amber"
         />
         <StatCard
           label="Debt Recycling CGT if Sold"
           value={formatCompact(dr.cgtIfSold)}
+          numericValue={dr.cgtIfSold}
+          format="currency"
           color="cyan"
           subtext={`Direct CGT: ${formatCompact(direct.cgtIfSold)}`}
         />
@@ -312,10 +446,10 @@ export function DirectVsDR() {
       <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-5">
         <h3 className="text-sm font-bold text-[var(--foreground)] mb-3">CGT on Disposal — Direct Investment</h3>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <StatCard label="Sale Value" value={formatCompact(direct.finalValue)} color="blue" />
-          <StatCard label="Cost Base" value={formatCompact(effectiveAmount)} color="amber" />
-          <StatCard label="Taxable Gain" value={formatCompact(cgtBreakdown.taxableGain)} color="purple" subtext={`Discount: ${formatCompact(cgtBreakdown.discountAmount)}`} />
-          <StatCard label="CGT Payable" value={formatCompact(cgtBreakdown.cgtPayable)} color="red" subtext={`Proceeds: ${formatCompact(cgtBreakdown.proceedsAfterCgt)}`} />
+          <StatCard label="Sale Value" value={formatCompact(direct.finalValue)} numericValue={direct.finalValue} format="currency" color="blue" />
+          <StatCard label="Cost Base" value={formatCompact(effectiveAmount)} numericValue={effectiveAmount} format="currency" color="amber" />
+          <StatCard label="Taxable Gain" value={formatCompact(cgtBreakdown.taxableGain)} numericValue={cgtBreakdown.taxableGain} format="currency" color="purple" subtext={`Discount: ${formatCompact(cgtBreakdown.discountAmount)}`} />
+          <StatCard label="CGT Payable" value={formatCompact(cgtBreakdown.cgtPayable)} numericValue={cgtBreakdown.cgtPayable} format="currency" color="red" subtext={`Proceeds: ${formatCompact(cgtBreakdown.proceedsAfterCgt)}`} />
         </div>
         <p className="text-[10px] text-[var(--muted-foreground)] mt-2">
           Gain {(direct.finalValue - effectiveAmount).toLocaleString('en-AU')} × (1 − {params.cgtDiscount}% discount) × {formatPct(effectiveMargTax)} marginal rate, holding ≥ 12 months.
@@ -361,7 +495,7 @@ export function DirectVsDR() {
         {' '}offset by deductions of{' '}
         <span className="font-mono text-violet-600">{formatCurrency(dr.totalTaxDeductions)}</span>.
       </div>
-      </motion.div>
+      </div>
 
       <Assumptions items={ASSUMPTIONS} />
       <Disclaimer calculatorName="Direct Investing vs Debt Recycling calculator" />

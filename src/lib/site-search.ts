@@ -95,7 +95,10 @@ const docs: SearchDoc[] = [
     id: `tool-${t.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`,
     title: t.name,
     subtitle: t.description,
-    keywords: 'calculator tool interactive banking HISA HECS CGT Super EV Novated Lease Stress Test'.toLowerCase(),
+    // Per-tool keywords only. A shared keyword string made every calculator
+    // match every other calculator's query (e.g. "HECS" returned resume and
+    // interview tools).
+    keywords: `${t.name} ${t.description} ${t.route} calculator tool`.toLowerCase(),
     route: t.route,
   })),
   ...Object.entries(OFFICIAL_WEB_LINKS).map<SearchDoc>(([key, link]) => ({
@@ -120,7 +123,7 @@ function getFuse(): Fuse<SearchDoc> {
       ],
       includeMatches: true,
       includeScore: true,
-      threshold: 0.4,
+      threshold: 0.2,
       ignoreLocation: true,
       useTokenSearch: true,
       minMatchCharLength: 2,

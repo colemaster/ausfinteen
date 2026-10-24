@@ -1,4 +1,5 @@
-import type { ReactNode } from 'react';
+import { useId, type ReactNode } from 'react';
+import { Minus, Plus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { sound } from '@/lib/sound-synthesizer';
 import {
@@ -54,6 +55,7 @@ export function NumberInput({
   stepButtons = false,
   tooltip,
 }: NumberInputProps) {
+  const inputId = useId();
   const displayValue =
     period && period !== basePeriod ? convertPeriod(value, period, basePeriod) : value;
   const displaySuffix = withPeriodSuffix(suffix, period);
@@ -80,12 +82,12 @@ export function NumberInput({
   return (
     <div className="group flex flex-col gap-1.5">
       <div className="flex items-center justify-between gap-1">
-        <label className="text-xs font-medium uppercase tracking-wide text-muted-foreground transition-colors group-focus-within:text-foreground">
+        <label htmlFor={inputId} className="text-xs font-semibold uppercase tracking-wider text-muted-foreground transition-colors group-focus-within:text-foreground cursor-pointer">
           {label}
         </label>
         {tooltip && <div className="shrink-0">{tooltip}</div>}
       </div>
-      <div className="flex items-center rounded-xl border border-border bg-background shadow-sm transition-all duration-200 focus-within:border-primary/50 focus-within:ring-4 focus-within:ring-primary/10">
+      <div className="flex items-center rounded-xl border border-border/80 bg-background/90 shadow-xs transition-all duration-200 hover:border-border focus-within:border-primary focus-within:ring-4 focus-within:ring-primary/15">
         {prefix && (
           <span className="flex h-full shrink-0 select-none items-center self-stretch rounded-l-xl border-r border-border/60 bg-muted/40 px-3 text-sm font-medium text-muted-foreground">
             {prefix}
@@ -96,16 +98,22 @@ export function NumberInput({
             type="button"
             aria-label={`Decrease ${label}`}
             onClick={() => handleStep(-1)}
-            className="flex h-full shrink-0 select-none items-center self-stretch border-r border-border/60 bg-muted/40 px-2.5 text-sm font-bold text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+            disabled={min !== undefined && value <= min}
+            className="flex h-full shrink-0 select-none items-center self-stretch border-r border-border/60 bg-muted/30 px-2.5 text-muted-foreground outline-none transition-all hover:bg-muted/70 hover:text-foreground active:scale-95 disabled:opacity-30 disabled:pointer-events-none focus-visible:ring-2 focus-visible:ring-ring"
           >
-            −
+            <Minus className="w-3 h-3" />
           </button>
         )}
         <input
+          id={inputId}
           type="number"
           min={min}
           max={max}
           step={step}
+          role="spinbutton"
+          aria-valuenow={value}
+          aria-valuemin={min}
+          aria-valuemax={max}
           value={displayValue === 0 && !placeholder ? '' : displayValue}
           placeholder={placeholder ?? '0'}
           aria-label={label}
@@ -117,9 +125,10 @@ export function NumberInput({
             type="button"
             aria-label={`Increase ${label}`}
             onClick={() => handleStep(1)}
-            className="flex h-full shrink-0 select-none items-center self-stretch border-l border-border/60 bg-muted/40 px-2.5 text-sm font-bold text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+            disabled={max !== undefined && value >= max}
+            className="flex h-full shrink-0 select-none items-center self-stretch border-l border-border/60 bg-muted/30 px-2.5 text-muted-foreground outline-none transition-all hover:bg-muted/70 hover:text-foreground active:scale-95 disabled:opacity-30 disabled:pointer-events-none focus-visible:ring-2 focus-visible:ring-ring"
           >
-            +
+            <Plus className="w-3 h-3" />
           </button>
         )}
         {displaySuffix && (

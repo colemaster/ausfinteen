@@ -126,3 +126,6 @@ export type {
   ResponsiveContainerProps,
   ComponentProps as RechartsComponentProps,
 };
+
+export { DeferredChart, type DeferredChartProps } from './DeferredChart';
+

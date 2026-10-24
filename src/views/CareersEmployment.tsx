@@ -1,4 +1,3 @@
-import { motion, AnimatePresence } from 'motion/react';
 import { useSearchParams } from '@/lib/router';
 import { careersEmploymentModule as moduleData } from '@/data/modules/careers-employment';
 import { TopicGuideAccordion } from '@/components/shared/TopicGuideAccordion';
@@ -14,6 +13,8 @@ import { Briefcase, FileText, ShieldAlert, MessageSquare, Award, BookOpen, Clock
 import { Badge } from '@/components/ui/Badge';
 import { SmartImage } from '@/components/ui/SmartImage';
 import { usePageTitle } from '@/hooks/usePageTitle';
+
+import { PrintShareFAB } from '@/components/shared/PrintShareFAB';
 
 const TABS = [
   { id: 'roadmap', label: '15yo Roadmap', icon: Compass },
@@ -70,15 +71,13 @@ export function CareersEmployment() {
             </h1>
             <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
               Everything you need for your first Australian job: Junior Award pay rates, Saturday/Sunday penalty rates, ATO TFN & Super forms, unpaid trial shift rules, Barefoot Investor paycheck automation, and workplace conversation scripts!
+              <br/><br/>
+              <strong>💡 2026 First Job Tips:</strong> Find jobs on Seek.com.au, Indeed, Jora, local community boards, or by dropping resumes in-store. School-based apprenticeships and traineeships are available from Year 10 (age 15). For the gig economy, note that Airtasker requires 18+, but tutoring platforms may accept 16+.
             </p>
           </div>
 
           <div className="md:col-span-4 hidden md:flex justify-center">
-            <motion.div
-              animate={{ y: [0, -8, 0] }}
-              transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-              className="relative group"
-            >
+            <div className="float-slow relative group">
               <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-blue-500 to-indigo-500 blur-md opacity-40 group-hover:opacity-70 transition duration-500" />
               <SmartImage
                 src="/assets/graphics/popmart_job.jpg"
@@ -88,12 +87,12 @@ export function CareersEmployment() {
                 width={144}
                 height={144}
               />
-            </motion.div>
+            </div>
           </div>
         </div>
 
-        {/* 7 Sub-Tabs Navigation Bar with Motion layoutId */}
-        <div className="mt-6 pt-4 border-t border-blue-500/20 flex flex-wrap gap-2" role="tablist" aria-label="Careers & Employment sections">
+        {/* 7 Sub-Tabs Navigation Bar — CSS pill, no layout-animation runtime */}
+        <div className="mt-6 pt-4 border-t border-blue-500/20 flex flex-wrap gap-2 sticky top-16 z-20 backdrop-blur-xl bg-card/85 p-2 rounded-2xl shadow-sm border border-border/60" role="tablist" aria-label="Careers & Employment sections">
           {TABS.map(tab => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -106,17 +105,10 @@ export function CareersEmployment() {
                 onClick={() => setActiveTab(tab.id)}
                 className={`relative flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
                   isActive
-                    ? 'text-primary-foreground font-extrabold shadow-md'
+                    ? 'bg-primary text-primary-foreground font-extrabold shadow-md'
                     : 'bg-card/80 hover:bg-card border border-border text-foreground'
                 }`}
               >
-                {isActive && (
-                  <motion.div
-                    layoutId="activeCareerTabPill"
-                    className="absolute inset-0 bg-primary rounded-xl z-0"
-                    transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                  />
-                )}
                 <span className="relative z-10 flex items-center gap-1.5">
                   <Icon className="w-3.5 h-3.5" />
                   <span>{tab.label}</span>
@@ -127,16 +119,8 @@ export function CareersEmployment() {
         </div>
       </div>
 
-      {/* Animated Tab Content Display */}
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={activeTab}
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -12 }}
-          transition={{ duration: 0.2 }}
-          className="space-y-6"
-        >
+      {/* Tab content — one keyed CSS fade instead of an exit-animation tree. */}
+      <div key={activeTab} className="animate-fade-in space-y-6">
           {activeTab === 'roadmap' && <FifteenYearOldRoadmap />}
           {activeTab === 'calc' && <PayslipAnalyzer />}
           {activeTab === 'penalty' && <PenaltyShiftCalculatorWidget />}
@@ -150,9 +134,9 @@ export function CareersEmployment() {
               topics={moduleData.topics}
             />
           )}
-        </motion.div>
-      </AnimatePresence>
+      </div>
 
+      <PrintShareFAB />
       <ModulePrevNext currentId="careers-employment" />
     </div>
   );

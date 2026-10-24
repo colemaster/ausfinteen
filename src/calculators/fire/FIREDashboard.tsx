@@ -1,6 +1,4 @@
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { fadeInUp } from '@/lib/animations';
 import { Tabs } from '../../components/ui/Tabs';
 import { Assumptions } from '../../components/shared/Assumptions';
 import { Disclaimer } from '../../components/shared/Disclaimer';
@@ -104,14 +102,10 @@ export function FIREDashboard() {
 
       <Tabs tabs={TABS} activeTab={activeTab} onChange={setActiveTab} />
 
-      <AnimatePresence mode="wait">
-  <motion.div
-    key={activeTab}
-    variants={fadeInUp}
-    initial="hidden"
-    animate="visible"
-    exit="hidden"
-  >
+      <div
+        key={activeTab}
+        className="animate-fade-in space-y-6"
+      >
         {activeTab === 'classic' && (
           <ClassicFIRE
             currentAge={currentAge}
@@ -156,8 +150,7 @@ export function FIREDashboard() {
             returnRate={returnRate}
           />
         )}
-      </motion.div>
-  </AnimatePresence>
+      </div>
 
       <Assumptions items={ASSUMPTIONS} />
       <Disclaimer calculatorName="FIRE Calculator Suite" />

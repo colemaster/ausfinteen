@@ -19,6 +19,7 @@ import { OFFICIAL_WEB_LINKS } from '@/data/teen-finance-data';
 import { useTeenProfile } from '@/context/TeenProfileContext';
 import { SmartImage } from '@/components/ui/SmartImage';
 import { ModulePrevNext } from '@/components/shared/ModulePrevNext';
+import { PrintShareFAB } from '@/components/shared/PrintShareFAB';
 import { usePageTitle } from '@/hooks/usePageTitle';
 
 const BNE_TABS = ['unis', 'schools', 'realestate', 'help'] as const;
@@ -133,6 +134,7 @@ export function BrisbaneQLD() {
           ]}
           activeTab={tab}
           onChange={setTab}
+          sticky={true}
         />
 
         {tab === 'unis' && (
@@ -325,6 +327,8 @@ export function BrisbaneQLD() {
           </p>
         </Card>
       </div>
+
+      <PrintShareFAB />
     </div>
   );
 }

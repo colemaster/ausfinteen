@@ -26,7 +26,7 @@ export interface BudgetItem {
 export const BRISBANE_WEEKLY_BUDGET: BudgetItem[] = [
   { category: 'Rent (sharehouse room)', emoji: '🏠', weekly: 250, note: 'Median shared room inner Brisbane $235–$260/wk (2026, RTA bond medians; range $180 Kelvin Grove – $350 New Farm)' },
   { category: 'Groceries & food', emoji: '🛒', weekly: 100, note: 'Aldi/Woolies deals; West End & Rocklea markets' },
-  { category: 'Public transport (50c Translink fares)', emoji: '🚌', weekly: 5, note: 'Queensland permanent 50-cent flat fare across all SE QLD trains, buses & ferries ≈ $5/wk' },
+  { category: 'Public transport (50c Translink fares)', emoji: '🚌', weekly: 5, note: 'Queensland permanent 50-cent flat fare across all SE QLD trains, buses & ferries ≈ $5/wk (Go Card or contactless debit/smartphone)' },
   { category: 'Phone + internet', emoji: '📱', weekly: 15, note: 'Budget SIM plans from $15/mo' },
   { category: 'Utilities (electricity, water, gas share)', emoji: '💡', weekly: 25, note: 'Split between sharehouse housemates' },
   { category: 'Eating out & coffee', emoji: '☕', weekly: 50, note: 'Lunch $15-25, coffee $4-6' },
@@ -771,6 +771,8 @@ export const HECS_BANDS_2026 = [
 
 /** Student Services & Amenities Fee (SSAF) cap for 2026 (Dept of Education — $373 max, $279.75 part-time; was $365 in 2025, $386 in 2027) */
 export const SSAF_CAP_2026 = 373;
+/** Student Services & Amenities Fee (SSAF) cap for 2027 ($386 max, $289.50 part-time) */
+export const SSAF_CAP_2027 = 386;
 
 /**
  * QILT national graduate benchmarks — GOS 2025 & GOS-L 2025 (published 2026, Social Research Centre for Dept of Education).
@@ -868,9 +870,9 @@ export const QLD_TEEN_RULES: QLDRule[] = [
     detail: 'In Queensland your bond is capped at 4 weeks rent (no rent threshold since Sep 2024). The agent must lodge it with the RTA within 10 days.',
   },
   {
-    title: '50c flat fares',
+    title: '50c flat fares permanent',
     emoji: '🚌',
-    detail: 'Since 5 August 2024, all Queensland public transport (bus, train, ferry, tram) is a flat 50c per trip — no Go Card, no concession needed. Free transfers within 60 minutes; no daily/weekly cap required. School students no longer need a concession card.',
+    detail: 'Queensland 50-cent flat fares are permanent by law across all TransLink public transport (bus, train, ferry, tram in SEQ and regional urban buses). Tap on/off with Go Card or contactless Visa/Mastercard/smartphone wallet. Free transfers within 60 minutes; under-5s always free, weekend travel free for kids 5–14 on child Go Card.',
   },
   {
     title: 'QLD rego = 3 parts',

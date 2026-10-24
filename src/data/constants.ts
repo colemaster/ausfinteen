@@ -80,6 +80,12 @@ export const TAX_FREE_THRESHOLD = 18200;
 /** $1,000 standard deduction for work-related expenses (from 2026-27, replacing $300 no-receipt threshold; legislated via Tax Reform No.1 Act 2026 — auto-applied against labour income, first claimed in 2026-27 return) */
 export const STANDARD_DEDUCTION_2026_27 = 1000;
 
+/** ATO Work from home fixed rate deduction (PCG 2023/1): 70c/hour for 2025-26 and 2026-27 */
+export const WFH_FIXED_RATE_HOURLY = 0.70;
+
+/** ATO Motor vehicle cents-per-kilometre deduction rate (max 5,000 km): 88c/km (2025-26), 91c/km (2026-27) */
+export const CENTS_PER_KM_2026_27 = 0.91;
+
 /** Top marginal rate used when a TFN is NOT provided (or exemption not claimed) */
 export const TFN_WITHHOLDING_RATE = 0.47;
 
@@ -153,6 +159,16 @@ export const HELP_LOAN_LIMIT_2026 = {
   general: 129883,
   medicineDentistryVetAviation: 186544,
 } as const;
+
+/** HELP borrowing limit 2027: $134,558 general / $193,259 medicine-dentistry-vet-aviation (indexed per StudyAssist) */
+export const HELP_LOAN_LIMIT_2027 = {
+  general: 134558,
+  medicineDentistryVetAviation: 193259,
+} as const;
+
+/** Student Services and Amenities Fee (SSAF) maximum cap: 2026 ($373) / 2027 ($386) */
+export const SSAF_CAP_2026 = 373;
+export const SSAF_CAP_2027 = 386;
 
 /** FEE-HELP loan fee for undergraduate non-Table B courses (25% → 20% from 1 Jan 2023; postgrad/Table B exempt) */
 export const FEE_HELP_LOAN_FEE_UNDERGRAD = 0.20;

@@ -1,4 +1,3 @@
-import { motion } from 'motion/react';
 import { Shield, Sparkles, Wallet, PiggyBank, Receipt } from 'lucide-react';
 
 interface PaycheckSplitterWidgetProps {
@@ -46,37 +45,31 @@ export function PaycheckSplitterWidget({
       <div className="space-y-2">
         <div className="h-6 w-full rounded-xl bg-muted/50 overflow-hidden flex p-1 gap-1 border border-border">
           {/* Net Take-Home (Green Glow) */}
-          <motion.div
-            className="h-full rounded-lg bg-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.5)] flex items-center justify-center text-[10px] font-extrabold text-emerald-950"
-            initial={{ width: 0 }}
-            animate={{ width: `${netPct}%` }}
-            transition={{ type: 'spring', stiffness: 120, damping: 18 }}
+          <div
+            className="h-full rounded-lg bg-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.5)] flex items-center justify-center text-[10px] font-extrabold text-emerald-950 transition-[width] duration-700 ease-out"
+            style={{ width: `${netPct}%` }}
           >
             {netPct > 15 && `Take-Home (${netPct.toFixed(0)}%)`}
-          </motion.div>
+          </div>
 
           {/* Tax Withheld (Amber Glow) */}
           {taxWeekly > 0 && (
-            <motion.div
-              className="h-full rounded-lg bg-amber-500 shadow-[0_0_12px_rgba(245,158,11,0.5)] flex items-center justify-center text-[10px] font-extrabold text-amber-950"
-              initial={{ width: 0 }}
-              animate={{ width: `${taxPct}%` }}
-              transition={{ type: 'spring', stiffness: 120, damping: 18 }}
+            <div
+              className="h-full rounded-lg bg-amber-500 shadow-[0_0_12px_rgba(245,158,11,0.5)] flex items-center justify-center text-[10px] font-extrabold text-amber-950 transition-[width] duration-700 ease-out"
+              style={{ width: `${taxPct}%` }}
             >
               {taxPct > 8 && `Tax`}
-            </motion.div>
+            </div>
           )}
 
           {/* Super Guarantee (Cyan Glow) */}
           {superWeekly > 0 && (
-            <motion.div
-              className="h-full rounded-lg bg-cyan-500 shadow-[0_0_12px_rgba(6,182,212,0.5)] flex items-center justify-center text-[10px] font-extrabold text-cyan-950"
-              initial={{ width: 0 }}
-              animate={{ width: `${superPct}%` }}
-              transition={{ type: 'spring', stiffness: 120, damping: 18 }}
+            <div
+              className="h-full rounded-lg bg-cyan-500 shadow-[0_0_12px_rgba(6,182,212,0.5)] flex items-center justify-center text-[10px] font-extrabold text-cyan-950 transition-[width] duration-700 ease-out"
+              style={{ width: `${superPct}%` }}
             >
               {superPct > 8 && `Super`}
-            </motion.div>
+            </div>
           )}
         </div>
 

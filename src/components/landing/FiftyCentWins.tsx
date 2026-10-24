@@ -1,9 +1,9 @@
 import { useMemo, useState } from 'react';
-import { motion, useReducedMotion } from 'motion/react';
-import { ArrowRight, Bus, Check } from 'lucide-react';
+import { ArrowRight, Bus, Check, Sparkles } from 'lucide-react';
 import { SliderControl } from '@/components/ui/SliderControl';
 import { AnimatedNumber } from '@/components/ui/AnimatedNumber';
 import { Link } from '@/lib/router';
+import { sound } from '@/lib/sound-synthesizer';
 
 /** Flat TransLink fare per trip (AUD). */
 const FLAT_FARE = 0.5;
@@ -18,17 +18,9 @@ const aud2 = new Intl.NumberFormat('en-AU', {
   maximumFractionDigits: 2,
 });
 
-/**
- * FiftyCentWins — interactive TransLink 50c fare saver.
- *
- * Weekly saving = (oldFare − 0.50) × tripsPerWeek; yearly = weekly × 52.
- * Bus marker travels across the route line proportional to weekly saving
- * relative to the maximum possible saving; static when reduced motion is on.
- */
 export function FiftyCentWins() {
   const [tripsPerWeek, setTripsPerWeek] = useState<number>(10);
   const [oldFare, setOldFare] = useState<number>(4);
-  const reducedMotion = useReducedMotion() ?? false;
 
   const calc = useMemo(() => {
     const perTripSaving = Math.max(0, oldFare - FLAT_FARE);
@@ -46,163 +38,180 @@ export function FiftyCentWins() {
   return (
     <section
       aria-labelledby="fifty-cent-wins-heading"
-      className="mx-auto w-full max-w-xl rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6 dark:border-slate-800 dark:bg-slate-900"
+      className="relative mx-auto w-full max-w-3xl overflow-hidden rounded-3xl border border-border/80 bg-gradient-to-b from-card via-card/95 to-card/75 p-5 shadow-2xl backdrop-blur-xl sm:p-7 dark:border-sky-500/20 dark:shadow-[0_0_50px_-15px_rgba(14,165,233,0.12)]"
     >
-      <div className="mb-4 flex items-start gap-3">
-        <span
-          aria-hidden="true"
-          className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-sky-100 text-sky-700 dark:bg-sky-950 dark:text-sky-300"
-        >
-          <Bus className="h-5 w-5" />
-        </span>
-        <div className="min-w-0">
-          <h2
-            id="fifty-cent-wins-heading"
-            className="text-base font-bold leading-tight text-slate-900 sm:text-lg dark:text-white"
+      {/* Decorative cyber ambient blooms */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -top-24 -right-24 h-64 w-64 rounded-full bg-sky-500/10 blur-3xl dark:bg-sky-500/15"
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -bottom-24 -left-24 h-64 w-64 rounded-full bg-emerald-500/10 blur-3xl dark:bg-emerald-500/15"
+      />
+
+      {/* Header */}
+      <div className="relative mb-5 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div className="flex items-start gap-3.5">
+          <span
+            aria-hidden="true"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-500/20 to-blue-500/20 text-sky-600 ring-1 ring-sky-500/30 shadow-inner dark:from-sky-500/30 dark:to-blue-500/10 dark:text-sky-400"
           >
-            50¢ TransLink Wins
-          </h2>
-          <p className="mt-1 text-xs leading-relaxed text-slate-600 dark:text-slate-400">
-            Queensland&apos;s flat 50c fare vs what you used to pay per trip.
-            Drag the sliders to see your saving.
-          </p>
+            <Bus className="h-6 w-6" />
+          </span>
+          <div className="min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="inline-flex items-center gap-1 rounded-full border border-sky-500/30 bg-sky-500/10 px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-widest text-sky-600 dark:text-sky-400">
+                <Sparkles className="h-3 w-3" />
+                Permanent QLD Policy
+              </span>
+              <span className="text-[11px] font-semibold text-muted-foreground">
+                All Zones &amp; Modes (Bus, Train, Ferry, Tram)
+              </span>
+            </div>
+            <h2
+              id="fifty-cent-wins-heading"
+              className="mt-1 text-xl font-extrabold tracking-tight text-foreground sm:text-2xl"
+            >
+              50¢ TransLink Wins: Queensland Transit Savings
+            </h2>
+            <p className="mt-1 text-xs leading-relaxed text-muted-foreground sm:text-sm">
+              Queensland’s flat 50c fare vs previous zone fares. Drag the sliders to calculate your annual savings.
+            </p>
+          </div>
         </div>
       </div>
 
-      <div className="flex flex-col gap-4">
-        <SliderControl
-          label="Trips per week"
-          value={tripsPerWeek}
-          onChange={setTripsPerWeek}
-          min={2}
-          max={20}
-          step={1}
-          suffix=" trips/wk"
-        />
-        <SliderControl
-          label="Old fare per trip"
-          value={oldFare}
-          onChange={setOldFare}
-          min={2}
-          max={6}
-          step={0.1}
-          prefix="$"
-          suffix=" /trip"
-          decimals={2}
-        />
+      {/* Interactive Controls */}
+      <div className="relative mb-5 rounded-2xl border border-border/80 bg-muted/40 p-4 shadow-inner">
+        <div className="flex flex-col gap-4">
+          <SliderControl
+            label="Trips per week"
+            value={tripsPerWeek}
+            onChange={(v) => {
+              sound.playTick?.();
+              setTripsPerWeek(v);
+            }}
+            min={2}
+            max={20}
+            step={1}
+            suffix=" trips/wk"
+          />
+          <SliderControl
+            label="Previous average fare per trip"
+            value={oldFare}
+            onChange={(v) => {
+              sound.playTick?.();
+              setOldFare(v);
+            }}
+            min={2}
+            max={6}
+            step={0.1}
+            prefix="$"
+            suffix=" /trip"
+            decimals={2}
+          />
+        </div>
       </div>
 
-      <dl className="mt-5 grid grid-cols-2 gap-3">
-        <div className="min-w-0 rounded-xl border border-emerald-200 bg-emerald-50 p-3 dark:border-emerald-900 dark:bg-emerald-950/40">
-          <dt className="text-[11px] font-medium uppercase tracking-wide text-emerald-700 dark:text-emerald-300">
-            You save / week
+      {/* Savings Metric Cards */}
+      <dl className="relative mb-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-emerald-950 dark:text-emerald-100 backdrop-blur-sm">
+          <dt className="text-[11px] font-extrabold uppercase tracking-wider text-emerald-700 dark:text-emerald-300">
+            Weekly Money Banked
           </dt>
-          <dd className="mt-1 font-mono text-xl font-bold tabular-nums text-emerald-800 sm:text-2xl dark:text-emerald-200">
-            <AnimatedNumber
-              value={calc.weeklySaving}
-              format="currency"
-              className="font-mono font-bold tabular-nums"
-            />
+          <dd className="mt-1 font-mono text-2xl font-extrabold tabular-nums text-emerald-700 dark:text-emerald-300 sm:text-3xl">
+            <AnimatedNumber value={calc.weeklySaving} format="currency" />
           </dd>
-          <dd className="mt-0.5 truncate text-[11px] text-emerald-700/80 dark:text-emerald-300/70">
-            {aud2.format(calc.perTripSaving)}/trip × {tripsPerWeek} trips
+          <dd className="mt-1 truncate text-xs text-muted-foreground">
+            {aud2.format(calc.perTripSaving)} saved/trip × {tripsPerWeek} trips (now costs {aud2.format(calc.weeklyCostNow)}/wk)
           </dd>
         </div>
-        <div className="min-w-0 rounded-xl border border-sky-200 bg-sky-50 p-3 dark:border-sky-900 dark:bg-sky-950/40">
-          <dt className="text-[11px] font-medium uppercase tracking-wide text-sky-700 dark:text-sky-300">
-            You save / year
+
+        <div className="rounded-2xl border border-sky-500/30 bg-sky-500/10 p-4 text-sky-950 dark:text-sky-100 backdrop-blur-sm">
+          <dt className="text-[11px] font-extrabold uppercase tracking-wider text-sky-700 dark:text-sky-300">
+            Annual Cash Kept
           </dt>
-          <dd className="mt-1 font-mono text-xl font-bold tabular-nums text-sky-800 sm:text-2xl dark:text-sky-200">
-            <AnimatedNumber
-              value={calc.yearlySaving}
-              format="currency"
-              className="font-mono font-bold tabular-nums"
-            />
+          <dd className="mt-1 font-mono text-2xl font-extrabold tabular-nums text-sky-700 dark:text-sky-300 sm:text-3xl">
+            <AnimatedNumber value={calc.yearlySaving} format="currency" />
           </dd>
-          <dd className="mt-0.5 truncate text-[11px] text-sky-700/80 dark:text-sky-300/70">
-            Weekly × 52 · now {aud2.format(calc.weeklyCostNow)}/wk
+          <dd className="mt-1 truncate text-xs text-muted-foreground">
+            52 weeks of travel savings ready to compound in your youth HISA!
           </dd>
         </div>
       </dl>
 
+      {/* Cyber Transit Path Visualizer */}
       <div
         role="img"
-        aria-label={`Bus progress: saving ${Math.round(progressPct)} percent of the maximum weekly saving`}
-        className="mt-5"
+        aria-label={`Bus progress: saving ${Math.round(progressPct)} percent of maximum`}
+        className="relative mb-5 rounded-2xl border border-border/80 bg-muted/50 p-4 shadow-inner"
       >
-        <div className="relative h-12 w-full overflow-hidden rounded-xl bg-slate-100 dark:bg-slate-800">
+        <div className="relative h-14 w-full overflow-hidden rounded-xl bg-card border border-border/60">
           <div
             aria-hidden="true"
-            className="absolute inset-x-3 top-1/2 -translate-y-1/2 border-t-2 border-dashed border-slate-300 dark:border-slate-600"
+            className="absolute inset-x-4 top-1/2 -translate-y-1/2 border-t-2 border-dashed border-sky-500/30"
           />
-          {[0, 50, 100].map((stop) => (
+          {[0, 25, 50, 75, 100].map((stop) => (
             <span
               key={stop}
               aria-hidden="true"
-              style={{ left: `calc(${stop}% + ${(0.5 - stop / 100) * 24}px)` }}
-              className="absolute top-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-slate-400 dark:bg-slate-500"
+              style={{ left: `calc(${stop}% + ${(0.5 - stop / 100) * 28}px)` }}
+              className="absolute top-1/2 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full border border-card bg-muted-foreground/60 shadow-xs"
             />
           ))}
           <div
             aria-hidden="true"
-            className="absolute inset-x-3 top-1/2 h-1 -translate-y-1/2 overflow-hidden rounded-full"
+            className="absolute inset-x-4 top-1/2 h-1.5 -translate-y-1/2 overflow-hidden rounded-full"
           >
-            <motion.div
-              initial={reducedMotion ? false : { width: '0%' }}
-              animate={{ width: `${progressPct}%` }}
-              transition={{
-                duration: reducedMotion ? 0 : 0.6,
-                ease: 'easeOut',
-              }}
-              className="h-full rounded-full bg-gradient-to-r from-sky-500 to-emerald-500"
+            <div
+              style={{ width: `${progressPct}%` }}
+              className="bar-fill h-full rounded-full bg-gradient-to-r from-sky-500 via-teal-400 to-emerald-500 shadow-sm"
             />
           </div>
-          <motion.div
+          <div
             aria-hidden="true"
-            initial={reducedMotion ? false : { left: '12px' }}
-            animate={{ left: `calc(${(progressPct / 100) * 100}% + ${(0.5 - progressPct / 100) * 40}px)` }}
-            transition={{
-              duration: reducedMotion ? 0 : 0.6,
-              ease: 'easeOut',
-            }}
-            className="absolute top-1/2 flex h-8 w-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-sky-600 text-white shadow-md dark:bg-sky-500 dark:text-slate-950"
+            style={{ left: `calc(${(progressPct / 100) * 100}% + ${(0.5 - progressPct / 100) * 44}px)` }}
+            className="absolute top-1/2 flex h-9 w-9 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-xl bg-gradient-to-br from-sky-500 to-blue-600 text-white shadow-lg shadow-sky-500/30 ring-2 ring-white/20 transition-[left] duration-(--motion-slower) ease-(--ease-out)"
           >
-            <Bus className="h-4 w-4" />
-          </motion.div>
+            <Bus className="h-4.5 w-4.5" />
+          </div>
         </div>
-        <p className="mt-1.5 text-center font-mono text-[11px] tabular-nums text-slate-500 dark:text-slate-400">
-          {aud2.format(calc.weeklySaving)}/wk banked — every trip costs just 50c
+        <p className="mt-2 text-center font-mono text-xs font-semibold text-muted-foreground">
+          {aud2.format(calc.weeklySaving)}/week banked · Every ride on public transit is just 50¢
         </p>
       </div>
 
-      <ul className="mt-4 space-y-2">
+      {/* Facts Strip */}
+      <ul className="space-y-2">
         {[
-          'Permanent flat 50c — all modes (bus, train, tram, ferry) & all zones',
-          'No cap or signup needed — fare is just 50c, every trip',
-          'Tap on/off with contactless, go card, or TransLink app',
+          'Permanent flat 50c — all modes (bus, train, tram, ferry) across South East Queensland',
+          'No special student concessions or paperwork required — universal 50c for all riders',
+          'Tap on/off with contactless credit/debit card, phone wallet, go card, or TransLink app',
         ].map((fact) => (
-          <li key={fact} className="flex items-start gap-2 text-xs leading-relaxed">
+          <li key={fact} className="flex items-start gap-2.5 text-xs leading-relaxed">
             <span
               aria-hidden="true"
-              className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300"
+              className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"
             >
               <Check className="h-3 w-3" strokeWidth={3} />
             </span>
-            <span className="min-w-0 text-slate-700 dark:text-slate-300">{fact}</span>
+            <span className="text-muted-foreground">{fact}</span>
           </li>
         ))}
       </ul>
 
-      <div className="mt-5 flex flex-col gap-2 border-t border-slate-200 pt-4 sm:flex-row sm:items-center sm:justify-between dark:border-slate-800">
-        <p className="text-[11px] leading-snug text-slate-500 dark:text-slate-400">
-          Illustrative saving: (old fare − $0.50) × trips, × 52 for yearly.
+      {/* Footer */}
+      <div className="mt-5 flex flex-col gap-3 border-t border-border/80 pt-4 sm:flex-row sm:items-center sm:justify-between">
+        <p className="text-[11px] leading-relaxed text-muted-foreground max-w-sm">
+          TransLink Queensland statutory fare policy. Verified 50c flat pricing across SEQ.
         </p>
         <Link
           to="/brisbane-qld"
-          className="inline-flex shrink-0 items-center gap-1.5 rounded-xl bg-sky-600 px-4 py-2.5 text-sm font-bold text-white transition-colors hover:bg-sky-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600 dark:bg-sky-500 dark:text-slate-950 dark:hover:bg-sky-400"
+          className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-sky-600 to-blue-600 px-4 py-2.5 text-xs font-bold text-white shadow-lg shadow-sky-600/20 transition-all hover:from-sky-500 hover:to-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500"
         >
-          Brisbane money guide
-          <ArrowRight className="h-4 w-4" aria-hidden="true" />
+          <span>Brisbane Youth Guide</span>
+          <ArrowRight className="h-3.5 w-3.5" />
         </Link>
       </div>
     </section>

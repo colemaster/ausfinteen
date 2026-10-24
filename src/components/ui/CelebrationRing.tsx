@@ -1,6 +1,6 @@
-import { useEffect, useRef } from 'react';
-import { motion, useReducedMotion } from 'motion/react';
+import { useEffect, useRef, useId } from 'react';
 import confetti from 'canvas-confetti';
+import { useReducedMotionSafe } from '@/hooks/useReducedMotionSafe';
 import { sound } from '@/lib/sound-synthesizer';
 import { cn } from '@/lib/utils';
 import { Check } from 'lucide-react';
@@ -36,7 +36,7 @@ export function CelebrationRing({
 }: CelebrationRingProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const prevProgressRef = useRef(progress);
-  const reducedMotion = useReducedMotion() ?? false;
+  const reducedMotion = useReducedMotionSafe();
 
   const normalized = Math.min(100, Math.max(0, Math.round(progress)));
   const radius = (size - strokeWidth) / 2;
@@ -63,10 +63,19 @@ export function CelebrationRing({
   }, [normalized, isComplete, autoConfetti, reducedMotion]);
 
   const [color1, color2] = THEME_GRADIENTS[colorTheme] || THEME_GRADIENTS.primary;
-  const gradientId = `celebration-ring-grad-${colorTheme}-${size}`;
+  const gradientId = useId();
+  const filterId = useId();
 
   return (
-    <div ref={containerRef} className={cn('relative flex flex-col items-center justify-center select-none', className)}>
+    <div
+      ref={containerRef}
+      role="progressbar"
+      aria-valuenow={normalized}
+      aria-valuemin={0}
+      aria-valuemax={100}
+      aria-label={label ?? 'Goal progress'}
+      className={cn('relative flex flex-col items-center justify-center select-none', className)}
+    >
       <div className="relative" style={{ width: size, height: size }}>
         <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="-rotate-90 transform overflow-visible">
           <defs>
@@ -74,7 +83,7 @@ export function CelebrationRing({
               <stop offset="0%" stopColor={color1} />
               <stop offset="100%" stopColor={color2} />
             </linearGradient>
-            <filter id={`ring-glow-${gradientId}`} x="-20%" y="-20%" width="140%" height="140%">
+            <filter id={filterId} x="-20%" y="-20%" width="140%" height="140%">
               <feGaussianBlur stdDeviation="3" result="blur" />
               <feMerge>
                 <feMergeNode in="blur" />
@@ -94,8 +103,9 @@ export function CelebrationRing({
             className="text-muted/40"
           />
 
-          {/* Animated active progress arc */}
-          <motion.circle
+          {/* Progress arc — a plain SVG circle with a CSS transition. */}
+          <circle
+            className="celebration-arc"
             cx={size / 2}
             cy={size / 2}
             r={radius}
@@ -103,35 +113,26 @@ export function CelebrationRing({
             stroke={`url(#${gradientId})`}
             strokeWidth={strokeWidth}
             strokeDasharray={circumference}
-            initial={reducedMotion ? { strokeDashoffset } : { strokeDashoffset: circumference }}
-            animate={{ strokeDashoffset }}
-            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+            strokeDashoffset={strokeDashoffset}
             strokeLinecap="round"
-            filter={isComplete ? `url(#ring-glow-${gradientId})` : undefined}
+            filter={isComplete ? `url(#${filterId})` : undefined}
           />
         </svg>
 
         {/* Center label & percentage / check icon */}
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
           {isComplete ? (
-            <motion.div
-              initial={{ scale: 0, rotate: -45 }}
-              animate={{ scale: 1, rotate: 0 }}
-              transition={{ type: 'spring', stiffness: 350, damping: 20 }}
-              className="flex items-center justify-center w-10 h-10 rounded-full bg-emerald-500 text-white shadow-lg shadow-emerald-500/30"
-            >
+            <div className="animate-pop-in flex items-center justify-center w-10 h-10 rounded-full bg-emerald-500 text-white shadow-lg shadow-emerald-500/30">
               <Check className="w-6 h-6 stroke-[3]" />
-            </motion.div>
+            </div>
           ) : (
             <>
-              <motion.span
+              <span
                 key={normalized}
-                initial={reducedMotion ? false : { scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                className="text-2xl sm:text-3xl font-black font-mono tracking-tight text-foreground"
+                className="animate-pop-in text-2xl sm:text-3xl font-black font-mono tracking-tight text-foreground"
               >
                 {normalized}%
-              </motion.span>
+              </span>
               <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-wider">
                 Progress
               </span>

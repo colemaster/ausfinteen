@@ -1,5 +1,4 @@
 import React, { useTransition } from 'react';
-import { motion } from 'motion/react';
 import { Check } from 'lucide-react';
 import { sound } from '@/lib/sound-synthesizer';
 import { cn } from '@/lib/utils';
@@ -73,10 +72,8 @@ export function AccentColorPicker({ className, showLabel = true }: AccentColorPi
               style={{ backgroundColor: option.swatch }}
             >
               {isSelected && (
-                <motion.div
-                  layoutId="accent-picker-ring"
-                  className="absolute -inset-1 rounded-full border-2 border-foreground"
-                  transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                <span
+                  className="animate-scale-in absolute -inset-1 rounded-full border-2 border-foreground"
                 />
               )}
               {isSelected && <Check className="w-3 h-3 text-white stroke-[3]" />}

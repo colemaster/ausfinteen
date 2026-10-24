@@ -4,7 +4,8 @@ import { Card } from '@/components/ui/Card';
 import type { TopicGuide } from '@/data/mandy-topics';
 import { WebReferenceLink } from '@/components/shared/WebReferenceLink';
 import { ActionStepBadge } from '@/components/shared/ActionStepBadge';
-import { ChevronDown, ChevronUp, Sparkles } from 'lucide-react';
+import { ChevronDown, ChevronUp, Sparkles, HelpCircle } from 'lucide-react';
+import { sound } from '@/lib/sound-synthesizer';
 
 interface TopicGuideAccordionProps {
   topics: TopicGuide[];
@@ -19,7 +20,7 @@ interface TopicGuideAccordionProps {
 export function TopicGuideAccordion({
   topics,
   title = 'Topic Q&A Guide',
-  collapsibleAll = false,
+  collapsibleAll = true,
 }: TopicGuideAccordionProps) {
   const [searchParams] = useSearchParams();
   const deepLinkTopic = searchParams.get('topic');
@@ -41,6 +42,7 @@ export function TopicGuideAccordion({
   }, [deepLinkTopic, topics]);
 
   const toggleTopic = (id: string) => {
+    sound.playClick();
     setOpenIds(prev => {
       if (collapsibleAll) {
         const next = new Set(prev);
@@ -51,8 +53,6 @@ export function TopicGuideAccordion({
         }
         return next;
       }
-      // Single-open mode (legacy behaviour): clicking the open topic
-      // closes it; clicking another topic opens only that one.
       if (prev.has(id) && prev.size === 1) return new Set();
       return new Set([id]);
     });
@@ -60,6 +60,7 @@ export function TopicGuideAccordion({
 
   const allOpen = topics.length > 0 && openIds.size === topics.length;
   const handleToggleAll = () => {
+    sound.playClick();
     setOpenIds(allOpen ? new Set() : new Set(topics.map(t => t.id)));
   };
 
@@ -69,17 +70,18 @@ export function TopicGuideAccordion({
         <div className="flex items-center gap-2">
           <Sparkles className="w-5 h-5 text-amber-500" />
           <h2 className="text-xl font-bold text-foreground">{title}</h2>
+          <span className="text-xs text-muted-foreground font-mono">({topics.length} topics)</span>
         </div>
 
-        {collapsibleAll && topics.length > 0 && (
+        {topics.length > 0 && (
           <button
             type="button"
             onClick={handleToggleAll}
             aria-expanded={allOpen}
-            className="shrink-0 inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border border-border bg-muted/50 text-[11px] font-bold text-muted-foreground hover:text-foreground hover:border-primary/40 transition-all"
+            className="shrink-0 inline-flex items-center gap-1 px-2.5 py-1 rounded-xl border border-border bg-card hover:bg-muted text-xs font-semibold text-muted-foreground hover:text-foreground transition-all shadow-xs"
           >
-            {allOpen ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
-            {allOpen ? 'Collapse all' : 'Expand all'}
+            {allOpen ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+            <span>{allOpen ? 'Collapse All' : 'Expand All'}</span>
           </button>
         )}
       </div>
@@ -91,16 +93,23 @@ export function TopicGuideAccordion({
             <div
               key={t.id}
               id={`topic-${t.id}`}
-              className="rounded-2xl border border-border bg-card overflow-hidden transition-all shadow-xs"
+              className={`rounded-2xl border transition-all shadow-xs overflow-hidden ${
+                isOpen
+                  ? 'border-primary/40 bg-card shadow-sm'
+                  : 'border-border bg-card/80 hover:border-primary/30 hover:bg-card'
+              }`}
             >
               <button
                 type="button"
                 onClick={() => toggleTopic(t.id)}
                 aria-expanded={isOpen}
                 aria-controls={`topic-panel-${t.id}`}
-                className="w-full p-4 text-left flex items-center justify-between gap-3 focus:outline-none"
+                className="w-full p-4 text-left flex items-center justify-between gap-3 focus:outline-none cursor-pointer"
               >
-                <span className="font-bold text-sm text-foreground">{t.question}</span>
+                <div className="flex items-center gap-2.5">
+                  <HelpCircle className={`w-4 h-4 shrink-0 transition-colors ${isOpen ? 'text-primary' : 'text-muted-foreground'}`} />
+                  <span className="font-bold text-sm text-foreground">{t.question}</span>
+                </div>
                 <ChevronDown
                   className={`w-4 h-4 shrink-0 transition-transform ${
                     isOpen ? 'rotate-180 text-primary' : 'text-muted-foreground'
@@ -111,7 +120,7 @@ export function TopicGuideAccordion({
               {isOpen && (
                 <div
                   id={`topic-panel-${t.id}`}
-                  className="p-4 border-t border-border/50 bg-muted/30 text-xs text-muted-foreground space-y-3 leading-relaxed animate-fade-in"
+                  className="p-5 border-t border-border/50 bg-muted/20 text-xs text-muted-foreground space-y-3.5 leading-relaxed animate-fade-in"
                 >
                   <p className="text-foreground font-medium text-sm sm:text-base leading-snug">
                     {t.answer}

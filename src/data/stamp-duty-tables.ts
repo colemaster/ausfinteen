@@ -89,6 +89,7 @@ export const QLD_STAMP_DUTY: StampDutyTable = {
     concessionTopThreshold: 800000,  // Phases out to $800k
     grantAmount: 30000,              // $30k FHOG for new homes (locked in 2026-27 Budget)
     grantPriceCapNew: 750000,
+    isUnlimitedNewHome: true,        // QLD Duties Act 2001 s 92A: nil duty on new homes with no price cap
   },
   foreignSurchargeRate: 0.08,
 };
@@ -270,8 +271,8 @@ export function calculateStampDuty(
   let fhogAmount = 0;
 
   if (firstHomeBuyer) {
-    // Special SA rule: 0 stamp duty on all new builds for FHBs
-    if (state === 'SA' && isNewHome && fhb.isUnlimitedNewHome) {
+    // Special SA & QLD rule: 0 stamp duty on new builds for FHBs with no price cap
+    if ((state === 'SA' || state === 'QLD') && isNewHome && fhb.isUnlimitedNewHome) {
       dutyPayable = 0;
       concessionApplied = true;
       concessionSaving = fullDuty;

@@ -1,7 +1,9 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { StatCard } from '../../components/ui/StatCard';
 import { NumberInput } from '../../components/ui/NumberInput';
 import { SliderControl } from '../../components/ui/SliderControl';
+import { QuickPresetBar, type ScenarioPreset } from '../../components/ui/QuickPresetBar';
+import { CalculatorActions } from '../../components/shared/CalculatorActions';
 import { calculateFIRENumber, coastFIRENumber, projectCoastToRetirement } from './engine';
 import { formatCurrency, formatCompact } from '../../utils/formatters';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, ReferenceLine } from '@/components/charts';
@@ -13,11 +15,60 @@ interface Props {
   returnRate: number;
 }
 
+interface CoastPreset {
+  currentAge: number;
+  retirementAge: number;
+  annualExpenses: number;
+  swr: number;
+}
+
+const PRESETS: ScenarioPreset<CoastPreset>[] = [
+  {
+    id: 'young-starter',
+    label: 'Early 20s Starter',
+    badge: 'Age 25',
+    description: 'Age 25 aiming for age 60 retirement with modest $60k/yr expenses',
+    values: { currentAge: 25, retirementAge: 60, annualExpenses: 60000, swr: 4 },
+  },
+  {
+    id: 'mid-career',
+    label: 'Mid-Career Family',
+    badge: 'Age 35',
+    description: 'Age 35 with comfortable $80k/yr retirement target at age 65',
+    values: { currentAge: 35, retirementAge: 65, annualExpenses: 80000, swr: 4 },
+  },
+  {
+    id: 'accelerated-coast',
+    label: 'Accelerated Coast',
+    badge: 'Age 40 -> 55',
+    description: 'Age 40 aiming for semi-retirement at 55 with conservative 3.5% SWR',
+    values: { currentAge: 40, retirementAge: 55, annualExpenses: 70000, swr: 3.5 },
+  },
+];
+
 export function CoastFIRE({ currentInvestments, returnRate }: Props) {
   const [currentAge, setCurrentAge] = useState(35);
   const [retirementAge, setRetirementAge] = useState(65);
   const [annualExpenses, setAnnualExpenses] = useState(80000);
   const [swr, setSwr] = useState(4);
+  const [activePreset, setActivePreset] = useState<string | undefined>(undefined);
+
+  const handleApplyPreset = useCallback((preset: ScenarioPreset<CoastPreset>) => {
+    setActivePreset(preset.id);
+    if (!preset.values) return;
+    if (preset.values.currentAge !== undefined) setCurrentAge(preset.values.currentAge);
+    if (preset.values.retirementAge !== undefined) setRetirementAge(preset.values.retirementAge);
+    if (preset.values.annualExpenses !== undefined) setAnnualExpenses(preset.values.annualExpenses);
+    if (preset.values.swr !== undefined) setSwr(preset.values.swr);
+  }, []);
+
+  const handleReset = useCallback(() => {
+    setActivePreset(undefined);
+    setCurrentAge(35);
+    setRetirementAge(65);
+    setAnnualExpenses(80000);
+    setSwr(4);
+  }, []);
 
   const fireNumber = useMemo(
     () => calculateFIRENumber(annualExpenses, swr / 100),
@@ -43,8 +94,37 @@ export function CoastFIRE({ currentInvestments, returnRate }: Props) {
   const reached = currentInvestments >= coastNumber;
   const gap = coastNumber - currentInvestments;
 
+  const summaryText = useMemo(() => {
+    return [
+      '--- Coast FIRE Calculation Summary ---',
+      `Current Portfolio: ${formatCurrency(currentInvestments)} (Return Rate: ${returnRate}%)`,
+      `Current Age: ${currentAge} | Target Retirement Age: ${retirementAge} (${yearsToRetirement} years compounding)`,
+      `Annual Expenses in Retirement: ${formatCurrency(annualExpenses)} (SWR: ${swr}%)`,
+      `Full FIRE Number Target: ${formatCurrency(fireNumber)}`,
+      `Coast FIRE Number Required Today: ${formatCurrency(coastNumber)}`,
+      `Status: ${reached ? `Reached! (${formatCurrency(Math.abs(gap))} surplus)` : `Gap of ${formatCurrency(gap)} remaining`}`,
+      `Calculated via AusFinTools FIRE Suite`,
+    ].join('\n');
+  }, [currentInvestments, returnRate, currentAge, retirementAge, yearsToRetirement, annualExpenses, swr, fireNumber, coastNumber, reached, gap]);
+
   return (
     <div className="space-y-5">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <QuickPresetBar
+          presets={PRESETS}
+          activePresetId={activePreset}
+          onSelect={handleApplyPreset}
+          title="Coast FIRE Scenarios"
+        />
+        <div className="shrink-0">
+          <CalculatorActions
+            onReset={handleReset}
+            summaryText={summaryText}
+            summaryTitle="Coast FIRE"
+          />
+        </div>
+      </div>
+
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 bg-[var(--background)] border border-[var(--border)] rounded-xl p-4">
         <NumberInput label="Current Age" value={currentAge} onChange={v => setCurrentAge(Math.round(v))} min={18} max={70} step={1} />
         <NumberInput label="Target Retirement Age" value={retirementAge} onChange={v => setRetirementAge(Math.round(v))} min={30} max={80} step={1} />
@@ -62,9 +142,29 @@ export function CoastFIRE({ currentInvestments, returnRate }: Props) {
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-        <StatCard label="Coast FIRE Number" value={formatCompact(coastNumber)} color="blue" subtext={`At ${returnRate}% return over ${yearsToRetirement} yrs`} />
-        <StatCard label="FIRE Number (target)" value={formatCompact(fireNumber)} color="green" subtext={`${(annualExpenses / 1000).toFixed(0)}k expenses / ${swr}% SWR`} />
-        <StatCard label={reached ? 'Surplus' : 'Gap to Coast'} value={formatCurrency(Math.abs(gap))} color={reached ? 'green' : 'amber'} />
+        <StatCard
+          label="Coast FIRE Number"
+          value={formatCompact(coastNumber)}
+          numericValue={coastNumber}
+          format="currency"
+          color="blue"
+          subtext={`At ${returnRate}% return over ${yearsToRetirement} yrs`}
+        />
+        <StatCard
+          label="FIRE Number (target)"
+          value={formatCompact(fireNumber)}
+          numericValue={fireNumber}
+          format="currency"
+          color="green"
+          subtext={`${(annualExpenses / 1000).toFixed(0)}k expenses / ${swr}% SWR`}
+        />
+        <StatCard
+          label={reached ? 'Surplus' : 'Gap to Coast'}
+          value={formatCurrency(Math.abs(gap))}
+          numericValue={Math.abs(gap)}
+          format="currency"
+          color={reached ? 'green' : 'amber'}
+        />
       </div>
 
       {chartData.length > 0 && (

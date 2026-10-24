@@ -1,6 +1,4 @@
 import { useState, useMemo } from 'react';
-import { motion } from 'motion/react';
-import { fadeInUp } from '@/lib/animations';
 import { SliderControl } from '../../components/ui/SliderControl';
 import { NumberInput } from '../../components/ui/NumberInput';
 import { PortfolioField } from '../../components/ui/PortfolioField';
@@ -229,7 +227,7 @@ export function InvestmentCompare() {
       </div>
 
       {/* Chart */}
-      <motion.div variants={fadeInUp} initial="hidden" animate="visible" className="space-y-6">
+      <div className="animate-rise-in space-y-6">
       <div className="text-xs text-[var(--muted-foreground)] bg-[var(--background)] border border-slate-100 rounded-lg px-4 py-3 leading-relaxed">
         Each line shows the <strong className="text-[var(--foreground)]">total portfolio balance</strong> (initial + contributions + compounded growth, minus tax and fees) over your chosen time horizon. Lines that diverge steeply benefit most from either lower fees or preferential tax treatment. <strong className="text-[var(--foreground)]">Final balance</strong> is before any withdrawal tax or CGT.{' '}
         <a href="https://moneysmart.gov.au/saving-and-budgeting/compound-interest" target="_blank" rel="noopener noreferrer" className="text-[var(--primary)] hover:text-[var(--primary)]">MoneySmart: How compound interest works ↗</a>
@@ -370,7 +368,7 @@ export function InvestmentCompare() {
           </tbody>
         </table>
       </div>
-      </motion.div>
+      </div>
 
       <Assumptions items={ASSUMPTIONS} />
       <Disclaimer calculatorName="Investment Comparison calculator" />

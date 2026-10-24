@@ -5,7 +5,9 @@ import { StatCard } from '@/components/ui/StatCard';
 import { Badge } from '@/components/ui/Badge';
 import { FinancialHealthScore } from '@/components/ui/FinancialHealthScore';
 import { PaycheckSplitterWidget } from '@/components/teen-profile/PaycheckSplitterWidget';
+import { ProfileSummaryCard } from '@/components/teen-profile/ProfileSummaryCard';
 import { FifteenYearOldRoadmap } from '@/components/teen/FifteenYearOldRoadmap';
+import { PrintShareFAB } from '@/components/shared/PrintShareFAB';
 import { SpotlightCard } from '@/components/ui/SpotlightCard';
 import { AGE_PRESETS } from '@/data/teen-finance-data';
 import { usePageTitle } from '@/hooks/usePageTitle';
@@ -251,6 +253,9 @@ export function TeenProfile() {
         </SpotlightCard>
       </div>
 
+      {/* Profile Summary Card */}
+      <ProfileSummaryCard showQuickActions={false} />
+
       {/* Profile Live Calculation Summary */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
         <StatCard
@@ -331,6 +336,8 @@ export function TeenProfile() {
           ))}
         </div>
       </section>
+
+      <PrintShareFAB />
     </div>
   );
 }

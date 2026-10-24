@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import {
@@ -10,11 +10,41 @@ import {
 import { asxEtfYieldConfig } from '@/lib/chart-configs';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, BarChart, Bar, Tooltip } from '@/components/charts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, useReducedMotion } from '@/components/ui/chart';
+import { QuickPresetBar, type ScenarioPreset } from '@/components/ui/QuickPresetBar';
+import { CalculatorActions } from '@/components/shared/CalculatorActions';
 import { TrendingUp, ExternalLink, CalendarDays, PiggyBank } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const YEAR_START = 2016;
 const YEAR_END = 2025;
+
+interface EtfComboPreset {
+  codes: string[];
+}
+
+const ETF_PRESETS: ScenarioPreset<EtfComboPreset>[] = [
+  {
+    id: 'core-combo',
+    label: 'Classic Core (AU + US)',
+    badge: 'VAS / IVV / VGS',
+    description: 'The definitive diversified mix of Aussie blue-chips, US S&P 500, and World ex-US',
+    values: { codes: ['VAS', 'IVV', 'VGS'] },
+  },
+  {
+    id: 'tech-growth',
+    label: 'Tech & Quality Tilt',
+    badge: 'NDQ / QUAL / IVV',
+    description: 'High-conviction exposure to Nasdaq-100 giants, global quality compounders, and US large-cap',
+    values: { codes: ['NDQ', 'QUAL', 'IVV'] },
+  },
+  {
+    id: 'low-cost-index',
+    label: 'Ultra Low-Fee Index',
+    badge: 'A200 / IVV / IOZ',
+    description: 'Lowest MER fee structure across ASX 200 and S&P 500',
+    values: { codes: ['A200', 'IVV', 'IOZ'] },
+  },
+];
 
 const PERIODS: { key: '1Y' | '3Y' | '5Y'; label: string }[] = [
   { key: '1Y', label: '1Y' },
@@ -31,6 +61,7 @@ export function ASXETFExplorer() {
   const [selectedCodes, setSelectedCodes] = useState<string[]>(['VAS', 'NDQ', 'IVV']);
   const [selectedEtf, setSelectedEtf] = useState<ASXETF>(TOP_10_ASX_ETFS[0]);
   const [view, setView] = useState<'growth' | 'annual'>('growth');
+  const [activePreset, setActivePreset] = useState<string | undefined>();
   const reduced = useReducedMotion();
 
   const selected = useMemo(
@@ -39,10 +70,25 @@ export function ASXETFExplorer() {
   );
 
   const toggleCode = (code: string) => {
+    setActivePreset(undefined);
     setSelectedCodes(prev =>
       prev.includes(code) ? prev.filter(c => c !== code) : [...prev, code]
     );
   };
+
+  const handleApplyPreset = (preset: ScenarioPreset<EtfComboPreset>) => {
+    setActivePreset(preset.id);
+    if (preset.values.codes) {
+      setSelectedCodes(preset.values.codes);
+    }
+  };
+
+  const handleReset = useCallback(() => {
+    setActivePreset(undefined);
+    setSelectedCodes(['VAS', 'NDQ', 'IVV']);
+    setSelectedEtf(TOP_10_ASX_ETFS[0]);
+    setView('growth');
+  }, []);
 
   const growthData = useMemo(
     () => buildGrowthSeries(selected, YEAR_START, YEAR_END),
@@ -50,18 +96,29 @@ export function ASXETFExplorer() {
   );
 
   const historyData = useMemo(() => {
-    const rows: Record<string, number | string>[] = [];
-    for (let year = YEAR_START; year <= YEAR_END; year++) {
-      const row: Record<string, number | string> = { year: String(year) };
-      selected.forEach(etf => {
-        if (etf.annualReturns[String(year)] !== undefined) {
-          row[etf.code] = etf.annualReturns[String(year)];
+    const years = Array.from({ length: YEAR_END - YEAR_START + 1 }, (_, i) => YEAR_START + i);
+    return years.map(yr => {
+      const row: Record<string, number | string> = { year: String(yr) };
+      for (const etf of selected) {
+        const val = etf.annualReturns[String(yr)];
+        if (val !== undefined) {
+          row[etf.code] = val;
         }
-      });
-      rows.push(row);
-    }
-    return rows;
+      }
+      return row;
+    });
   }, [selected]);
+
+  const summaryText = useMemo(() => {
+    return [
+      '--- Top ASX ETFs Comparison Summary ---',
+      `Comparing: ${selectedCodes.join(', ')}`,
+      `Selected Detail: ${selectedEtf.code} - ${selectedEtf.name} (${selectedEtf.issuer})`,
+      `MER: ${selectedEtf.mer}% | AUM: $${selectedEtf.fum.toFixed(1)}B | Yield: ${selectedEtf.dividendYield}%`,
+      `Trailing Returns: 1Y ${selectedEtf.trailing['1Y'] ?? '—'}% | 3Y ${selectedEtf.trailing['3Y'] ?? '—'}% | 5Y ${selectedEtf.trailing['5Y'] ?? '—'}%`,
+      `Data: ASX Investment Products reference. AusFinTools`,
+    ].join('\n');
+  }, [selectedCodes, selectedEtf]);
 
   const yieldData = useMemo(
     () =>
@@ -94,6 +151,14 @@ export function ASXETFExplorer() {
         </div>
         <Badge variant="outline" className="shrink-0">As at {ASX_ETF_DATA_AS_AT}</Badge>
       </div>
+
+      {/* Quick combo presets */}
+      <QuickPresetBar
+        presets={ETF_PRESETS}
+        activePresetId={activePreset}
+        onSelect={handleApplyPreset}
+        title="Popular ETF Portfolio Combos"
+      />
 
       {/* Ticker chips */}
       <div className="flex flex-wrap gap-2">
@@ -313,6 +378,12 @@ export function ASXETFExplorer() {
           </ChartContainer>
         </div>
       </div>
+
+      <CalculatorActions
+        onReset={handleReset}
+        summaryText={summaryText}
+        summaryTitle="ETF Comparison Summary"
+      />
 
       <p className="text-[11px] text-muted-foreground leading-relaxed">
         Data compiled from the ASX Investment Products report, Morningstar AU, Yahoo Finance AU and issuer PDS documents.

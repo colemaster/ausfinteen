@@ -1,6 +1,7 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { calculateEVNovatedLease, EV_LEASE_CONSTANTS } from './engine';
 import { OdometerCounter } from '@/components/shared/OdometerCounter';
+import { CalculatorActions } from '../../components/shared/CalculatorActions';
 import { sound } from '@/lib/sound-synthesizer';
 import { exportToCSV, encodePlanToHash, generateSimpleQRCodeSVG } from '@/lib/share-state';
 import {
@@ -79,6 +80,26 @@ export function EVNovatedLeaseCalc() {
     toast.success('Lease comparison exported to CSV!');
   };
 
+  const handleReset = useCallback(() => {
+    setVehiclePrice(63900);
+    setAnnualSalary(115000);
+    setLeaseTerm(5);
+    setIsEV(true);
+  }, []);
+
+  const summaryText = useMemo(() => {
+    return [
+      '--- EV Novated Lease vs Cash vs Car Loan ---',
+      `Vehicle: $${vehiclePrice.toLocaleString()} (${isEV ? 'Electric Vehicle - FBT Exempt' : 'ICE/Petrol'}) | Term: ${leaseTerm} yrs`,
+      `Gross Salary: $${annualSalary.toLocaleString()} | Upfront GST Saved: $${result.gstSavingOnPurchase.toLocaleString()}`,
+      `Annual Tax Saved: $${result.annualTaxSavings.toLocaleString()}/yr | Net Monthly Pay Impact: $${Math.round(result.netAnnualTakeHomePayReduction / 12).toLocaleString()}/mo`,
+      `5-Yr TCO Novated Lease: $${result.fiveYearTotalCostOfOwnership.novatedLease.toLocaleString()}`,
+      `5-Yr TCO Outright Cash: $${result.fiveYearTotalCostOfOwnership.outrightCash.toLocaleString()} (Saving: $${result.totalSavingsVsCash.toLocaleString()})`,
+      `5-Yr TCO Secured Loan: $${result.fiveYearTotalCostOfOwnership.securedCarLoan.toLocaleString()} (Saving: $${result.totalSavingsVsLoan.toLocaleString()})`,
+      `Calculated via AusFinTools EV Novated Lease Suite`,
+    ].join('\n');
+  }, [vehiclePrice, isEV, leaseTerm, annualSalary, result]);
+
   const handleSharePlan = async () => {
     sound.playSuccess();
     const state = { vehiclePrice, annualSalary, leaseTerm, annualKm, leaseRate, isEV };
@@ -108,7 +129,12 @@ export function EVNovatedLeaseCalc() {
             </p>
           </div>
 
-          <div className="flex items-center gap-2 w-full sm:w-auto">
+          <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+            <CalculatorActions
+              onReset={handleReset}
+              summaryText={summaryText}
+              summaryTitle="EV Novated Lease"
+            />
             <button
               onClick={handleExportCSV}
               className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-muted text-foreground text-xs font-bold hover:bg-muted/80 transition-all"
@@ -346,7 +372,7 @@ export function EVNovatedLeaseCalc() {
       {/* Share Modal */}
       {showShareModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-          <div className="w-full max-w-sm rounded-3xl bg-card border border-border p-6 shadow-2xl space-y-4 animate-in fade-in zoom-in-95">
+          <div className="w-full max-w-sm rounded-3xl bg-card border border-border p-6 shadow-2xl space-y-4 animate-pop-in">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-bold text-foreground">Share EV Lease Plan</h3>
               <button

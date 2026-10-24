@@ -10,10 +10,15 @@ const {
 } = Astro.props;
 ---
 
-<div class={`rounded-2xl border border-amber-500/25 bg-amber-500/5 p-4 sm:p-5 text-xs text-muted-foreground leading-relaxed my-8 shadow-xs ${className}`}>
-  <div class="flex items-start gap-3">
-    <div class="p-1.5 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5">
-      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+<div class={`card-depth card-specular rounded-2xl border border-amber-500/25 bg-amber-500/5 p-4 sm:p-5 text-xs text-muted-foreground leading-relaxed my-8 shadow-soft ${className}`}>
+  {/* Luminous amber edge that reads as a lit warning strip */}
+  <div aria-hidden="true" class="absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-amber-400 via-amber-500/70 to-transparent rounded-full"></div>
+  {/* Warm ink blot diffusing behind the advisory panel */}
+  <div aria-hidden="true" class="ink-blot ink-blot-sm ink-blot-amber -top-6 -right-8 dark:opacity-40"></div>
+
+  <div class="relative z-10 flex items-start gap-3">
+    <div class="p-1.5 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5 card-specular">
+      <svg class="w-4 h-4 animate-pulse-soft" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <circle cx="12" cy="12" r="10"></circle>
         <line x1="12" y1="8" x2="12" y2="12"></line>
         <line x1="12" y1="16" x2="12.01" y2="16"></line>

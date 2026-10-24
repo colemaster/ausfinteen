@@ -29,7 +29,10 @@ const {
   <head>
     <SEOHead {...seoProps} />
   </head>
-  <body class="min-h-screen flex flex-col bg-background text-foreground transition-colors duration-200 selection:bg-primary/20 selection:text-primary antialiased">
+  <body class="min-h-screen flex flex-col bg-background text-foreground transition-colors duration-300 selection:bg-primary/25 selection:text-primary antialiased relative overflow-x-hidden">
+    <!-- Subtle noise overlay for tactile finish -->
+    <div class="noise-grain fixed inset-0 pointer-events-none z-[5] mix-blend-overlay opacity-[0.03] dark:opacity-[0.02]" aria-hidden="true"></div>
+    
     <!-- Accessible Skip Link -->
     <SkipLink />
 
@@ -42,6 +45,9 @@ const {
     <!-- Page Content Container with Ambient Chromatic Aura -->
     <div class={`relative flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 py-6 ${className}`}>
       <AuraBackground />
+      <!-- Decorative animated mesh orbs for extra depth -->
+      <div class="mesh-glow-lg hidden xl:block -top-[15%] -right-[10%] opacity-40" aria-hidden="true"></div>
+      <div class="mesh-glow-md hidden lg:block top-[40%] -left-[12%] opacity-30" aria-hidden="true"></div>
       <main id="main-content" tabindex="-1" class="relative z-10 focus:outline-none" transition:animate="fade">
         <slot />
       </main>

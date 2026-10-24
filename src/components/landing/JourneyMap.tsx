@@ -1,8 +1,8 @@
-import { useState } from 'react';
-import { motion, useReducedMotion } from 'motion/react';
+import { useEffect, useState } from 'react';
 import { ArrowRight, CalendarDays, CheckCircle2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Link } from '@/lib/router';
 import { NAV_MODULES } from '@/data/nav-modules';
+import { sound } from '@/lib/sound-synthesizer';
 import { cn } from '@/lib/utils';
 
 interface JourneyMonth {
@@ -194,21 +194,28 @@ export interface JourneyMapProps {
  *
  * Jan–Dec pills select a month; the panel shows that month's Qld
  * school-term context, money milestone, one action, and one
- * MANDY_MODULES deep link. Panel swaps animate (spring) unless the
- * user prefers reduced motion, in which case they swap instantly.
+ * MANDY_MODULES deep link. Panel swaps use a compositor-only CSS rise.
  */
 export function JourneyMap({ className }: JourneyMapProps) {
-  const reducedMotion = useReducedMotion() ?? false;
-  const [selectedIdx, setSelectedIdx] = useState<number>(() => {
-    if (typeof window === 'undefined') return 0;
-    const m = new Date().getMonth();
-    return m >= 0 && m <= 11 ? m : 0;
-  });
+  // Start on January for a deterministic server render, then jump to the
+  // current month after hydration. Reading the clock during the initial
+  // render makes the client tree differ from the prerendered HTML.
+  const [selectedIdx, setSelectedIdx] = useState<number>(0);
+  useEffect(() => {
+    const month = new Date().getMonth();
+    if (month >= 0 && month <= 11) setSelectedIdx(month);
+  }, []);
 
   const selected: JourneyMonth = JOURNEY_MAP[selectedIdx] ?? JOURNEY_MAP[0]!;
 
-  const goPrev = (): void => setSelectedIdx((i) => (i + 11) % 12);
-  const goNext = (): void => setSelectedIdx((i) => (i + 1) % 12);
+  const goPrev = (): void => {
+    sound.playClick();
+    setSelectedIdx((i) => (i + 11) % 12);
+  };
+  const goNext = (): void => {
+    sound.playClick();
+    setSelectedIdx((i) => (i + 1) % 12);
+  };
 
   return (
     <section aria-labelledby="journey-map-heading" className={cn('w-full', className)}>
@@ -248,14 +255,17 @@ export function JourneyMap({ className }: JourneyMapProps) {
               <button
                 key={month.key}
                 type="button"
-                onClick={() => setSelectedIdx(i)}
+                onClick={() => {
+                  sound.playClick();
+                  setSelectedIdx(i);
+                }}
                 aria-pressed={isActive}
                 aria-label={`${month.full}: ${month.milestone}`}
                 className={cn(
-                  'shrink-0 snap-start rounded-full px-3 py-1.5 text-xs font-bold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-950',
+                  'shrink-0 snap-start rounded-full px-3.5 py-1.5 text-xs font-bold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-950',
                   isActive
-                    ? 'bg-sky-600 text-white shadow-md shadow-sky-600/20'
-                    : 'border border-slate-200 bg-white text-slate-600 hover:border-sky-300 hover:text-sky-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:border-sky-700 dark:hover:text-sky-300',
+                    ? 'bg-sky-600 text-white shadow-md shadow-sky-600/30 dark:bg-sky-500 dark:text-slate-950'
+                    : 'border border-border/80 bg-card/80 text-muted-foreground hover:border-sky-400 hover:text-foreground',
                 )}
               >
                 {month.short}
@@ -274,29 +284,15 @@ export function JourneyMap({ className }: JourneyMapProps) {
       </div>
 
       {/* Detail panel: aria-live so month changes are announced */}
-      <div aria-live="polite" aria-atomic="true">
-        {reducedMotion ? (
-          <div
-            key={selected.key}
-            role="tabpanel"
-            aria-label={`${selected.full}: ${selected.milestone}`}
-            className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5 dark:border-slate-800 dark:bg-slate-900"
-          >
-            <PanelBody month={selected} />
-          </div>
-        ) : (
-          <motion.div
-            key={selected.key}
-            role="tabpanel"
-            aria-label={`${selected.full}: ${selected.milestone}`}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ type: 'spring', stiffness: 320, damping: 30 }}
-            className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5 dark:border-slate-800 dark:bg-slate-900"
-          >
-            <PanelBody month={selected} />
-          </motion.div>
-        )}
+      <div aria-live="polite" aria-atomic="true" className="mx-auto max-w-3xl">
+        <div
+          key={selected.key}
+          role="tabpanel"
+          aria-label={`${selected.full}: ${selected.milestone}`}
+          className="animate-rise-in rounded-3xl border border-border/80 bg-gradient-to-b from-card via-card/95 to-card/75 p-5 shadow-xl backdrop-blur-xl sm:p-6 dark:border-sky-500/20"
+        >
+          <PanelBody month={selected} />
+        </div>
       </div>
     </section>
   );

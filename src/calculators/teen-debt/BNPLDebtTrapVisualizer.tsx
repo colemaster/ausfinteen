@@ -1,15 +1,53 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { Card } from '@/components/ui/Card';
 import { NumberInput } from '@/components/ui/NumberInput';
 import { SliderControl } from '@/components/ui/SliderControl';
 import { StatCard } from '@/components/ui/StatCard';
 import { Badge } from '@/components/ui/Badge';
+import { QuickPresetBar, type ScenarioPreset } from '@/components/ui/QuickPresetBar';
+import { CalculatorActions } from '@/components/shared/CalculatorActions';
 import { OFFICIAL_WEB_LINKS } from '@/data/teen-finance-data';
 import { WebReferenceLink } from '@/components/shared/WebReferenceLink';
 import { Flame, ShieldAlert, CalendarClock } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip } from '@/components/charts';
 import { ChartContainer, ChartTooltipContent } from '@/components/ui/chart';
 import { bnplLateFeeCascade, weeklyPayoffPlan } from './engine';
+import { formatCurrency } from '@/utils/formatters';
+
+interface BNPLPreset {
+  price: number;
+  missed: number;
+  fee: number;
+  weeks: number;
+}
+
+const BNPL_PRESETS: ScenarioPreset<BNPLPreset>[] = [
+  {
+    id: 'festival',
+    label: 'Festival Ticket ($150)',
+    badge: '1 Missed Fee',
+    description: '$150 ticket with 1 missed fortnightly repayment',
+    values: { price: 150, missed: 1, fee: 15, weeks: 4 },
+  },
+  {
+    id: 'sneakers',
+    label: 'Limited Sneaker Drop ($280)',
+    badge: 'Late Fee Cascade',
+    description: '3 missed installments triggering compounding penalty fees',
+    values: { price: 280, missed: 3, fee: 15, weeks: 6 },
+  },
+  {
+    id: 'phone-tech',
+    label: 'Tech Gear ($450)',
+    badge: 'Severe Debt Trap',
+    description: 'Maximum 4 missed payments blowing out to massive percentage markup',
+    values: { price: 450, missed: 4, fee: 20, weeks: 8 },
+  },
+];
+
+const CHART_CONFIG = {
+  value: { label: 'Amount ($)', color: 'var(--chart-1, #3b82f6)' },
+};
 
 export function BNPLDebtTrapVisualizer() {
   const [purchasePrice, setPurchasePrice] = useState<number>(120);
@@ -17,6 +55,24 @@ export function BNPLDebtTrapVisualizer() {
   const [feePerLatePayment, setFeePerLatePayment] = useState<number>(15);
   const [payoffWeeks, setPayoffWeeks] = useState<number>(4);
   const [payoffStrategy, setPayoffStrategy] = useState<'snowball' | 'avalanche'>('snowball');
+  const [activePreset, setActivePreset] = useState<string | undefined>();
+
+  const handleApplyPreset = (preset: ScenarioPreset<BNPLPreset>) => {
+    setActivePreset(preset.id);
+    if (preset.values.price !== undefined) setPurchasePrice(preset.values.price);
+    if (preset.values.missed !== undefined) setMissedPayments(preset.values.missed);
+    if (preset.values.fee !== undefined) setFeePerLatePayment(preset.values.fee);
+    if (preset.values.weeks !== undefined) setPayoffWeeks(preset.values.weeks);
+  };
+
+  const handleReset = useCallback(() => {
+    setActivePreset(undefined);
+    setPurchasePrice(120);
+    setMissedPayments(2);
+    setFeePerLatePayment(15);
+    setPayoffWeeks(4);
+    setPayoffStrategy('snowball');
+  }, []);
 
   const fortnightInstallment = purchasePrice / 4;
   const cascade = bnplLateFeeCascade(purchasePrice, 4, missedPayments, feePerLatePayment, 1.5);
@@ -28,18 +84,24 @@ export function BNPLDebtTrapVisualizer() {
   // Comparison data for 1-year impact if saved/invested vs BNPL wasted
   const chartData = useMemo(() => {
     return [
-      { name: 'Item Price', value: purchasePrice, color: '#3b82f6' },
-      { name: 'BNPL Late Fees', value: totalLateFees, color: '#ef4444' },
-      { name: 'Total Wasted', value: totalCost, color: '#f59e0b' },
-      { name: 'If Invested (1y @ 7%)', value: Math.round(totalCost * 1.07), color: '#10b981' },
+      { name: 'Item Price', value: purchasePrice, color: 'var(--chart-1, #3b82f6)' },
+      { name: 'BNPL Late Fees', value: totalLateFees, color: 'var(--chart-4, #ef4444)' },
+      { name: 'Total Paid', value: totalCost, color: 'var(--chart-3, #f59e0b)' },
+      { name: 'If Invested (1y @ 7%)', value: Math.round(totalCost * 1.07), color: 'var(--chart-2, #10b981)' },
     ];
   }, [purchasePrice, totalLateFees, totalCost]);
 
-  const chartConfig = useMemo(() => {
-    return {
-      value: { label: 'Amount ($)', color: '#3b82f6' },
-    };
-  }, []);
+  const summaryText = useMemo(() => {
+    return [
+      '--- BNPL Debt Trap & Late Fee Analysis ---',
+      `Original Purchase: ${formatCurrency(purchasePrice)} (4 installments of ${formatCurrency(fortnightInstallment)})`,
+      `Missed Payments: ${missedPayments} | Base Late Fee: ${formatCurrency(feePerLatePayment)}`,
+      `Total Late Fees Incurred: +${formatCurrency(totalLateFees)} (+${percentageMarkup.toFixed(0)}% price markup)`,
+      `Total Cost Paid: ${formatCurrency(totalCost)}`,
+      `Payoff Plan: ${formatCurrency(payoffPlan.weeklyPayment)}/wk across ${payoffWeeks} weeks (${payoffStrategy.toUpperCase()} method)`,
+      `Calculated via AusFinTools BNPL Visualizer`,
+    ].join('\n');
+  }, [purchasePrice, fortnightInstallment, missedPayments, feePerLatePayment, totalLateFees, percentageMarkup, totalCost, payoffPlan, payoffWeeks, payoffStrategy]);
 
   return (
     <Card variant="glass" className="p-6 space-y-6">
@@ -58,33 +120,49 @@ export function BNPLDebtTrapVisualizer() {
         </Badge>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+      {/* Quick Presets */}
+      <QuickPresetBar
+        presets={BNPL_PRESETS}
+        activePresetId={activePreset}
+        onSelect={handleApplyPreset}
+        title="Common BNPL Impulse Traps"
+      />
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div className="space-y-4">
           <NumberInput
-            label="Impulse Item Purchase Price ($)"
+            label="Original Purchase Amount ($)"
             value={purchasePrice}
-            onChange={v => setPurchasePrice(v)}
-            min={40}
-            max={1000}
+            onChange={v => {
+              setPurchasePrice(v);
+              setActivePreset(undefined);
+            }}
+            min={20}
+            max={2000}
             step={10}
             prefix="$"
           />
-        </div>
 
-        <div className="space-y-4">
           <SliderControl
-            label="Missed Installments"
+            label="Missed Fortnightly Installments"
             value={missedPayments}
-            onChange={v => setMissedPayments(v)}
+            onChange={v => {
+              setMissedPayments(v);
+              setActivePreset(undefined);
+            }}
             min={0}
             max={4}
             step={1}
-            suffix=" missed"
+            suffix=" payments"
           />
-          <SliderControl
-            label="Late Fee per Missed Payment"
+
+          <NumberInput
+            label="Base Late Fee per Missed Payment ($)"
             value={feePerLatePayment}
-            onChange={v => setFeePerLatePayment(v)}
+            onChange={v => {
+              setFeePerLatePayment(v);
+              setActivePreset(undefined);
+            }}
             min={5}
             max={30}
             step={1}
@@ -92,79 +170,88 @@ export function BNPLDebtTrapVisualizer() {
           />
         </div>
 
-        <div className="space-y-2">
-          <label className="text-xs font-semibold text-muted-foreground block font-medium">Broke Millennial Payoff Strategy</label>
+        {/* Payoff plan settings */}
+        <div className="space-y-4 rounded-2xl border border-border bg-card p-4">
+          <div className="flex items-center gap-2 text-primary font-bold text-sm">
+            <CalendarClock className="w-4 h-4" />
+            <span>Payoff & Recovery Strategy</span>
+          </div>
+
+          <SliderControl
+            label="Payoff Target Timeline"
+            value={payoffWeeks}
+            onChange={v => {
+              setPayoffWeeks(v);
+              setActivePreset(undefined);
+            }}
+            min={1}
+            max={12}
+            step={1}
+            suffix=" weeks"
+          />
+
           <div className="grid grid-cols-2 gap-2">
             <button
               type="button"
               onClick={() => setPayoffStrategy('snowball')}
-              className={`py-2 px-2 rounded-xl border text-xs font-bold transition-all text-left ${
+              className={`py-2 px-3 rounded-xl border text-xs font-bold transition-all ${
                 payoffStrategy === 'snowball'
                   ? 'bg-primary text-primary-foreground border-primary shadow-xs'
                   : 'bg-card border-border hover:bg-muted text-foreground'
               }`}
             >
-              Debt Snowball (Smallest First)
+              Debt Snowball ⚡️
             </button>
             <button
               type="button"
               onClick={() => setPayoffStrategy('avalanche')}
-              className={`py-2 px-2 rounded-xl border text-xs font-bold transition-all text-left ${
+              className={`py-2 px-3 rounded-xl border text-xs font-bold transition-all ${
                 payoffStrategy === 'avalanche'
-                  ? 'bg-purple-500 text-white border-purple-500 shadow-xs'
+                  ? 'bg-primary text-primary-foreground border-primary shadow-xs'
                   : 'bg-card border-border hover:bg-muted text-foreground'
               }`}
             >
-              Debt Avalanche (Highest Interest)
+              Debt Avalanche 📉
             </button>
           </div>
 
-          <div className="rounded-2xl border border-border bg-card/60 p-3.5 space-y-2">
-            <div className="flex items-center gap-1.5 text-xs font-bold text-foreground">
-              <CalendarClock className="w-3.5 h-3.5 text-primary" />
-              Pay It Off Fast Plan
+          <div className="p-3 rounded-xl bg-muted/60 border border-border text-xs">
+            <div className="font-semibold text-foreground">Weekly Payoff Requirement:</div>
+            <div className="text-xl font-black font-mono text-primary mt-0.5">
+              ${payoffPlan.weeklyPayment.toFixed(2)} / week
             </div>
-            <SliderControl
-              label="Clear the whole purchase in"
-              value={payoffWeeks}
-              onChange={v => setPayoffWeeks(v)}
-              min={1}
-              max={8}
-              step={1}
-              suffix=" wks"
-            />
-            <p className="text-[11px] text-muted-foreground">
-              That's <strong className="font-mono">${payoffPlan.weeklyPayment.toFixed(2)}/wk</strong> — set it as a
-              payday auto-transfer and you never touch a late fee.
-            </p>
+            <div className="text-[10px] text-muted-foreground mt-0.5">
+              Clear in {payoffWeeks} weeks before credit score penalties bite
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Visual Bar Comparison Chart */}
+      {/* Visual Chart */}
       <div className="bg-card/50 border border-border/60 rounded-xl p-4 space-y-2">
-        <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">True Cost vs Opportunity Cost</h3>
-        <ChartContainer config={chartConfig} className="h-[200px] w-full">
+        <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">True Cost & Opportunity Cost Visualizer</h3>
+        <ChartContainer config={CHART_CONFIG} className="h-[200px] w-full">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" vertical={false} />
               <XAxis dataKey="name" tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
               <YAxis tickFormatter={v => `$${v}`} tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
               <Tooltip content={<ChartTooltipContent formatter={v => [`$${v}`, 'Amount']} />} />
-              <Bar dataKey="value" radius={[6, 6, 0, 0]} animationDuration={1000} fill="#ef4444" />
+              <Bar dataKey="value" radius={[6, 6, 0, 0]} animationDuration={800} />
             </BarChart>
           </ResponsiveContainer>
         </ChartContainer>
       </div>
 
+      {/* Results */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
         <StatCard
-          label="4 Fortnightly Installments"
-          value={`4x $${fortnightInstallment.toFixed(2)}`}
+          label="Fortnightly Installment"
+          value={`$${fortnightInstallment.toFixed(2)}`}
           numericValue={fortnightInstallment}
           format="currency"
           color="blue"
-          subtext="Advertised 'Interest Free'"
+          subtext="Base installment (4 payments total)"
         />
         <StatCard
           label="Late Fees Accumulated"
@@ -215,6 +302,13 @@ export function BNPLDebtTrapVisualizer() {
           Under Australian law, BNPL defaults and late payments are reported to credit bureaus (Equifax / Experian). Having defaults on your credit file at 18 makes it significantly harder to rent an apartment, get a mobile plan, or buy a car!
         </div>
       </div>
+
+      {/* Action buttons */}
+      <CalculatorActions
+        onReset={handleReset}
+        summaryText={summaryText}
+        summaryTitle="BNPL Debt Analysis"
+      />
 
       <div className="pt-2 flex flex-wrap gap-2.5">
         <WebReferenceLink link={OFFICIAL_WEB_LINKS.moneysmart_debt} />

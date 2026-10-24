@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useLayoutEffect, useRef } from 'react';
 import { Link } from '@/lib/router';
 import { NAV_MODULES } from '@/data/nav-modules';
 import { Badge } from '@/components/ui/Badge';
@@ -16,8 +16,6 @@ import {
   LayoutGrid,
   Filter,
 } from 'lucide-react';
-import { motion, LayoutGroup } from 'motion/react';
-import { fadeInUp, staggerContainer, fastStagger } from '@/lib/animations';
 import { cn } from '@/lib/utils';
 import { useUrlParams } from '@/hooks/useUrlParams';
 import { SpotlightCard } from '@/components/ui/SpotlightCard';
@@ -95,7 +93,7 @@ const FAST_PATHS: ReadonlyArray<{
     id: '15yo-roadmap',
     emoji: '🧭',
     title: '15yo Roadmap',
-    desc: 'Free TFN via AusPost, 5.0%+ HISA, Medicare at 15, and L-plate prep.',
+    desc: 'Free TFN via AusPost, 5.80% HISA, Medicare at 15, and L-plate prep.',
     route: '/careers-employment?tab=roadmap',
     tag: '15yo Milestone',
   },
@@ -126,7 +124,7 @@ const FAST_PATHS: ReadonlyArray<{
   {
     id: 'youth-hisa',
     emoji: '🧬',
-    title: '5.0%+ Youth HISA',
+    title: '5.80% Youth HISA',
     desc: 'Compare top fee-free youth savings accounts & APRA $250k protection.',
     route: '/interest-products?topic=ip-1',
     tag: 'High Interest',
@@ -194,43 +192,77 @@ const FEATURED_CALCULATORS: ReadonlyArray<{
 ];
 
 function CategoryChips({ value, onChange }: { value: string; onChange: (id: string) => void }) {
+  const listRef = useRef<HTMLDivElement>(null);
+  const pillRef = useRef<HTMLSpanElement>(null);
+  const chipRefs = useRef<(HTMLButtonElement | null)[]>([]);
+
+  // Measure the active chip and move one composited pill. This replaces
+  // Measure the active chip and slide a single absolutely-positioned pill
+  // behind it. The earlier approach used an animation runtime on the landing
+  // page just to move a highlight between filter chips.
+  useLayoutEffect(() => {
+    const list = listRef.current;
+    const pill = pillRef.current;
+    if (!list || !pill) return;
+
+    const activeIndex = CATEGORY_FILTERS.findIndex(filter => filter.id === value);
+
+    const sync = () => {
+      const button = chipRefs.current[activeIndex];
+      if (!button) {
+        pill.style.opacity = '0';
+        return;
+      }
+      pill.style.opacity = '1';
+      pill.style.width = `${button.offsetWidth}px`;
+      pill.style.height = `${button.offsetHeight}px`;
+      pill.style.transform = `translate3d(${button.offsetLeft}px, ${button.offsetTop}px, 0)`;
+    };
+
+    sync();
+    if (typeof ResizeObserver === 'undefined') return;
+
+    const observer = new ResizeObserver(sync);
+    observer.observe(list);
+    chipRefs.current.forEach(button => button && observer.observe(button));
+    return () => observer.disconnect();
+  }, [value]);
+
   return (
-    <LayoutGroup id="landing-category-chips">
-      <div
-        className="flex gap-1.5 overflow-x-auto pb-1 -mx-1 px-1 sm:flex-wrap sm:overflow-visible"
-        role="tablist"
-        aria-label="Filter modules by category"
-      >
-        {CATEGORY_FILTERS.map(filter => {
-          const active = filter.id === value;
-          return (
-            <button
-              key={filter.id}
-              type="button"
-              role="tab"
-              aria-selected={active}
-              onClick={() => {
-                sound.playClick();
-                onChange(filter.id);
-              }}
-              className={cn(
-                'relative px-3.5 py-1.5 rounded-xl text-xs font-bold transition-colors whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60',
-                active ? 'text-primary-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-muted'
-              )}
-            >
-              {active && (
-                <motion.span
-                  layoutId="activeCategoryChip"
-                  className="absolute inset-0 rounded-xl bg-primary shadow-md shadow-primary/20"
-                  transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                />
-              )}
-              <span className="relative z-10">{filter.label}</span>
-            </button>
-          );
-        })}
-      </div>
-    </LayoutGroup>
+    <div
+      ref={listRef}
+      className="relative flex gap-1.5 overflow-x-auto pb-1 -mx-1 px-1 sm:flex-wrap sm:overflow-visible"
+      role="tablist"
+      aria-label="Filter modules by category"
+    >
+      <span
+        ref={pillRef}
+        aria-hidden="true"
+        className="pointer-events-none absolute left-0 top-0 rounded-xl bg-primary opacity-0 shadow-md shadow-primary/20 transition-[transform,width,height,opacity] duration-(--motion-medium) ease-(--ease-out)"
+      />
+      {CATEGORY_FILTERS.map((filter, idx) => {
+        const active = filter.id === value;
+        return (
+          <button
+            key={filter.id}
+            ref={el => { chipRefs.current[idx] = el; }}
+            type="button"
+            role="tab"
+            aria-selected={active}
+            onClick={() => {
+              sound.playClick();
+              onChange(filter.id);
+            }}
+            className={cn(
+              'relative px-3.5 py-1.5 rounded-xl text-xs font-bold transition-colors whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60',
+              active ? 'text-primary-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+            )}
+          >
+            <span className="relative z-10">{filter.label}</span>
+          </button>
+        );
+      })}
+    </div>
   );
 }
 
@@ -280,7 +312,13 @@ export function Landing() {
   ];
 
   return (
-    <div className="space-y-12 animate-fade-in pb-12">
+    <div className="relative space-y-14 animate-fade-in pb-16 overflow-hidden">
+      {/* Strategic Ambient Mesh Blooms */}
+      <div aria-hidden="true" className="pointer-events-none absolute top-48 left-1/2 -translate-x-1/2 h-[500px] w-[900px] rounded-full bg-gradient-to-r from-emerald-500/10 via-teal-500/5 to-cyan-500/10 blur-[120px] dark:from-emerald-500/15 dark:via-teal-500/5 dark:to-cyan-500/15" />
+      <div aria-hidden="true" className="pointer-events-none absolute top-[1600px] -left-64 h-[600px] w-[600px] rounded-full bg-violet-500/10 blur-[130px] dark:bg-violet-500/15" />
+      <div aria-hidden="true" className="pointer-events-none absolute top-[3000px] -right-64 h-[600px] w-[600px] rounded-full bg-cyan-500/10 blur-[130px] dark:bg-cyan-500/15" />
+      <div aria-hidden="true" className="pointer-events-none absolute top-[4400px] left-1/4 h-[500px] w-[800px] rounded-full bg-amber-500/10 blur-[120px] dark:bg-amber-500/10" />
+
       {/* 15yo-first Hero */}
       <Hero15yo>
         <ParallaxHeroArt />
@@ -313,28 +351,25 @@ export function Landing() {
       <section className="space-y-5 calculator-section">
         <div className="text-center sm:text-left space-y-1">
           <Badge variant="info">Quick-Start Fast Paths</Badge>
-          <h2 className="text-xl sm:text-2xl font-extrabold text-foreground tracking-tight">
+          <h2 className="scroll-entrance-up text-xl sm:text-2xl font-extrabold text-foreground tracking-tight">
             Start Your Money Journey in 4 Clicks
           </h2>
-          <p className="text-xs sm:text-sm text-muted-foreground">
+          <p className="scroll-entrance-up text-xs sm:text-sm text-muted-foreground">
             Curated journeys that deep-link straight into the right calculator or guide.
           </p>
         </div>
 
-        <motion.div
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-40px' }}
-          className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4"
-        >
+        <div className="reveal-stagger grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           {FAST_PATHS.map(fp => (
-            <motion.div key={fp.id} variants={fadeInUp}>
+            <div key={fp.id}>
               <Link
                 to={fp.route}
                 onMouseEnter={() => prefetchRoute(fp.route)}
                 onClick={() => sound.playClick()}
-                className="group block h-full p-4 rounded-2xl border border-border bg-card hover:border-primary/40 hover:shadow-xl hover:shadow-primary/10 hover:-translate-y-0.5 transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+                className={cn(
+                  'group block h-full p-4.5 rounded-2xl border border-border/80 bg-gradient-to-b from-card via-card/95 to-card/80 hover:border-primary/50 hover:shadow-xl hover:shadow-primary/15 hover:-translate-y-1 transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 backdrop-blur-md sheen overflow-hidden animate-float-up',
+                  fp.id === 'first-paycheck' && 'animate-breath'
+                )}
               >
                 <div className="flex items-start justify-between gap-2">
                   <span className="text-2xl" aria-hidden="true">{fp.emoji}</span>
@@ -351,9 +386,9 @@ export function Landing() {
                   <ArrowRight className="w-3 h-3" />
                 </span>
               </Link>
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </div>
       </section>
 
       {/* Featured Calculators Grid */}
@@ -379,22 +414,16 @@ export function Landing() {
           </Link>
         </div>
 
-        <motion.div
-          variants={fastStagger}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-40px' }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
-        >
+        <div className="reveal-stagger grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {FEATURED_CALCULATORS.map(calc => (
-            <motion.div key={calc.id} variants={fadeInUp} className="h-full">
+            <div key={calc.id} className="h-full">
               <Link
                 to={calc.route}
                 onMouseEnter={() => prefetchRoute(calc.route)}
                 onClick={() => sound.playClick()}
-                className="block h-full rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+                className="block h-full rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 animate-float-up"
               >
-                <SpotlightCard className="h-full p-5 flex flex-col gap-3">
+                <SpotlightCard className="sheen h-full p-5 flex flex-col gap-3" depth>
                   <div className="flex items-center justify-between">
                     <span className="text-2xl" aria-hidden="true">{calc.emoji}</span>
                     <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
@@ -417,9 +446,9 @@ export function Landing() {
                   </div>
                 </SpotlightCard>
               </Link>
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </div>
       </section>
 
       {/* Youth money widgets: HISA showdown, penalty pay, 50c fares, compounding */}
@@ -467,7 +496,7 @@ export function Landing() {
 
         <div
           className={cn(
-            'grid grid-cols-1 gap-4',
+            'reveal-stagger grid grid-cols-1 gap-4',
             compact ? 'sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4' : 'sm:grid-cols-2 lg:grid-cols-3'
           )}
         >
@@ -526,7 +555,10 @@ export function Landing() {
               to={tool.route}
               onMouseEnter={() => prefetchRoute(tool.route)}
               onClick={() => sound.playClick()}
-              className="group p-5 rounded-3xl bg-card border border-border hover:border-primary/40 hover:shadow-xl transition-all duration-300 flex flex-col justify-between space-y-3 hover:-translate-y-1"
+              className={cn(
+                'sheen group relative overflow-hidden p-5.5 rounded-3xl bg-gradient-to-b from-card via-card/95 to-card/80 border border-border/80 hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/15 transition-all duration-300 flex flex-col justify-between space-y-3.5 hover:-translate-y-1 backdrop-blur-md card-depth card-glow-hover animate-float-up',
+                tool.route === '/hecs-payoff' && 'animate-breath'
+              )}
             >
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
@@ -618,19 +650,15 @@ export function Landing() {
           </p>
         </div>
 
-        <motion.div
+        <div
           key={cat}
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-50px' }}
           className={cn(
-            'grid grid-cols-1 gap-4',
+            'reveal-stagger grid grid-cols-1 gap-4',
             compact ? 'sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4' : 'sm:grid-cols-2 lg:grid-cols-3'
           )}
         >
           {filteredModules.map(module => (
-            <motion.div key={module.id} variants={fadeInUp}>
+            <div key={module.id}>
               <Link
                 to={module.route}
                 onMouseEnter={() => prefetchRoute(module.route)}
@@ -639,7 +667,7 @@ export function Landing() {
               >
                 <HolographicTiltCard
                   showBeam={false}
-                  className={cn('h-full rounded-3xl', compact ? 'space-y-2 p-4' : 'space-y-3')}
+                  className={cn('sheen h-full rounded-3xl', compact ? 'space-y-2 p-4' : 'space-y-3')}
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
@@ -680,9 +708,9 @@ export function Landing() {
                   </div>
                 </HolographicTiltCard>
               </Link>
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </div>
       </section>
 
       {/* "What Will I Learn?" Topic Selector — Lazy Loaded */}

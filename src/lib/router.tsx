@@ -103,9 +103,22 @@ export type SearchParamsSetter = (
   options?: { replace?: boolean }
 ) => void;
 
+/**
+ * Internal notification for query-string updates made by `setSearchParams`.
+ * A synthetic `popstate` used to be dispatched here, but that event is owned
+ * by the browser (and Astro's ClientRouter expects `event.state.index`), so a
+ * bare Event crashed the router. A private event keeps hook instances in sync
+ * without touching navigation state.
+ */
+const URL_PARAMS_EVENT = 'urlparamschange';
+
 export function useSearchParams(): [URLSearchParams, SearchParamsSetter] {
+  // Start empty on both server and client so hydration matches the prerendered
+  // HTML. The effect below immediately adopts the real query string, which
+  // keeps deep links (`?tab=roadmap`, `?cat=investing`) working without a
+  // hydration mismatch.
   const [searchParams, setSearchParamsState] = useState(
-    () => new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '')
+    () => new URLSearchParams()
   );
 
   useEffect(() => {
@@ -113,10 +126,13 @@ export function useSearchParams(): [URLSearchParams, SearchParamsSetter] {
       setSearchParamsState(new URLSearchParams(window.location.search));
     };
 
+    update();
     window.addEventListener('popstate', update);
+    window.addEventListener(URL_PARAMS_EVENT, update);
     document.addEventListener('astro:page-load', update);
     return () => {
       window.removeEventListener('popstate', update);
+      window.removeEventListener(URL_PARAMS_EVENT, update);
       document.removeEventListener('astro:page-load', update);
     };
   }, []);
@@ -141,14 +157,16 @@ export function useSearchParams(): [URLSearchParams, SearchParamsSetter] {
       const queryString = sp.toString();
       const newUrl = `${window.location.pathname}${queryString ? '?' + queryString : ''}${window.location.hash}`;
 
+      // Preserve Astro's history state (scroll index) on query-only updates.
+      const historyState = window.history.state;
       if (options?.replace) {
-        window.history.replaceState(null, '', newUrl);
+        window.history.replaceState(historyState, '', newUrl);
       } else {
-        window.history.pushState(null, '', newUrl);
+        window.history.pushState(historyState, '', newUrl);
       }
 
       setSearchParamsState(new URLSearchParams(queryString));
-      window.dispatchEvent(new Event('popstate'));
+      window.dispatchEvent(new CustomEvent(URL_PARAMS_EVENT));
     },
     []
   );

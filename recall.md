@@ -58,6 +58,9 @@
 | v7.0.0  | 50%+ Performance Overhaul & Modern Architecture | 56% bundle reduction (1,510 KB → 648 KB uncompressed, 17.7 KB critical path JS), 68% test speedup (2.62s → 0.84s), per-module topic slices, statutory web-links extraction, PWA Service Worker (offline caching), oxc-transform-react, Tailwind v4 content-auto, CSS @starting-style, client:idle hydration on all 21 pages | Local |
 | v7.1.0  | Latest SDKs, Native React Compiler & 50%+ Performance Boost | Full upgrade to @astrojs/react 7.0.0, Astro 7.3.4, Motion 13.4.1, JSDOM 30.1.1; native React 19 Compiler with oxc-transform-react (bypassing Babel, cutting Vite build by 81%); statutory-links extraction (154KB → 28KB JS savings, -82%); WOFF2-only font subsetting (-51.3% font payload); 100% idle/visible island hydration (<2.6KB synchronous JS on initial paint); visualizer build:analyze | Local |
 | v7.2.0  | Comprehensive 15yo First Job, Banking & Saving Goals Boost | Complete statutory audit & content boost: 548 verified Australian web sources, 30 student discount links wired to UI with active web references, Inverted Teen 50/30/20 preset in FirstPaycheckSplitter, 15yo first job compliance & junior award rates (Fast Food, Retail, Pharmacy, Cleaning 100% adult rule), 5.0%+ HISA comparison, and comprehensive test suite pass | Local |
+| v7.6.0  | Oct 2026 Verified Content Refresh (20 subagents) | Full content/data refresh against primary official sources as at 18 Oct 2026: RBA 4.60%, QLD Licence fees (1 Jul 2026 schedule), HELP 2026-27 marginal bands + 2.8% indexation, Super caps $32.5k/$130k/$390k + TBC $2.1M, Medicare $28,011/$35,013 + MLS $105k/$123k/$164k, tax 15% second bracket, State transfer duty/FHOG, first-car running costs + Brisbane fuel, HISA Oct 2026, ASX ETF metrics, QLD school/uni/ATAR/QTAC 2027, landing + module Q&A + search index | Local |
+| v7.7.0  | Latest SDK/Deps & 5-Subagent Frontend Polish | Full SDK/deps update (Astro 7.4.1, Motion 14.5.0, Lucide React 1.61.0, Vite 8.3.5, React 19.3.1, oxc-transform-react 0.152.0). 5 parallel subagents: (1) Core UI & design system (StatCard copy/accent, SliderControl steppers, CurrencyInput quick-bump, React Compiler cleanups), (2) Navigation, shell & search (glassmorphic Navbar, glowing route pills, category search chips, footer status), (3) Landing & cyber-finance visuals (CompoundRocket milestones, ScamShield threat badges, HisaShowdown/PenaltyPayBooster live sliders), (4) Youth tools & module views (TeenResumeBuilder 3 templates + preview, PenaltyShiftCalculatorWidget 6 multipliers, FifteenYearOldRoadmap, SavingsGoalsPlanner, ProfileSummaryCard, PrintShareFAB), (5) 28 calculators & charts (CalculatorActions reset/copy summary, DeferredChart zero-reflow, sticky breakdown tables, quick presets, pure engine 100% test pass) | Local |
+| v7.8.0  | 20-Subagent Content & Statutory Update (ATO, Unis, QLD) | 20-Subagent audit & content update across ATO (tax, super, HECS/HELP, deductions, youth/minors), Universities (CSP bands, SSAF, QTAC 2026-27, QILT GOS 2025, TAFE pathways), and QLD/Brisbane (TransLink permanent 50c fares, TMR driver licence 1 July 2026 schedule, property transfer duty & $30k FHOG, RTA median rents, child labor laws, 2032 Olympics) | Local |
 
 
 ---
@@ -1960,3 +1963,167 @@ for the absence of each old anti-pattern.
   calculator, not a design-system change.
 - **Did not claim any of this is unprecedented.** "Better than any site a user has seen" is not
   a testable claim and is not something to assert in a changelog.
+
+---
+
+## v7.6.0 — RE-ISSUE OF THE SAME INSTRUCTION (27 Sep 2026): SECOND PASS, RESEARCH-FIRST
+
+### User Instruction (verbatim, identical to the v7.5.0 request)
+> "update all the sdk + libs + deps to the latest versions - update to the latest frontend options -
+> latest vite + optimise the frontend - imprtove animations + graphics + uplift frontend look and feel
+> to yr2030 optimistaions - make it look way better - include all the latest features + frontend
+> enhancements - needs to be sooo good that usere have never seen a frontend webpage like it - full
+> emoji - 15yr styling - get their attention - research 500+ best latest websites from the web first -
+> use 20 subagents"
+
+### 0. Read this first: v7.5.0 already executed this instruction, in full, 2 hours earlier
+Commit `7913a50 feat(design): 2030 design uplift, WCAG AA token rebuild & motion system` is the
+result of the *exact same verbatim request*. Before adding anything, the work already on disk was
+read back. Re-doing it would be theatre.
+
+What v7.5.0 already delivered (do not repeat):
+- 7 failing contrast pairs -> 0, solved structurally via single-value `--accent-h` presets with
+  L/C pinned per mode. 66 shipped pairs audited, all pass AA, worst case 4.35:1.
+- Real a11y bug fixed: Navbar was using `role="menu"`/`menuitem` while implementing none of the
+  promised keyboard contract. Now APG disclosure navigation with focus-return on Escape.
+- Motion system: `src/lib/motion-core.ts` tri-state override, `--motion-*` + `--ease-*` tokens,
+  resolved pre-paint so "Calm" never shows a single full-motion frame. 11 new tests.
+- CSS-native motion: `@property --ring-pct` conic progress ring, `sibling-index()` stagger,
+  `@supports`-guarded `animation-timeline: view()`, `@starting-style`, surface tiers.
+- Inter switched to the `opsz` variable cut (wght 100-900 **and** opsz 14-28) so
+  `font-optical-sizing: auto` is no longer a silent no-op.
+- Emoji accessibility: `Emoji.tsx` forces `decorative`|`label`, and the 19 `<span>{x.emoji}</span>`
+  wrappers across 16 files codemodded to `aria-hidden`.
+
+**So the correct job for this pass is the v7.5.0 §11 punch-list, not a redesign.** Those items
+were left undone with reasons, and this pass takes them on:
+1. Recharts: still 562 KB raw in a single lazy chunk. Called "a separate project" last time. Doing it.
+2. ~120 emoji still inline inside text strings, so still announced by screen readers. Doing it.
+3. Mobile "bottom result bar" for calculators - named as the single highest-value mobile change.
+   Doing it.
+4. `oxc-transform-react` 0.145.0 -> 0.151.0 is the one genuinely outdated package.
+5. The "20 subagents" ask, honoured in full this time (v7.5.0 used 5).
+
+### 1. Standing ground rules carried over from v7.5.0
+- Verify every agent-reported number before shipping a fix for it. v7.5.0's agents reported three
+  contrast figures that were wrong; the numbers were re-derived from the built stylesheet.
+- "Better than any site a user has seen" is not a testable claim and will not be asserted.
+- Research agents stay read-only. Parallel writers into one design system drift and break the build.
+
+---
+
+## v7.6.0 — USER REQUEST (18 Oct 2026): "update all the content to the latest - ato / tax / first car etc - find all the latest info and update - use 20 subagents"
+
+### 0. Pre-flight (read this first when resuming)
+
+- Working tree already contained **unapplied user WIP**: `full_diff.patch` (779 lines, applied cleanly) plus
+  `patch_etf.js/.cjs` and `check_urls.js`. `full_diff.patch` was **applied first** so none of the user's
+  prepared content edits (2030→2026 labels, employer realisms, fuel/award/ETF figures) are lost. Those
+  figures are treated as *unverified* and are re-checked by the subagents against primary sources.
+- Baseline test run before any change: **437 passed / 1 failed** (`asx-etf-data.test.ts` expects A200 5Y
+  7.91, patched data has 7.95) — the ETF agent fixes the stale expectation.
+- The shared verified baseline handed to every subagent (RBA 4.60% eff. 30 Sep 2026; resident brackets
+  15% second tier; Medicare $28,011/$35,013, MLS $105k/$123k/$164k; HELP $69,528 / $129,717 / $186,050
+  marginal bands, indexation 2.8%; super concessional $32,500, NCC $130,000, bring-forward $390,000,
+  TBC $2.1M, Div 293 $250,000, defined benefit cap $131,250, co-contribution $49,293–$64,293; QLD
+  licence fees as at 1 Jul 2026: PrepL $29.70, learner $80.15, HPT $42.70, practical $69.40, 1yr $94.65,
+  2yr $132.00, 5yr $212.00) came from the coordinator's own searches of ATO/RBA/qld.gov.au on 18 Oct 2026.
+
+### 1. Method — 20 subagents, disjoint file ownership, 4 waves of 5
+
+Every agent owns an exclusive file set, must cite sources, must not run git, must not run the full build,
+runs only its own vitest files, and must not invent an unverifiable number. Waves: (1) statutory core
+tax/super/duty/car/teen data, (2) link registry + ETF + four module slices, (3) QLD education + landing +
+career + teen money, (4) tax/money engines + module view copy + infra/search. Coordinator integrates and
+runs `tsc --noEmit`, `vitest run`, `astro build` after all waves.
+
+### 2. Ownership map (agent → files)
+
+1 tax core: `src/data/tax-brackets.ts`, `src/data/constants.ts`
+2 super core: `src/data/super-rules.ts` (+test), `src/calculators/teen-super/*`, `src/calculators/super-drawdown/*`
+3 property: `src/data/stamp-duty-tables.ts`, `src/calculators/house-affordability/*`, `src/calculators/property-research/*`
+4 first car: `src/data/car-data.ts`, `src/calculators/teen-car/*`, `src/calculators/ev-novated-lease/*`
+5 teen data: `src/data/teen-finance-data.ts`, `src/data/teen-finance-data.test.ts`
+6 links: `src/data/official-web-links.ts`, `src/data/statutory-links.ts`
+7 investing: `src/data/asx-etf-data.ts` (+test), `src/calculators/teen-investing/*`, `src/calculators/investment-compare/*`
+8 modules: `src/data/modules/{money-and-you,careers-employment,tax-guide}.ts`
+9 modules: `src/data/modules/{super-retirement,teen-budgeting,spending-saving}.ts`
+10 modules: `src/data/modules/{investing-shares,interest-products,dealing-with-debt}.ts`
+11 QLD: `src/data/modules/{car-driving,brisbane-qld}.ts`, `src/calculators/teen-brisbane/*`, `src/views/BrisbaneQLD.tsx`
+12 schools/unis: `src/data/brisbane-data.ts` (+test)
+13 landing: `src/data/{landing-content,landing-stats,spotlight-topics}.ts`, `src/views/Landing.tsx`, `src/components/landing/*`
+14 career: `src/components/career/*`, `src/calculators/teen-job/*`
+15 teen money: `src/calculators/{teen-savings,teen-debt,teen-budget}/*`, `src/components/teen/*`, `src/components/teen-profile/*`, `src/views/TeenProfile.tsx`
+16 tax engines: `src/calculators/{cgt-engine,teen-tax,hecs-payoff,tax-savings,savings-rate}/*`
+17 money engines: `src/calculators/{fire,offset-vs-dr,direct-vs-dr,financial-stress-test}/*`
+18 views A: `src/views/{TaxGuide,SuperRetirement,SuperDrawdown,HECSPayoff,CGTEngine,EVNovatedLease,FinancialStressTest,CalculatorsHub}.tsx`
+19 views B: `src/views/{CarDriving,CareersEmployment,InvestingShares,InterestFinancialProducts,DealingWithDebt,SpendingSavingRealWorld,MoneyAndYou,TeenBudgeting,Portfolio,NotFound}.tsx`
+20 infra/search: `src/components/astro/*`, `src/layouts/*`, `src/lib/site-search.ts`, `src/components/search/*`, `src/data/nav-modules.ts`, `src/components/ui/CommandPalette.tsx`
+
+### 3. Outcome
+
+- **SDKs & Dependencies Refresh**:
+  - `@astrojs/react`: 7.0.0 → 7.1.0
+  - `astro`: 7.3.5 → 7.4.0
+  - `lucide-react`: 1.48.0 → 1.59.0
+  - `motion`: 13.4.4 → 13.5.1
+  - `react` & `react-dom`: 19.3.0 → 19.3.1
+  - `@vitejs/plugin-react`: 6.1.1 → 6.1.2
+  - `@vitest/ui`: 5.0.2 → 5.0.5
+  - `jsdom`: 30.1.1 → 30.1.3
+  - `vite`: 8.3.1 → 8.3.4
+  - `vitest`: 5.0.2 → 5.0.5
+- **ATO Tax Content Audit & Enhancements**:
+  - Stage 3 Resident Tax Brackets: FY 2026-27 updated 15% rate on $18,201–$45,000 tier with corresponding base amounts ($4,020, $31,020, $51,370). Corrected stale base tax description in `tax-guide.ts`.
+  - Superannuation Guarantee (SG): 12.0% statutory rate (FY 2025-26 & FY 2026-27). Verified across all teen and retirement modules.
+  - Transfer Balance Cap (TBC): $2.1M general cap (indexed 1 July 2026 from $1.9M FY24-25 and $2.0M FY25-26). Updated test expectations and comments in `super-drawdown`.
+  - Super Contribution Caps: Concessional cap $32,500, non-concessional $130,000, 3-year bring-forward $390,000, Division 296 ($3M/$10M realised earnings).
+  - Medicare Levy & Surcharge: Low-income threshold $28,011, phase-out $35,013; MLS indexed singles threshold $105,000 / $123,000 / $164,000.
+  - HELP/HECS Debt Repayments: Marginal system starting at $69,528 threshold (15%/17%/10%), 2.8% indexation cap.
+  - LITO & Effective Tax-Free Threshold: $700 LITO with 15% rate lifting effective tax-free threshold to $22,866.
+  - Updated EV vs Petrol test expectations to match latest October 2026 fuel and electricity figures ($2.38/L petrol, 28c/kWh flat residential rate).
+  - Fixed A200 5Y trailing return test expectation to 7.95 in `asx-etf-data.test.ts`.
+- **Validation**:
+  - `tsc --noEmit`: 0 errors
+  - `vitest run`: 32 test files passed, 464 tests passed (100%)
+  - `astro build`: 21 static pages built successfully in ~1.6s
+
+---
+
+## 2026-10-22 — v7.8.0 Content & Regulatory Update (20 Subagents: ATO, Uni, QLD/Brisbane)
+
+### 1. Research Overview (20 Parallel Subagents)
+Conducted a comprehensive primary-source investigation using 20 parallel research subagents across:
+- **ATO & Federal Tax**: Tax brackets (15% in FY26-27, 14% preview in FY27-28), Medicare Levy ($28,011 exemption, $44,268 single SAPTO), MLS ($105k / $123k / $164k), Superannuation (12.0% SG, $32,500 concessional, $130,000 NCC, $390,000 bring-forward, $2.1M TBC, Div 296, Payday Super 1 July 2026), deductions (WFH 70c/hr, motor vehicle 91c/km, $1,000 standard deduction, $20k write-off), and youth/minors (Div 6AA $416/$1,307, Youth Allowance $539/fn free area).
+- **Universities & Higher Education**: CSP Contribution Bands 2026 & 2027 ($4,908, $9,880, $14,046, $18,025), SSAF caps ($373 2026 / $386 2027), HELP loan borrowing limits ($129,883 / $186,544 2026; $134,558 / $193,259 2027), QTAC 2026-27 fees ($75 on-time, 18 Dec ATAR release, 23 Dec / 14 Jan offer rounds), QILT GOS 2025 starting salaries (UniSQ #1 at $87,100 / $83,300 pooled, UQ $78,000, Griffith $77,800, QUT $77,000, ACU $76,900), and TAFE QLD fee-free pathways.
+- **Queensland & Brisbane**: TransLink permanent 50c flat fares across SEQ & regional buses (Smart Ticketing contactless Visa/Mastercard/Apple/Google/Samsung Pay, Amex discontinued Dec 2025), TMR licence fees (1 July 2026 schedule: PrepL $29.70, Learner 3-yr $80.15, HPT $42.70, Q-SAFE $69.40, P1 1-yr $94.65, P2 2-yr $132.00, Open 5-yr $212.00, transfer fee $33.65), property transfer duty & $30k FHOG (uncapped new build stamp duty exemption under s 92A, established exemption to $700k up to $800k phase-out), RTA tenancy rules (12-month rent increases attached to property, 4-week maximum bond cap), child employment (min age 13, term 12 hr/wk, Form CE1), and high schools & 2032 Olympics.
+
+### 2. File Updates Made
+1. `src/data/tax-brackets.ts`:
+   - Updated verification timestamp to 22 Oct 2026.
+   - Added explicit SAPTO Medicare thresholds to `MEDICARE_LEVY_REDUCTION` (`saptoThreshold: 44268`, `saptoPhaseOutThreshold: 55335`, `saptoFamilyThreshold: 61623`, `saptoFamilyPhaseOutThreshold: 77028`).
+2. `src/data/constants.ts`:
+   - Added ATO deductions: `WFH_FIXED_RATE_HOURLY: 0.70` (PCG 2023/1) and `CENTS_PER_KM_2026_27: 0.91`.
+   - Added 2027 HELP borrowing caps (`HELP_LOAN_LIMIT_2027`: $134,558 / $193,259).
+   - Added statutory SSAF caps (`SSAF_CAP_2026: 373`, `SSAF_CAP_2027: 386`).
+3. `src/data/stamp-duty-tables.ts`:
+   - Updated `QLD_STAMP_DUTY.firstHomeBuyer`: set `isUnlimitedNewHome: true` per QLD Duties Act 2001 s 92A / 92B (nil duty on new homes with no price cap).
+   - Updated `calculateStampDuty`: extended uncapped first home new build exemption to `state === 'SA' || state === 'QLD'`.
+4. `src/data/brisbane-data.ts`:
+   - Added `SSAF_CAP_2027 = 386`.
+   - Updated `DETAILED_BRISBANE_UNIS` with GOS 2025 starting salaries (UniSQ, UQ, QUT, Griffith, UniSC, ACU) and SES ratings.
+   - Updated TransLink 50c fares description in `QLD_TEEN_RULES` to reflect permanent statutory enactment, contactless smart ticketing, and free weekend child travel.
+5. `src/data/teen-finance-data.ts`:
+   - Added General Retail Award clause 15.7 1.5-hour minimum shift exception for secondary school students between 3:00pm–6:30pm on school days with written parental consent.
+   - Explicitly clarified QLD Parent Consent Form CE1 under the Child Employment Act 2006.
+6. `src/data/modules/`:
+   - `car-driving.ts`: Aligned text licence fees with 1 July 2026 TMR schedule ($29.70 PrepL, $80.15 3-yr L, $42.70 HPT, $69.40 practical test, $94.65 P1 1-yr, $132.00 P2 2-yr, $212.00 5-yr open, $33.65 transfer fee).
+   - `brisbane-qld.ts`: Corrected PrepL fee to $29.70; updated TransLink smart ticketing payment methods (removed discontinued Amex).
+   - `careers-employment.ts`: Aligned junior wage examples with Level 1 base rate of $27.81 ($11.12 / $13.90 casual for fast food 40%; $12.51 / $15.64 casual for retail 45%); added retail 1.5-hour student shift rule and QLD Form CE1.
+   - `super-retirement.ts`: Updated under-18 30-hour weekly rule citation to SGAA 1992 s 27(1)(a).
+
+### 3. Verification & Quality Gates
+- `npm run typecheck`: 0 errors (strict TypeScript pass)
+- `npm test`: 33 test suites passed, 474 tests passed (100% pass)
+
+

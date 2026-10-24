@@ -1,5 +1,6 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { runFinancialStressTest, maxSurvivableRate, applyCumulativeScenarios } from './engine';
+import { CalculatorActions } from '../../components/shared/CalculatorActions';
 import { sound } from '@/lib/sound-synthesizer';
 import { exportToCSV, encodePlanToHash, generateSimpleQRCodeSVG } from '@/lib/share-state';
 import {
@@ -109,6 +110,30 @@ export function FinancialStressTestCalc() {
     [monthlyNetIncome, essentialExpenses, discretionaryExpenses, mortgageDebt, offsetBalance, mortgageRate, cashSavings, preset, bufferPct],
   );
 
+  const handleReset = useCallback(() => {
+    setMonthlyNetIncome(7200);
+    setEssentialExpenses(3900);
+    setDiscretionaryExpenses(1400);
+    setCashSavings(25000);
+    setOffsetBalance(45000);
+    setMortgageDebt(480000);
+    setBufferPct(3);
+    setPresetId('none');
+  }, []);
+
+  const summaryText = useMemo(() => {
+    return [
+      '--- Financial Stress Test Summary ---',
+      `Monthly Net Income: $${monthlyNetIncome.toLocaleString()}/mo | Expenses: $${(essentialExpenses + discretionaryExpenses).toLocaleString()}/mo ($${essentialExpenses.toLocaleString()} essential)`,
+      `Liquid Reserves: $${(cashSavings + offsetBalance).toLocaleString()} ($${cashSavings.toLocaleString()} cash + $${offsetBalance.toLocaleString()} offset)`,
+      `Mortgage Debt: $${mortgageDebt.toLocaleString()} at ${mortgageRate}%`,
+      `Emergency Runway: ${result.emergencyRunwayMonths} months (Bare-bones: ${result.bareBonesRunwayMonths} months)`,
+      `Max Survivable Rate: ${reverse.maxRate}% (Surplus at Max: $${reverse.surplusAtMax.toLocaleString()}/mo)`,
+      `Cumulative Shock Status: ${cumulative.isFatal ? 'FATAL SHOCK RISK' : 'SURVIVES'} (Runway: ${cumulative.survivingMonths === 99 ? 'Sustainable' : cumulative.survivingMonths + ' mo'})`,
+      `Calculated via AusFinTools Stress Test Engine`,
+    ].join('\n');
+  }, [monthlyNetIncome, essentialExpenses, discretionaryExpenses, cashSavings, offsetBalance, mortgageDebt, mortgageRate, result, reverse, cumulative]);
+
   const handleExportCSV = () => {
     sound.playClick();
     const headers = ['Stress Metric', 'Result'];
@@ -165,7 +190,12 @@ export function FinancialStressTestCalc() {
             </p>
           </div>
 
-          <div className="flex items-center gap-2 w-full sm:w-auto">
+          <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+            <CalculatorActions
+              onReset={handleReset}
+              summaryText={summaryText}
+              summaryTitle="Financial Stress Test"
+            />
             <button
               onClick={handleExportCSV}
               className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-muted text-foreground text-xs font-bold hover:bg-muted/80 transition-all"
@@ -530,7 +560,7 @@ export function FinancialStressTestCalc() {
       {/* Share Modal */}
       {showShareModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-          <div className="w-full max-w-sm rounded-3xl bg-card border border-border p-6 shadow-2xl space-y-4 animate-in fade-in zoom-in-95">
+          <div className="w-full max-w-sm rounded-3xl bg-card border border-border p-6 shadow-2xl space-y-4 animate-pop-in">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-bold text-foreground">Share Stress Test Plan</h3>
               <button

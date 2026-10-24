@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import {
   simulateHECSPayoff,
   calcHECSRepayment,
@@ -7,6 +7,8 @@ import {
   repaymentSplitSchedule,
 } from './engine';
 import { OdometerCounter } from '@/components/shared/OdometerCounter';
+import { QuickPresetBar, type ScenarioPreset } from '@/components/ui/QuickPresetBar';
+import { CalculatorActions } from '@/components/shared/CalculatorActions';
 import { sound } from '@/lib/sound-synthesizer';
 import { exportToCSV, encodePlanToHash, generateSimpleQRCodeSVG } from '@/lib/share-state';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, LineChart, Line, Legend } from '@/components/charts';
@@ -33,6 +35,37 @@ const PAYDOWN_CONFIG = {
   extraDebt: { label: 'Extra Debt Kept', color: 'var(--chart-5)' },
 } satisfies ChartConfig;
 
+interface HecsPreset {
+  debt: number;
+  income: number;
+  lumpSum: number;
+  monthlyVoluntary: number;
+}
+
+const HECS_PRESETS: ScenarioPreset<HecsPreset>[] = [
+  {
+    id: 'graduate',
+    label: 'Fresh Graduate',
+    badge: '$35k Debt • $68k Salary',
+    description: 'Starting career in entry-level role paying mandatory repayments only',
+    values: { debt: 35000, income: 68000, lumpSum: 0, monthlyVoluntary: 0 },
+  },
+  {
+    id: 'established',
+    label: 'Mid-Career Accelerate',
+    badge: 'Voluntary Boost',
+    description: '$42k debt, $95k salary, $250/mo extra to beat indexation',
+    values: { debt: 42000, income: 95000, lumpSum: 5000, monthlyVoluntary: 250 },
+  },
+  {
+    id: 'double-degree',
+    label: 'Double Degree / Law / Med',
+    badge: '$75k+ Debt',
+    description: 'Large student debt balance with higher salary trajectory ($130k)',
+    values: { debt: 75000, income: 130000, lumpSum: 10000, monthlyVoluntary: 500 },
+  },
+];
+
 export function HECSPayoffCalc() {
   // State
   const [currentDebt, setCurrentDebt] = useState<number>(38500);
@@ -45,6 +78,27 @@ export function HECSPayoffCalc() {
   const [indexationRate, setIndexationRate] = useState<number>(3.2);
   const [showShareModal, setShowShareModal] = useState<boolean>(false);
   const [shareUrl, setShareUrl] = useState<string>('');
+  const [activePreset, setActivePreset] = useState<string | undefined>();
+
+  const handleApplyPreset = (preset: ScenarioPreset<HecsPreset>) => {
+    setActivePreset(preset.id);
+    if (preset.values.debt !== undefined) setCurrentDebt(preset.values.debt);
+    if (preset.values.income !== undefined) setAnnualIncome(preset.values.income);
+    if (preset.values.lumpSum !== undefined) setLumpSumAvailable(preset.values.lumpSum);
+    if (preset.values.monthlyVoluntary !== undefined) setMonthlyVoluntary(preset.values.monthlyVoluntary);
+  };
+
+  const handleReset = useCallback(() => {
+    setActivePreset(undefined);
+    setCurrentDebt(38500);
+    setAnnualIncome(88000);
+    setLumpSumAvailable(5000);
+    setMonthlyVoluntary(250);
+    setMortgageRate(6.2);
+    setEtfReturn(8.0);
+    setUseMarginal(true);
+    setIndexationRate(3.2);
+  }, []);
 
   const incomeGrowthRate = 3.5;
   const projectionYears = 15;
@@ -115,6 +169,19 @@ export function HECSPayoffCalc() {
   const initialRepayment = useMemo(() => {
     return calcHECSRepayment(annualIncome, useMarginal);
   }, [annualIncome, useMarginal]);
+
+  const summaryText = useMemo(() => {
+    return [
+      '--- HECS-HELP Payoff & Voluntary Repayment Summary ---',
+      `Current HECS Debt: ${formatCurrency(currentDebt)} | Annual Salary: ${formatCurrency(annualIncome)}`,
+      `Compulsory Repayment: ${formatCurrency(initialRepayment)}/yr`,
+      `Payoff Horizon: ${result.compulsoryPayoffYears} years compulsory vs ${result.voluntaryPayoffYears} years voluntary (${result.yearsSaved} yrs saved)`,
+      `Total Indexation: ${formatCurrency(result.totalIndexationCompulsoryOnly)} | Total Repaid: ${formatCurrency(result.totalRepaidCompulsoryOnly)}`,
+      `Wealth from ETF Investing Alternative: ${formatCurrency(result.finalWealthETFInvesting)}`,
+      `APRA Borrowing Impact: -${formatCurrency(result.apraBorrowingCapacityImpact)} reduction in borrowing capacity`,
+      `Calculated via AusFinTools HECS Engine`,
+    ].join('\n');
+  }, [currentDebt, annualIncome, initialRepayment, result]);
 
   // Export CSV
   const handleExportCSV = () => {
@@ -200,6 +267,14 @@ export function HECSPayoffCalc() {
           </div>
         </div>
       </div>
+
+      {/* Quick Presets */}
+      <QuickPresetBar
+        presets={HECS_PRESETS}
+        activePresetId={activePreset}
+        onSelect={handleApplyPreset}
+        title="Student Debt & Career Profiles"
+      />
 
       {/* KPI Metric Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
@@ -475,12 +550,12 @@ export function HECSPayoffCalc() {
             </p>
             <div className="overflow-x-auto">
               <table className="w-full text-[11px] text-left">
-                <thead className="text-muted-foreground border-b border-border/60">
+                <thead className="text-foreground border-b border-border sticky top-0 bg-card z-10 font-bold shadow-xs">
                   <tr>
-                    <th className="py-1.5 px-2">Indexation</th>
-                    <th className="py-1.5 px-2">Payoff Time</th>
-                    <th className="py-1.5 px-2">Total Indexation</th>
-                    <th className="py-1.5 px-2">Total Repaid</th>
+                    <th className="py-2 px-2.5">Indexation</th>
+                    <th className="py-2 px-2.5">Payoff Time</th>
+                    <th className="py-2 px-2.5">Total Indexation</th>
+                    <th className="py-2 px-2.5">Total Repaid</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border/40 font-mono">
@@ -489,12 +564,12 @@ export function HECSPayoffCalc() {
                     const isCurrent = Math.abs(row.indexationRate - indexationRate / 100) < 0.005;
                     return (
                       <tr key={pct} className={isCurrent ? 'bg-primary/10' : ''}>
-                        <td className="py-1.5 px-2 font-bold">
+                        <td className="py-1.5 px-2.5 font-bold">
                           {pct.toFixed(1)}%{isCurrent && <span className="ml-1 text-[9px] text-primary font-semibold">(current)</span>}
                         </td>
-                        <td className="py-1.5 px-2">{row.payoffYears} yrs</td>
-                        <td className="py-1.5 px-2 text-amber-500">${row.totalIndexation.toLocaleString()}</td>
-                        <td className="py-1.5 px-2">${row.totalRepaid.toLocaleString()}</td>
+                        <td className="py-1.5 px-2.5">{row.payoffYears} yrs</td>
+                        <td className="py-1.5 px-2.5 text-amber-500">${row.totalIndexation.toLocaleString()}</td>
+                        <td className="py-1.5 px-2.5">${row.totalRepaid.toLocaleString()}</td>
                       </tr>
                     );
                   })}
@@ -569,23 +644,23 @@ export function HECSPayoffCalc() {
             <h4 className="text-xs font-bold text-foreground">15-Year Simulation Amortization Schedule</h4>
             <div className="overflow-x-auto max-h-56">
               <table className="w-full text-[11px] text-left">
-                <thead className="text-muted-foreground border-b border-border/60 sticky top-0 bg-card">
+                <thead className="text-foreground border-b border-border sticky top-0 bg-card z-10 font-bold shadow-xs">
                   <tr>
-                    <th className="py-1.5 px-2">Yr</th>
-                    <th className="py-1.5 px-2">Salary</th>
-                    <th className="py-1.5 px-2">Compulsory</th>
-                    <th className="py-1.5 px-2">Debt Remainder</th>
-                    <th className="py-1.5 px-2">ETF Portfolio</th>
+                    <th className="py-2 px-2.5">Yr</th>
+                    <th className="py-2 px-2.5">Salary</th>
+                    <th className="py-2 px-2.5">Compulsory</th>
+                    <th className="py-2 px-2.5">Debt Remainder</th>
+                    <th className="py-2 px-2.5">ETF Portfolio</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border/40 font-mono">
                   {result.schedule.slice(0, 8).map(row => (
                     <tr key={row.year} className="hover:bg-muted/40 transition-colors">
-                      <td className="py-1.5 px-2">{row.year}</td>
-                      <td className="py-1.5 px-2">${row.salary.toLocaleString()}</td>
-                      <td className="py-1.5 px-2">${row.compulsoryRepayment.toLocaleString()}</td>
-                      <td className="py-1.5 px-2 text-primary font-semibold">${row.endingBalance.toLocaleString()}</td>
-                      <td className="py-1.5 px-2 text-emerald-600 dark:text-emerald-400">${row.etfBalance.toLocaleString()}</td>
+                      <td className="py-1.5 px-2.5 font-bold">{row.year}</td>
+                      <td className="py-1.5 px-2.5">${row.salary.toLocaleString()}</td>
+                      <td className="py-1.5 px-2.5">${row.compulsoryRepayment.toLocaleString()}</td>
+                      <td className="py-1.5 px-2.5 text-primary font-semibold">${row.endingBalance.toLocaleString()}</td>
+                      <td className="py-1.5 px-2.5 text-emerald-600 dark:text-emerald-400 font-semibold">${row.etfBalance.toLocaleString()}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -595,10 +670,17 @@ export function HECSPayoffCalc() {
         </div>
       </div>
 
+      {/* Calculator Actions */}
+      <CalculatorActions
+        onReset={handleReset}
+        summaryText={summaryText}
+        summaryTitle="HECS Payoff Plan"
+      />
+
       {/* Share Modal */}
       {showShareModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-          <div className="w-full max-w-sm rounded-3xl bg-card border border-border p-6 shadow-2xl space-y-4 animate-in fade-in zoom-in-95">
+          <div className="w-full max-w-sm rounded-3xl bg-card border border-border p-6 shadow-2xl space-y-4 animate-pop-in">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-bold text-foreground">Share Financial Plan</h3>
               <button

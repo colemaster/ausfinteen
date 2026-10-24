@@ -68,7 +68,7 @@ export const teenBudgetingModule: MandyModule = {
         moduleId: 'teen-budgeting',
         moduleTitle: 'Budgeting & Paychecks 💵',
         question: '7. What Is The "Hours Worked" Rule For Purchase Conversion?',
-        answer: 'The "Hours Worked" psychological framework converts the price tag of any item into the exact hours of physical labor you must work to pay for it: Price divided by Hourly Take-Home Wage = Labor Hours. For example, at a 15yo fast-food base rate of $11.12/hr, buying a $100 hoodie requires 9 hours of standing by a hot kitchen fryer! Asking yourself "Is this hoodie worth 9 hours of my life on shift?" instantly eliminates impulse buying.',
+        answer: 'The "Hours Worked" psychological framework converts the price tag of any item into the exact hours of physical labor you must work to pay for it: Price divided by Hourly Take-Home Wage = Labor Hours. For example, at a 15yo fast-food base rate of $10.58/hr, buying a $100 hoodie requires 9 hours of standing by a hot kitchen fryer! Asking yourself "Is this hoodie worth 9 hours of my life on shift?" instantly eliminates impulse buying.',
         actionStep: 'Before your next purchase, calculate how many hours you must work to pay for it.',
         webLink: OFFICIAL_WEB_LINKS.moneysmart_saving_goals,
       },

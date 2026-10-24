@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import {
   simulateRetirementPlan,
   calculateAgePension,
@@ -8,8 +8,11 @@ import {
 } from './engine';
 import { MonteCarloFanChart } from '@/components/shared/MonteCarloFanChart';
 import { OdometerCounter } from '@/components/shared/OdometerCounter';
+import { QuickPresetBar, type ScenarioPreset } from '@/components/ui/QuickPresetBar';
+import { CalculatorActions } from '@/components/shared/CalculatorActions';
 import { sound } from '@/lib/sound-synthesizer';
 import { exportToCSV, encodePlanToHash, generateSimpleQRCodeSVG } from '@/lib/share-state';
+import { formatCurrency } from '@/utils/formatters';
 import {
   Coins,
   Sparkles,
@@ -22,6 +25,38 @@ import { toast } from '@/lib/toast';
 
 const MONTE_CARLO_SIMS = 40;
 const MONTE_CARLO_VOLATILITY = 0.12;
+
+interface SuperDrawdownPreset {
+  balance: number;
+  income: number;
+  age: number;
+  status: 'single' | 'couple';
+  homeowner: boolean;
+}
+
+const SUPER_DRAWDOWN_PRESETS: ScenarioPreset<SuperDrawdownPreset>[] = [
+  {
+    id: 'asfa-modest',
+    label: 'ASFA Modest ($400k)',
+    badge: 'Age 67 Safety Net',
+    description: 'Single homeowner aiming for modest lifestyle backed by Age Pension',
+    values: { balance: 400000, income: 45000, age: 67, status: 'single', homeowner: true },
+  },
+  {
+    id: 'asfa-comfortable',
+    label: 'ASFA Comfortable ($750k)',
+    badge: 'Couple Goal',
+    description: 'Couple homeowner targeting $72,000/yr comfortable retirement benchmark',
+    values: { balance: 750000, income: 72000, age: 65, status: 'couple', homeowner: true },
+  },
+  {
+    id: 'early-retiree',
+    label: 'Early Retiree ($1.2M)',
+    badge: 'Age 60 Bridge',
+    description: 'Retiring at age 60 before Age Pension eligibility with $85,000 drawdown',
+    values: { balance: 1200000, income: 85000, age: 60, status: 'couple', homeowner: true },
+  },
+];
 
 export function SuperDrawdownCalc() {
   const currentAge = 60;
@@ -36,6 +71,28 @@ export function SuperDrawdownCalc() {
   const [isHomeowner, setIsHomeowner] = useState<boolean>(true);
   const [showShareModal, setShowShareModal] = useState<boolean>(false);
   const [shareUrl, setShareUrl] = useState<string>('');
+  const [activePreset, setActivePreset] = useState<string | undefined>();
+
+  const handleApplyPreset = (preset: ScenarioPreset<SuperDrawdownPreset>) => {
+    setActivePreset(preset.id);
+    if (preset.values.balance !== undefined) setSuperBalance(preset.values.balance);
+    if (preset.values.income !== undefined) setDesiredIncome(preset.values.income);
+    if (preset.values.age !== undefined) setRetirementAge(preset.values.age);
+    if (preset.values.status !== undefined) setRelationshipStatus(preset.values.status);
+    if (preset.values.homeowner !== undefined) setIsHomeowner(preset.values.homeowner);
+  };
+
+  const handleReset = useCallback(() => {
+    setActivePreset(undefined);
+    setRetirementAge(65);
+    setSuperBalance(750000);
+    setDesiredIncome(60000);
+    setExpectedReturn(6.5);
+    setInflationRate(2.5);
+    setLumpSum(0);
+    setRelationshipStatus('single');
+    setIsHomeowner(true);
+  }, []);
 
   const simResult = useMemo(() => {
     return simulateRetirementPlan({
@@ -104,6 +161,18 @@ export function SuperDrawdownCalc() {
       otherFortnightlyIncome: 0,
     });
   }, [relationshipStatus, isHomeowner, superBalance, otherAssets]);
+
+  const summaryText = useMemo(() => {
+    return [
+      '--- Super Drawdown & Pension Optimization Summary ---',
+      `Super Balance at Retirement: ${formatCurrency(superBalance)} | Retirement Age: ${retirementAge}`,
+      `Desired Annual Drawdown: ${formatCurrency(desiredIncome)}/yr (Expected Return: ${expectedReturn}%, Inflation: ${inflationRate}%)`,
+      `Super Longevity: ${simResult.isFullySustainableTo100 ? 'Age 100+ (Fully Perpetual)' : `Exhaustion at Age ${simResult.exhaustionAge} (${simResult.sustainableYears} years)`}`,
+      `Age Pension at 67: ${formatCurrency(pensionAt67.annualAgePension)}/yr (${formatCurrency(pensionAt67.fortnightlyAgePension)}/fn, ${pensionAt67.determiningTest.toUpperCase()} test)`,
+      `Lifetime Age Pension Safety Net: ${formatCurrency(simResult.lifetimeAgePensionReceived)}`,
+      `Calculated via AusFinTools Super Drawdown Simulator`,
+    ].join('\n');
+  }, [superBalance, retirementAge, desiredIncome, expectedReturn, inflationRate, simResult, pensionAt67]);
 
   const handleExportCSV = () => {
     sound.playClick();
@@ -184,6 +253,14 @@ export function SuperDrawdownCalc() {
           </div>
         </div>
       </div>
+
+      {/* Quick Presets */}
+      <QuickPresetBar
+        presets={SUPER_DRAWDOWN_PRESETS}
+        activePresetId={activePreset}
+        onSelect={handleApplyPreset}
+        title="Retirement Benchmark Scenarios"
+      />
 
       {/* KPI Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
@@ -454,25 +531,25 @@ export function SuperDrawdownCalc() {
 
             <div className="overflow-x-auto max-h-72">
               <table className="w-full text-[11px] text-left">
-                <thead className="text-muted-foreground border-b border-border/60 sticky top-0 bg-card">
+                <thead className="text-foreground border-b border-border sticky top-0 bg-card z-10 font-bold shadow-xs">
                   <tr>
-                    <th className="py-1.5 px-2">Age</th>
-                    <th className="py-1.5 px-2">Starting Balance</th>
-                    <th className="py-1.5 px-2">ABP Drawdown</th>
-                    <th className="py-1.5 px-2">Age Pension</th>
-                    <th className="py-1.5 px-2">Total Income</th>
-                    <th className="py-1.5 px-2">Ending Super</th>
+                    <th className="py-2 px-2.5">Age</th>
+                    <th className="py-2 px-2.5">Starting Balance</th>
+                    <th className="py-2 px-2.5">ABP Drawdown</th>
+                    <th className="py-2 px-2.5">Age Pension</th>
+                    <th className="py-2 px-2.5">Total Income</th>
+                    <th className="py-2 px-2.5">Ending Super</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border/40 font-mono">
                   {simResult.schedule.map(row => (
                     <tr key={row.age} className={`hover:bg-muted/40 transition-colors ${!row.isSolvent ? 'opacity-40 text-danger' : ''}`}>
-                      <td className="py-1.5 px-2 font-bold">{row.age}</td>
-                      <td className="py-1.5 px-2">${row.startingBalance.toLocaleString()}</td>
-                      <td className="py-1.5 px-2 text-primary">${row.drawdownAmount.toLocaleString()}</td>
-                      <td className="py-1.5 px-2 text-amber-500">${row.agePensionAmount.toLocaleString()}</td>
-                      <td className="py-1.5 px-2 font-bold text-foreground">${row.totalIncome.toLocaleString()}</td>
-                      <td className="py-1.5 px-2 font-semibold text-emerald-600 dark:text-emerald-400">
+                      <td className="py-1.5 px-2.5 font-bold">{row.age}</td>
+                      <td className="py-1.5 px-2.5">${row.startingBalance.toLocaleString()}</td>
+                      <td className="py-1.5 px-2.5 text-primary">${row.drawdownAmount.toLocaleString()}</td>
+                      <td className="py-1.5 px-2.5 text-amber-500">${row.agePensionAmount.toLocaleString()}</td>
+                      <td className="py-1.5 px-2.5 font-bold text-foreground">${row.totalIncome.toLocaleString()}</td>
+                      <td className="py-1.5 px-2.5 font-semibold text-emerald-600 dark:text-emerald-400">
                         ${row.endingBalance.toLocaleString()}
                       </td>
                     </tr>
@@ -484,10 +561,17 @@ export function SuperDrawdownCalc() {
         </div>
       </div>
 
+      {/* Action buttons */}
+      <CalculatorActions
+        onReset={handleReset}
+        summaryText={summaryText}
+        summaryTitle="Super Drawdown Plan"
+      />
+
       {/* Share Modal */}
       {showShareModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-          <div className="w-full max-w-sm rounded-3xl bg-card border border-border p-6 shadow-2xl space-y-4 animate-in fade-in zoom-in-95">
+          <div className="w-full max-w-sm rounded-3xl bg-card border border-border p-6 shadow-2xl space-y-4 animate-pop-in">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-bold text-foreground">Share Retirement Plan</h3>
               <button

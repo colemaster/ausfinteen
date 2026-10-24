@@ -1,65 +1,216 @@
 ---
 import Icon from '@/components/astro/Icon.astro';
 
-const APP_VERSION = '7.2.0';
+const APP_VERSION = '7.5.0';
 const GITHUB_URL = 'https://github.com/colemaster/ausfinteen';
-const LAST_UPDATED = 'Sep 2026';
+const LAST_UPDATED = 'Oct 2026';
 
-const TOOLS_LINKS = [
-  { to: '/', label: 'Home' },
-  { to: '/calculators', label: 'All Calculators' },
-  { to: '/profile', label: 'My Profile' },
-];
+const QUICK_LINKS = {
+  calculators: [
+    { to: '/hecs-payoff', label: 'HECS-HELP vs Investing' },
+    { to: '/super-drawdown', label: 'Super Drawdown & Pension' },
+    { to: '/ev-novated-lease', label: 'EV Novated Lease Simulator' },
+    { to: '/cgt-engine', label: 'Capital Gains Tax Engine' },
+    { to: '/financial-stress-test', label: 'Emergency Runway & Stress Test' },
+    { to: '/calculators', label: 'All Financial Calculators Hub' },
+  ],
+  education: [
+    { to: '/tax-guide', label: 'Tax & $18,200 Tax-Free Threshold' },
+    { to: '/careers-employment', label: 'Fair Work Awards & Penalty Rates' },
+    { to: '/teen-budgeting', label: 'First Paycheck 50/30/20 Split' },
+    { to: '/super-retirement', label: '12% Superannuation & Compound' },
+    { to: '/car-driving', label: 'First Car Costs & Rego / CTP' },
+    { to: '/brisbane-qld', label: 'Brisbane Living & Student Budget' },
+  ],
+  utilities: [
+    { to: '/profile', label: 'My Profile & Youth Rates' },
+    { to: '/money-and-you', label: 'Money Mindset Quiz' },
+    { to: '/investing-shares', label: 'ASX ETFs & Compounding' },
+    { to: '/dealing-with-debt', label: 'BNPL Traps & Credit Scores' },
+    { to: '/spending-saving', label: 'High-Interest Savings (HISA)' },
+  ],
+};
 ---
 
-<footer class="relative bg-background border-t border-border/70 mt-auto transition-colors duration-300">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
-    <div class="grid grid-cols-1 md:grid-cols-[1fr_auto_auto] gap-6 text-sm text-muted-foreground">
-      <div class="max-w-xl leading-relaxed">
-        <strong class="text-foreground font-semibold">Not financial advice.</strong>
-        AusTeen Money is a free educational tool made for young Aussies. All calculations are
-        illustrative only and should not be relied upon for financial decisions. Always consult a
-        licensed Australian financial adviser (AFS licence holder) before acting.
+<footer class="relative bg-card/60 backdrop-blur-md border-t border-border/70 mt-auto transition-colors duration-300 overflow-hidden">
+  {/* Subtle chromatic top border gradient with a slow shimmer flow */}
+  <div
+    class="h-[2px] w-full bg-gradient-to-r from-primary/60 via-violet-500/60 to-amber-500/60 bg-[length:200%_100%] animate-text-shimmer"
+    aria-hidden="true"
+  ></div>
+
+  {/* Decorative ink blots behind the footer */}
+  <div aria-hidden="true" class="pointer-events-none absolute inset-0 ink-blot ink-blot-lg ink-blot-violet dark:opacity-40" />
+  <div aria-hidden="true" class="pointer-events-none absolute inset-0 ink-blot ink-blot-md ink-blot-emerald top-[-20%] right-[10%] dark:opacity-30" />
+
+  {/* Ambient mesh glow + film grain to finish the shading pass */}
+  <div class="mesh-glow-sm bottom-0 left-[12%]" aria-hidden="true"></div>
+  <div aria-hidden="true" class="noise-grain"></div>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    {/* Top Disclaimer & Compliance Badges Banner */}
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-8 border-b border-border/60">
+      <div class="max-w-2xl text-xs sm:text-sm text-muted-foreground leading-relaxed">
+        <strong class="text-foreground font-semibold">Not financial advice.</strong> AusTeen Money and
+        AusFinance Suite are free, open-source educational resources designed for young Aussies. All
+        calculations are illustrative and do not constitute personal financial, tax, or legal advice.
+        Consult a licensed Australian Financial Services (AFSL) holder before making major decisions.
       </div>
 
-      <nav aria-label="Tools" class="flex flex-col gap-1.5 text-xs">
-        <span class="text-[10px] font-bold uppercase tracking-wider text-foreground">Tools</span>
-        {TOOLS_LINKS.map(link => (
-          <a
-            href={link.to}
-            data-astro-prefetch="hover"
-            class="text-muted-foreground hover:text-foreground transition-colors"
-          >
-            {link.label}
-          </a>
-        ))}
-      </nav>
+      <div class="flex flex-wrap items-center gap-2.5 shrink-0">
+        {/* 2026-27 Compliant Status Badge */}
+        <span class="card-specular inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold border border-emerald-500/30 text-xs">
+          <Icon name="check" class="w-3.5 h-3.5" />
+          <span>2026-27 Compliant</span>
+        </span>
 
-      <div class="flex flex-col items-start md:items-end gap-2 text-xs">
-        <div class="flex items-center gap-3">
-          <span>© {new Date().getFullYear()} · MIT Licence</span>
-          <span
-            data-web-vitals-badge
-            class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-mono font-bold border border-emerald-500/30 text-[11px]"
-            title="Client-Side Telemetry: 100% Privacy-Preserved"
+        {/* Privacy First Badge */}
+        <span class="card-specular inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 text-primary font-bold border border-primary/30 text-xs">
+          <Icon name="sparkles" class="w-3.5 h-3.5" />
+          <span>100% Client-Side Privacy</span>
+        </span>
+
+        {/* Back-to-Top Button */}
+        <button
+          type="button"
+          data-back-to-top
+          aria-label="Scroll back to top of page"
+          class="lift-card card-glow-hover tactile-press inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-border bg-card hover:bg-muted text-foreground text-xs font-semibold shadow-xs hover:border-primary/50 transition-all duration-200"
+        >
+          <Icon name="chevron-down" class="w-3.5 h-3.5 text-primary rotate-180 group-hover:-translate-y-0.5 transition-transform" />
+          <span>Back to Top</span>
+        </button>
+      </div>
+    </div>
+
+    {/* Quick Links Grouped by Category */}
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-8 py-10 text-xs">
+      {/* Calculators Hub */}
+      <div class="space-y-3">
+        <div class="text-[11px] font-bold uppercase tracking-wider text-foreground flex items-center gap-1.5 card-specular">
+          <span class="w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_8px_oklch(var(--accent-l)_var(--accent-c)_var(--accent-h)/0.8)]"></span>
+          <span>Calculators</span>
+        </div>
+        <ul class="space-y-2">
+          {QUICK_LINKS.calculators.map(link => (
+            <li>
+              <a
+                href={link.to}
+                data-astro-prefetch="hover"
+                class="link-underline w-fit text-muted-foreground hover:text-primary transition-colors block py-0.5"
+              >
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Education Guides */}
+      <div class="space-y-3">
+        <div class="text-[11px] font-bold uppercase tracking-wider text-foreground flex items-center gap-1.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-violet-500 shadow-[0_0_8px_oklch(0.55_0.2_293/0.6)]"></span>
+          <span>Education Guides</span>
+        </div>
+        <ul class="space-y-2">
+          {QUICK_LINKS.education.map(link => (
+            <li>
+              <a
+                href={link.to}
+                data-astro-prefetch="hover"
+                class="link-underline w-fit text-muted-foreground hover:text-primary transition-colors block py-0.5"
+              >
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Life & Tools */}
+      <div class="space-y-3">
+        <div class="text-[11px] font-bold uppercase tracking-wider text-foreground flex items-center gap-1.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-amber-500 shadow-[0_0_8px_oklch(0.75_0.15_70/0.6)]"></span>
+          <span>Life &amp; Tools</span>
+        </div>
+        <ul class="space-y-2">
+          {QUICK_LINKS.utilities.map(link => (
+            <li>
+              <a
+                href={link.to}
+                data-astro-prefetch="hover"
+                class="link-underline w-fit text-muted-foreground hover:text-primary transition-colors block py-0.5"
+              >
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* A11y & Telemetry */}
+      <div class="space-y-3">
+        <div class="text-[11px] font-bold uppercase tracking-wider text-foreground flex items-center gap-1.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_oklch(0.7_0.17_152/0.6)]"></span>
+          <span>A11y &amp; Telemetry</span>
+        </div>
+        <div class="space-y-2.5">
+          <button
+            type="button"
+            data-open-shortcuts
+            class="w-full flex items-center justify-between px-3 py-2 rounded-xl border border-border/80 bg-muted/40 hover:bg-muted text-muted-foreground hover:text-foreground transition-all"
           >
-            <Icon name="zap" class="w-3 h-3" />
-            <span data-web-vitals-text>CLS 0.00 • TTFB <10ms</span>
-          </span>
+            <span class="flex items-center gap-1.5">
+              <Icon name="keyboard" class="w-3.5 h-3.5 text-primary" />
+              <span>Keyboard Shortcuts</span>
+            </span>
+            <kbd class="px-1.5 py-0.5 rounded-md border border-border bg-card text-[10px] font-mono font-bold">
+              ?
+            </kbd>
+          </button>
+
           <button
             type="button"
             data-open-performance
-            class="inline-flex items-center gap-1 font-semibold text-emerald-600 dark:text-emerald-400 hover:underline"
+            class="w-full flex items-center justify-between px-3 py-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 transition-all font-semibold"
           >
-            <Icon name="zap" class="w-3 h-3" />
-            <span>⚡ 100% Instant Mode</span>
+            <span class="flex items-center gap-1.5">
+              <Icon name="zap" class="w-3.5 h-3.5 text-emerald-500" />
+              <span>100% Instant Mode</span>
+            </span>
+            <span class="text-[10px] uppercase font-mono">Specs →</span>
           </button>
+
+          <div class="pt-1">
+            <span
+              data-web-vitals-badge
+              class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-mono font-bold border border-emerald-500/30 text-[11px]"
+              title="Client-Side Telemetry: 100% Privacy-Preserved"
+            >
+              <Icon name="zap" class="w-3 h-3" />
+              <span data-web-vitals-text>CLS 0.00 • TTFB &lt;10ms</span>
+            </span>
+          </div>
         </div>
+      </div>
+    </div>
+
+    {/* Bottom Bar: Copyright, GitHub, Version */}
+    <div class="pt-8 border-t border-border/60 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-muted-foreground">
+      <div class="flex items-center gap-2">
+        <span>© {new Date().getFullYear()} AusFinance Suite</span>
+        <span>·</span>
+        <span>MIT Licence</span>
+        <span>·</span>
+        <span>Made for young Aussies</span>
+      </div>
+
+      <div class="flex items-center gap-4">
         <a
           href={GITHUB_URL}
           target="_blank"
           rel="noopener noreferrer"
-          class="inline-flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors"
+          class="inline-flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors font-medium"
         >
           <svg
             viewBox="0 0 24 24"
@@ -73,18 +224,11 @@ const TOOLS_LINKS = [
           </svg>
           <span>View source on GitHub</span>
         </a>
-        <span class="text-[11px] text-muted-foreground/80">
-          v{APP_VERSION} · Last updated: {LAST_UPDATED}
+        <span>·</span>
+        <span class="text-[11px] font-mono font-bold text-muted-foreground/80">
+          v{APP_VERSION} ({LAST_UPDATED})
         </span>
       </div>
-    </div>
-
-    <div
-      class="mt-6 pt-4 border-t border-border/60 flex items-center justify-center gap-3 text-[11px] text-muted-foreground/80"
-    >
-      <span class="h-px w-10 bg-border" aria-hidden="true"></span>
-      <span>Made for young Aussies</span>
-      <span class="h-px w-10 bg-border" aria-hidden="true"></span>
     </div>
   </div>
 </footer>
@@ -92,9 +236,8 @@ const TOOLS_LINKS = [
 <script>
   import { initWebVitals, getPerformanceMetrics } from '@/lib/web-vitals';
 
-  /* Astro's ClientRouter replaces the footer on every navigation, and this module can be
-     evaluated more than once, so the polling interval and the document listener are bound
-     once and always resolve the footer that is currently in the document. */
+  /* Astro's ClientRouter replaces the footer on every navigation, so the badge listener and
+     clicks are bound safely. */
   const liveBadge = (): HTMLElement | null => document.querySelector<HTMLElement>('[data-web-vitals-text]');
 
   const paintBadge = () => {
@@ -109,17 +252,34 @@ const TOOLS_LINKS = [
   initWebVitals();
   paintBadge();
 
-  const wired = window as unknown as Record<string, number | undefined>;
+  const wired = window as unknown as Record<string, number | boolean | undefined>;
   if (wired.__ausFooterTimer === undefined) {
     wired.__ausFooterTimer = window.setInterval(paintBadge, 2000);
   }
 
-  // The modal is the only consumer of the overlay host, and it should not be reachable from
-  // the page's static module graph — so the loader is pulled in on click.
-  document.addEventListener('click', (e) => {
-    if (!(e.target as HTMLElement).closest('[data-open-performance]')) return;
-    void import('@/lib/overlay-loader').then((m) => m.openPerformanceModal());
-  });
+  // Document level click delegate
+  if (!wired.__ausFooterEventsWired) {
+    wired.__ausFooterEventsWired = true;
+
+    document.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement | null;
+      if (!target) return;
+
+      if (target.closest('[data-open-performance]')) {
+        void import('@/lib/overlay-loader').then((m) => m.openPerformanceModal());
+      } else if (target.closest('[data-open-shortcuts]')) {
+        void import('@/lib/overlay-loader').then((m) => {
+          if (m.isOverlayHostMounted()) {
+            document.dispatchEvent(new CustomEvent('toggle-shortcuts-modal'));
+          } else {
+            void m.toggleShortcutsModal();
+          }
+        });
+      } else if (target.closest('[data-back-to-top]')) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    });
+  }
 
   document.addEventListener('astro:page-load', paintBadge);
 </script>

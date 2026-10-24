@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { HelpCircle, Info, X } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '@/lib/utils';
 
 export interface InfoTooltipProps {
@@ -110,17 +109,12 @@ export function InfoTooltip({
         <span className="sr-only">{activeTitle || 'More information'}</span>
       </button>
 
-      <AnimatePresence>
-        {open && (
-          <motion.div
+      {open && (
+          <div
             id={tooltipId}
             role="tooltip"
-            initial={{ opacity: 0, scale: 0.95, y: side === 'top' ? 4 : side === 'bottom' ? -4 : 0 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ duration: 0.15, ease: 'easeOut' }}
             className={cn(
-              'absolute z-50 w-64 sm:w-72 rounded-xl border border-border/80 bg-popover/95 p-3 text-left shadow-xl backdrop-blur-md pointer-events-auto',
+              'animate-pop-in absolute z-50 w-64 sm:w-72 origin-bottom rounded-xl border border-border/80 bg-popover/95 p-3 text-left shadow-xl backdrop-blur-md pointer-events-auto',
               sideClasses[side]
             )}
           >
@@ -142,9 +136,8 @@ export function InfoTooltip({
             <div className="text-xs text-muted-foreground leading-relaxed">
               {activeContent}
             </div>
-          </motion.div>
+          </div>
         )}
-      </AnimatePresence>
     </div>
   );
 }

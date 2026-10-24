@@ -1,19 +1,85 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { Card } from '@/components/ui/Card';
 import { NumberInput } from '@/components/ui/NumberInput';
 import { SliderControl } from '@/components/ui/SliderControl';
 import { StatCard } from '@/components/ui/StatCard';
 import { Badge } from '@/components/ui/Badge';
 import { InfoTooltip } from '@/components/ui/InfoTooltip';
+import { QuickPresetBar, type ScenarioPreset } from '@/components/ui/QuickPresetBar';
+import { CalculatorActions } from '@/components/shared/CalculatorActions';
 import { OFFICIAL_WEB_LINKS, TEEN_CAR_COST_DEFAULTS } from '@/data/teen-finance-data';
 import { WebReferenceLink } from '@/components/shared/WebReferenceLink';
 import { Car, CheckCircle2, Flame, Wrench } from 'lucide-react';
 import { firstCarTotalCostOfOwnership } from './engine';
+import { formatCurrency } from '@/utils/formatters';
+
+interface FirstCarInputs {
+  purchasePrice: number;
+  purchaseType: 'cash' | 'loan';
+  weeklyFuel: number;
+  regoAnnual: number;
+  ctpAnnual: number;
+  insuranceAnnual: number;
+  servicingAnnual: number;
+  repairsAnnual: number;
+}
+
+const CAR_PRESETS: ScenarioPreset<FirstCarInputs>[] = [
+  {
+    id: 'beater',
+    label: '$5k First Beater',
+    badge: 'Cash • $0 Debt',
+    description: 'Affordable runabout bought outright, low comprehensive insurance',
+    values: {
+      purchasePrice: 5000,
+      purchaseType: 'cash',
+      weeklyFuel: 35,
+      regoAnnual: 850,
+      ctpAnnual: 380,
+      insuranceAnnual: 850,
+      servicingAnnual: 400,
+      repairsAnnual: 400,
+    },
+  },
+  {
+    id: 'reliable-hatch',
+    label: '$10k Reliable Hatch',
+    badge: 'Smart Saver',
+    description: 'Corolla / i30 in cash with balanced running costs and peace of mind',
+    values: {
+      purchasePrice: 10000,
+      purchaseType: 'cash',
+      weeklyFuel: 45,
+      regoAnnual: 850,
+      ctpAnnual: 380,
+      insuranceAnnual: 1200,
+      servicingAnnual: 450,
+      repairsAnnual: 300,
+    },
+  },
+  {
+    id: 'finance-trap',
+    label: '$15k Finance Trap',
+    badge: '12.5% Debt Trap',
+    description: 'Dealer finance trap showing how $15k balloons to $20k+ with interest',
+    values: {
+      purchasePrice: 15000,
+      purchaseType: 'loan',
+      weeklyFuel: 55,
+      regoAnnual: 850,
+      ctpAnnual: 380,
+      insuranceAnnual: 1800,
+      servicingAnnual: 550,
+      repairsAnnual: 400,
+    },
+  },
+];
 
 export function FirstCarCostCalculator() {
   const [purchasePrice, setPurchasePrice] = useState<number>(TEEN_CAR_COST_DEFAULTS.averagePurchasePrice);
   const [purchaseType, setPurchaseType] = useState<'cash' | 'loan'>('cash');
   const [weeklyFuel, setWeeklyFuel] = useState<number>(TEEN_CAR_COST_DEFAULTS.fuelWeekly);
+  const [activePreset, setActivePreset] = useState<string | undefined>();
 
   // Adjustable running costs (defaults from TEEN_CAR_COST_DEFAULTS)
   const [regoAnnual, setRegoAnnual] = useState<number>(TEEN_CAR_COST_DEFAULTS.regoAnnual);
@@ -21,6 +87,30 @@ export function FirstCarCostCalculator() {
   const [insuranceAnnual, setInsuranceAnnual] = useState<number>(TEEN_CAR_COST_DEFAULTS.comprehensiveInsuranceUnder25);
   const [servicingAnnual, setServicingAnnual] = useState<number>(TEEN_CAR_COST_DEFAULTS.servicingAnnual);
   const [repairsAnnual, setRepairsAnnual] = useState<number>(TEEN_CAR_COST_DEFAULTS.tiresAndRepairsAnnual);
+
+  const handleApplyPreset = (preset: ScenarioPreset<FirstCarInputs>) => {
+    setActivePreset(preset.id);
+    if (preset.values.purchasePrice !== undefined) setPurchasePrice(preset.values.purchasePrice);
+    if (preset.values.purchaseType !== undefined) setPurchaseType(preset.values.purchaseType);
+    if (preset.values.weeklyFuel !== undefined) setWeeklyFuel(preset.values.weeklyFuel);
+    if (preset.values.regoAnnual !== undefined) setRegoAnnual(preset.values.regoAnnual);
+    if (preset.values.ctpAnnual !== undefined) setCtpAnnual(preset.values.ctpAnnual);
+    if (preset.values.insuranceAnnual !== undefined) setInsuranceAnnual(preset.values.insuranceAnnual);
+    if (preset.values.servicingAnnual !== undefined) setServicingAnnual(preset.values.servicingAnnual);
+    if (preset.values.repairsAnnual !== undefined) setRepairsAnnual(preset.values.repairsAnnual);
+  };
+
+  const handleResetDefaults = useCallback(() => {
+    setActivePreset(undefined);
+    setPurchasePrice(TEEN_CAR_COST_DEFAULTS.averagePurchasePrice);
+    setPurchaseType('cash');
+    setWeeklyFuel(TEEN_CAR_COST_DEFAULTS.fuelWeekly);
+    setRegoAnnual(TEEN_CAR_COST_DEFAULTS.regoAnnual);
+    setCtpAnnual(TEEN_CAR_COST_DEFAULTS.ctpGreenSlipAnnual);
+    setInsuranceAnnual(TEEN_CAR_COST_DEFAULTS.comprehensiveInsuranceUnder25);
+    setServicingAnnual(TEEN_CAR_COST_DEFAULTS.servicingAnnual);
+    setRepairsAnnual(TEEN_CAR_COST_DEFAULTS.tiresAndRepairsAnnual);
+  }, []);
 
   const annualRunningCosts = regoAnnual + ctpAnnual + insuranceAnnual + servicingAnnual + repairsAnnual + (weeklyFuel * 52);
   const weeklyRunningCost = annualRunningCosts / 52;
@@ -36,6 +126,19 @@ export function FirstCarCostCalculator() {
     () => firstCarTotalCostOfOwnership(totalPurchaseCost, annualRunningCosts, 5),
     [totalPurchaseCost, annualRunningCosts]
   );
+
+  const weeklyCostWithLoan = weeklyRunningCost + (totalLoanInterest / 156);
+
+  const summaryText = useMemo(() => {
+    return [
+      '--- First Car Cost & TCO Summary ---',
+      `Strategy: ${purchaseType === 'cash' ? 'Cash ($0 Interest)' : `3-Year Loan (+$${Math.round(totalLoanInterest).toLocaleString()} interest)`}`,
+      `Purchase Price: ${formatCurrency(purchasePrice)} | Total Acquisition: ${formatCurrency(totalPurchaseCost)}`,
+      `Annual Running Costs: ${formatCurrency(annualRunningCosts)}/yr (${formatCurrency(weeklyRunningCost)}/wk)`,
+      `5-Year Total Cost of Ownership: ${formatCurrency(tco.tcoOverYears)} (${(tco.runningCostsShare * 100).toFixed(0)}% running costs)`,
+      `Calculated via AusFinTools First Car Simulator`,
+    ].join('\n');
+  }, [purchaseType, totalLoanInterest, purchasePrice, totalPurchaseCost, annualRunningCosts, weeklyRunningCost, tco]);
 
   return (
     <Card variant="glass" className="p-6 space-y-6">
@@ -54,13 +157,24 @@ export function FirstCarCostCalculator() {
         </Badge>
       </div>
 
+      {/* Quick Preset Bar */}
+      <QuickPresetBar
+        presets={CAR_PRESETS}
+        activePresetId={activePreset}
+        onSelect={handleApplyPreset}
+        title="Car Budget Scenarios"
+      />
+
       {/* Purchase Mode Toggle */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div className="space-y-4">
           <NumberInput
             label="Car Purchase Price ($)"
             value={purchasePrice}
-            onChange={v => setPurchasePrice(v)}
+            onChange={v => {
+              setPurchasePrice(v);
+              setActivePreset(undefined);
+            }}
             min={1000}
             max={25000}
             step={500}
@@ -71,7 +185,10 @@ export function FirstCarCostCalculator() {
           <NumberInput
             label="Weekly Fuel Budget ($)"
             value={weeklyFuel}
-            onChange={v => setWeeklyFuel(v)}
+            onChange={v => {
+              setWeeklyFuel(v);
+              setActivePreset(undefined);
+            }}
             min={10}
             max={200}
             step={5}
@@ -80,10 +197,14 @@ export function FirstCarCostCalculator() {
         </div>
 
         <div className="space-y-2">
-          <label className="text-xs font-semibold text-muted-foreground block">Purchase Strategy (Barefoot Warning)</label>          <div className="grid grid-cols-2 gap-2">
+          <label className="text-xs font-semibold text-muted-foreground block">Purchase Strategy (Barefoot Warning)</label>
+          <div className="grid grid-cols-2 gap-2">
             <button
               type="button"
-              onClick={() => setPurchaseType('cash')}
+              onClick={() => {
+                setPurchaseType('cash');
+                setActivePreset(undefined);
+              }}
               className={`py-3 px-3 rounded-xl border text-xs font-bold transition-all text-left ${
                 purchaseType === 'cash'
                   ? 'bg-emerald-500 text-white border-emerald-500 shadow-md'
@@ -95,7 +216,10 @@ export function FirstCarCostCalculator() {
             </button>
             <button
               type="button"
-              onClick={() => setPurchaseType('loan')}
+              onClick={() => {
+                setPurchaseType('loan');
+                setActivePreset(undefined);
+              }}
               className={`py-3 px-3 rounded-xl border text-xs font-bold transition-all text-left ${
                 purchaseType === 'loan'
                   ? 'bg-rose-500 text-white border-rose-500 shadow-md'
@@ -119,38 +243,52 @@ export function FirstCarCostCalculator() {
           <SliderControl
             label="Registration (QLD rego)"
             value={regoAnnual}
-            onChange={v => setRegoAnnual(v)}
-            min={600}
-            max={1200}
-            step={10}
-            prefix="$"
-            suffix="/yr"
-          />
-          <SliderControl
-            label="CTP Green Slip (compulsory 3rd party)"
-            value={ctpAnnual}
-            onChange={v => setCtpAnnual(v)}
+            onChange={v => {
+              setRegoAnnual(v);
+              setActivePreset(undefined);
+            }}
             min={400}
-            max={900}
+            max={1500}
+            step={25}
+            prefix="$"
+            suffix="/yr"
+            tooltip={<InfoTooltip term="rego" />}
+          />
+          <SliderControl
+            label="CTP Green Slip (mandatory)"
+            value={ctpAnnual}
+            onChange={v => {
+              setCtpAnnual(v);
+              setActivePreset(undefined);
+            }}
+            min={250}
+            max={800}
             step={10}
             prefix="$"
             suffix="/yr"
+            tooltip={<InfoTooltip term="ctp" />}
           />
           <SliderControl
-            label="Comprehensive Insurance (under 25)"
+            label="Comprehensive / Third Party Insurance"
             value={insuranceAnnual}
-            onChange={v => setInsuranceAnnual(v)}
-            min={900}
+            onChange={v => {
+              setInsuranceAnnual(v);
+              setActivePreset(undefined);
+            }}
+            min={300}
             max={3000}
             step={50}
             prefix="$"
             suffix="/yr"
           />
           <SliderControl
-            label="Servicing & Maintenance"
+            label="Annual Servicing & Fluids"
             value={servicingAnnual}
-            onChange={v => setServicingAnnual(v)}
-            min={200}
+            onChange={v => {
+              setServicingAnnual(v);
+              setActivePreset(undefined);
+            }}
+            min={150}
             max={1000}
             step={25}
             prefix="$"
@@ -159,7 +297,10 @@ export function FirstCarCostCalculator() {
           <SliderControl
             label="Tires & Unexpected Repairs"
             value={repairsAnnual}
-            onChange={v => setRepairsAnnual(v)}
+            onChange={v => {
+              setRepairsAnnual(v);
+              setActivePreset(undefined);
+            }}
             min={0}
             max={1200}
             step={50}
@@ -188,12 +329,16 @@ export function FirstCarCostCalculator() {
         <StatCard
           label="Annual Running Costs"
           value={`$${Math.round(annualRunningCosts).toLocaleString()}/yr`}
+          numericValue={Math.round(annualRunningCosts)}
+          format="currency"
           color="blue"
           subtext="Rego, CTP, Insurance, Fuel, Service"
         />
         <StatCard
           label="Weekly Total Car Cost"
-          value={`$${(weeklyRunningCost + (totalLoanInterest / 156)).toFixed(2)}/wk`}
+          value={`$${weeklyCostWithLoan.toFixed(2)}/wk`}
+          numericValue={Math.round(weeklyCostWithLoan)}
+          format="currency"
           color="purple"
           subtext="True weekly cost out of your paycheck"
         />
@@ -212,7 +357,7 @@ export function FirstCarCostCalculator() {
         <StatCard
           label="Running Costs Share of TCO"
           value={`${(tco.runningCostsShare * 100).toFixed(0)}%`}
-          numericValue={tco.runningCostsShare}
+          numericValue={Math.round(tco.runningCostsShare * 100)}
           format="percent"
           color="purple"
           subtext="The real cost of a car is running it"
@@ -245,6 +390,13 @@ export function FirstCarCostCalculator() {
           </div>
         </div>
       )}
+
+      {/* Action controls */}
+      <CalculatorActions
+        onReset={handleResetDefaults}
+        summaryText={summaryText}
+        summaryTitle="First Car Cost Summary"
+      />
 
       <div className="flex flex-wrap gap-2 pt-2">
         <WebReferenceLink link={OFFICIAL_WEB_LINKS.ppsr_check} />

@@ -16,6 +16,11 @@ import {
   Keyboard,
   Moon,
   RotateCcw,
+  GraduationCap,
+  Briefcase,
+  Percent,
+  Coins,
+  Compass,
   type LucideIcon,
 } from 'lucide-react';
 import {
@@ -29,13 +34,43 @@ import {
 } from '@/lib/site-search';
 import { sound } from '@/lib/sound-synthesizer';
 import { cn } from '@/lib/utils';
-import { motion, AnimatePresence } from 'motion/react';
+
+export type PaletteCategoryFilter =
+  | 'All'
+  | 'Calculators'
+  | 'Awards & Pay'
+  | 'Tax'
+  | 'Super'
+  | 'Schools & Unis';
+
+const FILTER_CATEGORIES: { id: PaletteCategoryFilter; label: string; icon: LucideIcon }[] = [
+  { id: 'All', label: 'All', icon: Compass },
+  { id: 'Calculators', label: 'Calculators', icon: Calculator },
+  { id: 'Awards & Pay', label: 'Awards & Pay', icon: Briefcase },
+  { id: 'Tax', label: 'Tax', icon: Percent },
+  { id: 'Super', label: 'Super', icon: Coins },
+  { id: 'Schools & Unis', label: 'Schools & Unis', icon: GraduationCap },
+];
 
 const TYPE_ICONS: Record<SearchResultType, typeof FileText> = {
   tool: Calculator,
   topic: Sparkles,
   module: LayoutGrid,
   weblink: ExternalLink,
+};
+
+const TYPE_STYLES: Record<SearchResultType, string> = {
+  topic: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 ring-1 ring-amber-500/20',
+  tool: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 ring-1 ring-emerald-500/20',
+  module: 'bg-primary/10 text-primary ring-1 ring-primary/20',
+  weblink: 'bg-sky-500/10 text-sky-600 dark:text-sky-400 ring-1 ring-sky-500/20',
+};
+
+const TYPE_BADGE_LABELS: Record<SearchResultType, string> = {
+  tool: 'Calculator',
+  topic: 'Q&A Guide',
+  module: 'Module',
+  weblink: 'Official',
 };
 
 type CommandCategory = 'Quick Actions' | 'Go To' | 'Open Calculator';
@@ -72,6 +107,53 @@ function evaluateMathExpression(expr: string): number | null {
   return null;
 }
 
+function Highlighted({ text, indices }: { text: string; indices?: [number, number][] }) {
+  if (!indices || indices.length === 0) return <>{text}</>;
+  const sorted = [...indices].sort((a, b) => a[0] - b[0]);
+  const parts: React.ReactNode[] = [];
+  let cursor = 0;
+  sorted.forEach(([start, end], i) => {
+    const s = Math.max(start, cursor);
+    if (s > cursor) parts.push(<span key={`p${i}`}>{text.slice(cursor, s)}</span>);
+    if (end >= s) {
+      parts.push(
+        <mark
+          key={`m${i}`}
+          className="rounded-[3px] bg-primary/25 dark:bg-primary/30 text-primary-foreground font-semibold px-0.5"
+        >
+          {text.slice(s, end + 1)}
+        </mark>
+      );
+    }
+    cursor = Math.max(cursor, end + 1);
+  });
+  if (cursor < text.length) parts.push(<span key="tail">{text.slice(cursor)}</span>);
+  return <>{parts}</>;
+}
+
+function matchesCategory(
+  item: { title: string; subtitle: string; route?: string; type?: string; keywords?: string },
+  category: PaletteCategoryFilter
+): boolean {
+  if (category === 'All') return true;
+  const content = `${item.title} ${item.subtitle} ${item.route || ''} ${item.keywords || ''}`.toLowerCase();
+
+  switch (category) {
+    case 'Calculators':
+      return item.type === 'tool' || (item.route?.includes('/calculators') ?? false) || /calculator|simulator|engine|optimizer|payoff|drawdown|splitter/i.test(content);
+    case 'Awards & Pay':
+      return (item.route?.includes('/careers-employment') ?? false) || /award|pay|rate|wage|salary|penalty|payslip|overtime|shift|job|resume|interview/i.test(content);
+    case 'Tax':
+      return (item.route?.includes('/tax-guide') ?? false) || (item.route?.includes('/cgt-engine') ?? false) || /tax|payg|threshold|return|cgt|capital gains|medicare|deduction|ato/i.test(content);
+    case 'Super':
+      return (item.route?.includes('/super-retirement') ?? false) || (item.route?.includes('/super-drawdown') ?? false) || /super|retirement|pension|drawdown|sisr|concessional|fund/i.test(content);
+    case 'Schools & Unis':
+      return (item.route?.includes('/hecs-payoff') ?? false) || /school|uni|university|hecs|student|teen|youth|15yo|fifteen|tafe|apprentice|concession/i.test(content);
+    default:
+      return true;
+  }
+}
+
 type PaletteItem =
   | { kind: 'command'; command: PaletteCommand }
   | { kind: 'hit'; hit: SearchHit; groupType: SearchResultType; groupLabel: string };
@@ -80,6 +162,7 @@ export function CommandPalette() {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [activeIndex, setActiveIndex] = useState(0);
+  const [selectedCategory, setSelectedCategory] = useState<PaletteCategoryFilter>('All');
   const [recent, setRecent] = useState<string[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
@@ -126,6 +209,7 @@ export function CommandPalette() {
       setActiveIndex(0);
     } else {
       setQuery('');
+      setSelectedCategory('All');
     }
   }, [open]);
 
@@ -160,7 +244,11 @@ export function CommandPalette() {
         keywords: 'scroll bottom down end',
         category: 'Quick Actions',
         icon: ArrowDown,
-        run: () => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' }),
+        run: () =>
+          window.scrollTo({
+            top: document.documentElement.scrollHeight,
+            behavior: 'smooth',
+          }),
       },
       {
         id: 'go-home',
@@ -201,7 +289,10 @@ export function CommandPalette() {
     ];
 
     const calcCommands: PaletteCommand[] = ALL_TOOLS.map(tool => ({
-      id: `calc-${tool.route}`,
+      // Several tools share a route (e.g. the careers-employment page hosts
+      // four calculators), so a route-only key left stale duplicate rows in
+      // the palette after filtering.
+      id: `calc-${tool.name}`,
       label: `Open calculator: ${tool.name}`,
       subtitle: tool.description,
       keywords: `${tool.description} calculator tool`,
@@ -213,29 +304,46 @@ export function CommandPalette() {
     return [...quick, ...calcCommands];
   }, [navigate]);
 
-  // Fuzzy-filter commands against the query (all commands when idle)
+  // Fuzzy-filter commands against query
   const visibleCommands = useMemo(() => {
     const terms = query.trim().toLowerCase().split(/\s+/).filter(Boolean);
-    if (terms.length === 0) return commands;
-    return commands.filter(c => {
-      const hay = `${c.label} ${c.subtitle} ${c.keywords}`.toLowerCase();
-      return terms.every(t => hay.includes(t));
-    });
-  }, [commands, query]);
+    const filteredByQuery =
+      terms.length === 0
+        ? commands
+        : commands.filter(c => {
+            const hay = `${c.label} ${c.subtitle} ${c.keywords}`.toLowerCase();
+            return terms.every(t => hay.includes(t));
+          });
+
+    if (selectedCategory === 'All') return filteredByQuery;
+    return filteredByQuery.filter(c =>
+      matchesCategory(
+        { title: c.label, subtitle: c.subtitle, keywords: c.keywords },
+        selectedCategory
+      )
+    );
+  }, [commands, query, selectedCategory]);
 
   // Fuzzy Search
   const { groups } = useMemo(() => searchSite(query), [query]);
 
-  // Flat, section-aware list: commands first, then grouped search hits
+  // Flat, category-filtered list
   const items = useMemo<PaletteItem[]>(() => {
     const arr: PaletteItem[] = visibleCommands.map(c => ({ kind: 'command', command: c }));
     for (const group of groups) {
       for (const hit of group.hits) {
-        arr.push({ kind: 'hit', hit, groupType: group.type, groupLabel: group.label });
+        if (
+          matchesCategory(
+            { title: hit.title, subtitle: hit.subtitle, route: hit.route, type: hit.type },
+            selectedCategory
+          )
+        ) {
+          arr.push({ kind: 'hit', hit, groupType: group.type, groupLabel: group.label });
+        }
       }
     }
     return arr;
-  }, [visibleCommands, groups]);
+  }, [visibleCommands, groups, selectedCategory]);
 
   const sectionOf = (item: PaletteItem): string =>
     item.kind === 'command' ? `command:${item.command.category}` : `hit:${item.groupType}`;
@@ -251,8 +359,10 @@ export function CommandPalette() {
 
   const selectHit = (hit: SearchHit) => {
     sound.playClick();
-    addRecentSearch(query);
-    setRecent(getRecentSearches());
+    if (query.trim()) {
+      addRecentSearch(query);
+      setRecent(getRecentSearches());
+    }
     setOpen(false);
     if (hit.type === 'weblink') {
       window.open(hit.route, '_blank', 'noopener,noreferrer');
@@ -276,7 +386,7 @@ export function CommandPalette() {
       e.preventDefault();
       if (mathResult !== null && items.length === 0) {
         sound.playSuccess();
-        navigator.clipboard.writeText(String(mathResult));
+        void navigator.clipboard.writeText(String(mathResult));
         setOpen(false);
         return;
       }
@@ -291,21 +401,17 @@ export function CommandPalette() {
   };
 
   return (
-    <AnimatePresence>
+    <>
       {open && (
-        <div className="fixed inset-0 z-50 flex items-start justify-center p-4 sm:p-6 md:p-20 bg-black/60 backdrop-blur-md">
+        <div className="fixed inset-0 z-50 flex items-start justify-center p-3 sm:p-6 md:p-12 bg-black/60 backdrop-blur-md">
           {/* Backdrop Click Dismiss */}
           <div className="fixed inset-0" onClick={() => setOpen(false)} />
 
-          <motion.div
+          <div
             role="dialog"
             aria-modal="true"
             aria-label="Command Center"
-            initial={{ opacity: 0, scale: 0.95, y: -10 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: -10 }}
-            transition={{ duration: 0.18, ease: 'easeOut' }}
-            className="relative w-full max-w-2xl rounded-3xl bg-card border border-border shadow-2xl overflow-hidden flex flex-col max-h-[80vh] z-10"
+            className="animate-pop-in relative w-full max-w-2xl rounded-3xl bg-card/95 backdrop-blur-2xl border border-border shadow-2xl overflow-hidden flex flex-col max-h-[85vh] z-10"
           >
             {/* Top Search Input */}
             <div className="flex items-center px-4 border-b border-border/80 h-16 shrink-0 bg-muted/20">
@@ -316,7 +422,7 @@ export function CommandPalette() {
                 role="combobox"
                 aria-expanded={open}
                 aria-label="Search or calculate"
-                placeholder="Type a calculator, topic, or math expression (e.g. 150000 * 0.12)..."
+                placeholder="Search calculators, topics, commands, or calculate (e.g. 95000 * 0.12)..."
                 value={query}
                 onChange={e => {
                   setQuery(e.target.value);
@@ -328,7 +434,10 @@ export function CommandPalette() {
               {query && (
                 <button
                   type="button"
-                  onClick={() => setQuery('')}
+                  onClick={() => {
+                    setQuery('');
+                    setActiveIndex(0);
+                  }}
                   className="p-1 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted"
                 >
                   <X className="w-4 h-4" />
@@ -336,11 +445,42 @@ export function CommandPalette() {
               )}
             </div>
 
+            {/* Category Filter Chips Bar */}
+            <div className="px-3 py-2 bg-muted/40 border-b border-border/60">
+              <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 scrollbar-none">
+                {FILTER_CATEGORIES.map(cat => {
+                  const Icon = cat.icon;
+                  const isSelected = selectedCategory === cat.id;
+                  return (
+                    <button
+                      key={cat.id}
+                      type="button"
+                      onClick={() => {
+                        sound.playTick();
+                        setSelectedCategory(cat.id);
+                        setActiveIndex(0);
+                        inputRef.current?.focus();
+                      }}
+                      className={cn(
+                        'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold shrink-0 transition-all duration-200',
+                        isSelected
+                          ? 'bg-primary text-primary-foreground shadow-xs ring-1 ring-primary'
+                          : 'bg-card/70 hover:bg-muted text-muted-foreground hover:text-foreground border border-border/60'
+                      )}
+                    >
+                      <Icon className="w-3.5 h-3.5" />
+                      <span>{cat.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
             {/* Results / Commands Body */}
             <div className="flex-1 overflow-y-auto p-2">
               {/* Recent Searches (idle state only) */}
               {query.trim().length === 0 && recent.length > 0 && (
-                <div className="mb-1">
+                <div className="mb-2">
                   <div className="px-3 pt-2 pb-1.5 flex items-center justify-between">
                     <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80 flex items-center gap-1.5">
                       <RotateCcw className="w-3 h-3" />
@@ -369,7 +509,7 @@ export function CommandPalette() {
                           setActiveIndex(0);
                           inputRef.current?.focus();
                         }}
-                        className="px-2.5 py-1 rounded-full text-[11px] font-semibold border border-border bg-muted/40 text-foreground hover:border-primary/50 hover:text-primary transition-all"
+                        className="px-2.5 py-1 rounded-full text-[11px] font-semibold border border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 transition-all"
                       >
                         {r}
                       </button>
@@ -382,7 +522,7 @@ export function CommandPalette() {
               {mathResult !== null && (
                 <div className="p-3 mb-2 rounded-2xl bg-gradient-to-r from-primary/15 via-primary/5 to-transparent border border-primary/30 flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="p-2 rounded-xl bg-primary text-white">
+                    <div className="p-2 rounded-xl bg-primary text-primary-foreground">
                       <Calculator className="w-4 h-4" />
                     </div>
                     <div>
@@ -395,27 +535,38 @@ export function CommandPalette() {
                     </div>
                   </div>
                   <button
+                    type="button"
                     onClick={() => {
                       sound.playSuccess();
-                      navigator.clipboard.writeText(String(mathResult));
+                      void navigator.clipboard.writeText(String(mathResult));
                       setOpen(false);
                     }}
-                    className="px-3 py-1.5 rounded-xl bg-primary text-white text-xs font-bold hover:bg-primary/90"
+                    className="px-3 py-1.5 rounded-xl bg-primary text-primary-foreground text-xs font-bold hover:bg-primary/90"
                   >
                     Copy Result
                   </button>
                 </div>
               )}
 
-              {/* Commands & Search Results (section headers + flat keyboard nav) */}
+              {/* Commands & Search Results */}
               {items.length > 0 ? (
                 items.map((item, idx) => {
-                  const Icon = item.kind === 'command' ? item.command.icon : TYPE_ICONS[item.hit.type];
+                  const Icon =
+                    item.kind === 'command' ? item.command.icon : TYPE_ICONS[item.hit.type];
                   const label = item.kind === 'command' ? item.command.label : item.hit.title;
-                  const subtitle = item.kind === 'command' ? item.command.subtitle : item.hit.subtitle;
+                  const subtitle =
+                    item.kind === 'command' ? item.command.subtitle : item.hit.subtitle;
                   const isActive = idx === activeIndex;
                   const newSection = idx === 0 || sectionOf(item) !== sectionOf(items[idx - 1]);
                   const key = item.kind === 'command' ? item.command.id : item.hit.id;
+
+                  const titleMatch =
+                    item.kind === 'hit' ? item.hit.matches.find(m => m.field === 'title') : undefined;
+                  const subMatch =
+                    item.kind === 'hit'
+                      ? item.hit.matches.find(m => m.field === 'subtitle')
+                      : undefined;
+
                   return (
                     <Fragment key={key}>
                       {newSection && (
@@ -440,23 +591,53 @@ export function CommandPalette() {
                         className={cn(
                           'w-full flex items-start gap-3 px-3 py-2.5 rounded-2xl text-left transition-all',
                           isActive
-                            ? 'bg-primary/10 text-primary font-bold'
+                            ? 'bg-primary/10 text-primary font-bold shadow-xs ring-1 ring-primary/20'
                             : 'text-foreground hover:bg-muted/60'
                         )}
                       >
-                        <span className="p-1.5 rounded-xl bg-muted shrink-0 mt-0.5">
-                          <Icon className="w-4 h-4 text-foreground" />
+                        <span
+                          className={cn(
+                            'p-1.5 rounded-xl shrink-0 mt-0.5',
+                            item.kind === 'hit' ? TYPE_STYLES[item.hit.type] : 'bg-muted text-foreground'
+                          )}
+                        >
+                          <Icon className="w-4 h-4" />
                         </span>
                         <div className="flex-1 min-w-0">
                           <div className="text-xs font-bold truncate flex items-center gap-1.5">
                             {item.kind === 'hit' && item.hit.emoji && <span>{item.hit.emoji}</span>}
-                            <span>{label}</span>
+                            <span>
+                              {item.kind === 'hit' ? (
+                                <Highlighted text={label} indices={titleMatch?.indices} />
+                              ) : (
+                                label
+                              )}
+                            </span>
+                            {item.kind === 'hit' && (
+                              <span
+                                className={cn(
+                                  'px-1.5 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wide ml-auto shrink-0',
+                                  TYPE_STYLES[item.hit.type]
+                                )}
+                              >
+                                {TYPE_BADGE_LABELS[item.hit.type]}
+                              </span>
+                            )}
                           </div>
                           <div className="text-[11px] font-normal text-muted-foreground truncate mt-0.5">
-                            {subtitle}
+                            {item.kind === 'hit' ? (
+                              <Highlighted text={subtitle} indices={subMatch?.indices} />
+                            ) : (
+                              subtitle
+                            )}
                           </div>
                         </div>
-                        <ArrowRight className="w-3.5 h-3.5 text-muted-foreground shrink-0 mt-1 opacity-60" />
+                        <ArrowRight
+                          className={cn(
+                            'w-3.5 h-3.5 text-muted-foreground shrink-0 mt-1 transition-all',
+                            isActive ? 'opacity-100 translate-x-0.5 text-primary' : 'opacity-40'
+                          )}
+                        />
                       </button>
                     </Fragment>
                   );
@@ -467,32 +648,41 @@ export function CommandPalette() {
                   <p className="text-sm font-bold text-foreground">No matches found for “{query}”</p>
                   <p className="text-xs text-muted-foreground">
                     Try typing an expression like{' '}
-                    <code className="font-mono bg-muted px-1.5 py-0.5 rounded-sm">= 95000 * 0.12</code>
+                    <code className="font-mono bg-muted px-1.5 py-0.5 rounded-sm">= 95000 * 0.12</code> or clear category filters.
                   </p>
                 </div>
               ) : null}
             </div>
 
             {/* Footer Keybindings */}
-            <div className="px-4 py-2.5 bg-muted/30 border-t border-border/80 flex items-center justify-between text-[11px] text-muted-foreground shrink-0">
+            <div className="px-4 py-2.5 bg-muted/40 border-t border-border/80 flex items-center justify-between text-[11px] text-muted-foreground shrink-0">
               <div className="flex items-center gap-3">
                 <span className="flex items-center gap-1">
-                  <kbd className="px-1.5 py-0.5 rounded-md bg-card border border-border text-[10px] font-mono">↑↓</kbd> Navigate
+                  <kbd className="px-1.5 py-0.5 rounded-md bg-card border border-border text-[10px] font-mono shadow-xs">
+                    ↑↓
+                  </kbd>{' '}
+                  to select
                 </span>
                 <span className="flex items-center gap-1">
-                  <kbd className="px-1.5 py-0.5 rounded-md bg-card border border-border text-[10px] font-mono">↵</kbd> Open
+                  <kbd className="px-1.5 py-0.5 rounded-md bg-card border border-border text-[10px] font-mono shadow-xs">
+                    ↵
+                  </kbd>{' '}
+                  to open
                 </span>
                 <span className="flex items-center gap-1">
-                  <kbd className="px-1.5 py-0.5 rounded-md bg-card border border-border text-[10px] font-mono">Esc</kbd> Dismiss
+                  <kbd className="px-1.5 py-0.5 rounded-md bg-card border border-border text-[10px] font-mono shadow-xs">
+                    esc
+                  </kbd>{' '}
+                  to close
                 </span>
               </div>
               <span className="hidden sm:inline font-semibold">
                 {isMac ? '⌘K' : 'Ctrl+K'} anywhere to open
               </span>
             </div>
-          </motion.div>
+          </div>
         </div>
       )}
-    </AnimatePresence>
+    </>
   );
 }

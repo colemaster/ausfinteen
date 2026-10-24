@@ -1,5 +1,4 @@
-import React, { useRef, useState } from 'react';
-import { motion, useReducedMotion } from 'motion/react';
+import React, { useRef } from 'react';
 import { cn } from '@/lib/utils';
 import { BorderBeam } from './BorderBeam';
 
@@ -10,6 +9,14 @@ interface HolographicTiltCardProps extends React.HTMLAttributes<HTMLDivElement> 
   showBeam?: boolean;
 }
 
+/**
+ * 3D pointer-tilt card.
+ *
+ * The tilt is driven by three CSS custom properties written from a single
+ * requestAnimationFrame, so React never re-renders while the pointer moves and
+ * the browser can keep the transform on the compositor. Pointer-coarse devices
+ * and reduced-motion users get a static card.
+ */
 export function HolographicTiltCard({
   children,
   className,
@@ -22,61 +29,56 @@ export function HolographicTiltCard({
   ...props
 }: HolographicTiltCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
-  const reducedMotion = useReducedMotion() ?? false;
-  const [transform, setTransform] = useState({ rotateX: 0, rotateY: 0, glareX: 50, glareY: 50, opacity: 0 });
+  const frame = useRef<number | null>(null);
 
-  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (reducedMotion || !cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    const width = rect.width;
-    const height = rect.height;
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
+  const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+    const node = cardRef.current;
+    if (!node || event.pointerType === 'touch' || frame.current !== null) return;
+    const { clientX, clientY } = event;
 
-    const rotateX = ((mouseY - height / 2) / (height / 2)) * -10;
-    const rotateY = ((mouseX - width / 2) / (width / 2)) * 10;
-    const glareX = (mouseX / width) * 100;
-    const glareY = (mouseY / height) * 100;
-
-    setTransform({ rotateX, rotateY, glareX, glareY, opacity: 1 });
+    frame.current = requestAnimationFrame(() => {
+      frame.current = null;
+      const rect = node.getBoundingClientRect();
+      const x = clientX - rect.left;
+      const y = clientY - rect.top;
+      node.style.setProperty('--tilt-x', `${((y - rect.height / 2) / (rect.height / 2)) * -8}deg`);
+      node.style.setProperty('--tilt-y', `${((x - rect.width / 2) / (rect.width / 2)) * 8}deg`);
+      node.style.setProperty('--glare-x', `${(x / rect.width) * 100}%`);
+      node.style.setProperty('--glare-y', `${(y / rect.height) * 100}%`);
+      node.style.setProperty('--glare-o', '1');
+    });
   };
 
   const handlePointerLeave = () => {
-    setTransform({ rotateX: 0, rotateY: 0, glareX: 50, glareY: 50, opacity: 0 });
+    const node = cardRef.current;
+    if (!node) return;
+    if (frame.current !== null) cancelAnimationFrame(frame.current);
+    frame.current = null;
+    node.style.setProperty('--tilt-x', '0deg');
+    node.style.setProperty('--tilt-y', '0deg');
+    node.style.setProperty('--glare-o', '0');
   };
 
   return (
-    <motion.div
+    <div
       ref={cardRef}
       onPointerMove={handlePointerMove}
       onPointerLeave={handlePointerLeave}
-      animate={reducedMotion ? {} : { rotateX: transform.rotateX, rotateY: transform.rotateY }}
-      transition={{ type: 'spring', stiffness: 350, damping: 25, mass: 0.5 }}
-      style={{ perspective: 1000, transformStyle: 'preserve-3d' }}
+      style={{ '--glow-color': glowColor } as React.CSSProperties}
       className={cn(
-        'relative rounded-3xl border border-border bg-card/85 backdrop-blur-xl p-6 shadow-xl transition-shadow duration-300 hover:shadow-2xl hover:shadow-primary/10 overflow-hidden group',
+        'tilt-card group relative overflow-hidden rounded-3xl border border-border/80 bg-card/80 p-6 shadow-xl backdrop-blur-xl transition-[border-color,box-shadow] duration-(--motion-base) ease-(--ease-out) hover:border-primary/40 hover:shadow-2xl hover:shadow-primary/15 focus-within:ring-2 focus-within:ring-primary/20',
         className
       )}
       {...props}
     >
-      {/* Specular Radial Glare */}
-      {!reducedMotion && (
-        <div
-          className="pointer-events-none absolute -inset-px transition-opacity duration-300 z-10"
-          style={{
-            opacity: transform.opacity,
-            background: `radial-gradient(600px circle at ${transform.glareX}% ${transform.glareY}%, color-mix(in oklab, ${glowColor} 20%, transparent), transparent 40%)`,
-          }}
-        />
-      )}
+      {/* Specular radial glare — position from CSS vars, opacity handled in CSS. */}
+      <div className="tilt-glare pointer-events-none absolute -inset-px z-10" aria-hidden="true" />
 
       {/* Animated Border Beam */}
       {showBeam && <BorderBeam size={250} duration={12} delay={0} />}
 
       {/* Card Content with 3D Depth Layer */}
-      <div style={{ transform: reducedMotion ? 'none' : 'translateZ(20px)' }} className="relative z-20">
-        {children}
-      </div>
-    </motion.div>
+      <div className="tilt-depth relative z-20">{children}</div>
+    </div>
   );
 }

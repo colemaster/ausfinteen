@@ -1,5 +1,4 @@
-import { useId, useRef } from 'react';
-import { motion } from 'motion/react';
+import { useLayoutEffect, useRef } from 'react';
 import { cn } from '@/lib/utils';
 import { sound } from '@/lib/sound-synthesizer';
 
@@ -18,6 +17,8 @@ interface TabsProps {
   /** Stretch tabs to fill the full container width (mobile-friendly). */
   fullWidth?: boolean;
   'aria-label'?: string;
+  className?: string;
+  sticky?: boolean;
 }
 
 export function Tabs({
@@ -27,9 +28,50 @@ export function Tabs({
   size = 'md',
   fullWidth = false,
   'aria-label': ariaLabel = 'Navigation tabs',
+  className,
+  sticky = false,
 }: TabsProps) {
-  const pillId = useId();
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const listRef = useRef<HTMLDivElement>(null);
+  const pillRef = useRef<HTMLSpanElement>(null);
+
+  /**
+   * Sliding active pill without a layout-animation library.
+   *
+   * The previous implementation used Motion's `layoutId`, which pulled the
+   * entire ~42 KB (gzip) motion runtime onto every calculator page just to move
+   * a 2 px-high highlight 40 px to the right. Measuring the active button and
+   * writing a transform is a single layout read per change and lets the browser
+   * composite the movement on the GPU.
+   */
+  useLayoutEffect(() => {
+    const list = listRef.current;
+    const pill = pillRef.current;
+    if (!list || !pill) return;
+
+    const activeIndex = tabs.findIndex((tab) => tab.id === activeTab);
+    const activeButton = tabRefs.current[activeIndex];
+
+    const sync = () => {
+      const button = tabRefs.current[activeIndex];
+      if (!button) {
+        pill.style.opacity = '0';
+        return;
+      }
+      pill.style.opacity = '1';
+      pill.style.width = `${button.offsetWidth}px`;
+      pill.style.height = `${button.offsetHeight}px`;
+      pill.style.transform = `translate3d(${button.offsetLeft}px, ${button.offsetTop}px, 0)`;
+    };
+
+    sync();
+
+    if (!activeButton || typeof ResizeObserver === 'undefined') return;
+    const observer = new ResizeObserver(sync);
+    observer.observe(list);
+    observer.observe(activeButton);
+    return () => observer.disconnect();
+  }, [activeTab, tabs, size]);
 
   function handleSelect(id: string) {
     if (id !== activeTab) {
@@ -62,13 +104,21 @@ export function Tabs({
 
   return (
     <div
+      ref={listRef}
       role="tablist"
       aria-label={ariaLabel}
       className={cn(
-        'flex flex-wrap gap-1 rounded-xl border border-border/60 bg-muted/40 p-1',
-        fullWidth ? 'w-full' : 'mx-auto w-fit sm:mx-0'
+        'relative flex flex-wrap gap-1 rounded-xl border border-border/60 bg-muted/40 p-1 transition-all',
+        sticky && 'sticky top-16 z-20 backdrop-blur-xl bg-background/85 shadow-md',
+        fullWidth ? 'w-full' : 'mx-auto w-fit sm:mx-0',
+        className
       )}
     >
+      <span
+        ref={pillRef}
+        aria-hidden="true"
+        className="pointer-events-none absolute left-0 top-0 rounded-lg border border-border/60 bg-card opacity-0 shadow-sm transition-[transform,width,height,opacity] duration-(--motion-medium) ease-(--ease-out)"
+      />
       {tabs.map((tab, idx) => {
         const isActive = activeTab === tab.id;
         return (
@@ -91,13 +141,6 @@ export function Tabs({
                 : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
             )}
           >
-            {isActive && (
-              <motion.span
-                layoutId={`tab-pill-${pillId}`}
-                className="absolute inset-0 rounded-lg border border-border/60 bg-card shadow-sm"
-                transition={{ type: 'spring', bounce: 0.2, duration: 0.5 }}
-              />
-            )}
             <span className="relative z-10 inline-flex items-center gap-1.5">
               <span>{tab.label}</span>
               {tab.badge !== undefined && (

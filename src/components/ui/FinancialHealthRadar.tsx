@@ -1,5 +1,4 @@
-import { useId, useMemo, useState } from 'react';
-import { motion, useReducedMotion } from 'motion/react';
+import { useId, useMemo, useState, useCallback } from 'react';
 import { cn } from '@/lib/utils';
 
 export interface RadarPillar {
@@ -41,7 +40,6 @@ export function FinancialHealthRadar({
   const [activePillarKey, setActivePillarKey] = useState<string | null>(null);
   const tableId = useId();
   const gradientId = useId();
-  const reducedMotion = useReducedMotion() ?? false;
 
   const center = size / 2;
   const radius = size * 0.36;
@@ -50,31 +48,37 @@ export function FinancialHealthRadar({
   const gridLevels = [0.25, 0.5, 0.75, 1.0];
 
   // Helper to map score (0-100) & index to (x, y)
-  const polarToCartesian = (index: number, score: number) => {
-    const angle = index * angleStep - Math.PI / 2; // start from 12 o'clock
-    const r = (Math.max(0, Math.min(100, score)) / 100) * radius;
-    return {
-      x: center + r * Math.cos(angle),
-      y: center + r * Math.sin(angle),
-    };
-  };
+  const polarToCartesian = useCallback(
+    (index: number, score: number) => {
+      const angle = index * angleStep - Math.PI / 2; // start from 12 o'clock
+      const r = (Math.max(0, Math.min(100, score)) / 100) * radius;
+      return {
+        x: center + r * Math.cos(angle),
+        y: center + r * Math.sin(angle),
+      };
+    },
+    [angleStep, center, radius]
+  );
 
   // Generate SVG Polygon path string
-  const generatePolygonPath = (scores: number[]) => {
-    const points = scores.map((s, i) => {
-      const { x, y } = polarToCartesian(i, s);
-      return `${x.toFixed(2)},${y.toFixed(2)}`;
-    });
-    return `M ${points.join(' L ')} Z`;
-  };
+  const generatePolygonPath = useCallback(
+    (scores: number[]) => {
+      const points = scores.map((s, i) => {
+        const { x, y } = polarToCartesian(i, s);
+        return `${x.toFixed(2)},${y.toFixed(2)}`;
+      });
+      return `M ${points.join(' L ')} Z`;
+    },
+    [polarToCartesian]
+  );
 
   const userPath = useMemo(
     () => generatePolygonPath(pillars.map((p) => p.score)),
-    [pillars, radius]
+    [pillars, generatePolygonPath]
   );
   const benchmarkPath = useMemo(
     () => generatePolygonPath(pillars.map((p) => p.benchmark)),
-    [pillars, radius]
+    [pillars, generatePolygonPath]
   );
 
   const activePillar = useMemo(
@@ -85,7 +89,7 @@ export function FinancialHealthRadar({
   return (
     <div
       className={cn(
-        'relative flex flex-col items-center rounded-3xl border border-border bg-card/90 p-5 sm:p-6 shadow-xl backdrop-blur-xl',
+        'relative flex flex-col items-center rounded-3xl border border-border/80 bg-card/85 p-5 sm:p-6 shadow-xl backdrop-blur-xl transition-all duration-300 hover:shadow-2xl hover:border-emerald-500/30',
         className
       )}
     >
@@ -176,16 +180,15 @@ export function FinancialHealthRadar({
             className="transition-all duration-500"
           />
 
-          {/* User Score Polygon (with spring morph animation) */}
-          <motion.path
+          {/* User Score Polygon — drawn with a CSS dash-offset. */}
+          <path
+            className="sparkline-path"
+            pathLength={1}
             d={userPath}
             fill={`url(#${gradientId})`}
             stroke="#10b981"
             strokeWidth="2.5"
             strokeLinejoin="round"
-            initial={reducedMotion ? {} : { pathLength: 0, opacity: 0 }}
-            animate={{ pathLength: 1, opacity: 1 }}
-            transition={{ duration: 1, ease: 'easeOut' }}
           />
 
           {/* Interactive Vertex Nodes */}

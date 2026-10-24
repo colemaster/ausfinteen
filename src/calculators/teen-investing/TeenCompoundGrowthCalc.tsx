@@ -1,12 +1,44 @@
-import { useState } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { Card } from '@/components/ui/Card';
 import { NumberInput } from '@/components/ui/NumberInput';
 import { SliderControl } from '@/components/ui/SliderControl';
 import { StatCard } from '@/components/ui/StatCard';
 import { Badge } from '@/components/ui/Badge';
+import { QuickPresetBar, type ScenarioPreset } from '../../components/ui/QuickPresetBar';
+import { CalculatorActions } from '../../components/shared/CalculatorActions';
 import { Sparkles, TrendingUp, Percent } from 'lucide-react';
 import { useTeenProfile } from '@/context/TeenProfileContext';
 import { realReturn } from './engine';
+
+interface CompoundPreset {
+  weeklyInvestment: number;
+  startAge: number;
+  etfReturnRate: number;
+}
+
+const PRESETS: ScenarioPreset<CompoundPreset>[] = [
+  {
+    id: 'spare-change',
+    label: 'Spare Change ($10/wk)',
+    badge: '$10/wk',
+    description: 'Invest $10/week from age 16 at 8.5% historical ASX 200 return',
+    values: { weeklyInvestment: 10, startAge: 16, etfReturnRate: 8.5 },
+  },
+  {
+    id: 'weekend-job',
+    label: 'Weekend Job ($25/wk)',
+    badge: '$25/wk',
+    description: 'Invest $25/week from age 15 to build early compound momentum',
+    values: { weeklyInvestment: 25, startAge: 15, etfReturnRate: 8.5 },
+  },
+  {
+    id: 'super-saver',
+    label: 'Super Saver ($50/wk)',
+    badge: '$50/wk',
+    description: 'Invest $50/week from age 17 at 9.0% total return',
+    values: { weeklyInvestment: 50, startAge: 17, etfReturnRate: 9.0 },
+  },
+];
 
 export function TeenCompoundGrowthCalc() {
   const { profile } = useTeenProfile();
@@ -16,6 +48,23 @@ export function TeenCompoundGrowthCalc() {
   const [etfReturnRate, setEtfReturnRate] = useState<number>(8.5);
   const [showRealTerms, setShowRealTerms] = useState<boolean>(false);
   const [inflationRate, setInflationRate] = useState<number>(2.5);
+  const [activePreset, setActivePreset] = useState<string | undefined>(undefined);
+
+  const handleApplyPreset = useCallback((preset: ScenarioPreset<CompoundPreset>) => {
+    setActivePreset(preset.id);
+    if (!preset.values) return;
+    if (preset.values.weeklyInvestment !== undefined) setWeeklyInvestment(preset.values.weeklyInvestment);
+    if (preset.values.startAge !== undefined) setStartAge(preset.values.startAge);
+    if (preset.values.etfReturnRate !== undefined) setEtfReturnRate(preset.values.etfReturnRate);
+  }, []);
+
+  const handleReset = useCallback(() => {
+    setActivePreset(undefined);
+    setWeeklyInvestment(15);
+    setStartAge(profile.age);
+    setEtfReturnRate(8.5);
+    setShowRealTerms(false);
+  }, [profile.age]);
 
   const monthsTo30 = (30 - startAge) * 12;
   const monthlyEtfRate = etfReturnRate / 100 / 12;
@@ -35,6 +84,18 @@ export function TeenCompoundGrowthCalc() {
   const fvEtfReal = (weeklyInvestment * 52 / 12) * ((Math.pow(1 + monthlyEtfRealRate, monthsTo30) - 1) / monthlyEtfRealRate);
   const fvBankReal = (weeklyInvestment * 52 / 12) * ((Math.pow(1 + monthlyBankRealRate, monthsTo30) - 1) / monthlyBankRealRate);
 
+  const summaryText = useMemo(() => {
+    return [
+      '--- Teen Compound Growth Simulator Summary ---',
+      `Weekly Contribution: $${weeklyInvestment}/wk (Starts at age ${startAge}, Return: ${etfReturnRate}%)`,
+      `Total Cash Deposited by Age 30: $${Math.round(totalCashDeposited).toLocaleString()}`,
+      `Bank Savings Account at Age 30 (4.5%): $${Math.round(fvBank30).toLocaleString()}`,
+      `ASX ETF Portfolio at Age 30 (${etfReturnRate}%): $${Math.round(fvEtf30).toLocaleString()} (+$${Math.round(etfCompoundInterest).toLocaleString()} in compound growth)`,
+      `At Age 60 (45 yrs): $${Math.round((weeklyInvestment * 52 / 12) * ((Math.pow(1 + monthlyEtfRate, 45 * 12) - 1) / monthlyEtfRate)).toLocaleString()}`,
+      `Calculated via AusFinTools Teen Investing Guide`,
+    ].join('\n');
+  }, [weeklyInvestment, startAge, etfReturnRate, totalCashDeposited, fvBank30, fvEtf30, etfCompoundInterest, monthlyEtfRate]);
+
   return (
     <Card variant="glass" className="p-6 space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border pb-4">
@@ -47,10 +108,24 @@ export function TeenCompoundGrowthCalc() {
             See how investing just a few dollars a week in ASX 200 index ETFs starting at age {startAge} compounds into serious wealth!
           </p>
         </div>
-        <Badge variant="success">
-          ASX 200 ETF 8.5% Historical Return
-        </Badge>
+        <div className="flex items-center gap-2">
+          <Badge variant="success">
+            ASX 200 ETF 8.5% Historical Return
+          </Badge>
+          <CalculatorActions
+            onReset={handleReset}
+            summaryText={summaryText}
+            summaryTitle="Teen Compound Growth"
+          />
+        </div>
       </div>
+
+      <QuickPresetBar
+        presets={PRESETS}
+        activePresetId={activePreset}
+        onSelect={handleApplyPreset}
+        title="Weekly Savings Targets"
+      />
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         <div className="space-y-4">
@@ -133,18 +208,24 @@ export function TeenCompoundGrowthCalc() {
         <StatCard
           label="Total Cash Saved By Age 30"
           value={`$${Math.round(totalCashDeposited).toLocaleString()}`}
+          numericValue={Math.round(totalCashDeposited)}
+          format="currency"
           color="blue"
           subtext={`$${weeklyInvestment}/wk for ${30 - startAge} years`}
         />
         <StatCard
           label="Bank Savings Account at Age 30"
           value={`$${Math.round(showRealTerms ? fvBankReal : fvBank30).toLocaleString()}`}
+          numericValue={Math.round(showRealTerms ? fvBankReal : fvBank30)}
+          format="currency"
           color="amber"
           subtext={showRealTerms ? `At 4.5% nominal (${bankRealRate.toFixed(1)}% real)` : 'At 4.5% interest rate'}
         />
         <StatCard
           label="ASX ETF Portfolio at Age 30"
           value={`$${Math.round(showRealTerms ? fvEtfReal : fvEtf30).toLocaleString()}`}
+          numericValue={Math.round(showRealTerms ? fvEtfReal : fvEtf30)}
+          format="currency"
           color="green"
           subtext={
             showRealTerms

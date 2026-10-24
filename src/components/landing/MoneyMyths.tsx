@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react';
-import { motion, useReducedMotion } from 'motion/react';
-import { AlertTriangle, BadgeCheck, RotateCw } from 'lucide-react';
+import { AlertTriangle, BadgeCheck, RotateCw, Sparkles } from 'lucide-react';
+import { sound } from '@/lib/sound-synthesizer';
+import { cn } from '@/lib/utils';
 
 type MythSource = 'ATO' | 'Fair Work' | 'APRA' | 'RTA';
 
@@ -9,99 +10,112 @@ interface MythFact {
   myth: string;
   fact: string;
   source: MythSource;
+  tag: string;
 }
 
-/**
- * Six common Australian money myths, each paired with a short
- * September-2026-accurate fact and the authority that backs it.
- */
 const MYTHS: ReadonlyArray<MythFact> = [
   {
     id: 'super-old-people',
-    myth: '“Super is only for old people.”',
-    fact: 'Employers must pay 12% Super Guarantee on your ordinary-time earnings (12% since 1 July 2025), landing each payday under Payday Super from 1 July 2026. A median sub-$5k teen balance left invested for ~40 years can compound into tens of thousands by preservation age 60.',
+    myth: '“Super is only for people close to retirement.”',
+    fact: 'Employers must pay 12% Super Guarantee on your ordinary earnings (12% since 1 July 2025), credited directly each payday under Payday Super from 1 July 2026. A modest $5,000 teen balance invested for ~42 years can compound into upwards of $100,000+ by age 60.',
     source: 'ATO',
+    tag: '12% Super Guarantee',
   },
   {
     id: 'no-tax-under-18',
-    myth: '“Under 18s pay no tax.”',
-    fact: 'Wages get the $18,200 tax-free threshold, but a minor’s unearned income over $416 is taxed at Division 6AA penalty rates up to 45%. Quote no TFN and payers must withhold 47% from the top dollar.',
+    myth: '“Teens and under-18s don’t pay any tax.”',
+    fact: 'Wages get the standard $18,200 tax-free threshold, but unearned investment income over $416 without an excepted trust is taxed at Division 6AA penalty rates up to 45%. Quoting no TFN also forces employers to withhold 47% from the top dollar.',
     source: 'ATO',
+    tag: '$18,200 Threshold',
   },
   {
     id: 'help-free-money',
-    myth: '“HELP is free money.”',
-    fact: 'HELP debt was indexed 2.8% on 1 June 2026, so balances grow even while you study. Compulsory repayments start at $69,528 repayment income in 2026–27 — 15¢ in the dollar above that.',
+    myth: '“HELP/HECS is free money you can ignore.”',
+    fact: 'HELP balances index annually on 1 June based on the lower of CPI or WPI (2.8% on 1 June 2026). Under the 2026 Universities Accord, compulsory repayments begin at $69,528 repayment income — deducting 15¢ in the dollar above that threshold.',
     source: 'ATO',
+    tag: '$69,528 HELP Cap',
   },
   {
     id: 'bnpl-harmless',
-    myth: '“Buy now, pay later is harmless.”',
-    fact: 'Missed BNPL instalments stack late fees that can quickly exceed the original purchase, and major providers now feed repayment history into Australia’s credit reporting system. That footprint can count against future car or home loan applications.',
+    myth: '“Buy Now, Pay Later doesn’t affect credit or loans.”',
+    fact: 'Missed BNPL instalments incur compounding late fees, and major Australian providers now report repayment histories into comprehensive credit reporting (CCR). A missed $20 payment can impair your ability to secure a car or home loan years later.',
     source: 'APRA',
+    tag: 'Credit File Risk',
   },
   {
     id: 'money-muling',
-    myth: '“Money muling is easy cash.”',
-    fact: 'Letting someone funnel cash through your account is money muling — a money-laundering offence that can bring a criminal record and frozen funds. Banks routinely shut down mule accounts, leaving you blacklisted from opening new ones.',
+    myth: '“Letting someone transfer money through my account is harmless.”',
+    fact: 'Letting strangers funnel funds through your account is money muling — a criminal money-laundering felony under Criminal Code Act 1995. Banks immediately freeze funds and report your details to AUSTRAC, leaving you blacklisted across Australian banks.',
     source: 'APRA',
+    tag: 'AML/CTF Felony',
   },
   {
     id: 'renting-deposit',
-    myth: '“Renting needs a 20% deposit.”',
-    fact: 'You don’t need a 20% deposit to rent — you need bond plus advance rent. In Queensland general tenancies, the RTA caps bond at 4 weeks rent and it must be lodged with the RTA, not handed to the landlord.',
+    myth: '“You need a 20% mortgage deposit before renting.”',
+    fact: 'You don’t need a home mortgage deposit to rent. In Queensland, general tenancy bonds are capped by law at 4 weeks rent and must strictly be lodged with the RTA (Residential Tenancies Authority), never transferred into a private landlord’s personal account.',
     source: 'RTA',
+    tag: 'RTA Bond Rules',
   },
 ];
 
 interface MythCardProps {
   entry: MythFact;
   flipped: boolean;
-  reducedMotion: boolean;
   onToggle: (id: string) => void;
 }
 
-function MythCard({ entry, flipped, reducedMotion, onToggle }: MythCardProps) {
+function MythCard({ entry, flipped, onToggle }: MythCardProps) {
   const faceBase =
-    'flex h-full w-full flex-col justify-between gap-3 rounded-2xl border p-4 text-left sm:p-5';
+    'flex h-full w-full flex-col justify-between gap-3.5 rounded-2xl border p-5 text-left shadow-lg backdrop-blur-md transition-all duration-300';
 
   const front = (
-    <span className={`${faceBase} border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900`}>
-      <span className="space-y-2">
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-rose-100 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-rose-700 dark:bg-rose-950 dark:text-rose-300">
-          <AlertTriangle aria-hidden="true" className="h-3.5 w-3.5" />
-          Myth
+    <span className={cn(faceBase, 'border-border/80 bg-gradient-to-b from-card via-card/95 to-card/80 hover:border-rose-500/40 hover:shadow-xl dark:border-rose-500/20')}>
+      <span className="space-y-2.5">
+        <span className="flex items-center justify-between gap-2">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-rose-500/30 bg-rose-500/10 px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-rose-600 dark:text-rose-400">
+            <AlertTriangle aria-hidden="true" className="h-3.5 w-3.5" />
+            Common Myth
+          </span>
+          <span className="font-mono text-[10px] font-bold text-muted-foreground uppercase">
+            {entry.tag}
+          </span>
         </span>
-        <span className="block text-base font-bold leading-snug text-slate-900 dark:text-white">
+        <span className="block text-base font-extrabold leading-snug text-foreground">
           {entry.myth}
         </span>
       </span>
-      <span className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-500 dark:text-slate-400">
-        <RotateCw aria-hidden="true" className="h-3.5 w-3.5" />
-        Tap to reveal the fact
+      <span className="flex items-center justify-between border-t border-border/50 pt-2.5 text-xs font-bold text-muted-foreground group-hover:text-primary">
+        <span className="flex items-center gap-1.5 text-rose-600 dark:text-rose-400">
+          <RotateCw aria-hidden="true" className="h-3.5 w-3.5" />
+          Click to reveal verified fact
+        </span>
+        <span className="text-[10px] opacity-75 font-mono">Source: {entry.source}</span>
       </span>
     </span>
   );
 
   const back = (
-    <span className={`${faceBase} border-emerald-200 bg-emerald-50 dark:border-emerald-900 dark:bg-emerald-950/50`}>
-      <span className="space-y-2">
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-600 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-white dark:bg-emerald-500 dark:text-emerald-950">
-          <BadgeCheck aria-hidden="true" className="h-3.5 w-3.5" />
-          Fact
+    <span className={cn(faceBase, 'border-emerald-500/40 bg-gradient-to-b from-emerald-500/15 via-card to-card text-foreground shadow-xl dark:border-emerald-500/30')}>
+      <span className="space-y-2.5">
+        <span className="flex items-center justify-between gap-2">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/40 bg-emerald-500/20 px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+            <BadgeCheck aria-hidden="true" className="h-3.5 w-3.5" />
+            Statutory Fact
+          </span>
+          <span className="rounded-full border border-emerald-500/30 bg-card/60 px-2 py-0.5 font-mono text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
+            {entry.source} Verified
+          </span>
         </span>
-        <span className="block text-sm leading-relaxed text-slate-800 dark:text-slate-100">
+        <span className="block text-xs sm:text-sm leading-relaxed text-foreground/90 font-medium">
           {entry.fact}
         </span>
       </span>
-      <span className="flex items-center justify-between gap-2">
-        <span className="inline-flex items-center rounded-full bg-white px-2.5 py-1 text-[11px] font-semibold text-slate-600 ring-1 ring-inset ring-slate-200 dark:bg-slate-900 dark:text-slate-300 dark:ring-slate-700">
-          Source: {entry.source}
-        </span>
-        <span className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-700 dark:text-emerald-300">
+      <span className="flex items-center justify-between border-t border-emerald-500/20 pt-2.5 text-xs font-bold text-emerald-700 dark:text-emerald-300">
+        <span className="flex items-center gap-1.5">
           <RotateCw aria-hidden="true" className="h-3.5 w-3.5" />
-          Flip back
+          Flip card
         </span>
+        <span className="text-[10px] text-muted-foreground font-mono">2026-27 Accurate</span>
       </span>
     </span>
   );
@@ -109,42 +123,32 @@ function MythCard({ entry, flipped, reducedMotion, onToggle }: MythCardProps) {
   return (
     <button
       type="button"
-      onClick={() => onToggle(entry.id)}
+      onClick={() => {
+        sound.playClick();
+        onToggle(entry.id);
+      }}
       aria-pressed={flipped}
       aria-label={`${flipped ? 'Fact' : 'Myth'}: ${entry.myth} Activate to ${flipped ? 'show the myth' : 'reveal the fact'}.`}
-      className="relative min-h-[280px] w-full rounded-2xl text-left shadow-sm transition-shadow duration-200 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 sm:min-h-[260px] dark:focus-visible:ring-offset-slate-950"
+      className="group relative min-h-[280px] w-full rounded-2xl text-left transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 sm:min-h-[260px]"
       style={{ perspective: '1200px' }}
     >
-      {reducedMotion ? (
-        flipped ? back : front
-      ) : (
-        <motion.span
-          className="relative block h-full min-h-[inherit] w-full"
-          style={{ transformStyle: 'preserve-3d' }}
-          initial={false}
-          animate={{ rotateY: flipped ? 180 : 0 }}
-          transition={{ type: 'spring', stiffness: 260, damping: 24 }}
+      <span
+        className="flip-3d relative block h-full min-h-[inherit] w-full"
+        data-flipped={flipped}
+      >
+        <span
+          aria-hidden={flipped}
+          className="flip-face absolute inset-0 block"
         >
-          <span
-            aria-hidden={flipped}
-            className="absolute inset-0 block"
-            style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}
-          >
-            {front}
-          </span>
-          <span
-            aria-hidden={!flipped}
-            className="absolute inset-0 block"
-            style={{
-              backfaceVisibility: 'hidden',
-              WebkitBackfaceVisibility: 'hidden',
-              transform: 'rotateY(180deg)',
-            }}
-          >
-            {back}
-          </span>
-        </motion.span>
-      )}
+          {front}
+        </span>
+        <span
+          aria-hidden={!flipped}
+          className="flip-face flip-face-back absolute inset-0 block"
+        >
+          {back}
+        </span>
+      </span>
     </button>
   );
 }
@@ -153,15 +157,7 @@ export interface MoneyMythsProps {
   className?: string;
 }
 
-/**
- * MoneyMyths — six tap-to-flip myth-vs-fact cards for the landing page.
- *
- * Each card is a keyboard-accessible button (`aria-pressed` reflects
- * flipped state). Motion users get a `rotateY` 3D flip; users who prefer
- * reduced motion get a simple front/back swap with no animation.
- */
 export function MoneyMyths({ className }: MoneyMythsProps) {
-  const reducedMotion = useReducedMotion() ?? false;
   const [flippedIds, setFlippedIds] = useState<ReadonlySet<string>>(() => new Set());
 
   const handleToggle = useCallback((id: string) => {
@@ -179,29 +175,30 @@ export function MoneyMyths({ className }: MoneyMythsProps) {
   return (
     <section
       aria-labelledby="money-myths-heading"
-      className={`w-full ${className ?? ''}`}
+      className={cn('relative w-full space-y-5', className)}
     >
-      <div className="mb-5 text-center">
-        <p className="text-xs font-bold uppercase tracking-widest text-emerald-600 dark:text-emerald-400">
-          Myth vs fact
-        </p>
+      <div className="text-center sm:text-left space-y-1">
+        <span className="inline-flex items-center gap-1 rounded-full border border-rose-500/30 bg-rose-500/10 px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-widest text-rose-600 dark:text-rose-400">
+          <Sparkles className="h-3 w-3" />
+          Australian Reality Check
+        </span>
         <h2
           id="money-myths-heading"
-          className="mt-1 text-xl font-bold text-slate-900 sm:text-2xl dark:text-white"
+          className="text-xl sm:text-2xl font-extrabold tracking-tight text-foreground"
         >
-          Money myths, busted
+          6 Common Australian Money Myths Debunked
         </h2>
-        <p className="mx-auto mt-1 max-w-xl text-sm text-slate-600 dark:text-slate-400">
-          Tap any card to flip it. Facts current as at September 2026.
+        <p className="text-xs sm:text-sm text-muted-foreground max-w-2xl">
+          Click any card to flip and reveal statutory guidance sourced straight from the ATO, APRA, Fair Work and the RTA.
         </p>
       </div>
+
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {MYTHS.map((entry) => (
           <MythCard
             key={entry.id}
             entry={entry}
             flipped={flippedIds.has(entry.id)}
-            reducedMotion={reducedMotion}
             onToggle={handleToggle}
           />
         ))}

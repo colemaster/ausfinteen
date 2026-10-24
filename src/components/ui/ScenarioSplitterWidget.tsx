@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
-import { motion, useReducedMotion } from 'motion/react';
 import { Sparkles, SlidersHorizontal } from 'lucide-react';
+import { sound } from '@/lib/sound-synthesizer';
 
 interface ScenarioSplitterWidgetProps {
   leftTitle?: string;
@@ -24,14 +24,53 @@ export function ScenarioSplitterWidget({
   rightBgGradient = 'from-emerald-950 via-primary/30 to-violet-950',
 }: ScenarioSplitterWidgetProps) {
   const [splitPos, setSplitPos] = useState(50); // 0 to 100%
+  const [isDragging, setIsDragging] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const reducedMotion = useReducedMotion() ?? false;
 
-  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+  const updateSplit = (clientX: number) => {
     if (!containerRef.current) return;
     const rect = containerRef.current.getBoundingClientRect();
-    const x = Math.max(0, Math.min(rect.width, e.clientX - rect.left));
+    const x = Math.max(0, Math.min(rect.width, clientX - rect.left));
     setSplitPos((x / rect.width) * 100);
+  };
+
+  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    setIsDragging(true);
+    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+    updateSplit(e.clientX);
+  };
+
+  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (isDragging || e.buttons === 1) {
+      updateSplit(e.clientX);
+    }
+  };
+
+  const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    setIsDragging(false);
+    try {
+      (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId);
+    } catch {}
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'ArrowLeft') {
+      e.preventDefault();
+      setSplitPos((p) => Math.max(0, p - 5));
+      sound.playClick();
+    } else if (e.key === 'ArrowRight') {
+      e.preventDefault();
+      setSplitPos((p) => Math.min(100, p + 5));
+      sound.playClick();
+    } else if (e.key === 'Home') {
+      e.preventDefault();
+      setSplitPos(0);
+      sound.playClick();
+    } else if (e.key === 'End') {
+      e.preventDefault();
+      setSplitPos(100);
+      sound.playClick();
+    }
   };
 
   return (
@@ -43,14 +82,23 @@ export function ScenarioSplitterWidget({
         </div>
         <div className="text-[11px] text-muted-foreground flex items-center gap-1">
           <SlidersHorizontal className="w-3.5 h-3.5" />
-          <span>Drag slider to compare</span>
+          <span>Drag slider or use arrow keys</span>
         </div>
       </div>
 
       <div
         ref={containerRef}
+        role="slider"
+        aria-label="Scenario comparison slider"
+        aria-valuenow={Math.round(splitPos)}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        tabIndex={0}
+        onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
-        className="relative h-64 sm:h-72 w-full rounded-3xl overflow-hidden border border-border shadow-2xl select-none cursor-ew-resize group"
+        onPointerUp={handlePointerUp}
+        onKeyDown={handleKeyDown}
+        className="relative h-64 sm:h-72 w-full rounded-3xl overflow-hidden border border-border shadow-2xl select-none cursor-ew-resize group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       >
         {/* Right Card Viewport (Layer 1 - background) */}
         <div className={`absolute inset-0 bg-gradient-to-br ${rightBgGradient} text-white p-6 sm:p-8 flex flex-col justify-between`}>
@@ -88,16 +136,14 @@ export function ScenarioSplitterWidget({
         </div>
 
         {/* Vertical Splitter Handle */}
-        <motion.div
-          className="absolute top-0 bottom-0 w-1 bg-gradient-to-b from-primary via-emerald-400 to-amber-400 shadow-[0_0_15px_rgba(16,185,129,0.8)] z-30"
+        <div
+          className="absolute top-0 bottom-0 w-1 bg-gradient-to-b from-primary via-emerald-400 to-amber-400 shadow-[0_0_15px_rgba(16,185,129,0.8)] z-30 pointer-events-none"
           style={{ left: `${splitPos}%` }}
-          animate={reducedMotion ? {} : { scaleY: [1, 1.02, 1] }}
-          transition={{ repeat: Infinity, duration: 3 }}
         >
           <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-9 h-9 rounded-full bg-card border-2 border-primary text-primary flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform">
             <SlidersHorizontal className="w-4 h-4" />
           </div>
-        </motion.div>
+        </div>
       </div>
     </div>
   );

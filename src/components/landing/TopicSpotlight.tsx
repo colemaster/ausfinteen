@@ -9,11 +9,9 @@ const ROTATE_INTERVAL_MS = 6000;
 
 /** Observe the prefers-reduced-motion media query (autorotate stays off when set). */
 function usePrefersReducedMotion(): boolean {
-  const [reduced, setReduced] = useState<boolean>((): boolean =>
-    typeof window !== 'undefined' && typeof window.matchMedia === 'function'
-      ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
-      : false,
-  );
+  // Always start false so hydration matches the prerendered HTML; the effect
+  // below reads the live media query and updates immediately after mount.
+  const [reduced, setReduced] = useState<boolean>(false);
 
   useEffect((): (() => void) => {
     if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
@@ -88,7 +86,7 @@ export function TopicSpotlight() {
         if (e.key === 'ArrowLeft') goPrev();
         if (e.key === 'ArrowRight') goNext();
       }}
-      className="w-full rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6 dark:border-slate-800 dark:bg-slate-900"
+      className="reveal-up w-full rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6 dark:border-slate-800 dark:bg-slate-900"
     >
       {/* Header + manual controls */}
       <div className="mb-3 flex items-start justify-between gap-3">
@@ -133,12 +131,13 @@ export function TopicSpotlight() {
 
       {/* Slide */}
       <article
+        key={current.topic.id}
         role="group"
         aria-roledescription="slide"
         aria-label={`${(index % total) + 1} of ${total}`}
         aria-live="polite"
         aria-atomic="true"
-        className="min-w-0 rounded-xl border border-slate-200 bg-slate-50 p-3 sm:p-4 dark:border-slate-700 dark:bg-slate-800/60"
+        className="animate-fade-in min-w-0 rounded-xl border border-slate-200 bg-slate-50 p-3 sm:p-4 dark:border-slate-700 dark:bg-slate-800/60"
       >
         <span className="inline-flex max-w-full items-center gap-1 rounded-full border border-violet-500/30 bg-violet-500/15 px-2.5 py-0.5 text-[11px] font-bold text-violet-700 dark:text-violet-300">
           {current.moduleEmoji !== '' && (

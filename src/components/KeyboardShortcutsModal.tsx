@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from '@/lib/router';
 import { Keyboard, X, Sparkles } from 'lucide-react';
 import { sound } from '@/lib/sound-synthesizer';
-import { motion, AnimatePresence } from 'motion/react';
 
 interface ShortcutGroup {
   name: string;
@@ -93,19 +92,16 @@ export function KeyboardShortcutsModal() {
   ];
 
   return (
-    <AnimatePresence>
+    <>
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
           <div className="fixed inset-0" onClick={() => setOpen(false)} />
 
-          <motion.div
+          <div
             role="dialog"
             aria-modal="true"
             aria-label="Keyboard Shortcuts"
-            initial={{ opacity: 0, scale: 0.95, y: 10 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 10 }}
-            className="relative w-full max-w-xl rounded-3xl bg-card border border-border shadow-2xl p-6 space-y-6 z-10 overflow-hidden"
+            className="animate-pop-in relative w-full max-w-xl rounded-3xl bg-card border border-border shadow-2xl p-6 space-y-6 z-10 overflow-hidden"
           >
             <div className="flex items-center justify-between border-b border-border/80 pb-4">
               <div className="flex items-center gap-2.5">
@@ -166,9 +162,9 @@ export function KeyboardShortcutsModal() {
                 Got It
               </button>
             </div>
-          </motion.div>
+          </div>
         </div>
       )}
-    </AnimatePresence>
+    </>
   );
 }

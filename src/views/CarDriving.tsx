@@ -3,6 +3,7 @@ import { TopicGuideAccordion } from '@/components/shared/TopicGuideAccordion';
 import { FirstCarCostCalculator } from '@/calculators/teen-car/FirstCarCostCalculator';
 import { EvVsPetrolCalculator } from '@/calculators/teen-car/EvVsPetrolCalculator';
 import { WebReferenceLink } from '@/components/shared/WebReferenceLink';
+import { PrintShareFAB } from '@/components/shared/PrintShareFAB';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Tabs } from '@/components/ui/Tabs';
@@ -122,6 +123,7 @@ export function CarDriving() {
           ]}
           activeTab={tab}
           onChange={setTab}
+          sticky={true}
         />
 
         {tab === 'licence' && (
@@ -222,15 +224,15 @@ export function CarDriving() {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div className="rounded-xl border border-border bg-card p-4 text-center">
                 <div className="text-[10px] uppercase tracking-wide text-muted-foreground font-semibold">E10 (cheapest petrol)</div>
-                <div className="text-2xl font-bold font-mono text-foreground">$1.94/L</div>
+                <div className="text-2xl font-bold font-mono text-foreground">$2.30/L</div>
               </div>
               <div className="rounded-xl border border-border bg-card p-4 text-center">
                 <div className="text-[10px] uppercase tracking-wide text-muted-foreground font-semibold">Unleaded 91</div>
-                <div className="text-2xl font-bold font-mono text-foreground">$1.96/L</div>
+                <div className="text-2xl font-bold font-mono text-foreground">$2.34/L</div>
               </div>
               <div className="rounded-xl border border-border bg-card p-4 text-center">
                 <div className="text-[10px] uppercase tracking-wide text-muted-foreground font-semibold">Premium 98</div>
-                <div className="text-2xl font-bold font-mono text-foreground">$2.21/L</div>
+                <div className="text-2xl font-bold font-mono text-foreground">$2.59/L</div>
               </div>
             </div>
 
@@ -400,6 +402,8 @@ export function CarDriving() {
           </p>
         </Card>
       </div>
+
+      <PrintShareFAB />
     </div>
   );
 }

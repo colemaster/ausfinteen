@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@import "tw-animate-css";
 @custom-variant dark (&:where(.dark, .dark *));
 
 @layer base {
@@ -477,6 +476,8 @@
   }
   .aura-orb-1,
   .aura-orb-2,
+  .float-slow,
+  .float-art,
   .animate-ticker,
   .animate-text-shimmer,
   .animate-border-beam,
@@ -503,6 +504,8 @@
 :root[data-motion='reduce'] .stagger-children > *,
 :root[data-motion='reduce'] .aura-orb-1,
 :root[data-motion='reduce'] .aura-orb-2,
+:root[data-motion='reduce'] .float-slow,
+:root[data-motion='reduce'] .float-art,
 :root[data-motion='reduce'] .animate-ticker,
 :root[data-motion='reduce'] .animate-text-shimmer,
 :root[data-motion='reduce'] .animate-border-beam {
@@ -713,6 +716,71 @@
   }
 }
 
+.glass-panel {
+  background: color-mix(in oklab, var(--card) 88%, transparent);
+  border: 1px solid color-mix(in oklab, var(--border) 75%, transparent);
+  box-shadow: 0 4px 20px -2px color-mix(in oklab, var(--foreground) 6%, transparent),
+              inset 0 1px 0 0 color-mix(in oklab, white 15%, transparent);
+  contain: paint;
+  transition: background-color var(--motion-base) var(--ease-out),
+    border-color var(--motion-base) var(--ease-out),
+    box-shadow var(--motion-base) var(--ease-out);
+}
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass-panel {
+    background: color-mix(in oklab, var(--card) 70%, transparent);
+    -webkit-backdrop-filter: blur(20px) saturate(175%);
+    backdrop-filter: blur(20px) saturate(175%);
+  }
+}
+
+@utility border-luminescent {
+  border-color: color-mix(in oklab, var(--border) 70%, var(--primary) 30%);
+  box-shadow: 0 0 12px -2px oklch(var(--accent-l) var(--accent-c) var(--accent-h) / 0.2);
+}
+
+@utility border-luminescent-active {
+  border-color: color-mix(in oklab, var(--border) 45%, var(--primary) 55%);
+  box-shadow: 0 0 16px -1px oklch(var(--accent-l) var(--accent-c) var(--accent-h) / 0.35);
+}
+
+.border-luminescent-hover {
+  transition: border-color var(--motion-base) var(--ease-out),
+              box-shadow var(--motion-base) var(--ease-out);
+}
+.border-luminescent-hover:hover {
+  border-color: color-mix(in oklab, var(--border) 45%, var(--primary) 55%);
+  box-shadow: 0 0 16px -1px oklch(var(--accent-l) var(--accent-c) var(--accent-h) / 0.35);
+}
+
+.tactile-press {
+  transition: transform var(--motion-instant) var(--ease-out),
+              box-shadow var(--motion-fast) var(--ease-out);
+}
+.tactile-press:active {
+  transform: scale(0.96) translateY(1px);
+}
+
+.focus-luminescent {
+  outline: none;
+  transition: border-color var(--motion-fast) var(--ease-out),
+              box-shadow var(--motion-fast) var(--ease-out);
+}
+.focus-luminescent:focus-visible {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px oklch(var(--accent-l) var(--accent-c) var(--accent-h) / 0.25),
+              0 0 16px -2px oklch(var(--accent-l) var(--accent-c) var(--accent-h) / 0.3);
+}
+
+@utility shadow-soft {
+  box-shadow: 0 2px 8px -2px color-mix(in oklab, var(--foreground) 6%, transparent),
+              0 6px 16px -4px color-mix(in oklab, var(--foreground) 4%, transparent);
+}
+@utility shadow-glass {
+  box-shadow: 0 8px 32px -8px color-mix(in oklab, var(--foreground) 8%, transparent),
+              inset 0 1px 0 0 color-mix(in oklab, white 20%, transparent);
+}
+
 /* 2027: smooth popover / dialog backdrop (pairs with Popover API) */
 ::backdrop {
   background: oklch(0 0 0 / 0.55);
@@ -732,7 +800,8 @@
     border: 1px solid CanvasText;
   }
   .aura-orb-1,
-  .aura-orb-2 {
+  .aura-orb-2,
+  .light-sheet {
     display: none;
   }
 }
@@ -797,6 +866,404 @@ p {
   -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
   mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
 }
+
+/* --- 2027 interaction motion layer ---------------------------------------
+ * These replace per-component JavaScript animations (and their runtime cost)
+ * with compositor-friendly CSS. Only transform / opacity / filter are animated,
+ * and every keyframe collapses under the shared reduced-motion switch.
+ */
+@keyframes pop-in {
+  from { opacity: 0; transform: scale(0.94) translateY(4px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes slide-down-in {
+  from { opacity: 0; transform: translateY(-6px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.animate-pop-in {
+  animation: pop-in var(--motion-base) var(--ease-out) both;
+}
+.animate-fade-in {
+  animation: fade-in var(--motion-base) var(--ease-out) both;
+}
+.animate-rise-in {
+  animation: rise-in var(--motion-medium) var(--ease-out) both;
+}
+.animate-scale-in {
+  animation: scale-in var(--motion-base) var(--ease-out) both;
+}
+.animate-slide-down-in {
+  animation: slide-down-in var(--motion-fast) var(--ease-out) both;
+}
+
+/* Sparkline: draw the stroke once with a dash-offset tween. */
+@keyframes sparkline-draw {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+@keyframes sparkline-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.sparkline-path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: sparkline-draw 0.9s var(--ease-out) 0.05s forwards;
+}
+.sparkline-area {
+  animation: sparkline-fade 0.6s var(--ease-out) both;
+}
+
+/* Normalised SVG line drawing. Paths opt in with pathLength="1", so the dash
+   units are independent of the actual geometry and the animation stays on the
+   compositor-friendly stroke properties. */
+@keyframes svg-draw {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+@keyframes dot-pop {
+  from { opacity: 0; transform: scale(0); }
+  to { opacity: 1; transform: scale(1); }
+}
+.svg-draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: svg-draw 1.8s var(--ease-out) both;
+}
+.svg-draw-late { animation-delay: 0.3s; }
+.svg-fade { animation: sparkline-fade 0.8s var(--ease-out) 1.2s both; }
+.svg-dot {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: dot-pop 0.3s var(--ease-out) both;
+}
+
+/* Width meters: animate the initial fill with a transform (cheap), then let
+   width changes transition so sliders stay smooth. */
+@keyframes bar-grow {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+.bar-fill {
+  transform-origin: left center;
+  animation: bar-grow 0.8s var(--ease-out) both;
+  transition: width var(--motion-slower) var(--ease-out);
+}
+
+/* CSS-only 3D flip card. */
+.flip-3d {
+  transform-style: preserve-3d;
+  transition: transform var(--motion-slower) cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.flip-3d[data-flipped='true'] {
+  transform: rotateY(180deg);
+}
+.flip-face {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.flip-face-back {
+  transform: rotateY(180deg);
+}
+
+/* Scroll-linked reveal for long-form sections. Unsupported browsers simply
+   render the final state, so nothing is hidden without JS. */
+@supports (animation-timeline: view()) {
+  .reveal-up {
+    animation: rise-in linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 55%;
+  }
+  .reveal-scale {
+    animation: scale-in linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 50%;
+  }
+  .reveal-left {
+    animation: reveal-left linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 55%;
+  }
+  .reveal-line {
+    transform-origin: top;
+    animation: line-draw linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 60%;
+  }
+  /* Every child gets its own view timeline, so grids reveal as each row
+     enters instead of all at once. */
+  .reveal-stagger > * {
+    animation: rise-in linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 55%;
+  }
+}
+@keyframes reveal-left {
+  from { opacity: 0; transform: translateX(-16px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes line-draw {
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
+}
+
+/* A single light sweep across a card on hover. Pure transform, no repaint of
+   the card background, and pointer-coarse devices never trigger it. */
+.sheen {
+  position: relative;
+  isolation: isolate;
+}
+.sheen::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    105deg,
+    transparent 35%,
+    color-mix(in oklab, white 22%, transparent) 48%,
+    transparent 62%
+  );
+  transform: translateX(-130%);
+  transition: transform 0.7s var(--ease-out);
+  opacity: 0;
+}
+@media (hover: hover) {
+  .sheen:hover::after {
+    transform: translateX(130%);
+    opacity: 1;
+  }
+}
+
+/* Cursor-tracked glow. Components write --glow-x / --glow-y directly from a
+   pointer handler, so no React state or re-render is involved. */
+.cursor-glow::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    360px circle at var(--glow-x, 50%) var(--glow-y, 50%),
+    var(--glow-color, oklch(0.65 0.15 250 / 0.16)),
+    transparent 65%
+  );
+  opacity: 0;
+  transition: opacity var(--motion-base) var(--ease-out);
+}
+@media (hover: hover) {
+  .cursor-glow:hover::before {
+    opacity: 1;
+  }
+}
+
+/* Animated mesh gradient for hero surfaces. Two pseudo-layers drift in
+   opposite directions on the compositor — no canvas, no JS loop. */
+@keyframes mesh-drift-a {
+  0%, 100% { transform: translate3d(-4%, -2%, 0) rotate(0deg) scale(1); }
+  50% { transform: translate3d(4%, 3%, 0) rotate(8deg) scale(1.08); }
+}
+@keyframes mesh-drift-b {
+  0%, 100% { transform: translate3d(3%, 2%, 0) rotate(0deg) scale(1.05); }
+  50% { transform: translate3d(-3%, -3%, 0) rotate(-6deg) scale(1); }
+}
+.mesh-aura {
+  position: absolute;
+  inset: -20%;
+  pointer-events: none;
+  overflow: hidden;
+  border-radius: inherit;
+}
+.mesh-aura::before,
+.mesh-aura::after {
+  content: '';
+  position: absolute;
+  width: 70%;
+  height: 70%;
+  border-radius: 50%;
+  filter: blur(70px);
+  will-change: transform;
+}
+.mesh-aura::before {
+  top: -10%;
+  left: 5%;
+  background: radial-gradient(circle, oklch(var(--accent-l) var(--accent-c) var(--accent-h) / 0.18), transparent 70%);
+  animation: mesh-drift-a 22s ease-in-out infinite;
+}
+.mesh-aura::after {
+  right: 0;
+  bottom: -15%;
+  background: radial-gradient(circle, oklch(0.7 0.15 195 / 0.13), transparent 70%);
+  animation: mesh-drift-b 28s ease-in-out infinite;
+}
+
+/* Faint dot grid used behind the hero copy. Masked so it dissolves into the
+   page background rather than ending on a hard edge. */
+.hero-grid {
+  background-image: radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0);
+  background-size: 26px 26px;
+  opacity: 0.08;
+  -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, black, transparent 75%);
+  mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, black, transparent 75%);
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-pop-in,
+  .animate-fade-in,
+  .animate-rise-in,
+  .animate-scale-in,
+  .animate-slide-down-in,
+  .sparkline-path,
+  .sparkline-area,
+  .svg-draw,
+  .svg-fade,
+  .svg-dot,
+  .bar-fill,
+  .mesh-aura::before,
+  .mesh-aura::after {
+    animation: none !important;
+  }
+  .sparkline-path { stroke-dashoffset: 0; }
+  .svg-draw { stroke-dashoffset: 0; }
+  .sheen::after { display: none; }
+  .reveal-up,
+  .reveal-scale,
+  .reveal-left,
+  .reveal-line,
+  .reveal-stagger > * { animation: none !important; }
+  .flip-3d { transition: none !important; }
+}
+:root[data-motion='reduce'] .animate-pop-in,
+:root[data-motion='reduce'] .animate-fade-in,
+:root[data-motion='reduce'] .animate-rise-in,
+:root[data-motion='reduce'] .animate-scale-in,
+:root[data-motion='reduce'] .animate-slide-down-in,
+:root[data-motion='reduce'] .sparkline-path,
+:root[data-motion='reduce'] .sparkline-area,
+:root[data-motion='reduce'] .svg-draw,
+:root[data-motion='reduce'] .svg-fade,
+:root[data-motion='reduce'] .svg-dot,
+:root[data-motion='reduce'] .bar-fill,
+:root[data-motion='reduce'] .mesh-aura::before,
+:root[data-motion='reduce'] .mesh-aura::after,
+:root[data-motion='reduce'] .reveal-up,
+:root[data-motion='reduce'] .reveal-scale,
+:root[data-motion='reduce'] .reveal-left,
+:root[data-motion='reduce'] .reveal-line,
+:root[data-motion='reduce'] .reveal-stagger > * {
+  animation: none !important;
+}
+:root[data-motion='reduce'] .sparkline-path { stroke-dashoffset: 0; }
+:root[data-motion='reduce'] .svg-draw { stroke-dashoffset: 0; }
+:root[data-motion='reduce'] .flip-3d { transition: none !important; }
+
+/* Static 3D tilt card. Pointer handlers only update custom properties. */
+.tilt-card {
+  transform: perspective(1000px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+  transform-style: preserve-3d;
+  transition:
+    transform var(--motion-medium) var(--ease-out),
+    border-color var(--motion-base) var(--ease-out),
+    box-shadow var(--motion-base) var(--ease-out);
+  will-change: transform;
+}
+.tilt-glare {
+  opacity: var(--glare-o, 0);
+  transition: opacity var(--motion-base) var(--ease-out);
+  background: radial-gradient(
+    600px circle at var(--glare-x, 50%) var(--glare-y, 50%),
+    color-mix(in oklab, var(--glow-color, oklch(0.65 0.15 250)) 20%, transparent),
+    transparent 40%
+  );
+}
+.tilt-depth {
+  transform: translateZ(20px);
+}
+@media (hover: none), (prefers-reduced-motion: reduce) {
+  .tilt-card {
+    transform: none;
+    will-change: auto;
+  }
+  .tilt-depth {
+    transform: none;
+  }
+}
+:root[data-motion='reduce'] .tilt-card {
+  transform: none;
+}
+
+/* Magnetic hover: pointer handler only writes --mag-x / --mag-y. */
+.magnetic-button {
+  transform: translate3d(var(--mag-x, 0px), var(--mag-y, 0px), 0);
+  transition:
+    transform var(--motion-medium) var(--ease-out),
+    color var(--motion-fast) var(--ease-out),
+    background-color var(--motion-fast) var(--ease-out),
+    border-color var(--motion-fast) var(--ease-out);
+}
+@media (hover: none), (prefers-reduced-motion: reduce) {
+  .magnetic-button {
+    transform: none;
+  }
+}
+:root[data-motion='reduce'] .magnetic-button {
+  transform: none;
+}
+
+.grid-beam {
+  left: var(--beam-x, -1000px);
+  top: var(--beam-y, -1000px);
+  opacity: var(--beam-opacity, 0);
+  transform: translate3d(-50%, -50%, 0);
+  filter: blur(30px);
+  transition: opacity var(--motion-slow) var(--ease-out);
+  will-change: transform, opacity;
+}
+
+@keyframes float-slow {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(0, -8px, 0); }
+}
+.float-slow {
+  animation: float-slow 4s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* Floating artwork with an optional resting rotation baked into the keyframes
+   (a transform animation would otherwise override a Tailwind rotate class). */
+@keyframes float-art {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(var(--float-rotate, 0deg)); }
+  50% {
+    transform: translate3d(0, var(--float-y, -8px), 0)
+      rotate(calc(var(--float-rotate, 0deg) + var(--float-rotate-delta, 0deg)));
+  }
+}
+.float-art {
+  animation: float-art var(--float-duration, 4.5s) ease-in-out infinite;
+  will-change: transform;
+}
+
+.celebration-arc {
+  transition: stroke-dashoffset 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .celebration-arc { transition: none; }
+}
+:root[data-motion='reduce'] .celebration-arc { transition: none; }
 
 /* 2030: luminescent gradient text shimmer */
 @keyframes shimmer-text {
@@ -870,6 +1337,382 @@ dialog[open] {
   }
 }
 
+/* ============================================================================
+   DESIGN UPLIFT — Shading, Graphics & Animations (2030)
+   -----------------------------------------------------------------------------
+   Richer depth, decorative graphics and compositor-friendly motion layered on
+   top of the existing OKLCH token system. Every animation collapses under the
+   shared reduced-motion switch (prefers-reduced-motion / data-motion='reduce').
+   ============================================================================ */
+
+/* --- Shading: depth layers ---------------------------------------------------
+   Cards get a specular "lit from above" highlight plus a soft drop shadow,
+   which reads as physical depth without increasing border weight. */
+@utility card-depth {
+  position: relative;
+  overflow: hidden;
+}
+@utility card-depth-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  z-index: 0;
+}
+@utility card-specular {
+  /* Top-left specular "lit" edge — gives cards a rounded, lit-from-above look. */
+  box-shadow: inset 0 1px 0 color-mix(in oklab, white 35%, transparent),
+              inset 0 -1px 0 color-mix(in oklab, var(--foreground) 8%, transparent);
+}
+@utility card-glow-hover {
+  transition: box-shadow var(--motion-base) var(--ease-out),
+              border-color var(--motion-base) var(--ease-out);
+}
+.card-glow-hover:hover {
+  box-shadow: 0 0 24px -6px oklch(var(--accent-l) var(--accent-c) var(--accent-h) / 0.35);
+}
+
+/* Soft inner shadow for recessed surfaces (modals, drawers, input groups). */
+@utility soft-inset-shadow {
+  box-shadow: inset 0 2px 4px -1px color-mix(in oklab, var(--foreground) 6%, transparent);
+}
+
+/* --- Shading: gradient borders ----------------------------------------------
+   A rotating conic-gradient border that sits outside the card's padding box so
+   it never overlaps content. Applied via .gradient-border on a relative
+   wrapper that also carries card-depth-layer. */
+@keyframes gradient-border-rotate {
+  to { transform: rotate(360deg); }
+}
+.gradient-border {
+  position: relative;
+  border-radius: inherit;
+  padding: 1px; /* border stroke width */
+  background: conic-gradient(
+    from 90deg,
+    color-mix(in oklab, var(--primary) 60%, transparent),
+    color-mix(in oklab, var(--accent-pop) 40%, transparent),
+    color-mix(in oklab, var(--primary) 30%, transparent),
+    color-mix(in oklab, var(--primary) 60%, transparent)
+  );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: destination-out;
+  mask-composite: exclude;
+  pointer-events: none;
+  animation: gradient-border-rotate 8s linear infinite;
+  z-index: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .gradient-border { animation: none !important; }
+}
+:root[data-motion='reduce'] .gradient-border { animation: none !important; }
+
+/* Inner gradient border variant — no mask hack, works on any radius. */
+@utility gradient-border-inner {
+  position: relative;
+  background: linear-gradient(var(--primary), var(--primary)) padding-box,
+              linear-gradient(90deg, color-mix(in oklab, var(--primary) 50%, transparent), color-mix(in oklab, var(--accent-pop) 50%, transparent)) border-box;
+  border: 1px solid transparent;
+  border-radius: inherit;
+}
+
+/* --- Graphics: noise grain --------------------------------------------------
+   Subtle film-grain texture over hero surfaces to kill banding in gradients. */
+@keyframes grain {
+  0%, 100% { transform: translate(0, 0); }
+  33% { transform: translate(-4px, 2px); }
+  66% { transform: translate(2px, -4px); }
+}
+.noise-grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.04;
+  pointer-events: none;
+  z-index: 1;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grain 8s steps(4, end) infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .noise-grain { animation: none !important; }
+}
+
+/* --- Graphics: ink blots (organic decorative shapes) -----------------------
+   SVG-free CSS blobs used behind hero copy and section headings. */
+@keyframes ink-drift {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1) rotate(0deg); }
+  33% { transform: translate3d(12px, -8px, 0) scale(1.05) rotate(2deg); }
+  66% { transform: translate3d(-8px, 10px, 0) scale(0.95) rotate(-2deg); }
+}
+.ink-blot {
+  position: absolute;
+  pointer-events: none;
+  border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+  filter: blur(48px);
+  opacity: 0.12;
+  z-index: 0;
+  animation: ink-drift 16s ease-in-out infinite;
+}
+.ink-blot-sm { width: 320px; height: 320px; }
+.ink-blot-md { width: 560px; height: 560px; }
+.ink-blot-lg { width: 760px; height: 760px; }
+.ink-blot-emerald { background: oklch(var(--accent-l) var(--accent-c) 162 / 0.14); }
+.ink-blot-violet { background: oklch(var(--accent-l) var(--accent-c) 293 / 0.14); }
+.ink-blot-amber { background: oklch(var(--accent-l) var(--accent-c) 70 / 0.14); }
+.ink-blot-cyan { background: oklch(0.7 0.15 195 / 0.14); }
+.dark .ink-blot-emerald { background: oklch(var(--accent-l) var(--accent-c) 162 / 0.08); }
+.dark .ink-blot-violet { background: oklch(var(--accent-l) var(--accent-c) 293 / 0.08); }
+.dark .ink-blot-amber { background: oklch(var(--accent-l) var(--accent-c) 70 / 0.08); }
+.dark .ink-blot-cyan { background: oklch(0.7 0.15 195 / 0.08); }
+@media (prefers-reduced-motion: reduce) {
+  .ink-blot { animation: none !important; }
+}
+:root[data-motion='reduce'] .ink-blot { animation: none !important; }
+
+/* --- Graphics: dot grid variants ------------------------------------------- */
+.dot-grid-fine {
+  background-image: radial-gradient(circle at 1px 1px, color-mix(in oklab, var(--foreground) 12%, transparent), transparent 0);
+  background-size: 18px 18px;
+  opacity: 0.06;
+}
+.dot-grid-coarse {
+  background-image: radial-gradient(circle at 1px 1px, color-mix(in oklab, var(--foreground) 18%, transparent), transparent 0);
+  background-size: 34px 34px;
+  opacity: 0.05;
+}
+
+/* --- Graphics: mesh glow orbs --------------------------------------------- */
+@keyframes mesh-glow-a {
+  0%, 100% { transform: translate3d(-6%, -4%, 0) scale(1); opacity: 0.35; }
+  50% { transform: translate3d(6%, 5%, 0) scale(1.12); opacity: 0.55; }
+}
+@keyframes mesh-glow-b {
+  0%, 100% { transform: translate3d(4%, 3%, 0) scale(1); opacity: 0.3; }
+  50% { transform: translate3d(-4%, -4%, 0) scale(1.08); opacity: 0.5; }
+}
+.mesh-glow-sm,
+.mesh-glow-md,
+.mesh-glow-lg {
+  position: absolute;
+  pointer-events: none;
+  border-radius: 50%;
+  filter: blur(64px);
+  z-index: 0;
+  will-change: transform, opacity;
+}
+.mesh-glow-sm {
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, oklch(var(--accent-l) var(--accent-c) var(--accent-h) / 0.16), transparent 70%);
+  animation: mesh-glow-a 20s ease-in-out infinite;
+}
+.mesh-glow-md {
+  width: 460px; height: 460px;
+  background: radial-gradient(circle, oklch(0.7 0.15 195 / 0.14), transparent 70%);
+  animation: mesh-glow-b 24s ease-in-out infinite reverse;
+}
+.mesh-glow-lg {
+  width: 640px; height: 640px;
+  background: radial-gradient(circle, oklch(var(--accent-l) var(--accent-c) 293 / 0.12), transparent 70%);
+  animation: mesh-glow-a 28s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .mesh-glow-sm, .mesh-glow-md, .mesh-glow-lg { animation: none !important; }
+}
+:root[data-motion='reduce'] .mesh-glow-sm,
+:root[data-motion='reduce'] .mesh-glow-md,
+:root[data-motion='reduce'] .mesh-glow-lg { animation: none !important; }
+
+/* --- Animations: breath (gentle scale pulse) -------------------------------- */
+@keyframes breath {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.03); opacity: 0.92; }
+}
+.animate-breath {
+  animation: breath 5s ease-in-out infinite;
+}
+
+/* --- Animations: float-up (gentle vertical drift) --------------------------- */
+@keyframes float-up {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(0, -10px, 0); }
+}
+.animate-float-up {
+  animation: float-up 5s ease-in-out infinite;
+}
+
+/* --- Animations: soft pulse (opacity) --------------------------------------- */
+@keyframes pulse-soft {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+.animate-pulse-soft {
+  animation: pulse-soft 3s ease-in-out infinite;
+}
+
+/* --- Animations: entrance-up (slide + fade) --------------------------------- */
+@keyframes entrance-up {
+  from { opacity: 0; transform: translate3d(0, 14px, 0); }
+  to { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+.animate-entrance-up {
+  animation: entrance-up var(--motion-medium) var(--ease-out) both;
+}
+@supports (animation-timeline: view()) {
+  .scroll-entrance-up {
+    animation: entrance-up linear both;
+    animation-timeline: view();
+    animation-range: entry 10% entry 50%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-breath, .animate-float-up, .animate-pulse-soft,
+  .animate-entrance-up, .scroll-entrance-up { animation: none !important; }
+  .animate-breath, .animate-float-up { transform: none !important; opacity: 1 !important; }
+  .animate-pulse-soft { opacity: 1 !important; }
+  .animate-entrance-up, .scroll-entrance-up { opacity: 1 !important; transform: none !important; }
+}
+:root[data-motion='reduce'] .animate-breath,
+:root[data-motion='reduce'] .animate-float-up,
+:root[data-motion='reduce'] .animate-pulse-soft,
+:root[data-motion='reduce'] .animate-entrance-up,
+:root[data-motion='reduce'] .scroll-entrance-up {
+  animation: none !important;
+}
+:root[data-motion='reduce'] .animate-breath,
+:root[data-motion='reduce'] .animate-float-up { transform: none !important; opacity: 1 !important; }
+:root[data-motion='reduce'] .animate-pulse-soft { opacity: 1 !important; }
+:root[data-motion='reduce'] .animate-entrance-up,
+:root[data-motion='reduce'] .scroll-entrance-up { opacity: 1 !important; transform: none !important; }
+
+/* --- Animations: staggered children ----------------------------------------- */
+@supports (animation-delay: calc(sibling-index() * 1ms)) {
+  .stagger-fade > * {
+    animation: entrance-up var(--motion-medium) var(--ease-out) both;
+    animation-delay: calc(sibling-index() * 60ms);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .stagger-fade > * { animation: none !important; opacity: 1 !important; transform: none !important; }
+}
+:root[data-motion='reduce'] .stagger-fade > * { animation: none !important; opacity: 1 !important; transform: none !important; }
+
+/* --- Animations: scan line (subtle texture on dark panels) ------------------ */
+@keyframes scan-line {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
+.scan-line {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 50%,
+    color-mix(in oklab, var(--foreground) 4%, transparent) 51%,
+    transparent 100%
+  );
+  background-size: 100% 4px;
+  opacity: 0.35;
+  pointer-events: none;
+  z-index: 2;
+  animation: scan-line 10s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .scan-line { animation: none !important; opacity: 0 !important; }
+}
+
+/* --- Graphics: drifting light sheet -----------------------------------------
+   A huge, heavily blurred diagonal band of accent light that sweeps the page
+   aurora at a glacial pace. Reads as "studio light" rather than an orb. */
+@keyframes sheet-drift {
+  0%, 100% { transform: translate3d(-6%, 0, 0) rotate(0deg) scale(1); opacity: 0.05; }
+  50% { transform: translate3d(6%, -14px, 0) rotate(2deg) scale(1.06); opacity: 0.09; }
+}
+.light-sheet {
+  position: absolute;
+  width: 150%;
+  height: 60%;
+  left: -25%;
+  top: 16%;
+  background: linear-gradient(
+    100deg,
+    transparent 18%,
+    color-mix(in oklab, var(--primary) 60%, transparent) 45%,
+    color-mix(in oklab, oklch(0.75 0.15 195) 50%, transparent) 53%,
+    transparent 80%
+  );
+  filter: blur(52px);
+  pointer-events: none;
+  z-index: 0;
+  animation: sheet-drift 26s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+@media (prefers-reduced-motion: reduce) {
+  .light-sheet { animation: none !important; }
+}
+:root[data-motion='reduce'] .light-sheet { animation: none !important; }
+
+/* --- Interaction: growing gradient underline for text links -----------------
+   Draws a 1.5px accent underline from left to right on hover. Transition-only
+   (no keyframes) so it naturally respects the --motion token system; under
+   reduced motion it still appears/disappears, just instantly. */
+@utility link-underline {
+  position: relative;
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 100%;
+    bottom: -1px;
+    height: 1.5px;
+    border-radius: 999px;
+    background: linear-gradient(
+      90deg,
+      var(--primary),
+      color-mix(in oklab, var(--accent-pop) 80%, transparent)
+    );
+    transition: right var(--motion-base) var(--ease-out);
+  }
+  &:hover::after {
+    right: 0;
+  }
+}
+
+/* --- Utility: sparkle dot (small lively accent point) -----------------------
+   Cheap one-element "twinkle" used at the tip of accent bars and status pills. */
+@keyframes sparkle {
+  0%, 100% { opacity: 0.55; transform: scale(0.82); }
+  50% { opacity: 1; transform: scale(1.12); }
+}
+.sparkle-dot {
+  animation: sparkle 2.4s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .sparkle-dot { animation: none !important; }
+}
+:root[data-motion='reduce'] .sparkle-dot { animation: none !important; }
+
+/* --- Utility: decorative frame (rounded corner with inner glow) ------------ */
+.decorative-frame {
+  position: relative;
+  overflow: hidden;
+  border-radius: 2rem;
+}
+.decorative-frame::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  z-index: 0;
+  border-radius: 2rem;
+  padding: 1px;
+  background: linear-gradient(135deg, color-mix(in oklab, var(--primary) 55%, transparent), color-mix(in oklab, var(--accent-pop) 35%, transparent));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: destination-out;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
 /* Print & PDF Export Stylesheet */
 @media print {
   body {
@@ -884,6 +1727,12 @@ dialog[open] {
   .glass-nav,
   .aura-orb-1,
   .aura-orb-2,
+  .light-sheet,
+  .noise-grain,
+  .mesh-glow-sm,
+  .mesh-glow-md,
+  .mesh-glow-lg,
+  .ink-blot,
   button,
   [role="dialog"] {
     display: none !important;

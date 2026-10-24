@@ -1,15 +1,50 @@
-import { useState } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { Card } from '@/components/ui/Card';
 import { NumberInput } from '@/components/ui/NumberInput';
 import { SliderControl } from '@/components/ui/SliderControl';
 import { StatCard } from '@/components/ui/StatCard';
 import { Badge } from '@/components/ui/Badge';
+import { QuickPresetBar, type ScenarioPreset } from '@/components/ui/QuickPresetBar';
+import { CalculatorActions } from '@/components/shared/CalculatorActions';
 import { OFFICIAL_WEB_LINKS, AGE_PRESETS, JUNIOR_AWARD_RATES, PENALTY_RATES, WORKPLACE_ALLOWANCES } from '@/data/teen-finance-data';
 import { WebReferenceLink } from '@/components/shared/WebReferenceLink';
 import { Calculator, Info } from 'lucide-react';
 import { useTeenProfile } from '@/context/TeenProfileContext';
 import { netPayWithAllowances, penaltyRateBreakdown, getJuniorRatePct, type AwardName } from './engine';
 import { FirstJobChecklist } from './FirstJobChecklist';
+import { formatCurrency } from '@/utils/formatters';
+
+interface JobPreset {
+  age: number;
+  hours: number;
+  rate: number;
+  award: AwardName;
+  penalty: keyof typeof PENALTY_RATES;
+}
+
+const JOB_PRESETS: ScenarioPreset<JobPreset>[] = [
+  {
+    id: 'fast-food-16',
+    label: 'Fast Food (16yo, 15h/wk)',
+    badge: 'Fast Food Award',
+    description: '16yo casual working 15 hrs/wk at Maccas or Hungry Jacks',
+    values: { age: 16, hours: 15, rate: 25.10, award: 'fast_food', penalty: 'ordinary' },
+  },
+  {
+    id: 'retail-weekend-17',
+    label: 'Retail Sunday (17yo, 12h/wk)',
+    badge: '1.5× Penalty',
+    description: '17yo retail casual at Coles or Kmart earning Sunday penalty rates',
+    values: { age: 17, hours: 12, rate: 26.20, award: 'retail', penalty: 'sunday' },
+  },
+  {
+    id: 'pharmacy-18',
+    label: 'Adult Trainee (18yo, 25h/wk)',
+    badge: '100% Rate + Super',
+    description: '18yo working 25 hrs/wk with mandatory 12% Super Guarantee active',
+    values: { age: 18, hours: 25, rate: 26.50, award: 'pharmacy', penalty: 'ordinary' },
+  },
+];
 
 export function PayslipAnalyzer() {
   const { profile, updateProfile, applyAgePreset } = useTeenProfile();
@@ -22,6 +57,28 @@ export function PayslipAnalyzer() {
   const [penaltyType, setPenaltyType] = useState<keyof typeof PENALTY_RATES>('ordinary');
   const [hasMealAllowance, setHasMealAllowance] = useState<boolean>(false);
   const [hasUniformAllowance, setHasUniformAllowance] = useState<boolean>(false);
+  const [activePreset, setActivePreset] = useState<string | undefined>();
+
+  const handleApplyPreset = (preset: ScenarioPreset<JobPreset>) => {
+    setActivePreset(preset.id);
+    if (preset.values.age !== undefined) setAge(preset.values.age);
+    if (preset.values.hours !== undefined) setHoursPerWeek(preset.values.hours);
+    if (preset.values.rate !== undefined) setHourlyRate(preset.values.rate);
+    if (preset.values.award !== undefined) setSelectedAward(preset.values.award);
+    if (preset.values.penalty !== undefined) setPenaltyType(preset.values.penalty);
+  };
+
+  const handleReset = useCallback(() => {
+    setActivePreset(undefined);
+    setHourlyRate(profile.hourlyRate || 25.10);
+    setHoursPerWeek(profile.hoursPerWeek || 15);
+    setAge(profile.age || 16);
+    setClaimsThreshold(true);
+    setSelectedAward('fast_food');
+    setPenaltyType('ordinary');
+    setHasMealAllowance(false);
+    setHasUniformAllowance(false);
+  }, [profile]);
 
   const handleAgeChange = (targetAge: number) => {
     setAge(targetAge);
@@ -50,6 +107,21 @@ export function PayslipAnalyzer() {
 
   const penaltyRows = penaltyRateBreakdown(hourlyRate * pay.juniorPct);
 
+  const summaryText = useMemo(() => {
+    return [
+      '--- Teen Payslip & Award Analysis Summary ---',
+      `Age: ${age}yo | Modern Award: ${selectedAward.replace('_', ' ').toUpperCase()}`,
+      `Hours Worked: ${hoursPerWeek} hrs/wk @ Base $${hourlyRate.toFixed(2)}/hr (${Math.round(pay.juniorPct * 100)}% junior rate)`,
+      `Penalty Rate: ${PENALTY_RATES[penaltyType].label} (${penaltyMultiplier}× multiplier)`,
+      `Effective Hourly Rate: $${pay.effectiveHourlyRate.toFixed(2)}/hr`,
+      `Weekly Gross Pay: ${formatCurrency(pay.grossWeekly)}/wk (${formatCurrency(pay.annualGross)}/yr)`,
+      `PAYG Tax Withheld: ${formatCurrency(pay.taxWithheldWeekly)}/wk (${claimsThreshold ? 'Tax-free threshold claimed' : 'No threshold claimed'})`,
+      `Net Take-Home Pay into Bank: ${formatCurrency(pay.netWeekly)}/wk (${formatCurrency(pay.netWeekly * 52)}/yr)`,
+      `Super Guarantee (12%): ${formatCurrency(pay.superWeekly)}/wk (${pay.isSuperEligible ? 'Eligible' : 'Under 18 working ≤30h rule'})`,
+      `Calculated via AusFinTools Fair Work Calculator`,
+    ].join('\n');
+  }, [age, selectedAward, hoursPerWeek, hourlyRate, pay, penaltyType, penaltyMultiplier, claimsThreshold]);
+
   return (
     <Card variant="glass" className="p-6 space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border pb-4">
@@ -66,6 +138,14 @@ export function PayslipAnalyzer() {
           2026-27 ATO & Fair Work PACT
         </Badge>
       </div>
+
+      {/* Quick Job Presets */}
+      <QuickPresetBar
+        presets={JOB_PRESETS}
+        activePresetId={activePreset}
+        onSelect={handleApplyPreset}
+        title="Common Student Award Roles"
+      />
 
       {/* Preset Selector */}
       <div className="space-y-2">
@@ -213,24 +293,32 @@ export function PayslipAnalyzer() {
         <StatCard
           label="Effective Hourly Rate"
           value={`$${pay.effectiveHourlyRate.toFixed(2)}/hr`}
+          numericValue={pay.effectiveHourlyRate}
+          format="currency"
           color="blue"
           subtext={`Base $${hourlyRate.toFixed(2)} x ${pay.juniorPct * 100}% junior x ${penaltyMultiplier}x penalty`}
         />
         <StatCard
           label="Weekly Gross Pay"
           value={`$${pay.grossWeekly.toFixed(2)}`}
+          numericValue={pay.grossWeekly}
+          format="currency"
           color="purple"
           subtext={totalAllowances > 0 ? `Incl. $${totalAllowances.toFixed(2)} allowances` : `$${pay.annualGross.toLocaleString()}/yr`}
         />
         <StatCard
           label="Take-Home Pay (Bank)"
           value={`$${pay.netWeekly.toFixed(2)}`}
+          numericValue={pay.netWeekly}
+          format="currency"
           color="green"
           subtext={`Tax withheld: $${pay.taxWithheldWeekly.toFixed(2)}`}
         />
         <StatCard
           label="Super Guarantee (12%)"
           value={`$${pay.superWeekly.toFixed(2)}`}
+          numericValue={pay.superWeekly}
+          format="currency"
           color={pay.isSuperEligible ? 'cyan' : 'red'}
           subtext={
             pay.isSuperEligible
@@ -277,6 +365,13 @@ export function PayslipAnalyzer() {
           </div>
         </div>
       )}
+
+      {/* Action buttons */}
+      <CalculatorActions
+        onReset={handleReset}
+        summaryText={summaryText}
+        summaryTitle="Payslip Estimate"
+      />
 
       <div className="flex flex-wrap gap-2 pt-2">
         <WebReferenceLink link={OFFICIAL_WEB_LINKS.fairwork_payslip} />

@@ -1,7 +1,9 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { SliderControl } from '@/components/ui/SliderControl';
+import { QuickPresetBar, type ScenarioPreset } from '../../components/ui/QuickPresetBar';
+import { CalculatorActions } from '../../components/shared/CalculatorActions';
 import {
   TOP_10_ASX_ETFS,
   BEST_3_ETF_PORTFOLIOS,
@@ -34,8 +36,49 @@ function pct(v: number | null): string {
 const TEN_YEAR_PROJECTION = 10000; // $10k invested for 10 years
 const TEN_YEAR_RETURN = 7.5;       // conservative long-run blended return (%)
 
+interface TaxBracketPreset {
+  marginalRatePct: number;
+}
+
+const PRESETS: ScenarioPreset<TaxBracketPreset>[] = [
+  {
+    id: 'teen-tax-free',
+    label: 'Teen Student (0% Tax)',
+    badge: 'Tax-Free',
+    description: 'Income under $18,200 threshold with zero CGT payable on sale',
+    values: { marginalRatePct: 0 },
+  },
+  {
+    id: 'entry-bracket',
+    label: 'Casual Job (16% Bracket)',
+    badge: '16% Tax',
+    description: 'Income between $18,201 and $45,000 paying low-tier tax',
+    values: { marginalRatePct: 16 },
+  },
+  {
+    id: 'median-bracket',
+    label: 'Full-Time (30% Bracket)',
+    badge: '30% Tax',
+    description: 'Income between $45,001 and $135,000 in Australia median bracket',
+    values: { marginalRatePct: 30 },
+  },
+];
+
 export function ETFPortfolioPicker() {
   const [marginalRatePct, setMarginalRatePct] = useState<number>(0);
+  const [activePreset, setActivePreset] = useState<string | undefined>(undefined);
+
+  const handleApplyPreset = useCallback((preset: ScenarioPreset<TaxBracketPreset>) => {
+    setActivePreset(preset.id);
+    if (preset.values?.marginalRatePct !== undefined) {
+      setMarginalRatePct(preset.values.marginalRatePct);
+    }
+  }, []);
+
+  const handleReset = useCallback(() => {
+    setActivePreset(undefined);
+    setMarginalRatePct(0);
+  }, []);
 
   const statsByPortfolio = useMemo(() => {
     const map: Record<string, ReturnType<typeof computePortfolioStats>> = {};
@@ -57,6 +100,22 @@ export function ETFPortfolioPicker() {
     return map;
   }, [statsByPortfolio, marginalRatePct]);
 
+  const summaryText = useMemo(() => {
+    const lines = [
+      '--- Best 3 Starter ETF Portfolios Summary ---',
+      `Assumed $10,000 invested for 10 years at ${TEN_YEAR_RETURN}% blended return (Marginal Tax: ${marginalRatePct}%)`,
+    ];
+    BEST_3_ETF_PORTFOLIOS.forEach(p => {
+      const proj = projectionsByPortfolio[p.id];
+      const stats = statsByPortfolio[p.id];
+      if (proj && stats) {
+        lines.push(`${p.name} (${p.risk} Risk, MER: ${pct(stats.weightedMer)}): $10k -> $${proj.growth.toLocaleString()} net of MER | After-tax sale: $${proj.afterTax.toLocaleString()}`);
+      }
+    });
+    lines.push('Calculated via AusFinTools Teen ETF Suite');
+    return lines.join('\n');
+  }, [marginalRatePct, projectionsByPortfolio, statsByPortfolio]);
+
   return (
     <Card variant="glass" className="p-6 space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border pb-4">
@@ -69,8 +128,22 @@ export function ETFPortfolioPicker() {
             Model portfolios built from the top-10 ASX ETFs above. Weighted-average returns & costs computed live from the data.
           </p>
         </div>
-        <Badge variant="outline" className="shrink-0">As at {ASX_ETF_DATA_AS_AT}</Badge>
+        <div className="flex items-center gap-2">
+          <Badge variant="outline" className="shrink-0">As at {ASX_ETF_DATA_AS_AT}</Badge>
+          <CalculatorActions
+            onReset={handleReset}
+            summaryText={summaryText}
+            summaryTitle="Starter ETF Portfolios"
+          />
+        </div>
       </div>
+
+      <QuickPresetBar
+        presets={PRESETS}
+        activePresetId={activePreset}
+        onSelect={handleApplyPreset}
+        title="Tax Bracket Scenarios"
+      />
 
       {/* Marginal rate + fee drag / tax controls */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

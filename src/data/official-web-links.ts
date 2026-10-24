@@ -395,7 +395,7 @@ export const OFFICIAL_WEB_LINKS: Record<string, WebLink> = {
     title: "ATO: Individual Income Tax Rates & Stage 3 Brackets",
     url: "https://www.ato.gov.au/tax-rates-and-codes/tax-rates-australian-residents",
     source: "ATO",
-    description: "Official 2026-27 Australian resident individual tax brackets including the $18,200 threshold and 16% lowest bracket.",
+    description: "Official 2026-27 Australian resident individual tax brackets including the $18,200 threshold and 15% lowest bracket.",
   },
   "ato_lito": {
     title: "ATO: Low Income Tax Offset (LITO Up to $700)",

@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { NumberInput } from '@/components/ui/NumberInput';
@@ -11,7 +11,13 @@ import {
   Sparkles,
   TrendingUp,
   Clock,
+  PlusCircle,
+  RotateCcw,
+  Trophy,
+  Zap,
 } from 'lucide-react';
+import { sound } from '@/lib/sound-synthesizer';
+import confetti from 'canvas-confetti';
 
 interface GoalPreset {
   id: string;
@@ -39,7 +45,7 @@ const PRESET_GOALS: GoalPreset[] = [
     category: 'Medium-Term',
     target: 700,
     icon: '🚗',
-    description: 'Under QLD/NSW rules, 10 instructor hours equal 30 logbook hours, saving parents $1,100 in opportunity cost!',
+    description: 'Under QLD/NSW rules, 10 instructor hours equal 30 logbook hours. Total cost: $700-$850.',
     tip: 'Save $18/week over 9 months to book your 10 lessons before turning 17.',
   },
   {
@@ -57,7 +63,7 @@ const PRESET_GOALS: GoalPreset[] = [
     category: 'Long-Term',
     target: 5000,
     icon: '🚘',
-    description: 'A clean 4-cylinder hatchback (Corolla, Mazda 3, i30) bought 100% in cash without predatory 14% car loans.',
+    description: 'A reliable used car costs $4,000-$7,000. Buy 100% in cash without predatory 14% car loans.',
     tip: 'Save $50/week for 2 years while living at home with $0 rent to buy outright.',
   },
   {
@@ -66,10 +72,12 @@ const PRESET_GOALS: GoalPreset[] = [
     category: 'Long-Term',
     target: 2500,
     icon: '⛽️',
-    description: 'Crucial buffer for young driver comprehensive insurance ($1,800+), QLD rego & CTP ($453), and first service.',
+    description: 'Crucial buffer for $2,500-$3,500 first-year running costs (comprehensive insurance, QLD rego & CTP, and first service).',
     tip: 'Never buy a car without having this fund ready — otherwise rego renewal turns into a crisis.',
   },
 ];
+
+const SAVINGS_PLANNER_STORAGE_KEY = 'pft_savings_planner_state';
 
 export function SavingsGoalsPlanner() {
   const [selectedGoalId, setSelectedGoalId] = useState<string>('mojo_500');
@@ -77,7 +85,44 @@ export function SavingsGoalsPlanner() {
   const [weeklyDeposit, setWeeklyDeposit] = useState<number>(25);
   const [currentSavings, setCurrentSavings] = useState<number>(100);
   const [itemPrice, setItemPrice] = useState<number>(140);
-  const [juniorWage, setJuniorWage] = useState<number>(13.90); // 15yo casual base $11.12 + 25%
+  const [juniorWage, setJuniorWage] = useState<number>(13.90);
+
+  // Restore from localStorage
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(SAVINGS_PLANNER_STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed.selectedGoalId) setSelectedGoalId(parsed.selectedGoalId);
+        if (typeof parsed.customTarget === 'number') setCustomTarget(parsed.customTarget);
+        if (typeof parsed.weeklyDeposit === 'number') setWeeklyDeposit(parsed.weeklyDeposit);
+        if (typeof parsed.currentSavings === 'number') setCurrentSavings(parsed.currentSavings);
+        if (typeof parsed.itemPrice === 'number') setItemPrice(parsed.itemPrice);
+        if (typeof parsed.juniorWage === 'number') setJuniorWage(parsed.juniorWage);
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  // Save to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem(
+        SAVINGS_PLANNER_STORAGE_KEY,
+        JSON.stringify({
+          selectedGoalId,
+          customTarget,
+          weeklyDeposit,
+          currentSavings,
+          itemPrice,
+          juniorWage,
+        })
+      );
+    } catch {
+      // ignore
+    }
+  }, [selectedGoalId, customTarget, weeklyDeposit, currentSavings, itemPrice, juniorWage]);
 
   const activeGoal = useMemo(() => {
     return PRESET_GOALS.find(g => g.id === selectedGoalId) || {
@@ -92,6 +137,41 @@ export function SavingsGoalsPlanner() {
   }, [selectedGoalId, customTarget]);
 
   const targetAmount = selectedGoalId === 'custom' ? customTarget : activeGoal.target;
+
+  // Progress metrics
+  const progressRatio = targetAmount > 0 ? (currentSavings / targetAmount) : 0;
+  const progressPercent = Math.min(100, Math.max(0, Math.round(progressRatio * 100)));
+  const remainingDollars = Math.max(0, targetAmount - currentSavings);
+
+  // Quick action deposits
+  const handleAddSavings = (amount: number) => {
+    sound.playClick();
+    const next = Math.max(0, currentSavings + amount);
+    setCurrentSavings(next);
+
+    if (next >= targetAmount && currentSavings < targetAmount) {
+      sound.playGoalCelebration();
+      try {
+        confetti({
+          particleCount: 60,
+          spread: 75,
+          origin: { y: 0.4 },
+          disableForReducedMotion: true,
+        });
+      } catch {}
+    }
+  };
+
+  const handleSetPercent = (pct: number) => {
+    sound.playClick();
+    const next = Math.round((targetAmount * pct) / 100);
+    setCurrentSavings(next);
+  };
+
+  const handleResetSavings = () => {
+    sound.playClick();
+    setCurrentSavings(0);
+  };
 
   // Projection maths (5.50% p.a. monthly compound rate)
   const ratePct = 5.50;
@@ -131,6 +211,7 @@ export function SavingsGoalsPlanner() {
 
   return (
     <Card variant="glass" className="p-6 space-y-6">
+      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border pb-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
@@ -138,7 +219,7 @@ export function SavingsGoalsPlanner() {
             <h2 className="text-xl font-bold text-foreground">Teen Savings Goals & Sinking Funds Planner</h2>
           </div>
           <p className="text-xs text-muted-foreground">
-            Master SMART youth savings targets, 3-for-1 driving lesson economics, and compound interest growth!
+            Master SMART youth savings targets, 3-for-1 driving lesson economics, and compound interest growth! (Average Aussie teen savings: ~$4,769 in 2026)
           </p>
         </div>
         <Badge variant="success">
@@ -155,12 +236,13 @@ export function SavingsGoalsPlanner() {
               key={goal.id}
               type="button"
               onClick={() => {
+                sound.playClick();
                 setSelectedGoalId(goal.id);
                 setCustomTarget(goal.target);
               }}
               className={`p-3 rounded-xl border text-left transition-all ${
                 selectedGoalId === goal.id
-                  ? 'border-emerald-500 bg-emerald-500/10 shadow-xs'
+                  ? 'border-emerald-500 bg-emerald-500/10 shadow-xs ring-1 ring-emerald-500/40'
                   : 'border-border bg-card hover:bg-muted'
               }`}
             >
@@ -176,10 +258,13 @@ export function SavingsGoalsPlanner() {
           ))}
           <button
             type="button"
-            onClick={() => setSelectedGoalId('custom')}
+            onClick={() => {
+              sound.playClick();
+              setSelectedGoalId('custom');
+            }}
             className={`p-3 rounded-xl border text-left transition-all ${
               selectedGoalId === 'custom'
-                ? 'border-emerald-500 bg-emerald-500/10 shadow-xs'
+                ? 'border-emerald-500 bg-emerald-500/10 shadow-xs ring-1 ring-emerald-500/40'
                 : 'border-border bg-card hover:bg-muted'
             }`}
           >
@@ -193,6 +278,96 @@ export function SavingsGoalsPlanner() {
             <p className="text-[11px] text-muted-foreground mt-1">
               Set any custom target amount (gaming console, formal outfit, holiday trip).
             </p>
+          </button>
+        </div>
+      </div>
+
+      {/* Interactive Goal Progress Bar & Milestone Animation */}
+      <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-500/10 via-teal-500/5 to-primary/10 border border-emerald-500/30 space-y-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+          <div className="flex items-center gap-2">
+            <Trophy className="w-4 h-4 text-emerald-500" />
+            <span className="font-bold text-foreground">
+              {activeGoal.name}: <span className="font-mono text-emerald-600 dark:text-emerald-400">${currentSavings.toLocaleString()}</span> of <span className="font-mono">${targetAmount.toLocaleString()}</span>
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Badge variant={progressPercent === 100 ? 'success' : 'default'} className="text-[10px]">
+              {progressPercent === 100 ? '🎉 100% Goal Reached!' : `${progressPercent}% Saved ($${remainingDollars.toLocaleString()} remaining)`}
+            </Badge>
+          </div>
+        </div>
+
+        {/* Multi-Segment Motion Progress Bar with Milestone Ticks */}
+        <div className="relative">
+          <div className="relative h-4 w-full rounded-full bg-muted/70 overflow-hidden border border-emerald-500/30 p-0.5">
+            <div
+              className={`h-full rounded-full transition-[width] duration-700 ease-out ${
+                progressPercent === 100
+                  ? 'bg-gradient-to-r from-emerald-500 to-teal-400 shadow-[0_0_12px_rgba(16,185,129,0.5)]'
+                  : 'bg-gradient-to-r from-emerald-500 to-primary'
+              }`}
+              style={{ width: `${progressPercent}%` }}
+            />
+          </div>
+
+          {/* Milestone markers at 25%, 50%, 75% */}
+          <div className="flex justify-between text-[10px] text-muted-foreground font-mono mt-1 px-1">
+            <span className={progressPercent >= 0 ? 'text-primary font-bold' : ''}>0%</span>
+            <span className={progressPercent >= 25 ? 'text-primary font-bold' : ''}>25%</span>
+            <span className={progressPercent >= 50 ? 'text-primary font-bold' : ''}>50%</span>
+            <span className={progressPercent >= 75 ? 'text-primary font-bold' : ''}>75%</span>
+            <span className={progressPercent >= 100 ? 'text-emerald-600 dark:text-emerald-400 font-bold' : ''}>100% 🎯</span>
+          </div>
+        </div>
+
+        {/* Quick Action Deposit Buttons Toolbar */}
+        <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-emerald-500/20 text-xs">
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <span className="text-[11px] font-semibold text-muted-foreground flex items-center gap-1">
+              <Zap className="w-3.5 h-3.5 text-amber-500" />
+              Quick Actions:
+            </span>
+            <button
+              type="button"
+              onClick={() => handleAddSavings(20)}
+              className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-card border border-border hover:bg-muted text-foreground transition-all flex items-center gap-1"
+            >
+              <PlusCircle className="w-3 h-3 text-emerald-500" />
+              +$20 Pocket Cash
+            </button>
+            <button
+              type="button"
+              onClick={() => handleAddSavings(50)}
+              className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-card border border-border hover:bg-muted text-foreground transition-all flex items-center gap-1"
+            >
+              <PlusCircle className="w-3 h-3 text-emerald-500" />
+              +$50 Paycheck
+            </button>
+            <button
+              type="button"
+              onClick={() => handleAddSavings(100)}
+              className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-card border border-border hover:bg-muted text-foreground transition-all flex items-center gap-1"
+            >
+              <PlusCircle className="w-3 h-3 text-emerald-500" />
+              +$100 Full Shift
+            </button>
+            <button
+              type="button"
+              onClick={() => handleSetPercent(50)}
+              className="px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-muted hover:bg-muted/80 text-foreground transition-all"
+            >
+              Halfway (50%)
+            </button>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleResetSavings}
+            className="inline-flex items-center gap-1 text-[11px] text-muted-foreground hover:text-foreground transition-all px-2 py-1"
+          >
+            <RotateCcw className="w-3 h-3" />
+            <span>Clear Savings</span>
           </button>
         </div>
       </div>
@@ -308,7 +483,7 @@ export function SavingsGoalsPlanner() {
               Contributes <strong>$30/week</strong> from age 15 to 25 (10 years). Total cash invested: <strong>$15,600</strong>. Stops adding cash at 25 and lets it compound at 8.0% p.a. until age 65.
             </p>
             <div className="pt-1 text-emerald-600 dark:text-emerald-400 font-bold text-sm">
-              Ending Balance at 65: ~$584,000!
+              Ending Balance at 65: $518k-$584k!
             </div>
           </div>
 

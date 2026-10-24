@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { sound } from '@/lib/sound-synthesizer';
 import { prefetchRoute } from '@/utils/prefetch';
+import { PrintShareFAB } from '@/components/shared/PrintShareFAB';
 
 interface CalcCard {
   id: string;
@@ -274,6 +275,8 @@ export function CalculatorsHub() {
           );
         })}
       </div>
+
+      <PrintShareFAB />
     </div>
   );
 }

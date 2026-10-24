@@ -1,4 +1,4 @@
-import { motion, useReducedMotion } from 'motion/react';
+import { useId } from 'react';
 import { cn } from '@/lib/utils';
 
 interface RadialScoreGaugeProps {
@@ -20,28 +20,36 @@ export function RadialScoreGauge({
   colorGradient = ['#3b82f6', '#10b981'],
   className,
 }: RadialScoreGaugeProps) {
-  const reducedMotion = useReducedMotion() ?? false;
+  const gradientId = useId();
+  const filterId = useId();
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   const normalizedScore = Math.min(100, Math.max(0, score));
   const strokeDashoffset = circumference - (normalizedScore / 100) * circumference * 0.75; // 270 degree arc
 
   return (
-    <div className={cn('relative flex flex-col items-center justify-center', className)}>
+    <div
+      role="meter"
+      aria-valuenow={normalizedScore}
+      aria-valuemin={0}
+      aria-valuemax={100}
+      aria-label={`${label}: ${normalizedScore} out of 100`}
+      className={cn('relative flex flex-col items-center justify-center select-none', className)}
+    >
       <div className="relative" style={{ width: size, height: size }}>
         <svg
           width={size}
           height={size}
           viewBox={`0 0 ${size} ${size}`}
-          className="-rotate-135 transform"
+          className="-rotate-135 transform overflow-visible"
         >
           <defs>
-            <linearGradient id="gauge-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <linearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor={colorGradient[0]} />
               <stop offset="100%" stopColor={colorGradient[1]} />
             </linearGradient>
-            <filter id="gauge-glow" x="-20%" y="-20%" width="140%" height="140%">
-              <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor={colorGradient[1]} floodOpacity="0.6" />
+            <filter id={filterId} x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="0" stdDeviation="5" floodColor={colorGradient[1]} floodOpacity="0.5" />
             </filter>
           </defs>
 
@@ -56,36 +64,30 @@ export function RadialScoreGauge({
             strokeDasharray={circumference}
             strokeDashoffset={circumference * 0.25}
             strokeLinecap="round"
-            className="text-muted/40"
+            className="text-muted/30"
           />
 
-          {/* Animated Glowing Score Arc */}
-          <motion.circle
+          {/* Score arc — CSS transition instead of an animation runtime. */}
+          <circle
+            className="celebration-arc"
             cx={size / 2}
             cy={size / 2}
             r={radius}
             fill="none"
-            stroke="url(#gauge-gradient)"
+            stroke={`url(#${gradientId})`}
             strokeWidth={strokeWidth}
             strokeDasharray={circumference}
-            initial={reducedMotion ? { strokeDashoffset } : { strokeDashoffset: circumference }}
-            animate={{ strokeDashoffset }}
-            transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
+            strokeDashoffset={strokeDashoffset}
             strokeLinecap="round"
-            filter="url(#gauge-glow)"
+            filter={`url(#${filterId})`}
           />
         </svg>
 
         {/* Center Content readout */}
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-          <motion.span
-            initial={reducedMotion ? false : { scale: 0.5, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ type: 'spring', stiffness: 200, damping: 15 }}
-            className="text-3xl sm:text-4xl font-black font-mono tracking-tight text-foreground"
-          >
+          <span className="animate-scale-in text-3xl sm:text-4xl font-black font-mono tracking-tight text-foreground">
             {normalizedScore}
-          </motion.span>
+          </span>
           <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-0.5">
             / 100
           </span>

@@ -3,11 +3,15 @@
  * Generates tactile clicks, slider ticks, celebratory arpeggios, and warning tones.
  * Follows Web Audio API best practices: Lazy AudioContext init, volume control, mute persistence.
  */
-import { useEffect, useState } from 'react';
-import { Volume2, VolumeX } from 'lucide-react';
-import { cn } from '@/lib/utils';
-
+/**
+ * The singleton is intentionally React-free. Every calculator imports it just
+ * to call `sound.playClick()`; keeping JSX / icons / class-name helpers in the
+ * same module used to put a 31 KB chunk on every page for a feature that is off
+ * by default; the speaker button in the navbar toggles it.
+ */
 const SOUND_URL_PARAM = 'sound';
+
+export { SOUND_URL_PARAM };
 
 class SoundSynthesizer {
   private ctx: AudioContext | null = null;
@@ -250,74 +254,3 @@ class SoundSynthesizer {
 }
 
 export const sound = new SoundSynthesizer();
-
-function setSoundUrlParam(enabled: boolean): void {
-  if (typeof window === 'undefined') return;
-  try {
-    const url = new URL(window.location.href);
-    if (enabled) {
-      url.searchParams.set(SOUND_URL_PARAM, '1');
-    } else {
-      url.searchParams.delete(SOUND_URL_PARAM);
-    }
-    window.history.replaceState(null, '', url.toString());
-  } catch {
-    // Ignore exotic environments
-  }
-}
-
-export interface SoundToggleProps {
-  className?: string;
-}
-
-/**
- * Tiny speaker-icon toggle for the global sound option.
- * - Default OFF (no surprise audio on load).
- * - Persists the choice via the `?sound=1` URL param (replaceState) —
- *   NO localStorage.
- * - Drop it anywhere: <SoundToggle /> in a Navbar or settings panel.
- */
-export function SoundToggle({ className }: SoundToggleProps) {
-  const [enabled, setEnabledState] = useState(() => sound.isSoundEnabled());
-
-  // Sync the module-level flag with ?sound=1 once on mount.
-  useEffect(() => {
-    let fromUrl = false;
-    if (typeof window !== 'undefined') {
-      try {
-        fromUrl = new URLSearchParams(window.location.search).get(SOUND_URL_PARAM) === '1';
-      } catch {
-        fromUrl = false;
-      }
-    }
-    if (fromUrl !== sound.isSoundEnabled()) {
-      sound.setSoundEnabled(fromUrl);
-      setEnabledState(fromUrl);
-    }
-  }, []);
-
-  const toggle = () => {
-    const next = !sound.isSoundEnabled();
-    sound.setSoundEnabled(next);
-    setEnabledState(next);
-    if (next) sound.playSuccess();
-    setSoundUrlParam(next);
-  };
-
-  return (
-    <button
-      type="button"
-      onClick={toggle}
-      aria-label={enabled ? 'Disable sound effects' : 'Enable sound effects'}
-      title={enabled ? 'Disable sound effects (?sound=1)' : 'Enable sound effects (?sound=1)'}
-      aria-pressed={enabled}
-      className={cn(
-        'inline-flex items-center justify-center p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted transition-all',
-        enabled && 'text-primary',
-        className
-      )}
-    >
-      {enabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4 opacity-60" />}
-    </button>
-  );
-}

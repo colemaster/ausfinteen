@@ -1,6 +1,7 @@
 /**
  * Official Australian Teen Financial Reference Data (2026-27)
  * Sources: ATO, Fair Work Ombudsman, Moneysmart, Services Australia, APRA, ACCC, PPSR, SafeWork Australia, RTBA, RBO, RTA, RACQ
+ * Figures re-verified against official sources as at 18 October 2026 (2026-27 rates from 1 July 2026 AWRE).
  */
 
 export { type WebLink, STATUTORY_LINKS as OFFICIAL_WEB_LINKS, STATUTORY_LINKS } from "./statutory-links";
@@ -20,10 +21,14 @@ export interface AgePreset {
 /**
  * Age presets use the 2026-27 effective junior award rate for the worker's
  * age band (Fast Food / Retail Level 1 adult base $27.81/hr from 1 July 2026,
- * junior % applied: under 16 = 40%, 16 = 50%, 17 = 60%, 18 = 70%).
- * Note: from 1 December 2026 the FWC ([2026] FWCFB 75) phases 18-20s up to
- * the full adult rate after 6 months with the same employer (Retail, Fast
- * Food & Pharmacy awards). Under-18 rates are unchanged.
+ * junior % applied: under 16 = 40%, 16 = 50%, 17 = 60%, 18 = 70%,
+ * 19 = 80%, 20 = 90% (first 6 months with an employer)).
+ * Note: from the first full pay period on or after 1 December 2026 the FWC
+ * ([2026] FWCFB 75, PR813654) phases 18-20s with MORE than 6 months' service
+ * up +5 percentage points per 1 Dec/1 Jul step until 100% — 20s by 1 Jul 2027,
+ * 19s by 1 Jul 2028, 18s by 1 Jul 2029 (Retail, Fast Food & Pharmacy awards).
+ * Under-18 rates and new starters (<=6 months' service) are unchanged.
+ * Verified 18 Oct 2026 (calculate.fairwork.gov.au pay guides, fwc.gov.au).
  */
 export const AGE_PRESETS: Record<number, AgePreset> = {
   15: {
@@ -63,7 +68,7 @@ export const AGE_PRESETS: Record<number, AgePreset> = {
     age: 18,
     label: '18yo School Leaver',
     jobTitle: 'Junior Sports Referee / Retail Level 1',
-    hourlyRate: 24.34, // $19.47 base + 25% casual loading ($24.34/hr, moves to $34.76 after 6mo per FWCFB 75)
+    hourlyRate: 24.34, // 70% ($19.47 base) + 25% casual loading = $24.34/hr; with >6mo service steps +5pp from 1 Dec 2026, reaching 100% by 1 Jul 2029 ([2026] FWCFB 75)
     hoursPerWeek: 20,
     claimsTaxFreeThreshold: true,
     savingsGoalName: 'Emergency Buffer ($2,000) & Index ETFs',
@@ -74,7 +79,7 @@ export const AGE_PRESETS: Record<number, AgePreset> = {
     age: 19,
     label: '19yo Uni / TAFE Student',
     jobTitle: 'Customer Service & Admin Team',
-    hourlyRate: 27.81, // $22.25 base + 25% casual loading ($27.81/hr)
+    hourlyRate: 27.81, // 80% ($22.25 base) + 25% casual loading = $27.81/hr; 100% by 1 Jul 2028 with >6mo service ([2026] FWCFB 75)
     hoursPerWeek: 22,
     claimsTaxFreeThreshold: true,
     savingsGoalName: 'Uni Laptop, Textbooks & Rental Bond Fund',
@@ -85,7 +90,7 @@ export const AGE_PRESETS: Record<number, AgePreset> = {
     age: 20,
     label: '20yo Young Adult',
     jobTitle: 'Shift Supervisor / Department Coordinator',
-    hourlyRate: 34.76, // $27.81 adult base + 25% casual loading ($34.76/hr)
+    hourlyRate: 31.29, // 90% ($25.03 base, first 6 months) + 25% casual loading = $31.29/hr; with >6mo service steps +5pp from 1 Dec 2026 to 100% by 1 Jul 2027 ([2026] FWCFB 75)
     hoursPerWeek: 28,
     claimsTaxFreeThreshold: true,
     savingsGoalName: 'First Home Deposit & ETF Portfolio',
@@ -108,7 +113,7 @@ export const MINOR_UNEARNED_TAX_RATES = {
 /**
  * Centrelink Youth Allowance & Student Assistance Rates (Jan 2026 indexation = Sept 2026 current; source: Services Australia).
  * Student personal income test: $539/fn free, then 50c per $ ($539–$646) and 60c above $646.
- * Verified 5 Sept 2026.
+ * Verified 27 Sept 2026.
  */
 export const CENTRELINK_YOUTH_ALLOWANCE_RATES = {
   singleUnder18AtHome: 418.90,
@@ -163,7 +168,7 @@ export const JUNIOR_AWARD_RATES = {
       { age: '20 years (>6 months)', pct: 1.00, label: '100% — $27.81/hr (>6 months; from 1 Dec 2026 [2026] FWCFB 75)' },
       { age: '21+ years', pct: 1.00, label: '100% (Adult Rate) — $27.81/hr (Casual: $34.76/hr)' },
     ],
-    note: 'Junior rates apply to Levels 1–3 only; Levels 4+ always adult rate. 3-hour minimum shift. Saturday: 150% casual; Sunday: 175% casual; Public Holiday: 250% casual.',
+    note: 'Junior rates apply to Levels 1–3 only; Levels 4+ always adult rate. 3-hour minimum shift (1.5-hour minimum for secondary school students working between 3:00pm–6:30pm on school days with written parental consent). Saturday: 150% casual; Sunday: 175% casual; Public Holiday: 250% casual.',
   },
   restaurant: {
     code: 'MA000119',
@@ -330,7 +335,7 @@ export const TEEN_CAR_COST_DEFAULTS = {
   ctpGreenSlipAnnual: 418.00,              // QLD CTP Class 1 scheme average ($411.80-$424.80, 2026-27)
   comprehensiveInsuranceUnder25: 1650.00,  // Under-25 young driver comprehensive policy avg ($1,400-$2,000)
   thirdPartyPropertyUnder25: 520.00,       // Third-party property damage only (for low-value cash cars)
-  fuelWeekly: 48.70,                       // ~$46-$56/wk based on ~13,500km/yr at 6.8L/100km @ $2.02/L (Brisbane ULP 91, Aug 2026)
+  fuelWeekly: 56.40,                       // ~$50-$60/wk based on ~13,500km/yr at 6.8L/100km @ $2.34/L (Brisbane ULP 91, late Sept 2026)
   servicingAnnual: 450.00,                 // Annual logbook minor service + fluid changes
   tiresAndRepairsAnnual: 350.00,           // Tyres ($400-$600 set amortised over 3-4 yrs) + minor repairs
   roadsideAssistanceAnnual: 125.00,        // RACQ Standard Roadside Cover
@@ -349,7 +354,10 @@ export interface TeenSavingsAccount {
   hasCardlessOption: boolean;
 }
 
-/** High Yield Teen Savings Account Comparison (2026-27 verified rates) */
+/** 
+ * High Yield Teen Savings Account Comparison (2026-27 verified rates) 
+ * Verified 27 Sept 2026
+ */
 export const TEEN_SAVINGS_ACCOUNTS: TeenSavingsAccount[] = [
   {
     bank: 'BOQ Future Saver (Under 18 Waiver)',
@@ -389,9 +397,9 @@ export const TEEN_SAVINGS_ACCOUNTS: TeenSavingsAccount[] = [
   },
   {
     bank: 'ING Savings Maximiser (Orange Everyday Youth)',
-    maxRate: 5.49,
-    baseRate: 0.05,
-    conditions: 'Deposit $1,000+ from external bank + 5 settled card purchases + grow balance (up to $100k; verify live rate — last confirmed 5.49% May 2026)',
+    maxRate: 5.50,
+    baseRate: 0.01,
+    conditions: 'Deposit $1,000+ from external bank + 5 settled card purchases + grow balance (up to $100k; Verified 27 Sept 2026)',
     maxAge: 99,
     minAge: 15,
     bestFor: 'High $100k balance limit for working teens with regular paychecks',
@@ -517,7 +525,7 @@ export const AU_STATE_WORKING_HOURS_RULES: StateWorkingHoursRule[] = [
     minAgeGeneral: '13 years (retail, fast food, hospitality)',
     minAgeLightOrDelivery: '11 years (supervised delivery of newspapers & pamphlets)',
     parentConsentMandatory: true,
-    parentConsentDetails: 'Mandatory signed parent\'s consent form (chief-executive approved form under s10(3) — the old "Form 1" number is deprecated) required before starting work; must state school hours and be updated if school hours change.',
+    parentConsentDetails: 'Mandatory signed Parent Consent Form CE1 (chief-executive approved form under Child Employment Act 2006 s 10(3); formerly Form 1) required before starting work; must state school hours and be updated if school hours change.',
     schoolTermMaxHours: 'Max 12 hours per week during school terms',
     schoolDayMaxHours: 'Max 4 hours on a school day',
     nonSchoolDayMaxHours: 'Max 8 hours on a non-school day (weekend)',

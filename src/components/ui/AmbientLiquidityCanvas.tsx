@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { useReducedMotion } from 'motion/react';
+import { useReducedMotionSafe } from '@/hooks/useReducedMotionSafe';
 import { cn } from '@/lib/utils';
 
 interface AmbientLiquidityCanvasProps {
@@ -20,7 +20,7 @@ export function AmbientLiquidityCanvas({
 }: AmbientLiquidityCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const reducedMotion = useReducedMotion();
+  const reducedMotion = useReducedMotionSafe();
 
   useEffect(() => {
     if (reducedMotion) return;

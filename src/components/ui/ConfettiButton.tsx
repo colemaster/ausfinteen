@@ -1,10 +1,10 @@
 import React, { useRef } from 'react';
 import confetti from 'canvas-confetti';
-import { motion, useReducedMotion, type HTMLMotionProps } from 'motion/react';
+import { useReducedMotionSafe } from '@/hooks/useReducedMotionSafe';
 import { sound } from '@/lib/sound-synthesizer';
 import { cn } from '@/lib/utils';
 
-export interface ConfettiButtonProps extends Omit<HTMLMotionProps<'button'>, 'children'> {
+export interface ConfettiButtonProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
   children: React.ReactNode;
   variant?: 'default' | 'primary' | 'success' | 'outline' | 'ghost';
   size?: 'sm' | 'md' | 'lg';
@@ -39,7 +39,7 @@ export function ConfettiButton({
   ...props
 }: ConfettiButtonProps) {
   const btnRef = useRef<HTMLButtonElement>(null);
-  const reducedMotion = useReducedMotion() ?? false;
+  const reducedMotion = useReducedMotionSafe();
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (playAudio) {
@@ -64,13 +64,12 @@ export function ConfettiButton({
   };
 
   return (
-    <motion.button
+    <button
       ref={btnRef}
-      whileHover={reducedMotion ? {} : { scale: 1.02 }}
-      whileTap={reducedMotion ? {} : { scale: 0.96 }}
+      type="button"
       onClick={handleClick}
       className={cn(
-        'inline-flex items-center justify-center font-medium transition-colors focus-visible:outline-2 focus-visible:outline-primary cursor-pointer select-none',
+        'inline-flex items-center justify-center font-medium transition-[transform,background-color,color,border-color,box-shadow] duration-(--motion-fast) hover:scale-[1.02] active:scale-[0.96] focus-visible:outline-2 focus-visible:outline-primary cursor-pointer select-none',
         VARIANT_CLASSES[variant],
         SIZE_CLASSES[size],
         className
@@ -78,6 +77,6 @@ export function ConfettiButton({
       {...props}
     >
       {children}
-    </motion.button>
+    </button>
   );
 }

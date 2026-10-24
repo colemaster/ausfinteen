@@ -62,7 +62,7 @@ describe('computePortfolioStats', () => {
   it('treats a fund with null trailing as weightless for that period', () => {
     // A200 has no 10Y data; 5Y is present so weighted 5Y is non-null
     const stats = computePortfolioStats([{ code: 'A200', pct: 100 }], TOP_10_ASX_ETFS);
-    expect(stats.weighted5Y).toBeCloseTo(7.91, 5);
+    expect(stats.weighted5Y).toBeCloseTo(7.95, 5);
   });
 
   it('all three portfolios are fully weighted (MER non-null)', () => {

@@ -1,76 +1,57 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import { cn } from '@/lib/utils';
 
 interface SpotlightCardProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
   className?: string;
   spotlightColor?: string;
+  /** Add specular depth layer (specular edge + inner shadow). */
+  depth?: boolean;
 }
 
 /**
- * 2030 Tactile Spotlight Card (inspired by Vercel & Raycast design systems)
- * Uses mouse-tracking CSS variables (--mouse-x, --mouse-y) for GPU-accelerated radial spotlight glow.
+ * Cursor-tracked spotlight card.
+ *
+ * Writes the pointer position straight to two CSS custom properties on the
+ * element instead of `setState` on every mousemove — the old version re-rendered
+ * the whole card subtree ~60 times a second while the pointer moved. The glow is
+ * a `::before` layer driven entirely by the compositor.
  */
 export function SpotlightCard({
   children,
   className = '',
-  spotlightColor = 'rgba(99, 102, 241, 0.15)',
+  spotlightColor = 'oklch(0.65 0.15 250 / 0.16)',
+  depth = false,
   ...props
 }: SpotlightCardProps) {
-  const divRef = useRef<HTMLDivElement>(null);
-  const [isFocused, setIsFocused] = useState(false);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [opacity, setOpacity] = useState(0);
+  const ref = useRef<HTMLDivElement>(null);
+  const frame = useRef<number | null>(null);
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!divRef.current || isFocused) return;
+  const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+    const node = ref.current;
+    if (!node || frame.current !== null) return;
+    const { clientX, clientY } = event;
 
-    const div = divRef.current;
-    const rect = div.getBoundingClientRect();
-
-    setPosition({ x: e.clientX - rect.left, y: e.clientY - rect.top });
-  };
-
-  const handleFocus = () => {
-    setIsFocused(true);
-    setOpacity(1);
-  };
-
-  const handleBlur = () => {
-    setIsFocused(false);
-    setOpacity(0);
-  };
-
-  const handleMouseEnter = () => {
-    setOpacity(1);
-  };
-
-  const handleMouseLeave = () => {
-    setOpacity(0);
+    frame.current = requestAnimationFrame(() => {
+      frame.current = null;
+      const rect = node.getBoundingClientRect();
+      node.style.setProperty('--glow-x', `${clientX - rect.left}px`);
+      node.style.setProperty('--glow-y', `${clientY - rect.top}px`);
+    });
   };
 
   return (
     <div
-      ref={divRef}
-      onMouseMove={handleMouseMove}
-      onFocus={handleFocus}
-      onBlur={handleBlur}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
+      ref={ref}
+      onPointerMove={handlePointerMove}
       className={cn(
-        'relative rounded-2xl border border-border bg-card/80 backdrop-blur-xl p-6 shadow-sm transition-all duration-300 hover:shadow-xl hover:border-primary/40 overflow-hidden group card-container',
+        'cursor-glow card-container group relative overflow-hidden rounded-2xl border border-border bg-card/80 p-6 shadow-sm transition-[border-color,box-shadow,transform] duration-(--motion-base) ease-(--ease-out) hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-xl backdrop-blur-xl',
+        depth && 'card-specular soft-inset-shadow',
         className
       )}
+      style={{ '--glow-color': spotlightColor } as React.CSSProperties}
       {...props}
     >
-      <div
-        className="pointer-events-none absolute -inset-px opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-        style={{
-          opacity,
-          background: `radial-gradient(600px circle at ${position.x}px ${position.y}px, ${spotlightColor}, transparent 40%)`,
-        }}
-        aria-hidden="true"
-      />
       <div className="relative z-10">{children}</div>
     </div>
   );

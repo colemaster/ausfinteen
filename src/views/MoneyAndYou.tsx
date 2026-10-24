@@ -3,6 +3,7 @@ import { TopicGuideAccordion } from '@/components/shared/TopicGuideAccordion';
 import { FifteenYearOldRoadmap } from '@/components/teen/FifteenYearOldRoadmap';
 import { MoneyMindsetQuiz } from '@/components/shared/MoneyMindsetQuiz';
 import { ModulePrevNext } from '@/components/shared/ModulePrevNext';
+import { PrintShareFAB } from '@/components/shared/PrintShareFAB';
 import { Badge } from '@/components/ui/Badge';
 import { SmartImage } from '@/components/ui/SmartImage';
 import { usePageTitle } from '@/hooks/usePageTitle';
@@ -54,6 +55,7 @@ export function MoneyAndYou() {
       </div>
 
       <ModulePrevNext currentId="money-and-you" />
+      <PrintShareFAB />
     </div>
   );
 }

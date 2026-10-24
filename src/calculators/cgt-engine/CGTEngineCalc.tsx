@@ -1,6 +1,8 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { calculateCGT, cgtOnDisposal } from './engine';
 import { OdometerCounter } from '@/components/shared/OdometerCounter';
+import { QuickPresetBar, type ScenarioPreset } from '../../components/ui/QuickPresetBar';
+import { CalculatorActions } from '../../components/shared/CalculatorActions';
 import { sound } from '@/lib/sound-synthesizer';
 import { exportToCSV, encodePlanToHash, generateSimpleQRCodeSVG } from '@/lib/share-state';
 import {
@@ -25,6 +27,80 @@ const WORKFLOW_STEPS = [
   { id: 'sell', label: 'Sell', icon: Landmark },
 ] as const;
 
+interface CGTPreset {
+  assetType: 'property' | 'shares' | 'crypto';
+  purchasePrice: number;
+  salePrice: number;
+  ownershipMonths: number;
+  buyingCosts: number;
+  renovations: number;
+  sellingCosts: number;
+  div43Clawback: number;
+  taxableIncome: number;
+  rentedMonths: number;
+  electedSixYear: boolean;
+}
+
+const PRESETS: ScenarioPreset<CGTPreset>[] = [
+  {
+    id: 'rental-property',
+    label: 'Investment Property ($920k)',
+    badge: 'Div 43 & 6-Yr',
+    description: 'Property bought for $650k, sold for $920k after 3 years renting with Div 43 clawback',
+    values: {
+      assetType: 'property',
+      purchasePrice: 650000,
+      salePrice: 920000,
+      ownershipMonths: 36,
+      buyingCosts: 28000,
+      renovations: 15000,
+      sellingCosts: 22000,
+      div43Clawback: 8000,
+      taxableIncome: 110000,
+      rentedMonths: 48,
+      electedSixYear: true,
+    },
+  },
+  {
+    id: 'asx-etf-sale',
+    label: 'ASX ETF Sale ($210k)',
+    badge: '50% CGT Discount',
+    description: 'Long-term ETF portfolio held 2+ years with $90k gross capital gain',
+    values: {
+      assetType: 'shares',
+      purchasePrice: 120000,
+      salePrice: 210000,
+      ownershipMonths: 24,
+      buyingCosts: 0,
+      renovations: 0,
+      sellingCosts: 500,
+      div43Clawback: 0,
+      taxableIncome: 130000,
+      rentedMonths: 0,
+      electedSixYear: false,
+    },
+  },
+  {
+    id: 'crypto-gains',
+    label: 'Crypto Asset Sale ($95k)',
+    badge: 'Digital Assets',
+    description: 'Crypto acquired for $25k sold for $95k after 18 months holding',
+    values: {
+      assetType: 'crypto',
+      purchasePrice: 25000,
+      salePrice: 95000,
+      ownershipMonths: 18,
+      buyingCosts: 100,
+      renovations: 0,
+      sellingCosts: 400,
+      div43Clawback: 0,
+      taxableIncome: 95000,
+      rentedMonths: 0,
+      electedSixYear: false,
+    },
+  },
+];
+
 export function CGTEngineCalc() {
   const [assetType, setAssetType] = useState<'property' | 'shares' | 'crypto'>('property');
   const [purchasePrice, setPurchasePrice] = useState<number>(650000);
@@ -44,6 +120,38 @@ export function CGTEngineCalc() {
   const [electedSixYear, setElectedSixYear] = useState<boolean>(true);
   const [showShareModal, setShowShareModal] = useState<boolean>(false);
   const [shareUrl, setShareUrl] = useState<string>('');
+  const [activePreset, setActivePreset] = useState<string | undefined>(undefined);
+
+  const handleApplyPreset = useCallback((preset: ScenarioPreset<CGTPreset>) => {
+    setActivePreset(preset.id);
+    if (!preset.values) return;
+    if (preset.values.assetType !== undefined) setAssetType(preset.values.assetType);
+    if (preset.values.purchasePrice !== undefined) setPurchasePrice(preset.values.purchasePrice);
+    if (preset.values.salePrice !== undefined) setSalePrice(preset.values.salePrice);
+    if (preset.values.ownershipMonths !== undefined) setOwnershipMonths(preset.values.ownershipMonths);
+    if (preset.values.buyingCosts !== undefined) setBuyingCosts(preset.values.buyingCosts);
+    if (preset.values.renovations !== undefined) setRenovations(preset.values.renovations);
+    if (preset.values.sellingCosts !== undefined) setSellingCosts(preset.values.sellingCosts);
+    if (preset.values.div43Clawback !== undefined) setDiv43Clawback(preset.values.div43Clawback);
+    if (preset.values.taxableIncome !== undefined) setTaxableIncome(preset.values.taxableIncome);
+    if (preset.values.rentedMonths !== undefined) setRentedMonths(preset.values.rentedMonths);
+    if (preset.values.electedSixYear !== undefined) setElectedSixYear(preset.values.electedSixYear);
+  }, []);
+
+  const handleReset = useCallback(() => {
+    setActivePreset(undefined);
+    setAssetType('property');
+    setPurchasePrice(650000);
+    setSalePrice(920000);
+    setOwnershipMonths(36);
+    setBuyingCosts(28000);
+    setRenovations(15000);
+    setSellingCosts(22000);
+    setDiv43Clawback(8000);
+    setTaxableIncome(110000);
+    setRentedMonths(48);
+    setElectedSixYear(true);
+  }, []);
 
   // ATO section references for the current scenario (workflow model)
   const disposalRefs = useMemo(
@@ -137,6 +245,18 @@ export function CGTEngineCalc() {
     toast.success('Shareable link copied to clipboard!');
   };
 
+  const summaryText = useMemo(() => {
+    return [
+      '--- Capital Gains Tax Summary ---',
+      `Asset Type: ${assetType.toUpperCase()} | Purchase: $${purchasePrice.toLocaleString()} -> Sale: $${salePrice.toLocaleString()} (${ownershipMonths} mos)`,
+      `Adjusted Cost Base: $${result.adjustedCostBase.toLocaleString()} | Gross Capital Gain: $${result.grossCapitalGain.toLocaleString()}`,
+      `50% CGT Discount: -$${result.cgtDiscount50PercentAmount.toLocaleString()} (${result.discountEligible ? 'Eligible' : 'Ineligible'})`,
+      `Net Taxable Capital Gain: $${result.netTaxableCapitalGain.toLocaleString()}`,
+      `Estimated CGT Payable to ATO: $${result.cgtTaxPayable.toLocaleString()} (Effective Rate on Gain: ${result.effectiveCGTRateOnGrossGain}%)`,
+      `Calculated via AusFinTools CGT Engine`,
+    ].join('\n');
+  }, [assetType, purchasePrice, salePrice, ownershipMonths, result]);
+
   return (
     <div className="space-y-6 max-w-5xl mx-auto">
       {/* Header Banner */}
@@ -155,7 +275,12 @@ export function CGTEngineCalc() {
             </p>
           </div>
 
-          <div className="flex items-center gap-2 w-full sm:w-auto">
+          <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+            <CalculatorActions
+              onReset={handleReset}
+              summaryText={summaryText}
+              summaryTitle="Capital Gains Tax"
+            />
             <button
               onClick={handleExportCSV}
               className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-muted text-foreground text-xs font-bold hover:bg-muted/80 transition-all"
@@ -173,6 +298,13 @@ export function CGTEngineCalc() {
           </div>
         </div>
       </div>
+
+      <QuickPresetBar
+        presets={PRESETS}
+        activePresetId={activePreset}
+        onSelect={handleApplyPreset}
+        title="Asset Disposal Scenarios"
+      />
 
       {/* Asset Type Selector */}
       <div className="flex items-center gap-2 p-1.5 bg-card border border-border rounded-2xl w-fit">
@@ -559,7 +691,7 @@ export function CGTEngineCalc() {
       {/* Share Modal */}
       {showShareModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-          <div className="w-full max-w-sm rounded-3xl bg-card border border-border p-6 shadow-2xl space-y-4 animate-in fade-in zoom-in-95">
+          <div className="w-full max-w-sm rounded-3xl bg-card border border-border p-6 shadow-2xl space-y-4 animate-pop-in">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-bold text-foreground">Share CGT Calculation</h3>
               <button

@@ -17,6 +17,10 @@ const badgeVariants = cva(
           'border-danger/20 bg-gradient-to-b from-danger/20 to-danger/5 text-danger shadow-sm',
         info: 'border-info/20 bg-gradient-to-b from-info/20 to-info/5 text-info shadow-sm',
         outline: 'border-border bg-card text-foreground shadow-sm',
+        glass:
+          'border-border/60 bg-card/40 backdrop-blur-xl text-foreground shadow-xs',
+        neon:
+          'border-primary/30 bg-primary/10 text-primary shadow-[0_0_12px_-2px_oklch(var(--accent-l)_var(--accent-c)_var(--accent-h)_/0.35)]',
       },
     },
     defaultVariants: {

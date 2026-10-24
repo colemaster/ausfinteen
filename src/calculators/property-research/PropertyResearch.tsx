@@ -1,6 +1,4 @@
 import { useState, useMemo } from 'react';
-import { motion } from 'motion/react';
-import { scaleIn } from '@/lib/animations';
 import { CRITERIA, LAYERS, type Layer } from './criteria';
 import { calculateScore, getRecommendationColor, getRecommendationBg, type WeightConfig } from './scoring';
 import { suburbYieldSummary } from './suburb-metrics';
@@ -232,7 +230,7 @@ export function PropertyResearch() {
         </div>
 
         {/* Right — score panel */}
-        <motion.div variants={scaleIn} initial="hidden" animate="visible" className="space-y-4">
+        <div className="animate-scale-in space-y-4">
           <div className={`sticky top-20 rounded-xl border-2 p-5 ${getRecommendationBg(result.recommendation)}`}>
             <div className="text-xs uppercase tracking-wide text-[var(--muted-foreground)] font-medium mb-2">
               {address || 'Your Property'}
@@ -353,7 +351,7 @@ export function PropertyResearch() {
               </table>
             </div>
           </div>
-        </motion.div>
+        </div>
       </div>
     </div>
   );

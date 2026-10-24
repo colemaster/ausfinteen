@@ -1,6 +1,4 @@
 import { useState, useMemo } from 'react';
-import { motion } from 'motion/react';
-import { fadeInUp } from '@/lib/animations';
 import { SliderControl } from '../../components/ui/SliderControl';
 import { NumberInput } from '../../components/ui/NumberInput';
 import { PortfolioField } from '../../components/ui/PortfolioField';
@@ -165,7 +163,7 @@ export function SavingsRate() {
       </div>
 
       {/* Stat cards */}
-      <motion.div variants={fadeInUp} initial="hidden" animate="visible" className="space-y-6">
+      <div className="animate-rise-in space-y-6">
       <div className="text-xs text-[var(--muted-foreground)] bg-[var(--background)] border border-slate-100 rounded-lg px-4 py-3 leading-relaxed">
         <strong className="text-[var(--foreground)]">FIRE Number</strong> = annual expenses ÷ 4% safe withdrawal rate — the portfolio size needed to retire. <strong className="text-[var(--foreground)]">Years to FIRE</strong> assumes you invest your annual savings each year, compounding at the return rate, until your portfolio covers the FIRE number. A higher savings rate shrinks both your FIRE number (lower expenses) and the time to reach it (more savings invested).{' '}
         <a href="https://en.wikipedia.org/wiki/FIRE_movement" target="_blank" rel="noopener noreferrer" className="text-[var(--primary)] hover:text-[var(--primary)]">Wikipedia: FIRE movement ↗</a>
@@ -351,7 +349,7 @@ export function SavingsRate() {
           </tbody>
         </table>
       </div>
-      </motion.div>
+      </div>
 
       <Assumptions items={ASSUMPTIONS} />
       <Disclaimer calculatorName="Savings Rate Impact calculator" />

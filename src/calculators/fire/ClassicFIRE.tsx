@@ -1,8 +1,10 @@
-import { useMemo, useState, useDeferredValue } from 'react';
+import { useMemo, useState, useDeferredValue, useCallback } from 'react';
 import { StatCard } from '../../components/ui/StatCard';
 import { SliderControl } from '../../components/ui/SliderControl';
 import { NumberInput } from '../../components/ui/NumberInput';
 import { PortfolioField } from '../../components/ui/PortfolioField';
+import { QuickPresetBar, type ScenarioPreset } from '../../components/ui/QuickPresetBar';
+import { CalculatorActions } from '../../components/shared/CalculatorActions';
 import { MonteCarloFanChart } from '../../components/shared/MonteCarloFanChart';
 import {
   calculateFIRENumber,
@@ -33,6 +35,36 @@ interface Props {
 
 const DRAWDOWN_YEARS = 30;
 
+interface FirePreset {
+  expenses: number;
+  swr: number;
+  savings: number;
+}
+
+const FIRE_PRESETS: ScenarioPreset<FirePreset>[] = [
+  {
+    id: 'lean',
+    label: 'Lean FIRE ($50k)',
+    badge: '4.0% SWR',
+    description: 'Minimalist frugal lifestyle with $50,000/yr target expenses',
+    values: { expenses: 50000, swr: 4.0, savings: 35000 },
+  },
+  {
+    id: 'standard',
+    label: 'Standard FIRE ($80k)',
+    badge: '3.5% Conservative',
+    description: 'Comfortable family benchmark with conservative 3.5% withdrawal rate',
+    values: { expenses: 80000, swr: 3.5, savings: 45000 },
+  },
+  {
+    id: 'fat',
+    label: 'Fat FIRE ($120k)',
+    badge: '3.25% High Buffer',
+    description: 'Abundant lifestyle with travel buffer and perpetual capital safety',
+    values: { expenses: 120000, swr: 3.25, savings: 65000 },
+  },
+];
+
 export function ClassicFIRE({
   currentAge, onCurrentAgeChange,
   currentInvestments, onCurrentInvestmentsChange, investmentsLocked,
@@ -44,6 +76,25 @@ export function ClassicFIRE({
   const [targetRetirementAge, setTargetRetirementAge] = useState(65);
   const [inflationRate, setInflationRate] = useState(3);
   const [showInflationAdjusted, setShowInflationAdjusted] = useState(true);
+  const [activePreset, setActivePreset] = useState<string | undefined>();
+
+  const handleApplyPreset = (preset: ScenarioPreset<FirePreset>) => {
+    setActivePreset(preset.id);
+    if (preset.values.expenses !== undefined) setAnnualExpenses(preset.values.expenses);
+    if (preset.values.swr !== undefined) setSwr(preset.values.swr);
+    if (preset.values.savings !== undefined && !annualSavingsLocked) onAnnualSavingsChange(preset.values.savings);
+  };
+
+  const handleReset = useCallback(() => {
+    setActivePreset(undefined);
+    setAnnualExpenses(80000);
+    setSwr(4);
+    setTargetRetirementAge(65);
+    setInflationRate(3);
+    setShowInflationAdjusted(true);
+    if (!annualSavingsLocked) onAnnualSavingsChange(30000);
+    onReturnRateChange(7.0);
+  }, [annualSavingsLocked, onAnnualSavingsChange, onReturnRateChange]);
 
   const fireNumber = useMemo(
     () => calculateFIRENumber(annualExpenses, swr / 100),
@@ -112,8 +163,29 @@ export function ClassicFIRE({
     years: yearsToFIRE(currentInvestments, annualSavings, calculateFIRENumber(annualExpenses, rate / 100), returnRate),
   }));
 
+  const summaryText = useMemo(() => {
+    return [
+      '--- Classic FIRE & Financial Independence Summary ---',
+      `Current Age: ${currentAge} | Target Retirement Age: ${targetRetirementAge}`,
+      `Current Investments: ${formatCurrency(currentInvestments)} | Annual Savings: ${formatCurrency(annualSavings)}/yr`,
+      `Target Annual Expenses: ${formatCurrency(annualExpenses)}/yr (Safe Withdrawal Rate: ${swr}%)`,
+      `FIRE Target Number: ${formatCurrency(fireNumber)} (${formatCompact(fireNumber)})`,
+      `Years to FIRE: ${years} years (Projected FIRE Age: ${fireAge})`,
+      `Timeline Status: ${onTrack ? 'On Track for Goal!' : `${fireAge - targetRetirementAge} years behind target retirement age`}`,
+      `Calculated via AusFinTools FIRE Dashboard`,
+    ].join('\n');
+  }, [currentAge, targetRetirementAge, currentInvestments, annualSavings, annualExpenses, swr, fireNumber, years, fireAge, onTrack]);
+
   return (
     <div className="space-y-5">
+      {/* Quick Presets */}
+      <QuickPresetBar
+        presets={FIRE_PRESETS}
+        activePresetId={activePreset}
+        onSelect={handleApplyPreset}
+        title="FIRE Strategy Personas"
+      />
+
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 bg-[var(--background)] border border-[var(--border)] rounded-xl p-4">
         <NumberInput label="Current Age" value={currentAge} onChange={v => onCurrentAgeChange(Math.round(v))} min={18} max={70} step={1} />
         <NumberInput label="Target Retirement Age" value={targetRetirementAge} onChange={v => setTargetRetirementAge(Math.round(v))} min={25} max={75} step={1} />
@@ -158,10 +230,34 @@ export function ClassicFIRE({
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <StatCard label="FIRE Number" value={formatCompact(fireNumber)} color="blue" />
-        <StatCard label="Years to FIRE" value={`${years} yrs`} color="green" />
-        <StatCard label="FIRE Age" value={`${fireAge}`} color="purple" />
-        <StatCard label="Annual Expenses" value={formatCurrency(annualExpenses)} color="cyan" />
+        <StatCard
+          label="FIRE Number"
+          value={formatCompact(fireNumber)}
+          numericValue={fireNumber}
+          format="currency"
+          color="blue"
+        />
+        <StatCard
+          label="Years to FIRE"
+          value={`${years} yrs`}
+          numericValue={years}
+          format="number"
+          color="green"
+        />
+        <StatCard
+          label="FIRE Age"
+          value={`${fireAge}`}
+          numericValue={fireAge}
+          format="number"
+          color="purple"
+        />
+        <StatCard
+          label="Annual Expenses"
+          value={formatCurrency(annualExpenses)}
+          numericValue={annualExpenses}
+          format="currency"
+          color="cyan"
+        />
       </div>
 
       {!onTrack && (
@@ -204,18 +300,18 @@ export function ClassicFIRE({
       {/* Sequence-of-returns risk */}
       <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-4 space-y-4">
         <h4 className="text-xs font-semibold text-[var(--muted-foreground)]">Sequence-of-Returns Risk (30-yr drawdown from FIRE)</h4>
-        <div className="overflow-x-auto rounded-xl border border-[var(--border)]">
+        <div className="overflow-x-auto rounded-xl border border-[var(--border)] max-h-72">
           <table className="w-full text-xs border-collapse">
-            <thead>
-              <tr className="bg-[var(--background)]">
+            <thead className="sticky top-0 bg-[var(--card)] z-10 shadow-xs border-b border-[var(--border)]">
+              <tr>
                 {['Scenario', 'Ending Balance', 'Min Balance', 'Outcome'].map(h => (
-                  <th key={h} className="px-4 py-2.5 text-right text-[10px] uppercase tracking-wide text-[var(--muted-foreground)] font-medium border-b border-[var(--border)] first:text-left">{h}</th>
+                  <th key={h} className="px-4 py-2.5 text-right text-[10px] uppercase tracking-wide text-[var(--foreground)] font-bold border-b border-[var(--border)] first:text-left">{h}</th>
                 ))}
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-border/40">
               {sequenceResults.map(r => (
-                <tr key={r.label} className="border-b border-slate-100 last:border-0">
+                <tr key={r.label} className="hover:bg-muted/40 transition-colors">
                   <td className="px-4 py-2 font-semibold text-[var(--foreground)]">{r.label}</td>
                   <td className="px-4 py-2 text-right font-mono text-[var(--foreground)]">{formatCompact(r.endingBalance)}</td>
                   <td className="px-4 py-2 text-right font-mono text-[var(--muted-foreground)]">{formatCompact(r.minBalance)}</td>
@@ -239,26 +335,33 @@ export function ClassicFIRE({
       </div>
 
       {/* SWR Sensitivity Table */}
-      <div className="overflow-x-auto rounded-xl border border-[var(--border)]">
+      <div className="overflow-x-auto rounded-xl border border-[var(--border)] max-h-64">
         <table className="w-full text-xs border-collapse">
-          <thead>
-            <tr className="bg-[var(--background)]">
+          <thead className="sticky top-0 bg-[var(--card)] z-10 shadow-xs border-b border-[var(--border)]">
+            <tr>
               {['SWR', 'FIRE Number', 'Years to FIRE'].map(h => (
-                <th key={h} className="px-4 py-2.5 text-right text-[10px] uppercase tracking-wide text-[var(--muted-foreground)] font-medium border-b border-[var(--border)] first:text-left">{h}</th>
+                <th key={h} className="px-4 py-2.5 text-right text-[10px] uppercase tracking-wide text-[var(--foreground)] font-bold border-b border-[var(--border)] first:text-left">{h}</th>
               ))}
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-border/40">
             {swrSensitivity.map(row => (
-              <tr key={row.rate} className={`border-b border-slate-100 last:border-0 ${row.rate === swr ? 'bg-[var(--primary)]/10 ' : ''}`}>
-                <td className="px-4 py-2 text-[var(--muted-foreground)]">{row.rate}% {row.rate === swr && <span className="text-[var(--primary)]">(current)</span>}</td>
+              <tr key={row.rate} className={`hover:bg-muted/40 transition-colors ${row.rate === swr ? 'bg-[var(--primary)]/10 font-semibold' : ''}`}>
+                <td className="px-4 py-2 text-[var(--foreground)]">{row.rate}% {row.rate === swr && <span className="text-[var(--primary)] font-bold">(current)</span>}</td>
                 <td className="px-4 py-2 text-right font-mono text-[var(--foreground)]">{formatCompact(row.fireNumber)}</td>
-                <td className="px-4 py-2 text-right font-mono font-semibold text-[var(--success)]">{row.years} yrs</td>
+                <td className="px-4 py-2 text-right font-mono font-bold text-[var(--success)]">{row.years} yrs</td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+
+      {/* Action buttons */}
+      <CalculatorActions
+        onReset={handleReset}
+        summaryText={summaryText}
+        summaryTitle="Classic FIRE Projection"
+      />
     </div>
   );
 }

@@ -1,8 +1,10 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { StatCard } from '../../components/ui/StatCard';
 import { NumberInput } from '../../components/ui/NumberInput';
 import { SliderControl } from '../../components/ui/SliderControl';
 import { PortfolioField } from '../../components/ui/PortfolioField';
+import { QuickPresetBar, type ScenarioPreset } from '../../components/ui/QuickPresetBar';
+import { CalculatorActions } from '../../components/shared/CalculatorActions';
 import { calculateSuperBridge, PRESERVATION_AGE, netSuperContribution } from './engine';
 import { formatCurrency, formatCompact } from '../../utils/formatters';
 import {
@@ -20,12 +22,82 @@ interface Props {
   returnRate: number;
 }
 
+interface SuperBridgePreset {
+  earlyRetirementAge: number;
+  annualExpenses: number;
+  annualSavingsNonSuper: number;
+  annualSuperContribs: number;
+  concessionalShare: number;
+}
+
+const PRESETS: ScenarioPreset<SuperBridgePreset>[] = [
+  {
+    id: 'retire-50',
+    label: '10-Yr Bridge (Retire 50)',
+    badge: 'Age 50 -> 60',
+    description: 'Bridge 10 years to Preservation Age 60 on $60k/yr living expenses',
+    values: {
+      earlyRetirementAge: 50,
+      annualExpenses: 60000,
+      annualSavingsNonSuper: 25000,
+      annualSuperContribs: 15000,
+      concessionalShare: 70,
+    },
+  },
+  {
+    id: 'retire-55',
+    label: '5-Yr Squeeze (Retire 55)',
+    badge: 'Short Bridge',
+    description: 'Bridge 5 years to age 60 with $75k expenses and maximized super salary sacrifice',
+    values: {
+      earlyRetirementAge: 55,
+      annualExpenses: 75000,
+      annualSavingsNonSuper: 35000,
+      annualSuperContribs: 20000,
+      concessionalShare: 80,
+    },
+  },
+  {
+    id: 'retire-45',
+    label: '15-Yr Early Fire (Retire 45)',
+    badge: 'Long Bridge',
+    description: 'Aggressive 15-year non-super bridge with frugal $50k annual spend',
+    values: {
+      earlyRetirementAge: 45,
+      annualExpenses: 50000,
+      annualSavingsNonSuper: 40000,
+      annualSuperContribs: 10000,
+      concessionalShare: 50,
+    },
+  },
+];
+
 export function SuperBridge({ currentAge, nonSuperBalance, superBalance, onSuperBalanceChange, superBalanceLocked, returnRate }: Props) {
   const [earlyRetirementAge, setEarlyRetirementAge] = useState(50);
   const [annualExpenses, setAnnualExpenses] = useState(60000);
   const [annualSavingsNonSuper, setAnnualSavingsNonSuper] = useState(20000);
   const [annualSuperContribs, setAnnualSuperContribs] = useState(15000);
   const [concessionalShare, setConcessionalShare] = useState(60);
+  const [activePreset, setActivePreset] = useState<string | undefined>(undefined);
+
+  const handleApplyPreset = useCallback((preset: ScenarioPreset<SuperBridgePreset>) => {
+    setActivePreset(preset.id);
+    if (!preset.values) return;
+    if (preset.values.earlyRetirementAge !== undefined) setEarlyRetirementAge(preset.values.earlyRetirementAge);
+    if (preset.values.annualExpenses !== undefined) setAnnualExpenses(preset.values.annualExpenses);
+    if (preset.values.annualSavingsNonSuper !== undefined) setAnnualSavingsNonSuper(preset.values.annualSavingsNonSuper);
+    if (preset.values.annualSuperContribs !== undefined) setAnnualSuperContribs(preset.values.annualSuperContribs);
+    if (preset.values.concessionalShare !== undefined) setConcessionalShare(preset.values.concessionalShare);
+  }, []);
+
+  const handleReset = useCallback(() => {
+    setActivePreset(undefined);
+    setEarlyRetirementAge(50);
+    setAnnualExpenses(60000);
+    setAnnualSavingsNonSuper(20000);
+    setAnnualSuperContribs(15000);
+    setConcessionalShare(60);
+  }, []);
 
   const bridgeParams = (retireAge: number) => ({
     currentAge,
@@ -64,8 +136,36 @@ export function SuperBridge({ currentAge, nonSuperBalance, superBalance, onSuper
   const bridgeYears = Math.max(0, PRESERVATION_AGE - earlyRetirementAge);
   const netContrib = netSuperContribution(annualSuperContribs, concessionalShare / 100);
 
+  const summaryText = useMemo(() => {
+    return [
+      '--- Super Bridge Calculation Summary ---',
+      `Current Age: ${currentAge} | Early Retirement Target: Age ${earlyRetirementAge} (${bridgeYears}-year bridge to preservation age ${PRESERVATION_AGE})`,
+      `Annual Expenses: ${formatCurrency(annualExpenses)} | Total Bridge Need: ${formatCurrency(annualExpenses * bridgeYears)}`,
+      `Non-Super Savings: ${formatCurrency(annualSavingsNonSuper)}/yr | Super Contributions: ${formatCurrency(annualSuperContribs)}/yr (${concessionalShare}% concessional)`,
+      `Status: ${primary.nonSuperSufficientToBridge ? `Bridge SUFFICIENT to age ${PRESERVATION_AGE}` : `Bridge SHORTFALL (runs out at age ${primary.ageNonSuperRunsOut ?? 'N/A'})`}`,
+      `Estimated Super at Preservation Age 60: ${formatCurrency(primary.yearly.find(r => r.age === PRESERVATION_AGE)?.superBalance ?? 0)}`,
+      `Calculated via AusFinTools Super Bridge Engine`,
+    ].join('\n');
+  }, [currentAge, earlyRetirementAge, bridgeYears, annualExpenses, annualSavingsNonSuper, annualSuperContribs, concessionalShare, primary]);
+
   return (
     <div className="space-y-5">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <QuickPresetBar
+          presets={PRESETS}
+          activePresetId={activePreset}
+          onSelect={handleApplyPreset}
+          title="Super Bridge Scenarios"
+        />
+        <div className="shrink-0">
+          <CalculatorActions
+            onReset={handleReset}
+            summaryText={summaryText}
+            summaryTitle="Super Bridge"
+          />
+        </div>
+      </div>
+
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 bg-[var(--background)] border border-[var(--border)] rounded-xl p-4">
         {superBalanceLocked
           ? <PortfolioField label="Current Super Balance" value={superBalance} prefix="$" />
@@ -105,12 +205,38 @@ export function SuperBridge({ currentAge, nonSuperBalance, superBalance, onSuper
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <StatCard label="Bridge Years" value={`${bridgeYears} yrs`} color="blue" subtext={`Age ${earlyRetirementAge} → ${PRESERVATION_AGE}`} />
-        <StatCard label="Non-Super Draws" value={formatCurrency(annualExpenses * bridgeYears)} color="amber" subtext="Total needed for bridge" />
-        <StatCard label="Super at Preservation" value={formatCompact(primary.yearly.find(r => r.age === PRESERVATION_AGE)?.superBalance ?? 0)} color="green" />
-        <StatCard label={primary.nonSuperSufficientToBridge ? 'Non-Super Surplus' : 'Shortfall'} value={primary.nonSuperSufficientToBridge
-          ? formatCurrency(primary.yearly.find(r => r.age === PRESERVATION_AGE)?.nonSuperBalance ?? 0)
-          : formatCurrency(primary.shortfallAtPreservation)}
+        <StatCard
+          label="Bridge Years"
+          value={`${bridgeYears} yrs`}
+          numericValue={bridgeYears}
+          format="number"
+          color="blue"
+          subtext={`Age ${earlyRetirementAge} → ${PRESERVATION_AGE}`}
+        />
+        <StatCard
+          label="Non-Super Draws"
+          value={formatCurrency(annualExpenses * bridgeYears)}
+          numericValue={annualExpenses * bridgeYears}
+          format="currency"
+          color="amber"
+          subtext="Total needed for bridge"
+        />
+        <StatCard
+          label="Super at Preservation"
+          value={formatCompact(primary.yearly.find(r => r.age === PRESERVATION_AGE)?.superBalance ?? 0)}
+          numericValue={primary.yearly.find(r => r.age === PRESERVATION_AGE)?.superBalance ?? 0}
+          format="currency"
+          color="green"
+        />
+        <StatCard
+          label={primary.nonSuperSufficientToBridge ? 'Non-Super Surplus' : 'Shortfall'}
+          value={primary.nonSuperSufficientToBridge
+            ? formatCurrency(primary.yearly.find(r => r.age === PRESERVATION_AGE)?.nonSuperBalance ?? 0)
+            : formatCurrency(primary.shortfallAtPreservation)}
+          numericValue={primary.nonSuperSufficientToBridge
+            ? (primary.yearly.find(r => r.age === PRESERVATION_AGE)?.nonSuperBalance ?? 0)
+            : primary.shortfallAtPreservation}
+          format="currency"
           color={primary.nonSuperSufficientToBridge ? 'green' : 'red'}
         />
       </div>
@@ -144,19 +270,19 @@ export function SuperBridge({ currentAge, nonSuperBalance, superBalance, onSuper
       </div>
 
       {/* Scenario comparison table */}
-      <div className="overflow-x-auto rounded-xl border border-[var(--border)]">
+      <div className="overflow-x-auto rounded-xl border border-[var(--border)] max-h-96">
         <h4 className="text-xs font-semibold text-[var(--muted-foreground)] px-4 pt-3 pb-1">Retirement Age Scenarios</h4>
         <table className="w-full text-xs border-collapse">
-          <thead>
-            <tr className="bg-[var(--background)]">
+          <thead className="sticky top-0 bg-[var(--card)] z-10 font-bold border-b shadow-xs">
+            <tr>
               {['Retire Age', 'Bridge Years', 'Non-Super at 60', 'Sufficient?'].map(h => (
-                <th key={h} className="px-4 py-2 text-right text-[10px] uppercase tracking-wide text-[var(--muted-foreground)] font-medium border-b border-[var(--border)] first:text-left">{h}</th>
+                <th key={h} className="px-4 py-2.5 text-right text-[10px] uppercase tracking-wide text-[var(--muted-foreground)] font-bold border-b border-[var(--border)] first:text-left">{h}</th>
               ))}
             </tr>
           </thead>
           <tbody>
             {scenarios.map(s => (
-              <tr key={s.retireAge} className={`border-b border-slate-100 last:border-0 ${s.retireAge === earlyRetirementAge ? 'bg-[var(--primary)]/10 ' : ''}`}>
+              <tr key={s.retireAge} className={`border-b border-slate-100 last:border-0 ${s.retireAge === earlyRetirementAge ? 'bg-[var(--primary)]/10 font-semibold' : ''}`}>
                 <td className="px-4 py-2 font-semibold text-[var(--foreground)]">Age {s.retireAge}</td>
                 <td className="px-4 py-2 text-right font-mono text-[var(--muted-foreground)]">{PRESERVATION_AGE - s.retireAge} yrs</td>
                 <td className="px-4 py-2 text-right font-mono text-[var(--foreground)]">

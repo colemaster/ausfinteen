@@ -26,7 +26,7 @@ const MOTION_OPTIONS = [
 ];
 
 const ACTIVE_INDICATOR =
-  'text-primary font-bold bg-primary/10 after:absolute after:inset-x-3 after:bottom-1 after:h-[2px] after:rounded-full after:bg-gradient-to-r after:from-primary after:to-success after:content-[""]';
+  'text-primary font-bold bg-primary/10 shadow-xs ring-1 ring-primary/25 after:absolute after:inset-x-3 after:bottom-1 after:h-[2.5px] after:rounded-full after:bg-gradient-to-r after:from-primary after:via-violet-400 after:to-emerald-400 after:shadow-[0_0_8px_rgba(16,185,129,0.5)] after:content-[""]';
 
 const navLinkClasses = (active: boolean): string =>
   `nav-link relative flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold transition-all duration-200 ${
@@ -56,26 +56,39 @@ const isCalcsActive = CALC_ROUTES.includes(path);
 const isModulesActive = path !== '/' && path !== '/profile' && !path.startsWith('/calculators');
 ---
 
-<header class="sticky top-0 z-40 w-full glass-nav" data-navbar>
-  <div class="h-[3px] w-full bg-gradient-to-r from-primary via-violet-500 to-warning" aria-hidden="true"></div>
+<header class="sticky top-0 z-40 w-full backdrop-blur-xl bg-background/80 border-b border-border/50 glass-nav" data-navbar>
+  <div class="h-[3px] w-full bg-gradient-to-r from-primary via-violet-500 to-amber-500 bg-[length:200%_100%] animate-text-shimmer" aria-hidden="true"></div>
+
+  {/* Decorative ink blot behind the brand mark */}
+  <div
+    aria-hidden="true"
+    class="pointer-events-none absolute inset-0 ink-blot ink-blot-md ink-blot-cyan dark:opacity-50"
+  />
 
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="flex items-center justify-between h-16">
+    <div class="flex items-center justify-between h-16 relative z-10">
       <a
         href="/"
         data-sound="click"
         data-astro-prefetch="hover"
         class="flex items-center gap-2.5 group"
       >
-        <div class="p-2 rounded-xl bg-gradient-to-tr from-amber-500 to-primary text-white shadow-xs group-hover:scale-105 transition-transform">
-          <Icon name="sparkles" class="w-5 h-5" />
+        <div class="relative">
+          {/* Living canvas glow behind the brand mark — brightens + lifts on hover */}
+          <div
+            aria-hidden="true"
+            class="absolute -inset-1 rounded-2xl bg-gradient-to-tr from-amber-500 via-primary to-violet-500 blur-md opacity-35 group-hover:opacity-70 transition-opacity duration-300 pointer-events-none"
+          ></div>
+          <div class="p-2 rounded-xl bg-gradient-to-tr from-amber-500 via-primary to-violet-500 text-white shadow-xs card-specular group-hover:scale-105 group-hover:rotate-3 group-hover:shadow-lg group-active:scale-95 transition-transform duration-300 relative z-10">
+            <Icon name="sparkles" class="w-5 h-5 group-hover:animate-pulse-soft" />
+          </div>
         </div>
         <div>
           <span class="font-extrabold text-base sm:text-lg text-foreground tracking-tight block leading-tight">
             AusFinance Suite
           </span>
           <span class="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider block">
-            2030 Pro Edition ⚡️
+            2026-27 Compliant ⚡️
           </span>
         </div>
       </a>
@@ -110,14 +123,14 @@ const isModulesActive = path !== '/' && path !== '/profile' && !path.startsWith(
             id="nav-calculators-panel"
             data-dropdown-panel="calcs"
             hidden
-            class="absolute top-full left-0 mt-2 w-80 p-2 rounded-2xl bg-popover border border-border shadow-xl grid grid-cols-1 gap-1 z-50 animate-in fade-in slide-in-from-top-4 zoom-in-98 duration-200"
+            class="absolute top-full left-0 mt-2 w-80 p-2 rounded-2xl bg-popover border border-border shadow-xl grid grid-cols-1 gap-1 z-50 animate-slide-down-in card-depth card-specular"
           >
             <a
               href="/calculators"
               data-astro-prefetch="hover"
               data-sound="click"
               data-close-dropdown
-              class="p-2 rounded-xl bg-primary/10 text-primary font-bold flex items-center justify-between text-xs mb-1"
+              class="p-2 rounded-xl bg-primary/10 text-primary font-bold flex items-center justify-between text-xs mb-1 card-specular"
             >
               <span><span aria-hidden="true">⚡️</span> Browse All Calculators</span>
               <span class="text-[10px] uppercase font-mono">Hub →</span>
@@ -156,7 +169,7 @@ const isModulesActive = path !== '/' && path !== '/profile' && !path.startsWith(
             id="nav-modules-panel"
             data-dropdown-panel="modules"
             hidden
-            class="absolute top-full left-0 mt-2 w-72 max-h-[70vh] overflow-y-auto p-2 rounded-2xl bg-popover border border-border shadow-xl grid grid-cols-1 gap-1 z-50 animate-in fade-in slide-in-from-top-4 zoom-in-98 duration-200"
+            class="absolute top-full left-0 mt-2 w-72 max-h-[70vh] overflow-y-auto p-2 rounded-2xl bg-popover border border-border shadow-xl grid grid-cols-1 gap-1 z-50 animate-slide-down-in card-depth card-specular"
           >
             {NAV_MODULES.map(m => (
               <a
@@ -208,7 +221,8 @@ const isModulesActive = path !== '/' && path !== '/profile' && !path.startsWith(
           class="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border border-border bg-muted/40 text-muted-foreground hover:text-primary hover:border-primary/40 transition-all text-[10px] font-bold"
         >
           <span class="relative flex h-2 w-2" aria-hidden="true">
-            <span class="inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            <span class="absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75 animate-ping motion-reduce:animate-none"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
           </span>
           v7.2.0
         </a>
@@ -222,7 +236,7 @@ const isModulesActive = path !== '/' && path !== '/profile' && !path.startsWith(
           class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted transition-all"
         >
           <Icon name="search" class="w-4 h-4" />
-          <kbd class="hidden sm:inline font-mono text-[10px] font-bold">⌘K</kbd>
+          <kbd class="hidden sm:inline font-mono text-[10px] font-bold px-1.5 py-0.5 rounded-md border border-border/80 bg-card shadow-xs">⌘K</kbd>
         </button>
 
         <button
@@ -264,7 +278,7 @@ const isModulesActive = path !== '/' && path !== '/profile' && !path.startsWith(
             id="appearance-popover"
             data-dropdown-panel="appearance"
             hidden
-            class="absolute right-0 top-full mt-2 z-50 w-64 rounded-2xl border border-border bg-card shadow-xl shadow-black/10 p-4 space-y-4"
+            class="absolute right-0 top-full mt-2 z-50 w-64 rounded-2xl border border-border bg-card shadow-xl shadow-black/10 p-4 space-y-4 animate-slide-down-in card-depth card-specular"
           >
             <div class="space-y-2">
               <p class="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
@@ -278,7 +292,7 @@ const isModulesActive = path !== '/' && path !== '/profile' && !path.startsWith(
                     aria-label={a.label}
                     aria-pressed="false"
                     data-accent-value={a.value}
-                    class="h-5 w-5 shrink-0 cursor-pointer rounded-full transition-transform duration-200 hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ring-1 ring-inset ring-border/60"
+                    class="h-5 w-5 shrink-0 cursor-pointer rounded-full transition-transform duration-200 hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background gradient-border-inner"
                     style={`background-color: ${a.swatch}`}
                   ></button>
                 ))}
@@ -360,14 +374,14 @@ const isModulesActive = path !== '/' && path !== '/profile' && !path.startsWith(
     id="mobile-nav-drawer"
     data-mobile-drawer
     hidden
-    class="md:hidden border-t border-border bg-card/95 backdrop-blur-xl px-4 py-4 space-y-2 max-h-[80vh] overflow-y-auto"
+    class="md:hidden border-t border-border bg-card/95 backdrop-blur-xl px-4 py-4 space-y-2 max-h-[80vh] overflow-y-auto glass-panel stagger-fade"
   >
     <a
       href="/calculators"
       data-astro-prefetch="hover"
       data-sound="click"
       data-close-mobile
-      class="flex items-center gap-2 p-2.5 rounded-xl bg-primary/10 text-primary font-bold text-xs"
+      class="flex items-center gap-2 p-2.5 rounded-xl bg-primary/10 text-primary font-bold text-xs card-specular"
     >
       <Icon name="calculator" class="w-4 h-4" />
       <span>⚡️ 2026 Financial Calculators Suite</span>
@@ -378,7 +392,7 @@ const isModulesActive = path !== '/' && path !== '/profile' && !path.startsWith(
       data-astro-prefetch="hover"
       data-sound="click"
       data-close-mobile
-      class="flex items-center gap-2 p-2.5 rounded-xl bg-muted text-foreground font-bold text-xs"
+      class="flex items-center gap-2 p-2.5 rounded-xl bg-muted text-foreground font-bold text-xs card-specular"
     >
       <Icon name="user" class="w-4 h-4" />
       <span>My Profile (<span data-profile-name>Issy</span>, <span data-profile-age>15</span>yo)</span>
@@ -393,7 +407,7 @@ const isModulesActive = path !== '/' && path !== '/profile' && !path.startsWith(
         data-astro-prefetch="hover"
         data-sound="click"
         data-close-mobile
-        class="flex items-center gap-2.5 p-2 rounded-xl text-xs text-foreground hover:bg-muted"
+        class="flex items-center gap-2.5 p-2 rounded-xl text-xs text-foreground hover:bg-muted hover:translate-x-1 hover:text-primary transition-all duration-200"
       >
         <span class="text-base" aria-hidden="true">{c.emoji}</span>
         <span>{c.title}</span>
@@ -409,7 +423,7 @@ const isModulesActive = path !== '/' && path !== '/profile' && !path.startsWith(
         data-astro-prefetch="hover"
         data-sound="click"
         data-close-mobile
-        class="flex items-center gap-2.5 p-2 rounded-xl text-xs text-foreground hover:bg-muted"
+        class="flex items-center gap-2.5 p-2 rounded-xl text-xs text-foreground hover:bg-muted hover:translate-x-1 hover:text-primary transition-all duration-200"
       >
         <span class="text-base" aria-hidden="true">{m.emoji}</span>
         <span>{m.title}</span>
@@ -455,6 +469,13 @@ const isModulesActive = path !== '/' && path !== '/profile' && !path.startsWith(
   const ACTIVE_INDICATOR =
     'text-primary font-bold bg-primary/10 after:absolute after:inset-x-3 after:bottom-1 after:h-[2px] after:rounded-full after:bg-gradient-to-r after:from-primary after:to-success';
   const INACTIVE_INDICATOR = 'text-muted-foreground hover:text-foreground hover:bg-muted/60';
+
+  /** classList.toggle throws on space-separated names, so apply each token. */
+  const toggleClasses = (el: Element, classes: string, on: boolean) => {
+    for (const token of classes.split(/\s+/)) {
+      if (token) el.classList.toggle(token, on);
+    }
+  };
 
   const CALC_ROUTES = [
     '/calculators',
@@ -719,11 +740,8 @@ const isModulesActive = path !== '/' && path !== '/profile' && !path.startsWith(
 
       const paint = (el: Element | null | undefined, active: boolean) => {
         if (!el) return;
-        el.classList.toggle('text-primary', active);
-        el.classList.toggle('font-bold', active);
-        el.classList.toggle('bg-primary/10', active);
-        el.classList.toggle(ACTIVE_INDICATOR, active);
-        el.classList.toggle(INACTIVE_INDICATOR, !active);
+        toggleClasses(el, ACTIVE_INDICATOR, active);
+        toggleClasses(el, INACTIVE_INDICATOR, !active);
       };
 
       paint(dropdowns.get('calcs')?.button, calcsActive);

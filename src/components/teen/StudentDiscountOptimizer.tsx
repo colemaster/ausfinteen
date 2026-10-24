@@ -53,7 +53,7 @@ export function StudentDiscountOptimizer() {
             <h2 className="text-xl font-bold text-foreground">Australian Student Discount & Subscription Optimizer</h2>
           </div>
           <p className="text-xs text-muted-foreground">
-            Activate your 15yo student concessions across public transport, prepaid SIMs, Apple tech, and music streaming!
+            Activate your 15yo student concessions across public transport, Budget MVNO phone plans ($15-$25/month for 25-40GB), Apple tech, and music streaming!
           </p>
         </div>
         <div className="flex items-center gap-2">

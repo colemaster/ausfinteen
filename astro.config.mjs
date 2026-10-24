@@ -93,19 +93,11 @@ export default defineConfig({
       chunkSizeWarningLimit: 900,
       rolldownOptions: {
         output: {
-          codeSplitting: {
-            groups: [
-              {
-                // lucide-react emits one ~250 byte chunk *per icon*, which put
-                // ~20 extra requests on every page for ~5 KB of glyphs. Folding
-                // them into a single chunk trades ~7 KB for ~19 fewer round
-                // trips and 19 fewer modules to link on the main thread.
-                name: 'icons',
-                test: /node_modules[\\/](lucide-react|@lucide[\\/])/,
-                priority: 1,
-              },
-            ],
-          },
+          // Icons are intentionally NOT hoisted into one shared chunk.
+          // With ~21 pages importing ~10 glyphs each, a global "icons" chunk
+          // made every page download every icon used anywhere on the site.
+          // Default per-module splitting keeps the shared React runtime
+          // common while letting each route carry only its own glyphs.
         },
       },
       // NOTE: broader `codeSplitting.groups` (charts / motion / vendor) were

@@ -210,7 +210,7 @@ export function FirstPaycheckWidget() {
       <div className="mt-4 flex flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-[11px] leading-relaxed text-muted-foreground">
           Estimate only — junior % from {calc.awardName}. Casual loading 25%.
-          Before penalty rates, super &amp; HELP. Not financial advice.
+          Before penalty rates, super &amp; HELP (University costs: HECS band 1 ~$4,908, band 2 ~$9,880, band 3 ~$18,025). Not financial advice.
         </p>
         <a
           href="/teen-budgeting"

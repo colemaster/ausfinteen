@@ -1,6 +1,7 @@
 import { spendingSavingModule as moduleData } from '@/data/modules/spending-saving';
 import { TopicGuideAccordion } from '@/components/shared/TopicGuideAccordion';
 import { ModulePrevNext } from '@/components/shared/ModulePrevNext';
+import { PrintShareFAB } from '@/components/shared/PrintShareFAB';
 import { StudentDiscountOptimizer } from '@/components/teen/StudentDiscountOptimizer';
 import { SavingsGoalsPlanner } from '@/components/teen/SavingsGoalsPlanner';
 import { Smartphone, ShieldCheck, ShoppingBag } from 'lucide-react';
@@ -74,6 +75,7 @@ export function SpendingSavingRealWorld() {
       </div>
 
       <ModulePrevNext currentId="spending-saving" />
+      <PrintShareFAB />
     </div>
   );
 }

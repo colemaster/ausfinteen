@@ -4,12 +4,12 @@ import { evVsPetrolRunningCost, firstCarTotalCostOfOwnership } from './engine';
 describe('evVsPetrolRunningCost', () => {
   it('computes the annual comparison with defaults (15000km, 10% fast charging)', () => {
     const res = evVsPetrolRunningCost({});
-    // Petrol: 150 * 6.5 * 2.02 = 1969.50
-    expect(res.petrolAnnual).toBeCloseTo(1969.5, 2);
-    // EV blended: (0.30*90 + 0.65*10)/100 = 0.335; 150 * 16.0 * 0.335 = 804.00
-    expect(res.evAnnual).toBeCloseTo(804.0, 2);
-    expect(res.savingsAnnual).toBeCloseTo(1165.5, 2);
-    expect(res.savingsPct).toBeCloseTo(59.2, 0);
+    // Petrol: 150 * 6.5 * 2.38 = 2320.50
+    expect(res.petrolAnnual).toBeCloseTo(2320.5, 2);
+    // EV blended: (0.28*90 + 0.65*10)/100 = 0.317; 150 * 16.0 * 0.317 = 760.80
+    expect(res.evAnnual).toBeCloseTo(760.8, 2);
+    expect(res.savingsAnnual).toBeCloseTo(1559.7, 2);
+    expect(res.savingsPct).toBeCloseTo(67, 0);
   });
 
   it('all-100% public fast charging almost erases the savings', () => {
@@ -18,14 +18,14 @@ describe('evVsPetrolRunningCost', () => {
     expect(res.evAnnual).toBeCloseTo(1560, 2);
     expect(res.publicSharePct).toBe(100);
     expect(res.homeSharePct).toBe(0);
-    expect(res.savingsAnnual).toBeCloseTo(409.5, 2);
+    expect(res.savingsAnnual).toBeCloseTo(760.5, 2);
   });
 
   it('100% home charging gives the cheapest EV running cost', () => {
     const res = evVsPetrolRunningCost({ publicFastSharePct: 0 });
-    // 150 * 16.0 * 0.30 = 720
-    expect(res.evAnnual).toBeCloseTo(720, 2);
-    expect(res.evPer100km).toBeCloseTo(4.8, 2);
+    // 150 * 16.0 * 0.28 = 672
+    expect(res.evAnnual).toBeCloseTo(672, 2);
+    expect(res.evPer100km).toBeCloseTo(4.48, 2);
   });
 
   it('clamps the public share to 0-100', () => {

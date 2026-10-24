@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { Card } from '@/components/ui/Card';
 import { NumberInput } from '@/components/ui/NumberInput';
 import { SliderControl } from '@/components/ui/SliderControl';
@@ -6,6 +6,7 @@ import { StatCard } from '@/components/ui/StatCard';
 import { Badge } from '@/components/ui/Badge';
 import { InfoTooltip } from '@/components/ui/InfoTooltip';
 import { PaymentPeriodToggle, type PaymentPeriod } from '@/components/ui/PaymentPeriodToggle';
+import { CalculatorActions } from '@/components/shared/CalculatorActions';
 import { OFFICIAL_WEB_LINKS } from '@/data/teen-finance-data';
 import { WebReferenceLink } from '@/components/shared/WebReferenceLink';
 import { PieChart as PieChartIcon, Sparkles } from 'lucide-react';
@@ -13,6 +14,7 @@ import { useTeenProfile } from '@/context/TeenProfileContext';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from '@/components/charts';
 import { ChartContainer, ChartTooltipContent } from '@/components/ui/chart';
 import { splitPaycheck, adjustSplitKeepingTotal, convertPaycheckPeriod, type BucketKey } from './engine';
+import { formatCurrency } from '@/utils/formatters';
 
 const BUCKET_COLORS = ['#f59e0b', '#10b981', '#a855f7', '#3b82f6'];
 
@@ -40,6 +42,13 @@ export function FirstPaycheckSplitter() {
   const onCustomSlider = (key: BucketKey, pct: number) => {
     setCustomSplit(prev => adjustSplitKeepingTotal(prev, key, pct));
   };
+
+  const handleReset = useCallback(() => {
+    setPaycheckAmount(weeklyNetPay > 0 ? weeklyNetPay : 234);
+    setPeriod('weekly');
+    setSystemStyle('barefoot');
+    setCustomSplit({ needs: 50, wants: 30, savings: 20 });
+  }, [weeklyNetPay]);
 
   const customTotal = customSplit.needs + customSplit.wants + customSplit.savings;
 
@@ -105,6 +114,22 @@ export function FirstPaycheckSplitter() {
     });
     return config;
   }, [chartData]);
+
+  const summaryText = useMemo(() => {
+    return [
+      '--- Teen First Paycheck Split Summary ---',
+      `Paycheck Amount: ${formatCurrency(paycheckAmount)} (${period})`,
+      `Strategy System: ${systemStyle.toUpperCase()}`,
+      systemStyle === 'barefoot'
+        ? `Blow (60%): ${formatCurrency(barefootBlow)} | Mojo (20%): ${formatCurrency(barefootMojo)} | Grow (20%): ${formatCurrency(barefootGrow)}`
+        : systemStyle === 'rule503020'
+        ? `Needs (50%): ${formatCurrency(needs50)} | Wants (30%): ${formatCurrency(wants30)} | Savings (20%): ${formatCurrency(savings20)}`
+        : systemStyle === 'bucket4'
+        ? `Everyday (40%): ${formatCurrency(b4Everyday)} | Savings (30%): ${formatCurrency(b4Savings)} | Mojo (20%): ${formatCurrency(b4Emergency)} | Big Goal (10%): ${formatCurrency(b4BigGoal)}`
+        : `Needs (${customSplit.needs}%): ${formatCurrency(customAmounts.needs)} | Wants (${customSplit.wants}%): ${formatCurrency(customAmounts.wants)} | Savings (${customSplit.savings}%): ${formatCurrency(customAmounts.savings)}`,
+      `Calculated via AusFinTools First Paycheck Splitter`,
+    ].join('\n');
+  }, [paycheckAmount, period, systemStyle, barefootBlow, barefootMojo, barefootGrow, needs50, wants30, savings20, b4Everyday, b4Savings, b4Emergency, b4BigGoal, customSplit, customAmounts]);
 
   return (
     <Card variant="glass" className="p-6 space-y-6">
@@ -532,6 +557,13 @@ export function FirstPaycheckSplitter() {
           </div>
         </div>
       )}
+
+      {/* Action buttons */}
+      <CalculatorActions
+        onReset={handleReset}
+        summaryText={summaryText}
+        summaryTitle="First Paycheck Split"
+      />
 
       <div className="pt-2">
         <WebReferenceLink link={OFFICIAL_WEB_LINKS.moneysmart_budget} />

@@ -1,6 +1,4 @@
-import { useMemo } from 'react';
-import { motion } from 'motion/react';
-import { fadeInUp } from '@/lib/animations';
+import { useMemo, useState, useCallback } from 'react';
 import { useUrlParams } from '../../hooks/useUrlParams';
 import { SliderControl } from '../../components/ui/SliderControl';
 import { NumberInput } from '../../components/ui/NumberInput';
@@ -8,6 +6,8 @@ import { PortfolioField } from '../../components/ui/PortfolioField';
 import { StatCard } from '../../components/ui/StatCard';
 import { Toggle } from '../../components/ui/Toggle';
 import { BarCompare } from '../../components/ui/BarCompare';
+import { QuickPresetBar, type ScenarioPreset } from '../../components/ui/QuickPresetBar';
+import { CalculatorActions } from '../../components/shared/CalculatorActions';
 import { Assumptions } from '../../components/shared/Assumptions';
 import { Disclaimer } from '../../components/shared/Disclaimer';
 import { AboutCalc } from '../../components/shared/AboutCalc';
@@ -27,6 +27,76 @@ const DEFAULTS = {
   rate: 6.0,
   loanTerm: 30,
 };
+
+interface HouseAffordabilityPreset {
+  grossIncome: number;
+  partnerIncome: number;
+  existingMonthlyDebts: number;
+  deposit: number;
+  propertyPrice: number;
+  state: AustralianState;
+  firstHomeBuyer: boolean;
+  isNewHome: boolean;
+  rate: number;
+  loanTerm: number;
+}
+
+const PRESETS: ScenarioPreset<HouseAffordabilityPreset>[] = [
+  {
+    id: 'first-home-qld',
+    label: 'First Home Buyer (QLD)',
+    badge: '$650k Entry',
+    description: '$95k income, $100k deposit on $650k Brisbane property with FHB stamp duty concession',
+    values: {
+      grossIncome: 95000,
+      partnerIncome: 0,
+      existingMonthlyDebts: 0,
+      deposit: 100000,
+      propertyPrice: 650000,
+      state: 'QLD',
+      firstHomeBuyer: true,
+      isNewHome: false,
+      rate: 5.9,
+      loanTerm: 30,
+    },
+  },
+  {
+    id: 'couple-upgrade-vic',
+    label: 'Dual-Income Upgrade (VIC)',
+    badge: '$1.1M Family',
+    description: '$140k + $90k partner income, $250k deposit on $1.1M Melbourne family home',
+    values: {
+      grossIncome: 140000,
+      partnerIncome: 90000,
+      existingMonthlyDebts: 400,
+      deposit: 250000,
+      propertyPrice: 1100000,
+      state: 'VIC',
+      firstHomeBuyer: false,
+      isNewHome: false,
+      rate: 6.0,
+      loanTerm: 30,
+    },
+  },
+  {
+    id: 'starter-wa',
+    label: 'Regional Starter (WA)',
+    badge: '$480k Starter',
+    description: '$85k + $65k dual income, $90k deposit on $480k Perth/Regional property',
+    values: {
+      grossIncome: 85000,
+      partnerIncome: 65000,
+      existingMonthlyDebts: 0,
+      deposit: 90000,
+      propertyPrice: 480000,
+      state: 'WA',
+      firstHomeBuyer: true,
+      isNewHome: false,
+      rate: 6.1,
+      loanTerm: 30,
+    },
+  },
+];
 
 const STATES: AustralianState[] = ['VIC', 'NSW', 'QLD', 'WA', 'SA', 'TAS', 'ACT', 'NT'];
 
@@ -56,6 +126,44 @@ export function HouseAffordability() {
     monthlySaving: 2000,
     depositReturn: 5,
   });
+
+  const [activePreset, setActivePreset] = useState<string | undefined>(undefined);
+
+  const handleApplyPreset = useCallback((preset: ScenarioPreset<HouseAffordabilityPreset>) => {
+    setActivePreset(preset.id);
+    if (!preset.values) return;
+    setParams({
+      grossIncome: preset.values.grossIncome ?? DEFAULTS.grossIncome,
+      partnerIncome: preset.values.partnerIncome ?? DEFAULTS.partnerIncome,
+      existingMonthlyDebts: preset.values.existingMonthlyDebts ?? DEFAULTS.existingMonthlyDebts,
+      deposit: preset.values.deposit ?? DEFAULTS.deposit,
+      propertyPrice: preset.values.propertyPrice ?? DEFAULTS.propertyPrice,
+      state: preset.values.state ?? DEFAULTS.state,
+      firstHomeBuyer: preset.values.firstHomeBuyer ?? DEFAULTS.firstHomeBuyer,
+      isNewHome: preset.values.isNewHome ?? DEFAULTS.isNewHome,
+      rate: preset.values.rate ?? DEFAULTS.rate,
+      loanTerm: preset.values.loanTerm ?? DEFAULTS.loanTerm,
+    });
+  }, [setParams]);
+
+  const handleReset = useCallback(() => {
+    setActivePreset(undefined);
+    setParams({
+      grossIncome: DEFAULTS.grossIncome,
+      partnerIncome: DEFAULTS.partnerIncome,
+      existingMonthlyDebts: DEFAULTS.existingMonthlyDebts,
+      deposit: DEFAULTS.deposit,
+      propertyPrice: DEFAULTS.propertyPrice,
+      state: DEFAULTS.state,
+      firstHomeBuyer: DEFAULTS.firstHomeBuyer,
+      isNewHome: DEFAULTS.isNewHome,
+      rate: DEFAULTS.rate,
+      loanTerm: DEFAULTS.loanTerm,
+      bufferPct: 10,
+      monthlySaving: 2000,
+      depositReturn: 5,
+    });
+  }, [setParams]);
 
   // Effective values: portfolio wins over URL params when set
   const effectiveGrossIncome = portfolio.grossSalary > 0 ? portfolio.grossSalary : params.grossIncome;
@@ -114,6 +222,18 @@ export function HouseAffordability() {
     [effectiveDeposit, params.monthlySaving, params.depositReturn],
   );
 
+  const summaryText = useMemo(() => {
+    return [
+      '--- House Purchasing Affordability Summary ---',
+      `Property Price: ${formatCurrency(effectivePropertyPrice)} in ${params.state} (Deposit: ${formatCurrency(effectiveDeposit)})`,
+      `Borrowing Capacity: ${formatCurrency(result.borrowingCapacity)} (Loan Amount: ${formatCurrency(result.loanAmount)})`,
+      `Monthly Repayment: ${formatCurrency(result.monthlyRepayment)}/mo at ${formatPct(effectiveRate)}% (${effectiveLoanTerm} yrs)`,
+      `Total Upfront Cost: ${formatCurrency(result.totalUpfrontCost)} (Duty: ${formatCurrency(result.stampDuty.dutyPayable)}, LMI: ${formatCurrency(result.lmi)})`,
+      `Affordability Ratio: ${formatPercent(result.affordabilityRatio)} (${result.affordableWithDeposit ? 'Affordable' : 'Exceeds borrowing capacity'})`,
+      `Calculated via AusFinTools House Affordability Engine`,
+    ].join('\n');
+  }, [effectivePropertyPrice, params.state, effectiveDeposit, result, effectiveRate, effectiveLoanTerm]);
+
   const breakdownChartData = [
     {
       name: 'Monthly Costs',
@@ -126,15 +246,29 @@ export function HouseAffordability() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="border-b border-[var(--border)] pb-4">
-        <h1 className="text-xl font-extrabold text-[var(--foreground)] tracking-tight">
-          House Purchasing Affordability
-        </h1>
-        <p className="text-xs text-[var(--muted-foreground)] mt-1">
-          APRA serviceability assessment, stamp duty, LMI, monthly costs and rate stress tests. Based on 2026-27 rates.
-        </p>
+      {/* Header with Actions */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-[var(--border)] pb-4">
+        <div>
+          <h1 className="text-xl font-extrabold text-[var(--foreground)] tracking-tight">
+            House Purchasing Affordability
+          </h1>
+          <p className="text-xs text-[var(--muted-foreground)] mt-1">
+            APRA serviceability assessment, stamp duty, LMI, monthly costs and rate stress tests. Based on 2026-27 rates.
+          </p>
+        </div>
+        <CalculatorActions
+          onReset={handleReset}
+          summaryText={summaryText}
+          summaryTitle="House Affordability"
+        />
       </div>
+
+      <QuickPresetBar
+        presets={PRESETS}
+        activePresetId={activePreset}
+        onSelect={handleApplyPreset}
+        title="Buyer Scenarios"
+      />
 
       <AboutCalc concepts={[
         {
@@ -204,7 +338,7 @@ export function HouseAffordability() {
       </div>
 
       {/* Affordability Banner */}
-      <motion.div variants={fadeInUp} initial="hidden" animate="visible" className="space-y-6">
+      <div className="animate-rise-in space-y-6">
       <div className="text-xs text-[var(--muted-foreground)] bg-[var(--background)]/50 border border-slate-100 rounded-lg px-4 py-3 leading-relaxed">
         <strong className="text-[var(--foreground)]">Borrowing capacity</strong> is estimated using the APRA method: your income finances repayments assessed at rate + 3%, capped at 30% of gross income for housing. <strong className="text-[var(--foreground)]">LMI</strong> is added when your deposit is under 20% (LVR above 80%). <strong className="text-[var(--foreground)]">Stamp duty</strong> varies by state and first-home-buyer status.{' '}
         <a href="https://moneysmart.gov.au/home-loans/how-much-can-i-borrow" target="_blank" rel="noopener noreferrer" className="text-[var(--primary)] hover:text-[var(--primary)]">MoneySmart: How much can I borrow ↗</a>
@@ -225,39 +359,94 @@ export function HouseAffordability() {
 
       {/* Key Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <StatCard label="Borrowing Capacity" value={formatCurrency(result.borrowingCapacity)} color="blue" subtext="At rate + 3% buffer" />
-        <StatCard label="Stamp Duty" value={formatCurrency(result.stampDuty.dutyPayable)} color={result.stampDuty.concessionApplied ? 'green' : 'amber'}
-          subtext={result.stampDuty.concessionApplied ? `Saved ${formatCurrency(result.stampDuty.concessionSaving)}` : undefined} />
-        <StatCard label="LMI Estimate" value={result.lmi > 0 ? formatCurrency(result.lmi) : 'Nil'} color={result.lmi > 0 ? 'red' : 'green'} subtext={result.lvr > 80 ? `LVR ${formatPct(result.lvr)}` : 'LVR ≤ 80%'} />
-        <StatCard label="Total Upfront Cost" value={formatCurrency(result.totalUpfrontCost)} color="purple" subtext={`Deposit + duty + LMI`} />
+        <StatCard
+          label="Borrowing Capacity"
+          value={formatCurrency(result.borrowingCapacity)}
+          numericValue={result.borrowingCapacity}
+          format="currency"
+          color="blue"
+          subtext="At rate + 3% buffer"
+        />
+        <StatCard
+          label="Stamp Duty"
+          value={formatCurrency(result.stampDuty.dutyPayable)}
+          numericValue={result.stampDuty.dutyPayable}
+          format="currency"
+          color={result.stampDuty.concessionApplied ? 'green' : 'amber'}
+          subtext={result.stampDuty.concessionApplied ? `Saved ${formatCurrency(result.stampDuty.concessionSaving)}` : undefined}
+        />
+        <StatCard
+          label="LMI Estimate"
+          value={result.lmi > 0 ? formatCurrency(result.lmi) : 'Nil'}
+          numericValue={result.lmi}
+          format="currency"
+          color={result.lmi > 0 ? 'red' : 'green'}
+          subtext={result.lvr > 80 ? `LVR ${formatPct(result.lvr)}` : 'LVR ≤ 80%'}
+        />
+        <StatCard
+          label="Total Upfront Cost"
+          value={formatCurrency(result.totalUpfrontCost)}
+          numericValue={result.totalUpfrontCost}
+          format="currency"
+          color="purple"
+          subtext={`Deposit + duty + LMI`}
+        />
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <StatCard label="Monthly Repayment" value={formatCurrency(result.monthlyRepayment)} color="blue" subtext={`${formatCurrency(result.monthlyRepayment * 12)} pa`} />
-        <StatCard label="Total Monthly Cost" value={formatCurrency(result.monthlyCostBreakdown.total)} color="cyan" subtext="P&I + rates + insurance" />
-        <StatCard label="Affordability Ratio" value={formatPercent(result.affordabilityRatio)} color={affordabilityColor} subtext={result.affordabilityRatio <= 0.28 ? 'Comfortable' : result.affordabilityRatio <= 0.35 ? 'Moderate' : 'Stretched'} />
+        <StatCard
+          label="Monthly Repayment"
+          value={formatCurrency(result.monthlyRepayment)}
+          numericValue={result.monthlyRepayment}
+          format="currency"
+          color="blue"
+          subtext={`${formatCurrency(result.monthlyRepayment * 12)} pa`}
+        />
+        <StatCard
+          label="Total Monthly Cost"
+          value={formatCurrency(result.monthlyCostBreakdown.total)}
+          numericValue={result.monthlyCostBreakdown.total}
+          format="currency"
+          color="cyan"
+          subtext="P&I + rates + insurance"
+        />
+        <StatCard
+          label="Affordability Ratio"
+          value={formatPercent(result.affordabilityRatio)}
+          numericValue={result.affordabilityRatio * 100}
+          format="percent"
+          color={affordabilityColor}
+          subtext={result.affordabilityRatio <= 0.28 ? 'Comfortable' : result.affordabilityRatio <= 0.35 ? 'Moderate' : 'Stretched'}
+        />
         {result.stampDuty.fhogAmount > 0 && (
-          <StatCard label="FHOG Grant" value={formatCurrency(result.stampDuty.fhogAmount)} color="green" subtext="First Home Owner Grant" />
+          <StatCard
+            label="FHOG Grant"
+            value={formatCurrency(result.stampDuty.fhogAmount)}
+            numericValue={result.stampDuty.fhogAmount}
+            format="currency"
+            color="green"
+            subtext="First Home Owner Grant"
+          />
         )}
       </div>
 
       {/* Rate Stress Test */}
       <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-5">
         <h3 className="text-sm font-bold text-[var(--foreground)] mb-3">Rate Stress Test</h3>
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto max-h-96">
           <table className="w-full text-xs border-collapse">
-            <thead>
-              <tr className="bg-[var(--background)]">
+            <thead className="sticky top-0 bg-[var(--card)] z-10 font-bold border-b shadow-xs">
+              <tr>
                 {['Rate', 'Monthly Repayment', 'Change vs Today', 'Annual Cost'].map(h => (
-                  <th key={h} className="px-4 py-2.5 text-right text-[10px] uppercase tracking-wide text-[var(--muted-foreground)] font-medium border-b border-[var(--border)] first:text-left">{h}</th>
+                  <th key={h} className="px-4 py-2.5 text-right text-[10px] uppercase tracking-wide text-[var(--muted-foreground)] font-bold border-b border-[var(--border)] first:text-left">{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {result.stressTest.map(row => (
-                <tr key={row.rateIncrease} className={`border-b border-slate-100 last:border-0 ${row.rateIncrease === 0 ? 'bg-[var(--primary)]/10 ' : ''}`}>
+                <tr key={row.rateIncrease} className={`border-b border-slate-100 last:border-0 ${row.rateIncrease === 0 ? 'bg-[var(--primary)]/10 font-semibold' : ''}`}>
                   <td className="px-4 py-2 text-[var(--muted-foreground)] font-mono">
-                    {formatPct(row.totalRate)} {row.rateIncrease > 0 ? <span className="text-amber-500">(+{row.rateIncrease}%)</span> : <span className="text-[var(--primary)]">(today)</span>}
+                    {formatPct(row.totalRate)} {row.rateIncrease > 0 ? <span className="text-amber-500">(+{row.rateIncrease}%)</span> : <span className="text-[var(--primary)] font-bold">(today)</span>}
                   </td>
                   <td className="px-4 py-2 text-right font-mono font-semibold text-[var(--foreground)]">{formatCurrency(row.monthlyRepayment)}</td>
                   <td className={`px-4 py-2 text-right font-mono ${row.monthlyChange > 0 ? 'text-[var(--danger)] ' : 'text-[var(--muted-foreground)]'}`}>
@@ -276,12 +465,12 @@ export function HouseAffordability() {
         <h3 className="text-sm font-bold text-[var(--foreground)] mb-3">
           Rate Sensitivity Matrix
         </h3>
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto max-h-96">
           <table className="w-full text-xs border-collapse">
-            <thead>
-              <tr className="bg-[var(--background)]">
+            <thead className="sticky top-0 bg-[var(--card)] z-10 font-bold border-b shadow-xs">
+              <tr>
                 {['Rate', 'Monthly Repayment', 'Total Interest (full term)', 'Interest vs Today'].map(h => (
-                  <th key={h} className="px-4 py-2.5 text-right text-[10px] uppercase tracking-wide text-[var(--muted-foreground)] font-medium border-b border-[var(--border)] first:text-left">{h}</th>
+                  <th key={h} className="px-4 py-2.5 text-right text-[10px] uppercase tracking-wide text-[var(--muted-foreground)] font-bold border-b border-[var(--border)] first:text-left">{h}</th>
                 ))}
               </tr>
             </thead>
@@ -291,9 +480,9 @@ export function HouseAffordability() {
                 const baseInterest = rateMatrix.find(r => Math.abs(r.rate - effectiveRate) < 0.001)?.totalInterest ?? row.totalInterest;
                 const diff = row.totalInterest - baseInterest;
                 return (
-                  <tr key={row.rate} className={`border-b border-slate-100 last:border-0 ${isToday ? 'bg-[var(--primary)]/10 ' : ''}`}>
+                  <tr key={row.rate} className={`border-b border-slate-100 last:border-0 ${isToday ? 'bg-[var(--primary)]/10 font-semibold' : ''}`}>
                     <td className="px-4 py-2 text-[var(--muted-foreground)] font-mono">
-                      {formatPct(row.rate)}{isToday && <span className="text-[var(--primary)]"> (today)</span>}
+                      {formatPct(row.rate)}{isToday && <span className="text-[var(--primary)] font-bold"> (today)</span>}
                     </td>
                     <td className="px-4 py-2 text-right font-mono font-semibold text-[var(--foreground)]">{formatCurrency(row.monthlyRepayment)}</td>
                     <td className="px-4 py-2 text-right font-mono text-[var(--muted-foreground)]">{formatCurrency(row.totalInterest)}</td>
@@ -377,7 +566,7 @@ export function HouseAffordability() {
           height={200}
         />
       </div>
-      </motion.div>
+      </div>
 
       <Assumptions items={ASSUMPTIONS} />
       <Disclaimer calculatorName="House Affordability calculator" />

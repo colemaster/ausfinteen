@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useId } from 'react';
 import { Plus, Minus, RotateCcw } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { sound } from '@/lib/sound-synthesizer';
@@ -24,6 +24,7 @@ export const CurrencyInput = React.memo(function CurrencyInput({
   onChange,
   min = 0,
   max = 100_000_000,
+  step,
   subtext,
   quickIncrements = [1000, 5000, 10000],
   allowReset = true,
@@ -31,6 +32,7 @@ export const CurrencyInput = React.memo(function CurrencyInput({
   disabled = false,
   className,
 }: CurrencyInputProps) {
+  const inputId = useId();
   const [localStr, setLocalStr] = useState(value.toLocaleString('en-AU'));
   const [isFocused, setIsFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -48,6 +50,17 @@ export const CurrencyInput = React.memo(function CurrencyInput({
     const clamped = Math.max(min, Math.min(max, num));
     setLocalStr(raw === '' ? '' : clamped.toLocaleString('en-AU'));
     onChange(clamped);
+  }
+
+  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    const bumpAmount = step ?? (quickIncrements[0] || 1000);
+    if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      handleBump(bumpAmount);
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      handleBump(-bumpAmount);
+    }
   }
 
   function handleBump(delta: number) {
@@ -68,7 +81,7 @@ export const CurrencyInput = React.memo(function CurrencyInput({
   return (
     <div className={cn('flex flex-col gap-2', className)}>
       <div className="flex items-center justify-between gap-2">
-        <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+        <label htmlFor={inputId} className="text-xs font-semibold uppercase tracking-wider text-muted-foreground cursor-pointer">
           {label}
         </label>
         {allowReset && defaultValue !== undefined && value !== defaultValue && (
@@ -89,9 +102,15 @@ export const CurrencyInput = React.memo(function CurrencyInput({
           $
         </div>
         <input
+          id={inputId}
           ref={inputRef}
           type="text"
           inputMode="numeric"
+          role="spinbutton"
+          aria-valuenow={value}
+          aria-valuemin={min}
+          aria-valuemax={max}
+          aria-label={label}
           disabled={disabled}
           value={localStr}
           onFocus={() => setIsFocused(true)}
@@ -100,10 +119,10 @@ export const CurrencyInput = React.memo(function CurrencyInput({
             setLocalStr(value.toLocaleString('en-AU'));
           }}
           onChange={handleInputChange}
+          onKeyDown={handleKeyDown}
           className={cn(
-            'w-full rounded-xl border border-border/70 bg-card py-2.5 pl-8 pr-3 font-mono text-sm font-semibold tabular-nums text-foreground shadow-sm transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-50'
+            'w-full rounded-xl border border-border/80 bg-card/90 py-2.5 pl-8 pr-3 font-mono text-sm font-semibold tabular-nums text-foreground shadow-xs transition-all hover:border-border focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/15 disabled:cursor-not-allowed disabled:opacity-50'
           )}
-          aria-label={label}
         />
       </div>
 
@@ -121,7 +140,8 @@ export const CurrencyInput = React.memo(function CurrencyInput({
               type="button"
               disabled={disabled || value + inc > max}
               onClick={() => handleBump(inc)}
-              className="inline-flex items-center rounded-lg border border-border/60 bg-muted/40 px-2 py-1 text-[10px] font-semibold text-muted-foreground transition-all hover:bg-muted/70 hover:text-foreground active:scale-95 disabled:pointer-events-none disabled:opacity-40"
+              aria-label={`Add $${inc >= 1000 ? `${inc / 1000}k` : inc} to ${label}`}
+              className="inline-flex items-center rounded-lg border border-border/70 bg-muted/40 px-2 py-1 text-[10px] font-semibold text-muted-foreground transition-all hover:bg-muted/70 hover:text-foreground hover:border-primary/30 active:scale-95 disabled:pointer-events-none disabled:opacity-40"
             >
               <Plus className="mr-0.5 h-2.5 w-2.5" />
               <span>${(inc >= 1000 ? `${inc / 1000}k` : inc)}</span>
@@ -133,7 +153,8 @@ export const CurrencyInput = React.memo(function CurrencyInput({
               type="button"
               disabled={disabled || value - inc < min}
               onClick={() => handleBump(-inc)}
-              className="inline-flex items-center rounded-lg border border-border/60 bg-muted/40 px-2 py-1 text-[10px] font-semibold text-muted-foreground transition-all hover:bg-muted/70 hover:text-foreground active:scale-95 disabled:pointer-events-none disabled:opacity-40"
+              aria-label={`Subtract $${inc >= 1000 ? `${inc / 1000}k` : inc} from ${label}`}
+              className="inline-flex items-center rounded-lg border border-border/70 bg-muted/40 px-2 py-1 text-[10px] font-semibold text-muted-foreground transition-all hover:bg-muted/70 hover:text-foreground hover:border-primary/30 active:scale-95 disabled:pointer-events-none disabled:opacity-40"
             >
               <Minus className="mr-0.5 h-2.5 w-2.5" />
               <span>${(inc >= 1000 ? `${inc / 1000}k` : inc)}</span>

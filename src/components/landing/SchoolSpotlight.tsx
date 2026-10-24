@@ -1,5 +1,4 @@
 import { useId, useMemo, useState } from 'react';
-import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { ArrowRight, ExternalLink, GraduationCap, MapPin, School, Search, Sparkles, X } from 'lucide-react';
 import { Link } from '@/lib/router';
 import { QLD_HIGH_SCHOOLS, type HighSchool } from '@/data/brisbane-data';
@@ -96,10 +95,9 @@ const RESOLVED_FEATURED: readonly ResolvedFeatured[] = FEATURED_SELECTIVE.flatMa
  * Search input + sector filter (All/State/Catholic/Independent), a featured row
  * of 3 selective schools with verified blurbs, ICSEA badges (elite ≥1150,
  * strong ≥1050), and a capped result list (12) deep-linking to the full
- * Brisbane schools guide. Motion layout animations; light + dark; 375px-safe.
+ * Brisbane schools guide. CSS entry animations; light + dark; 375px-safe.
  */
 export function SchoolSpotlight() {
-  const reducedMotion = useReducedMotion() ?? false;
   const searchId = useId();
   const headingId = useId();
   const countId = useId();
@@ -126,19 +124,10 @@ export function SchoolSpotlight() {
     ? `Showing ${visibleSchools.length} of ${filteredSchools.length} matching ${filteredSchools.length === 1 ? 'school' : 'schools'} · ${TOTAL_SCHOOLS} schools indexed`
     : `Showing ${visibleSchools.length} of ${TOTAL_SCHOOLS} schools`;
 
-  const motionItem = reducedMotion
-    ? {}
-    : {
-        initial: { opacity: 0, y: 12 },
-        animate: { opacity: 1, y: 0 },
-        exit: { opacity: 0, scale: 0.97 },
-        transition: { duration: 0.2 },
-      };
-
   return (
     <section
       aria-labelledby={headingId}
-      className="w-full rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6 dark:border-slate-800 dark:bg-slate-900"
+      className="relative mx-auto w-full max-w-5xl overflow-hidden rounded-3xl border border-border/80 bg-gradient-to-b from-card via-card/95 to-card/75 p-5 shadow-xl backdrop-blur-xl sm:p-7 dark:border-violet-500/20"
     >
       {/* Header */}
       <div className="mb-4 flex items-start gap-3">
@@ -171,11 +160,9 @@ export function SchoolSpotlight() {
           {RESOLVED_FEATURED.map(({ school, blurb, tag }: ResolvedFeatured) => {
             const tier: IcseaTier | null = icseaTier(school.indicativeICSEA);
             return (
-              <motion.article
+              <article
                 key={school.name}
-                layout={!reducedMotion}
-                {...motionItem}
-                className="flex min-w-0 flex-col rounded-xl border border-amber-300/60 bg-amber-50 p-3 dark:border-amber-800/50 dark:bg-amber-950/30"
+                className="reveal-up flex min-w-0 flex-col rounded-xl border border-amber-300/60 bg-amber-50 p-3 dark:border-amber-800/50 dark:bg-amber-950/30"
               >
                 <p className="text-[10px] font-bold uppercase tracking-wider text-amber-700 dark:text-amber-300">
                   {tag}
@@ -204,7 +191,7 @@ export function SchoolSpotlight() {
                     <ExternalLink className="h-3 w-3" aria-hidden="true" />
                   </a>
                 </div>
-              </motion.article>
+              </article>
             );
           })}
         </div>
@@ -294,17 +281,14 @@ export function SchoolSpotlight() {
           </button>
         </div>
       ) : (
-        <motion.ul layout={!reducedMotion} aria-describedby={countId} className="space-y-2">
-          <AnimatePresence mode="popLayout" initial={false}>
-            {visibleSchools.map((school: HighSchool) => {
-              const tier: IcseaTier | null = icseaTier(school.indicativeICSEA);
-              return (
-                <motion.li
-                  key={school.name}
-                  layout={!reducedMotion}
-                  {...motionItem}
-                  className="min-w-0 rounded-xl border border-slate-200 bg-slate-50 p-3 dark:border-slate-700 dark:bg-slate-800/60"
-                >
+        <ul aria-describedby={countId} className="space-y-2">
+          {visibleSchools.map((school: HighSchool) => {
+            const tier: IcseaTier | null = icseaTier(school.indicativeICSEA);
+            return (
+              <li
+                key={school.name}
+                className="animate-pop-in min-w-0 rounded-xl border border-slate-200 bg-slate-50 p-3 dark:border-slate-700 dark:bg-slate-800/60"
+              >
                   <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
                     <p className="min-w-0 flex-1 basis-40 truncate text-sm font-bold text-slate-900 dark:text-white">
                       {school.name}
@@ -342,11 +326,10 @@ export function SchoolSpotlight() {
                     Visit school website
                     <ExternalLink className="h-3 w-3" aria-hidden="true" />
                   </a>
-                </motion.li>
-              );
-            })}
-          </AnimatePresence>
-        </motion.ul>
+              </li>
+            );
+          })}
+        </ul>
       )}
 
       {/* Deep link to full guide */}

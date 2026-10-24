@@ -2,6 +2,7 @@ import { interestProductsModule as moduleData } from '@/data/modules/interest-pr
 import { TopicGuideAccordion } from '@/components/shared/TopicGuideAccordion';
 import { TeenSavingsAccountFinder } from '@/calculators/teen-savings/TeenSavingsAccountFinder';
 import { ModulePrevNext } from '@/components/shared/ModulePrevNext';
+import { PrintShareFAB } from '@/components/shared/PrintShareFAB';
 import { Dna, Landmark, Zap } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
@@ -70,6 +71,7 @@ export function InterestFinancialProducts() {
       </div>
 
       <ModulePrevNext currentId="interest-products" />
+      <PrintShareFAB />
     </div>
   );
 }

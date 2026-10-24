@@ -12,6 +12,10 @@ const cardVariants = cva(
           'border-white/10 bg-card/70 backdrop-blur-xl shadow-[0_8px_32px_-12px_rgba(0,0,0,0.18)]',
         elevated:
           'border-border/80 bg-card shadow-[0_10px_30px_-12px_rgba(0,0,0,0.15)] hover:shadow-[0_16px_40px_-12px_rgba(0,0,0,0.2)]',
+        depth:
+          'bg-card border-border/80 shadow-[0_4px_20px_-4px_color-mix(in_oklab,_var(--foreground)_8%_transparent)] card-specular soft-inset-shadow',
+        glow:
+          'bg-card border-border/80 shadow-[0_8px_32px_-12px_color-mix(in_oklab,_var(--primary)_20%_transparent)]',
       },
     },
     defaultVariants: {
@@ -27,6 +31,10 @@ export interface CardProps
   hover?: boolean;
   /** Add clickable micro-interactions: lift, shadow, active scale. */
   interactive?: boolean;
+  /** Add a lit-from-above specular edge + inner shadow for physical depth. */
+  depth?: boolean;
+  /** Add a primary-tinted outer glow shadow. */
+  glow?: boolean;
 }
 
 export function Card({
@@ -34,12 +42,16 @@ export function Card({
   variant,
   hover,
   interactive,
+  depth,
+  glow,
   ...props
 }: CardProps) {
   return (
     <div
       className={cn(
         cardVariants({ variant }),
+        depth && 'card-depth',
+        glow && 'card-glow-hover',
         'before:pointer-events-none before:absolute before:inset-x-8 before:top-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-border before:to-transparent',
         hover &&
           'hover:-translate-y-0.5 hover:border-primary/25 hover:shadow-lg',

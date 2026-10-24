@@ -1,9 +1,9 @@
-import { motion } from 'motion/react';
 import { taxGuideModule as moduleData } from '@/data/modules/tax-guide';
 import { TopicGuideAccordion } from '@/components/shared/TopicGuideAccordion';
 import { TeenTaxCalculator } from '@/calculators/teen-tax/TeenTaxCalculator';
 import { FirstTaxReturnGuide } from '@/components/teen/FirstTaxReturnGuide';
 import { ModulePrevNext } from '@/components/shared/ModulePrevNext';
+import { PrintShareFAB } from '@/components/shared/PrintShareFAB';
 import { DollarSign, ShieldCheck, FileCheck } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
@@ -33,11 +33,7 @@ export function TaxGuide() {
             </p>
           </div>
           <div className="md:col-span-4 hidden md:flex justify-center">
-            <motion.div
-              animate={{ y: [0, -8, 0] }}
-              transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-              className="relative group"
-            >
+            <div className="float-slow relative group">
               <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 blur-md opacity-40 group-hover:opacity-70 transition duration-500" />
               <SmartImage
                 src="/assets/graphics/popmart_tax.jpg"
@@ -47,7 +43,7 @@ export function TaxGuide() {
                 width={144}
                 height={144}
               />
-            </motion.div>
+            </div>
           </div>
         </div>
       </div>
@@ -97,6 +93,7 @@ export function TaxGuide() {
       </div>
 
       <ModulePrevNext currentId="tax-guide" />
+      <PrintShareFAB />
     </div>
   );
 }

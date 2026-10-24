@@ -1,6 +1,6 @@
 import { useRef, type ReactNode, type PointerEvent } from 'react';
-import { motion, useMotionValue, useSpring, useReducedMotion } from 'motion/react';
 import { cn } from '@/lib/utils';
+import { sound } from '@/lib/sound-synthesizer';
 
 interface MagneticButtonProps {
   children: ReactNode;
@@ -10,12 +10,13 @@ interface MagneticButtonProps {
   type?: 'button' | 'submit';
   ariaLabel?: string;
   title?: string;
+  disabled?: boolean;
 }
 
 /**
- * 2030 magnetic hover button — element springs toward the cursor within a
- * bounded radius (transform only, GPU-composited). Steps back to centre on
- * pointer leave. Reduced-motion users get a static button.
+ * Magnetic hover button: the element drifts toward the cursor within a bounded
+ * radius. Position is written to CSS variables from a single rAF, so the motion
+ * stays on the compositor and no React render happens on pointer move.
  */
 export function MagneticButton({
   children,
@@ -25,41 +26,57 @@ export function MagneticButton({
   type = 'button',
   ariaLabel,
   title,
+  disabled = false,
 }: MagneticButtonProps) {
   const ref = useRef<HTMLButtonElement>(null);
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-  const sx = useSpring(x, { stiffness: 300, damping: 18, mass: 0.4 });
-  const sy = useSpring(y, { stiffness: 300, damping: 18, mass: 0.4 });
-  const reducedMotion = useReducedMotion() ?? false;
+  const frame = useRef<number | null>(null);
 
   const handlePointerMove = (e: PointerEvent<HTMLButtonElement>) => {
-    if (reducedMotion || !ref.current) return;
-    const rect = ref.current.getBoundingClientRect();
-    const relX = e.clientX - (rect.left + rect.width / 2);
-    const relY = e.clientY - (rect.top + rect.height / 2);
-    x.set(relX * strength);
-    y.set(relY * strength);
+    const node = ref.current;
+    if (disabled || !node || e.pointerType === 'touch' || frame.current !== null) return;
+    const { clientX, clientY } = e;
+
+    frame.current = requestAnimationFrame(() => {
+      frame.current = null;
+      const rect = node.getBoundingClientRect();
+      const relX = clientX - (rect.left + rect.width / 2);
+      const relY = clientY - (rect.top + rect.height / 2);
+      node.style.setProperty('--mag-x', `${relX * strength}px`);
+      node.style.setProperty('--mag-y', `${relY * strength}px`);
+    });
   };
 
   const reset = () => {
-    x.set(0);
-    y.set(0);
+    const node = ref.current;
+    if (!node) return;
+    if (frame.current !== null) cancelAnimationFrame(frame.current);
+    frame.current = null;
+    node.style.setProperty('--mag-x', '0px');
+    node.style.setProperty('--mag-y', '0px');
+  };
+
+  const handleClick = () => {
+    if (disabled) return;
+    sound.playClick();
+    onClick?.();
   };
 
   return (
-    <motion.button
+    <button
       ref={ref}
       type={type}
-      onClick={onClick}
+      disabled={disabled}
+      onClick={handleClick}
       aria-label={ariaLabel}
       title={title}
       onPointerMove={handlePointerMove}
       onPointerLeave={reset}
-      style={reducedMotion ? undefined : { x: sx, y: sy }}
-      className={cn('relative inline-flex items-center justify-center', className)}
+      className={cn(
+        'magnetic-button relative inline-flex items-center justify-center transition-[color,background-color,border-color,box-shadow] duration-(--motion-fast) ease-(--ease-out) active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50 disabled:pointer-events-none',
+        className
+      )}
     >
       {children}
-    </motion.button>
+    </button>
   );
 }

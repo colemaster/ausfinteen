@@ -1,11 +1,11 @@
-import { useState, useMemo, useDeferredValue } from 'react';
-import { motion } from 'motion/react';
-import { fadeInUp } from '@/lib/animations';
+import { useState, useMemo, useDeferredValue, useCallback } from 'react';
 import { useUrlParams } from '../../hooks/useUrlParams';
 import { SliderControl } from '../../components/ui/SliderControl';
 import { NumberInput } from '../../components/ui/NumberInput';
 import { PortfolioField } from '../../components/ui/PortfolioField';
 import { StatCard } from '../../components/ui/StatCard';
+import { QuickPresetBar, type ScenarioPreset } from '../../components/ui/QuickPresetBar';
+import { CalculatorActions } from '../../components/shared/CalculatorActions';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid } from '@/components/charts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent } from '@/components/ui/chart';
 import { offsetVsDRConfig } from '@/lib/chart-configs';
@@ -31,6 +31,68 @@ const DEFAULTS = {
   splitFraction: 0.5,
   splitYears: 10,
 };
+
+interface OffsetPreset {
+  loan: number;
+  rate: number;
+  years: number;
+  etfReturn: number;
+  divYield: number;
+  margTax: number;
+  amountsStr: string;
+  drLoanType: 'io' | 'pi';
+}
+
+const PRESETS: ScenarioPreset<OffsetPreset>[] = [
+  {
+    id: 'starter-dr',
+    label: 'Balanced Starter ($100k)',
+    badge: 'IO Loan',
+    description: '$500k mortgage, 6.0% rate, recycling $100k into ASX ETFs at 8% total return',
+    values: {
+      loan: 500000,
+      rate: 6.0,
+      years: 30,
+      etfReturn: 8.0,
+      divYield: 2.0,
+      margTax: 34.5,
+      amountsStr: '50000,100000,150000,200000',
+      drLoanType: 'io',
+    },
+  },
+  {
+    id: 'aggressive-dr',
+    label: 'Aggressive High Earner',
+    badge: '47% Tax Bracket',
+    description: '$750k mortgage, 5.8% rate, 47% bracket with $200k+ debt recycling',
+    values: {
+      loan: 750000,
+      rate: 5.8,
+      years: 25,
+      etfReturn: 9.5,
+      divYield: 2.5,
+      margTax: 47.0,
+      amountsStr: '100000,200000,300000',
+      drLoanType: 'io',
+    },
+  },
+  {
+    id: 'conservative-pi',
+    label: 'Conservative P&I Recycling',
+    badge: 'Principal Repay',
+    description: '$400k mortgage, 6.2% rate, paying down investment loan principal alongside ETFs',
+    values: {
+      loan: 400000,
+      rate: 6.2,
+      years: 20,
+      etfReturn: 7.0,
+      divYield: 3.0,
+      margTax: 32.0,
+      amountsStr: '25000,50000,75000',
+      drLoanType: 'pi',
+    },
+  },
+];
 
 const ASSUMPTIONS = [
   'Home loan: P&I repayments, monthly compounding, fixed rate for the full term.',
@@ -65,6 +127,43 @@ export function OffsetVsDR() {
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
   const [viewYear, setViewYear] = useState<number>(params.years);
   const [drLoanType, setDrLoanType] = useState<'io' | 'pi'>('io');
+  const [activePreset, setActivePreset] = useState<string | undefined>(undefined);
+
+  const handleApplyPreset = useCallback((preset: ScenarioPreset<OffsetPreset>) => {
+    setActivePreset(preset.id);
+    if (!preset.values) return;
+    setParams({
+      loan: preset.values.loan ?? DEFAULTS.loan,
+      rate: preset.values.rate ?? DEFAULTS.rate,
+      years: preset.values.years ?? DEFAULTS.years,
+      etfReturn: preset.values.etfReturn ?? DEFAULTS.etfReturn,
+      divYield: preset.values.divYield ?? DEFAULTS.divYield,
+      margTax: preset.values.margTax ?? DEFAULTS.margTax,
+      amountsStr: preset.values.amountsStr ?? DEFAULTS.amountsStr,
+    });
+    if (preset.values.drLoanType) {
+      setDrLoanType(preset.values.drLoanType);
+    }
+  }, [setParams]);
+
+  const handleReset = useCallback(() => {
+    setActivePreset(undefined);
+    setParams({
+      loan: DEFAULTS.loan,
+      rate: DEFAULTS.rate,
+      years: DEFAULTS.years,
+      etfReturn: DEFAULTS.etfReturn,
+      divYield: DEFAULTS.divYield,
+      margTax: DEFAULTS.margTax,
+      cgtDiscount: DEFAULTS.cgtDiscount,
+      amountsStr: DEFAULTS.amountsStr,
+      extraMonthly: DEFAULTS.extraMonthly,
+      surplusMonthly: DEFAULTS.surplusMonthly,
+      splitFraction: DEFAULTS.splitFraction,
+      splitYears: DEFAULTS.splitYears,
+    });
+    setDrLoanType('io');
+  }, [setParams]);
 
   // Effective values: portfolio wins over URL params when portfolio is non-zero
   const effectiveLoan = portfolio.mortgageBalance > 0 ? portfolio.mortgageBalance : params.loan;
@@ -171,6 +270,20 @@ export function OffsetVsDR() {
 
   const afterTaxDRCost = (effectiveRate * (1 - effectiveMargTax / 100)).toFixed(2);
 
+  const summaryText = useMemo(() => {
+    const selInfo = sel
+      ? `Selected Amount: ${formatCurrency(sel.amount)} | Offset Net Wealth: ${formatCurrency(sel.amount)} vs DR Net Wealth Post-CGT: ${formatCurrency(sel.dr.netWealthPostCGT)} (DR Advantage: ${formatDiff(sel.drAdvantage)})`
+      : '';
+    return [
+      '--- Offset vs Debt Recycling Summary ---',
+      `Home Loan: ${formatCurrency(effectiveLoan)} at ${effectiveRate}% (${effectiveYears} yrs P&I, ${formatCurrency(mPmt)}/mo)`,
+      `DR Loan Type: ${drLoanType.toUpperCase()} | After-tax DR borrowing cost: ${afterTaxDRCost}% (Marginal Tax: ${effectiveMargTax}%)`,
+      `ETF Projected Return: ${effectiveEtfReturn}% pa (Div Yield: ${params.divYield}%)`,
+      selInfo,
+      `Calculated via AusFinTools Debt Recycling Engine`,
+    ].filter(Boolean).join('\n');
+  }, [effectiveLoan, effectiveRate, effectiveYears, mPmt, drLoanType, afterTaxDRCost, effectiveMargTax, effectiveEtfReturn, params.divYield, sel]);
+
   // Year selector buttons
   const yearBtns = useMemo(() => {
     const y = effectiveYears;
@@ -199,17 +312,31 @@ export function OffsetVsDR() {
             <span className="text-[var(--primary)]">{afterTaxDRCost}%</span>
           </p>
         </div>
-        <button
-          onClick={() => setSettingsOpen(o => !o)}
-          className={`flex items-center gap-1.5 px-2.5 py-1.5 text-xs rounded-md transition-all shrink-0 ${settingsOpen ? 'text-[var(--primary)] bg-[var(--primary)]/10 ' : 'text-[var(--muted-foreground)] hover:text-[var(--muted-foreground)] hover:bg-[var(--background)] ' }`}
-          aria-label="Toggle settings"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor">
-            <path fillRule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clipRule="evenodd" />
-          </svg>
-          <span className="font-medium">{settingsOpen ? 'Close' : 'Settings'}</span>
-        </button>
+        <div className="flex items-center gap-2 shrink-0">
+          <CalculatorActions
+            onReset={handleReset}
+            summaryText={summaryText}
+            summaryTitle="Offset vs Debt Recycling"
+          />
+          <button
+            onClick={() => setSettingsOpen(o => !o)}
+            className={`flex items-center gap-1.5 px-2.5 py-1.5 text-xs rounded-md transition-all shrink-0 ${settingsOpen ? 'text-[var(--primary)] bg-[var(--primary)]/10 ' : 'text-[var(--muted-foreground)] hover:text-[var(--muted-foreground)] hover:bg-[var(--background)] ' }`}
+            aria-label="Toggle settings"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clipRule="evenodd" />
+            </svg>
+            <span className="font-medium">{settingsOpen ? 'Close' : 'Settings'}</span>
+          </button>
+        </div>
       </div>
+
+      <QuickPresetBar
+        presets={PRESETS}
+        activePresetId={activePreset}
+        onSelect={handleApplyPreset}
+        title="Debt Recycling Scenarios"
+      />
 
       <AboutCalc concepts={[
         {
@@ -363,15 +490,15 @@ export function OffsetVsDR() {
 
       {/* Summary Table */}
       {results.length > 0 ? (
-        <motion.div variants={fadeInUp} initial="hidden" animate="visible" className="space-y-6">
+        <div className="animate-rise-in space-y-6">
           <div className="text-xs text-[var(--muted-foreground)] bg-[var(--background)] border border-slate-100 rounded-lg px-4 py-3 leading-relaxed">
             Each row compares using the same amount of cash in two ways: parking it in your offset account (reducing interest charged on your loan) vs investing via debt recycling (borrowing to invest, making interest tax-deductible). <strong className="text-[var(--foreground)]">Debt Recycling Net Wealth = portfolio value minus the outstanding investment loan minus estimated CGT if sold today.</strong> For IO loans this will appear low early on — Debt Recycling's advantage grows via compounding tax deductions.{' '}
             <a href="https://www.ato.gov.au/individuals-and-families/investments-and-assets/interest-deductions-and-borrowing-expenses" target="_blank" rel="noopener noreferrer" className="text-[var(--primary)] hover:text-[var(--primary)]">ATO: Interest deductions ↗</a>
           </div>
-          <div className="overflow-x-auto rounded-xl border border-[var(--border)]">
+          <div className="overflow-x-auto rounded-xl border border-[var(--border)] max-h-96">
           <table className="w-full text-xs border-collapse">
-            <thead>
-              <tr className="bg-[var(--background)]">
+            <thead className="sticky top-0 bg-[var(--card)] z-10 font-bold border-b shadow-xs">
+              <tr>
                 {[
                   'Amount',
                   'Offset Interest Saved',
@@ -384,7 +511,7 @@ export function OffsetVsDR() {
                 ].map(h => (
                   <th
                     key={h}
-                    className="px-3 py-2.5 text-right text-[10px] uppercase tracking-wide text-[var(--muted-foreground)] font-medium border-b border-[var(--border)] whitespace-nowrap"
+                    className="px-3 py-2.5 text-right text-[10px] uppercase tracking-wide text-[var(--muted-foreground)] font-bold border-b border-[var(--border)] whitespace-nowrap"
                   >
                     {h}
                   </th>
@@ -431,7 +558,7 @@ export function OffsetVsDR() {
             </tbody>
           </table>
         </div>
-        </motion.div>
+        </div>
       ) : (
         <div className="rounded-xl border border-[var(--border)] bg-[var(--background)] p-8 text-center text-sm text-[var(--muted-foreground)]">
           Enter your loan details and comparison amounts above to see results.
@@ -439,7 +566,7 @@ export function OffsetVsDR() {
       )}
 
       {/* Extra Repayment Scenario */}
-      <motion.div variants={fadeInUp} initial="hidden" animate="visible" className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-5 space-y-4">
+      <div className="animate-rise-in bg-[var(--background)] border border-[var(--border)] rounded-xl p-5 space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
             <h3 className="text-sm font-bold text-[var(--foreground)]">
@@ -463,16 +590,44 @@ export function OffsetVsDR() {
           </div>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <StatCard label="Interest Saved" value={formatCurrency(extraScenario.interestSaved)} color="green" subtext={`vs no extra repayment`} />
-          <StatCard label="Payoff Time" value={`${extraScenario.yearsToPayoff} yrs`} color="blue" subtext={`vs ${effectiveYears} yr scheduled`} />
-          <StatCard label="Total Extra Paid" value={formatCurrency(extraScenario.totalExtraPaid)} color="purple" subtext={`${formatCurrency(params.extraMonthly)}/mo`} />
-          <StatCard label="Total Interest" value={formatCurrency(extraScenario.totalInterest)} color="amber" subtext={`over ${extraScenario.yearsToPayoff} yrs`} />
+          <StatCard
+            label="Interest Saved"
+            value={formatCurrency(extraScenario.interestSaved)}
+            numericValue={extraScenario.interestSaved}
+            format="currency"
+            color="green"
+            subtext={`vs no extra repayment`}
+          />
+          <StatCard
+            label="Payoff Time"
+            value={`${extraScenario.yearsToPayoff} yrs`}
+            numericValue={parseFloat(extraScenario.yearsToPayoff)}
+            format="number"
+            color="blue"
+            subtext={`vs ${effectiveYears} yr scheduled`}
+          />
+          <StatCard
+            label="Total Extra Paid"
+            value={formatCurrency(extraScenario.totalExtraPaid)}
+            numericValue={extraScenario.totalExtraPaid}
+            format="currency"
+            color="purple"
+            subtext={`${formatCurrency(params.extraMonthly)}/mo`}
+          />
+          <StatCard
+            label="Total Interest"
+            value={formatCurrency(extraScenario.totalInterest)}
+            numericValue={extraScenario.totalInterest}
+            format="currency"
+            color="amber"
+            subtext={`over ${extraScenario.yearsToPayoff} yrs`}
+          />
         </div>
-      </motion.div>
+      </div>
 
       {/* Detail Cards */}
       {sel && (
-        <motion.div variants={fadeInUp} initial="hidden" animate="visible" className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div className="animate-rise-in grid grid-cols-1 md:grid-cols-2 gap-5">
           {/* Offset */}
           <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-5">
             <h3 className="text-sm font-bold text-[var(--success)] mb-4 flex items-center gap-2">
@@ -518,12 +673,12 @@ export function OffsetVsDR() {
               ))}
             </dl>
           </div>
-        </motion.div>
+        </div>
       )}
 
       {/* Year-by-Year Chart */}
       {sel && yearlyComp.length > 0 && (
-        <motion.div variants={fadeInUp} initial="hidden" animate="visible" className="space-y-6">
+        <div className="animate-rise-in space-y-6">
           <div className="text-xs text-[var(--muted-foreground)] bg-[var(--background)] border border-slate-100 rounded-lg px-4 py-3 leading-relaxed">
             The chart tracks <strong className="text-[var(--foreground)]">net wealth over time</strong> for the selected amount. Offset net wealth = your cash (flat line, since the offset funds aren't invested). Debt Recycling net wealth = portfolio value minus loan minus CGT. Click a year button to see a snapshot. The crossover point (where Debt Recycling exceeds Offset) depends on your ETF return, tax rate, and loan type.{' '}
             <a href="https://moneysmart.gov.au/shares/how-investments-are-taxed" target="_blank" rel="noopener noreferrer" className="text-[var(--primary)] hover:text-[var(--primary)]">MoneySmart: How investments are taxed ↗</a>
@@ -593,11 +748,11 @@ export function OffsetVsDR() {
             </BarChart>
           </ChartContainer>
         </div>
-        </motion.div>
+        </div>
       )}
 
       {/* Split Strategy */}
-      <motion.div variants={fadeInUp} initial="hidden" animate="visible" className="space-y-6">
+      <div className="animate-rise-in space-y-6">
         <div className="border-t border-[var(--border)] pt-6">
           <h3 className="text-sm font-bold text-[var(--foreground)] mb-1">
             Split Strategy — Surplus to Offset vs Debt Recycling
@@ -629,7 +784,7 @@ export function OffsetVsDR() {
             <StatCard label="Best Strategy" value={split.bestStrategy} color={split.bestStrategy === 'Split' ? 'blue' : split.bestStrategy === 'All Debt Recycling' ? 'purple' : 'green'} subtext={`Best outcome ${formatCompact(split.bestNetWealthAfterCGT)}`} />
           </div>
         </div>
-      </motion.div>
+      </div>
 
       <Assumptions items={ASSUMPTIONS} />
       <Disclaimer calculatorName="Offset vs Debt Recycling calculator" />

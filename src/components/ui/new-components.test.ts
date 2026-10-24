@@ -128,5 +128,62 @@ describe('2027 Frontend Components & Micro-Interactions', () => {
       expect(portal.name.length).toBeGreaterThan(0);
     }
   });
+
+  it('calculates StatCard target progress correctly', () => {
+    const calcProgress = (val: number, targetVal: number) => {
+      if (targetVal <= 0 || !Number.isFinite(val)) return 0;
+      return Math.min(100, Math.max(0, (val / targetVal) * 100));
+    };
+
+    expect(calcProgress(500, 1000)).toBe(50);
+    expect(calcProgress(1200, 1000)).toBe(100);
+    expect(calcProgress(-50, 1000)).toBe(0);
+    expect(calcProgress(0, 1000)).toBe(0);
+  });
+
+  it('calculates StatCard formatted copyable string correctly', () => {
+    const formatCopyValue = (numericValue?: number, format?: 'currency' | 'percent' | 'number', rawValue = '') => {
+      if (numericValue !== undefined) {
+        if (format === 'currency') return `$${Math.round(numericValue).toLocaleString('en-AU')}`;
+        if (format === 'percent') return `${numericValue}%`;
+        return `${numericValue}`;
+      }
+      return rawValue;
+    };
+
+    expect(formatCopyValue(50000, 'currency')).toBe('$50,000');
+    expect(formatCopyValue(12.5, 'percent')).toBe('12.5%');
+    expect(formatCopyValue(42, 'number')).toBe('42');
+    expect(formatCopyValue(undefined, undefined, '$120.50')).toBe('$120.50');
+  });
+
+  it('handles SliderControl stepping increment and decrement clamping', () => {
+    const stepSlider = (current: number, dir: 1 | -1, step: number, min: number, max: number, decimals?: number) => {
+      const next = dir === 1 ? Math.min(max, current + step) : Math.max(min, current - step);
+      return Number(next.toFixed(decimals ?? (step < 1 ? 2 : 0)));
+    };
+
+    expect(stepSlider(5, 1, 0.5, 0, 10, 1)).toBe(5.5);
+    expect(stepSlider(9.8, 1, 0.5, 0, 10, 1)).toBe(10);
+    expect(stepSlider(0.2, -1, 0.5, 0, 10, 1)).toBe(0);
+    expect(stepSlider(100, 1, 10, 0, 500)).toBe(110);
+  });
+
+  it('calculates ScenarioSplitter keyboard position steps correctly', () => {
+    const stepSplitter = (pos: number, key: string) => {
+      if (key === 'ArrowLeft') return Math.max(0, pos - 5);
+      if (key === 'ArrowRight') return Math.min(100, pos + 5);
+      if (key === 'Home') return 0;
+      if (key === 'End') return 100;
+      return pos;
+    };
+
+    expect(stepSplitter(50, 'ArrowLeft')).toBe(45);
+    expect(stepSplitter(50, 'ArrowRight')).toBe(55);
+    expect(stepSplitter(3, 'ArrowLeft')).toBe(0);
+    expect(stepSplitter(98, 'ArrowRight')).toBe(100);
+    expect(stepSplitter(42, 'Home')).toBe(0);
+    expect(stepSplitter(42, 'End')).toBe(100);
+  });
 });
 

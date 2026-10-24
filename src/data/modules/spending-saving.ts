@@ -5,7 +5,7 @@ export const spendingSavingModule: MandyModule = {
     id: 'spending-saving',
     title: 'Spending & Saving',
     emoji: '🛍️',
-    graphicUrl: '/assets/graphics/popmart_savings.jpg',
+    graphicUrl: '/assets/graphics/popmart_budget.jpg',
     description: 'Unlock top Australian high-interest savings accounts (5%+), APRA FCS guarantee, PayID/Osko, PayTo subscription management, and student discounts.',
     route: '/spending-saving',
     topics: [
@@ -14,7 +14,7 @@ export const spendingSavingModule: MandyModule = {
         moduleId: 'spending-saving',
         moduleTitle: 'Spending & Saving 🛍️',
         question: '1. What Are The Top Australian Youth Savings Accounts In 2026-27?',
-        answer: 'Top youth savings accounts for 2026-27 offer high interest (5.05% to 5.80% p.a.) with zero account fees: 1) **BOQ Future Saver**: 5.80% p.a. up to $50k (bonus deposit and card hurdles are automatically WAIVED for ages 14–17!). 2) **Newcastle Permanent Smart Saver (Under 25s)**: 5.75% p.a. up to $50k (grow balance + ≤2 withdrawals/mo). 3) **Great Southern Bank Youth eSaver**: 5.50% p.a. flat up to $5k with zero conditions. 4) **ING Savings Maximiser**: 5.49% p.a. up to $100k for ages 15+ ($1k deposit + 5 card purchases + grow balance; verify live rate). 5) **AMP Bank GO Save**: 5.25% unconditional to $50k (then 4.75% to $250k). 6) **ANZ Plus Growth Saver**: 5.10% p.a. up to $250k ($100/mo growth). 7) **Westpac Bump**: 5.05% p.a. up to $30k (grow balance + 1 deposit; 1.75% base rate). 8) **CommBank Youthsaver**: 5.05% p.a. up to $50k (deposit ≥$0.01 + grow balance; 2.15% base rate). 9) **Up Bank**: 5.35% p.a. (ages 16+; 5 settled purchases/mo + no withdrawal from that Saver). 10) **Macquarie Bank**: 5.00% flat on both savings and everyday spending accounts. 11) **Westpac Life (18+)**: 5.75% p.a. up to $150k (grow balance + 20 debit purchases/mo). Always quote your TFN in your banking app under Section 202D of the ITAA 1936 to avoid 47% No-TFN withholding tax!',
+        answer: 'Top youth savings accounts for 2026-27 offer high interest (5.05% to 6.00% p.a.) with zero account fees: 1) **BOQ Future Saver**: 5.80% p.a. up to $50k (bonus deposit and card hurdles are automatically WAIVED for ages 14–17!). 2) **Newcastle Permanent Smart Saver (Under 25s)**: 5.75% p.a. up to $50k (grow balance + ≤2 withdrawals/mo). 3) **Great Southern Bank Youth eSaver**: 5.50% p.a. flat up to $5k with zero conditions. 4) **ING Savings Booster**: 6.00% p.a. up to $500k for ages 15+ ($1k deposit + 5 card purchases + grow balance; verify live rate). 5) **AMP Bank GO Save**: 5.25% unconditional to $50k (then 4.75% to $250k). 6) **ANZ Plus Growth Saver**: 5.10% p.a. up to $250k ($100/mo growth). 7) **Westpac Bump**: 5.05% p.a. up to $30k (grow balance + 1 deposit; 1.75% base rate). 8) **CommBank Youthsaver**: 5.05% p.a. up to $50k (deposit ≥$0.01 + grow balance; 2.15% base rate). 9) **Up Bank**: 5.35% p.a. (ages 16+; 5 settled purchases/mo + no withdrawal from that Saver). 10) **Macquarie Bank**: 5.00% flat on both savings and everyday spending accounts. 11) **Westpac Life (18+)**: 5.75% p.a. up to $150k (grow balance + 20 debit purchases/mo). Always quote your TFN in your banking app under Section 202D of the ITAA 1936 to avoid 47% No-TFN withholding tax!',
         actionStep: 'Compare accounts in our Youth Savings Finder on this page and switch to a 5.0%+ rate.',
         webLink: OFFICIAL_WEB_LINKS.moneysmart_banking,
       },

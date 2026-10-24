@@ -1,5 +1,4 @@
 import { useMemo, useState, type ComponentType } from 'react';
-import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import {
   ArrowLeft,
   ArrowRight,
@@ -15,6 +14,7 @@ import {
 import { Link } from '@/lib/router';
 import { useTeenProfile } from '@/context/TeenProfileContext';
 import { NAV_MODULES } from '@/data/nav-modules';
+import { sound } from '@/lib/sound-synthesizer';
 import { cn } from '@/lib/utils';
 
 /** Q1 — teen age band. `18+` maps to the age-18 preset. */
@@ -131,7 +131,7 @@ function OptionGrid<T extends string | number>({
   columns?: string;
 }) {
   return (
-    <div role="group" aria-labelledby={labelledBy} className={cn('grid gap-2', columns)}>
+    <div role="group" aria-labelledby={labelledBy} className={cn('grid gap-2.5', columns)}>
       {options.map(({ value, label, hint, Icon }) => {
         const active = selected === value;
         return (
@@ -139,18 +139,21 @@ function OptionGrid<T extends string | number>({
             key={String(value)}
             type="button"
             aria-pressed={active}
-            onClick={() => onSelect(value)}
+            onClick={() => {
+              sound.playClick();
+              onSelect(value);
+            }}
             className={cn(
-              'flex min-w-0 flex-col items-start gap-1 rounded-xl border p-3 text-left transition-all',
+              'flex min-w-0 flex-col items-start gap-1 rounded-xl border p-3.5 text-left transition-all duration-200',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60',
               active
-                ? 'border-primary bg-primary/10 shadow-md shadow-primary/10'
-                : 'border-border bg-card hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md',
+                ? 'border-primary bg-primary/15 shadow-md shadow-primary/10 ring-1 ring-primary/30'
+                : 'border-border/80 bg-card/80 hover:-translate-y-0.5 hover:border-primary/40 hover:bg-card hover:shadow-md',
             )}
           >
             <span className="flex w-full items-center gap-2">
               <Icon className={cn('h-4 w-4 shrink-0', active ? 'text-primary' : 'text-muted-foreground')} aria-hidden="true" />
-              <span className="truncate text-sm font-bold text-foreground">{label}</span>
+              <span className="truncate text-sm font-extrabold text-foreground">{label}</span>
             </span>
             <span className="text-[11px] leading-snug text-muted-foreground">{hint}</span>
           </button>
@@ -169,7 +172,6 @@ function OptionGrid<T extends string | number>({
  */
 export function StartHereQuiz() {
   const { applyAgePreset } = useTeenProfile();
-  const reducedMotion = useReducedMotion() ?? false;
   const [step, setStep] = useState(0);
   const [age, setAge] = useState<AgeOption | null>(null);
   const [goal, setGoal] = useState<GoalId | null>(null);
@@ -196,7 +198,7 @@ export function StartHereQuiz() {
 
   return (
     <section aria-label="Find your starting path" className="mx-auto w-full max-w-xl">
-      <div className="rounded-2xl border border-border bg-card p-4 shadow-sm sm:p-6">
+      <div className="relative overflow-hidden rounded-3xl border border-border/80 bg-gradient-to-b from-card via-card/95 to-card/75 p-5 shadow-xl backdrop-blur-xl sm:p-7 dark:border-primary/20">
         {/* Progress dots */}
         <div className="flex items-center justify-between gap-2">
           <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
@@ -221,14 +223,7 @@ export function StartHereQuiz() {
           </div>
         </div>
 
-        <AnimatePresence mode="wait" initial={false}>
-          <motion.div
-            key={step}
-            initial={reducedMotion ? false : { opacity: 0, x: 24 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={reducedMotion ? undefined : { opacity: 0, x: -24 }}
-            transition={{ duration: 0.22, ease: 'easeOut' }}
-          >
+        <div key={step} className="animate-rise-in">
             {step === 0 && (
               <div className="mt-4">
                 <h3 id={stepHeadingId} className="text-base font-extrabold text-foreground">
@@ -326,8 +321,7 @@ export function StartHereQuiz() {
                 </div>
               </div>
             )}
-          </motion.div>
-        </AnimatePresence>
+        </div>
 
         {/* Nav */}
         {step < RESULT_STEP && (

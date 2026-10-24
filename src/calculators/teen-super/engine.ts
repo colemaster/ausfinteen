@@ -2,6 +2,10 @@
  * Teen Super Engine — super vs outside-super investing decision and compound
  * growth with fee drag for Australian teens.
  *
+ * Figures verified 18 October 2026 for the 2026-27 financial year: 12.0% SG,
+ * $32,500 concessional cap, $130,000 non-concessional cap and a $250,000
+ * Division 293 threshold (all ATO). Payday Super has applied since 1 July 2026.
+ *
  * Data sources: ATO super rules ('@/data/super-rules') and tax brackets
  * ('@/data/tax-brackets').
  */
@@ -11,8 +15,8 @@ import { getCombinedMarginalRate, getMarginalRate } from '@/data/tax-brackets';
 
 /**
  * Assumptions shared by the super-vs-outside decision model.
- * Growth of 7.5% p.a. is a documented long-run default; the horizon runs to
- * age 60 (preservation age).
+ * Growth of 7.5% p.a. is a documented long-run default (an assumption, not an
+ * ATO figure); the horizon runs to age 60 (preservation age).
  */
 export const SUPER_COMPARISON_ASSUMPTIONS = {
   growthRate: 0.075,

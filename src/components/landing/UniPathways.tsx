@@ -1,6 +1,5 @@
 import type { ComponentType } from 'react';
 import { Link } from '@/lib/router';
-import { motion } from 'motion/react';
 import {
   FileText,
   Wallet,
@@ -106,7 +105,7 @@ export function UniPathways(): React.JSX.Element {
   return (
     <section
       aria-labelledby="uni-pathways-heading"
-      className="w-full rounded-2xl border border-slate-200 bg-white p-4 sm:p-6 dark:border-slate-800 dark:bg-slate-900"
+      className="relative mx-auto w-full max-w-5xl overflow-hidden rounded-3xl border border-border/80 bg-gradient-to-b from-card via-card/95 to-card/75 p-5 shadow-xl backdrop-blur-xl sm:p-7 dark:border-blue-500/20"
     >
       <div className="flex items-center gap-2">
         <span className="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-blue-600/10 text-blue-600 dark:text-blue-400">
@@ -133,26 +132,14 @@ export function UniPathways(): React.JSX.Element {
           className="absolute bottom-2 left-[7px] top-2 w-0.5 rounded-full bg-slate-200 sm:left-[9px] dark:bg-slate-800"
         />
         {/* Draw-on-scroll progress line */}
-        <motion.div
+        <div
           aria-hidden="true"
-          initial={{ scaleY: 0 }}
-          whileInView={{ scaleY: 1 }}
-          viewport={{ once: true, margin: '-40px' }}
-          transition={{ duration: 1.2, ease: 'easeOut' }}
-          style={{ transformOrigin: 'top' }}
-          className="absolute bottom-2 left-[7px] top-2 w-0.5 rounded-full bg-blue-600 sm:left-[9px]"
+          className="reveal-line absolute bottom-2 left-[7px] top-2 w-0.5 rounded-full bg-blue-600 sm:left-[9px]"
         />
 
         <ol className="space-y-4">
-          {MILESTONES.map((m, i) => (
-            <motion.li
-              key={m.title}
-              initial={{ opacity: 0, x: -16 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, margin: '-40px' }}
-              transition={{ duration: 0.45, delay: i * 0.08 }}
-              className="relative"
-            >
+          {MILESTONES.map(m => (
+            <li key={m.title} className="reveal-left relative">
               <span
                 aria-hidden="true"
                 className={`absolute -left-6 top-1 h-4 w-4 rounded-full border-2 border-white sm:-left-8 dark:border-slate-900 ${m.dot}`}
@@ -174,7 +161,7 @@ export function UniPathways(): React.JSX.Element {
                   {m.detail}
                 </p>
               </div>
-            </motion.li>
+            </li>
           ))}
         </ol>
       </div>
@@ -187,14 +174,10 @@ export function UniPathways(): React.JSX.Element {
         </p>
         <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-3">
           {ATAR_CHIPS.map((chip) => (
-            <motion.div
+            <div
               key={chip.label}
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-40px' }}
-              transition={{ duration: 0.4 }}
               title={chip.atar}
-              className="rounded-xl border border-amber-200 bg-amber-50 p-3 dark:border-amber-500/20 dark:bg-amber-500/10"
+              className="reveal-up rounded-xl border border-amber-200 bg-amber-50 p-3 dark:border-amber-500/20 dark:bg-amber-500/10"
             >
               <p className="flex items-center gap-1.5 text-xs font-bold text-slate-900 dark:text-white">
                 <Sparkles className="h-3.5 w-3.5 text-amber-500" />
@@ -203,7 +186,7 @@ export function UniPathways(): React.JSX.Element {
               <p className="mt-1 font-mono text-[11px] leading-relaxed text-slate-600 dark:text-slate-300">
                 {chip.atar}
               </p>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>
@@ -216,17 +199,13 @@ export function UniPathways(): React.JSX.Element {
         </p>
         <div className="mt-2 flex flex-wrap gap-2">
           {EARLY_OFFER_SCHEMES.map((scheme) => (
-            <motion.span
+            <span
               key={scheme}
-              initial={{ opacity: 0, scale: 0.92 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true, margin: '-40px' }}
-              transition={{ duration: 0.3 }}
-              className="inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700 dark:border-emerald-500/20 dark:bg-emerald-500/10 dark:text-emerald-300"
+              className="reveal-scale inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700 dark:border-emerald-500/20 dark:bg-emerald-500/10 dark:text-emerald-300"
             >
               <ShieldCheck className="h-3.5 w-3.5" />
               {scheme}
-            </motion.span>
+            </span>
           ))}
         </div>
       </div>

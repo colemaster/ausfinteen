@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { Card } from '@/components/ui/Card';
 import { NumberInput } from '@/components/ui/NumberInput';
 import { SliderControl } from '@/components/ui/SliderControl';
@@ -6,7 +6,10 @@ import { StatCard } from '@/components/ui/StatCard';
 import { Badge } from '@/components/ui/Badge';
 import { InfoTooltip } from '@/components/ui/InfoTooltip';
 import { ComparisonPill } from '@/components/ui/ComparisonPill';
+import { QuickPresetBar, type ScenarioPreset } from '@/components/ui/QuickPresetBar';
+import { CalculatorActions } from '@/components/shared/CalculatorActions';
 import { OFFICIAL_WEB_LINKS } from '@/data/teen-finance-data';
+import { SUPER_CO_CONTRIBUTION_2026_27 } from '@/data/constants';
 import { WebReferenceLink } from '@/components/shared/WebReferenceLink';
 import { Sparkles, Info, ShieldCheck, Scale } from 'lucide-react';
 import { useTeenProfile } from '@/context/TeenProfileContext';
@@ -14,8 +17,40 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tool
 import { ChartContainer, ChartTooltipContent } from '@/components/ui/chart';
 import { compoundGrowthWithFees, superComparison, teenMarginalRate } from './engine';
 import { SUPER_RULES } from '@/data/super-rules';
+import { formatCurrency } from '@/utils/formatters';
 
-const SUPER_SG_RATE_2026_27 = 0.12; // 12.0% statutory SG FY 2026-27
+// 12.0% statutory SG rate for FY2025-26 and FY2026-27 (ATO, verified 18 Oct 2026)
+const SUPER_SG_RATE_2026_27 = SUPER_RULES.sgRate;
+
+interface TeenSuperPreset {
+  hours: number;
+  rate: number;
+  strategy: 'indexed_high_growth' | 'default_mysuper';
+}
+
+const TEEN_SUPER_PRESETS: ScenarioPreset<TeenSuperPreset>[] = [
+  {
+    id: 'part-time-fastfood',
+    label: 'Student Casual (15h/wk)',
+    badge: 'Under 18 Rule',
+    description: '15 hrs/wk at $18.50/hr. Super optional under 30 hrs for minors',
+    values: { hours: 15, rate: 18.5, strategy: 'indexed_high_growth' },
+  },
+  {
+    id: 'full-time-gap-year',
+    label: 'Gap Year Full-Time (38h/wk)',
+    badge: '12% SG Active',
+    description: '38 hrs/wk ($24.50/hr) unlocking mandatory 12% employer super',
+    values: { hours: 38, rate: 24.5, strategy: 'indexed_high_growth' },
+  },
+  {
+    id: 'hospitality-weekend',
+    label: 'Cafe Casual (25h/wk)',
+    badge: 'Hospitality Award',
+    description: '25 hrs/wk at $26.00/hr weekend casual rates',
+    values: { hours: 25, rate: 26.0, strategy: 'indexed_high_growth' },
+  },
+];
 
 export function TeenSuperCalculator() {
   const { profile } = useTeenProfile();
@@ -25,6 +60,22 @@ export function TeenSuperCalculator() {
   const [age] = useState<number>(profile.age);
   const [merPct, setMerPct] = useState<number>(0.5);
   const [fundStrategy, setFundStrategy] = useState<'indexed_high_growth' | 'default_mysuper'>('indexed_high_growth');
+  const [activePreset, setActivePreset] = useState<string | undefined>();
+
+  const handleApplyPreset = (preset: ScenarioPreset<TeenSuperPreset>) => {
+    setActivePreset(preset.id);
+    if (preset.values.hours !== undefined) setHoursWk(preset.values.hours);
+    if (preset.values.rate !== undefined) setHourlyPay(preset.values.rate);
+    if (preset.values.strategy !== undefined) setFundStrategy(preset.values.strategy);
+  };
+
+  const handleReset = useCallback(() => {
+    setActivePreset(undefined);
+    setHoursWk(profile.hoursPerWeek || 15);
+    setHourlyPay(profile.hourlyRate || 18.5);
+    setMerPct(0.5);
+    setFundStrategy('indexed_high_growth');
+  }, [profile]);
 
   const grossWk = hourlyPay * hoursWk;
   const isEligible = age >= 18 || hoursWk > 30;
@@ -45,6 +96,18 @@ export function TeenSuperCalculator() {
     const personalRate = teenMarginalRate(annualIncome);
     return superComparison(annualIncome, personalRate, SUPER_RULES.sgRate);
   }, [grossWk]);
+
+  const summaryText = useMemo(() => {
+    return [
+      '--- Teen Superannuation & Compound Growth Summary ---',
+      `Hours Worked: ${hoursWk}h/wk @ $${hourlyPay.toFixed(2)}/hr (Gross: ${formatCurrency(grossWk * 52)}/yr)`,
+      `ATO Super Guarantee: ${isEligible ? `Eligible (12% = ${formatCurrency(annualSuper)}/yr)` : 'Exempt (Under 18 working ≤30 hrs/wk)'}`,
+      `Strategy: ${fundStrategy === 'indexed_high_growth' ? 'Indexed High Growth (8.5%)' : 'Balanced MySuper (6.5%)'} | Fee Drag (MER): ${merPct}%`,
+      `Projected Balance at Age 60: ${formatCurrency(growthWithFees.futureValueWithFees)} (Fee loss: ${formatCurrency(growthWithFees.feeDragLoss)})`,
+      `Super Advantage vs Outside: ${decision.superAdvantage >= 0 ? '+' : ''}${formatCurrency(decision.superAdvantage)}`,
+      `Calculated via AusFinTools Teen Super Simulator`,
+    ].join('\n');
+  }, [hoursWk, hourlyPay, grossWk, isEligible, annualSuper, fundStrategy, merPct, growthWithFees, decision]);
 
   // Build growth projection trajectory over time (after fee drag)
   const netRate = returnRate - merPct / 100;
@@ -81,13 +144,21 @@ export function TeenSuperCalculator() {
             <h2 className="text-xl font-bold text-foreground">Teen Super Guarantee & Compound Growth Simulator</h2>
           </div>
           <p className="text-xs text-muted-foreground">
-            Calculate your 12% Super Guarantee, check ATO 30+ hours/week under 18 eligibility, and project compound super at age 60!
+            Calculate your 12% Super Guarantee (paid every payday since 1 July 2026), check ATO 30+ hours/week under 18 eligibility, and project compound super at age 60!
           </p>
         </div>
         <Badge variant="success">
-          12% ATO Super Rate (FY26-27)
+          12% SG (2026-27)
         </Badge>
       </div>
+
+      {/* Quick Presets */}
+      <QuickPresetBar
+        presets={TEEN_SUPER_PRESETS}
+        activePresetId={activePreset}
+        onSelect={handleApplyPreset}
+        title="Youth & Student Work Personas"
+      />
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         <div className="space-y-4">
@@ -256,7 +327,7 @@ export function TeenSuperCalculator() {
         </div>
         <p className="text-[11px] text-muted-foreground">
           {decision.division293Applies
-            ? '⚠️ Division 293: income + concessional contributions exceed $250,000 — the extra 15% tax narrows super\'s advantage.'
+            ? `⚠️ Division 293: income + concessional contributions exceed $${SUPER_RULES.division293Threshold.toLocaleString()} — the extra 15% tax narrows super's advantage.`
             : `With your ${Math.round(decision.outsideTaxRate * 100)}% marginal rate, salary-sacrificing into super beats outside investing on $${decision.annualContributionCompared.toLocaleString()}/yr of pre-tax pay.`}
           {' '}Remember: super is locked away until preservation age (60) — only sacrifice money you won't need before then.
         </p>
@@ -276,10 +347,42 @@ export function TeenSuperCalculator() {
           <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
           <div>
             <span className="font-bold block mb-0.5">12% Super Guarantee Active!</span>
-            Your employer is paying ${Math.round(annualSuper).toLocaleString()}/yr into your super fund. Make sure to complete <strong>ATO Form NAT 13080</strong> to staple your existing fund!
+            Your employer is paying ${Math.round(annualSuper).toLocaleString()}/yr into your super fund — and since Payday Super started on 1 July 2026 it must reach your fund within 7 business days of each payday. Make sure to complete <strong>ATO Form NAT 13080</strong> to staple your existing fund!
           </div>
         </div>
       )}
+
+      {/* 2026-27 ATO contribution limits & government help */}
+      <div className="rounded-2xl border border-border bg-card/60 p-4 space-y-3">
+        <div className="flex items-center gap-2">
+          <Info className="w-4 h-4 text-primary" />
+          <h3 className="text-sm font-bold text-foreground">2026-27 ATO Super Limits</h3>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-[11px] text-muted-foreground">
+          <div className="rounded-xl border border-border bg-card p-3">
+            <div className="text-[10px] uppercase tracking-wide font-semibold text-muted-foreground">Concessional Cap (pre-tax)</div>
+            <div className="text-base font-bold font-mono text-foreground">${SUPER_RULES.concessionalCap.toLocaleString()}</div>
+            <div className="mt-1">Employer SG + salary sacrifice, taxed at 15% on the way in.</div>
+          </div>
+          <div className="rounded-xl border border-border bg-card p-3">
+            <div className="text-[10px] uppercase tracking-wide font-semibold text-muted-foreground">Non-Concessional Cap (after-tax)</div>
+            <div className="text-base font-bold font-mono text-foreground">${SUPER_RULES.nonConcessionalCap.toLocaleString()}</div>
+            <div className="mt-1">Bring forward up to ${SUPER_RULES.bringForwardCap.toLocaleString()} over 3 years if your balance is under $1.84M.</div>
+          </div>
+          <div className="rounded-xl border border-border bg-card p-3">
+            <div className="text-[10px] uppercase tracking-wide font-semibold text-muted-foreground">Government Co-Contribution</div>
+            <div className="text-base font-bold font-mono text-foreground">up to ${SUPER_CO_CONTRIBUTION_2026_27.maxContribution}</div>
+            <div className="mt-1">Earn under ${SUPER_CO_CONTRIBUTION_2026_27.upperThreshold.toLocaleString()} and add after-tax money? The ATO kicks in 50c per $1 (10% eligible-income test applies).</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Action buttons */}
+      <CalculatorActions
+        onReset={handleReset}
+        summaryText={summaryText}
+        summaryTitle="Teen Super Projection"
+      />
 
       <div className="flex flex-wrap gap-2 pt-2">
         <WebReferenceLink link={OFFICIAL_WEB_LINKS.ato_super_guarantee} />

@@ -1,6 +1,4 @@
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { fadeInUp } from '@/lib/animations';
 import { Tabs } from '../../components/ui/Tabs';
 import { Assumptions } from '../../components/shared/Assumptions';
 import { Disclaimer } from '../../components/shared/Disclaimer';
@@ -99,13 +97,9 @@ export function TaxSavingsGuide() {
 
       <Tabs tabs={TABS} activeTab={activeTab} onChange={setActiveTab} />
 
-      <AnimatePresence mode="wait">
-      <motion.div
+      <div
         key={activeTab}
-        variants={fadeInUp}
-        initial="hidden"
-        animate="visible"
-        exit="hidden"
+        className="animate-fade-in space-y-6"
       >
         {activeTab === 'super' && (
           <SuperSalarySacrifice
@@ -125,8 +119,7 @@ export function TaxSavingsGuide() {
         )}
         {activeTab === 'negear' && <NegativeGearing />}
         {activeTab === 'brackets' && <TaxBracketVis />}
-      </motion.div>
-      </AnimatePresence>
+      </div>
 
       <Assumptions items={ASSUMPTIONS[activeTab] ?? []} />
       <Disclaimer calculatorName="Tax Savings Guide" />

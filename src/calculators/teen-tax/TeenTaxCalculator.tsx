@@ -1,18 +1,58 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { Card } from '@/components/ui/Card';
 import { NumberInput } from '@/components/ui/NumberInput';
 import { StatCard } from '@/components/ui/StatCard';
 import { Badge } from '@/components/ui/Badge';
 import { InfoTooltip } from '@/components/ui/InfoTooltip';
 import { Toggle } from '@/components/ui/Toggle';
+import { QuickPresetBar, type ScenarioPreset } from '@/components/ui/QuickPresetBar';
+import { CalculatorActions } from '@/components/shared/CalculatorActions';
 import { OFFICIAL_WEB_LINKS, MINOR_UNEARNED_TAX_RATES } from '@/data/teen-finance-data';
 import { WebReferenceLink } from '@/components/shared/WebReferenceLink';
 import { Calculator, ShieldAlert, ReceiptText } from 'lucide-react';
 import { useTeenProfile } from '@/context/TeenProfileContext';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from '@/components/charts';
 import { ChartContainer, ChartTooltipContent } from '@/components/ui/chart';
+import { calcIncomeTax } from '@/data/tax-brackets';
 import { afterSchoolJobTax, payslipBreakdown } from './engine';
 import { PaySlipPreview } from './PaySlipPreview';
+import { formatCurrency } from '@/utils/formatters';
+
+interface TeenTaxPreset {
+  annualIncome: number;
+  uniform: number;
+  rsa: number;
+  hours: number;
+  rate: number;
+}
+
+const TEEN_TAX_PRESETS: ScenarioPreset<TeenTaxPreset>[] = [
+  {
+    id: 'under-threshold',
+    label: 'High School Casual (Tax-Free)',
+    badge: 'Under $18,200',
+    description: '12 hrs/wk at $18.50/hr ($11,544/yr) — 100% tax-free under statutory threshold',
+    values: { annualIncome: 11544, uniform: 100, rsa: 0, hours: 12, rate: 18.5 },
+  },
+  {
+    id: 'uni-casual',
+    label: 'Uni Student Casual',
+    badge: '$27k/yr',
+    description: '20 hrs/wk at $26.00/hr ($27,040/yr) — low bracket paying ~16% on dollars over $18.2k',
+    values: { annualIncome: 27040, uniform: 150, rsa: 80, hours: 20, rate: 26.0 },
+  },
+  {
+    id: 'apprentice-fulltime',
+    label: 'Apprentice / Full-Time Trainee',
+    badge: '$42k/yr',
+    description: '38 hrs/wk full-time trade trainee with tool and safety gear deductions',
+    values: { annualIncome: 42000, uniform: 350, rsa: 0, hours: 38, rate: 21.25 },
+  },
+];
+
+const CHART_CONFIG = {
+  value: { label: 'Amount ($)', color: 'var(--chart-2, #10b981)' },
+};
 
 export function TeenTaxCalculator() {
   const { profile } = useTeenProfile();
@@ -27,6 +67,28 @@ export function TeenTaxCalculator() {
   const [hourlyRate, setHourlyRate] = useState<number>(profile.hourlyRate);
   const [claimTFNExemption, setClaimTFNExemption] = useState<boolean>(profile.claimsTaxFreeThreshold);
   const [includeTeenHELP, setIncludeTeenHELP] = useState<boolean>(false);
+  const [activePreset, setActivePreset] = useState<string | undefined>();
+
+  const handleApplyPreset = (preset: ScenarioPreset<TeenTaxPreset>) => {
+    setActivePreset(preset.id);
+    if (preset.values.annualIncome !== undefined) setAnnualEarnedIncome(preset.values.annualIncome);
+    if (preset.values.uniform !== undefined) setUniformExpenses(preset.values.uniform);
+    if (preset.values.rsa !== undefined) setRsaRcgCourseFees(preset.values.rsa);
+    if (preset.values.hours !== undefined) setWeeklyHours(preset.values.hours);
+    if (preset.values.rate !== undefined) setHourlyRate(preset.values.rate);
+  };
+
+  const handleReset = useCallback(() => {
+    setActivePreset(undefined);
+    setAnnualEarnedIncome(profile.hourlyRate * profile.hoursPerWeek * 52 || 14430);
+    setUniformExpenses(120);
+    setRsaRcgCourseFees(0);
+    setUnearnedInterestIncome(150);
+    setWeeklyHours(profile.hoursPerWeek || 15);
+    setHourlyRate(profile.hourlyRate || 18.5);
+    setClaimTFNExemption(true);
+    setIncludeTeenHELP(false);
+  }, [profile]);
 
   const jobTax = useMemo(
     () => afterSchoolJobTax(weeklyHours, hourlyRate, { includeHELP: includeTeenHELP }),
@@ -41,11 +103,8 @@ export function TeenTaxCalculator() {
   const totalDeductions = uniformExpenses + rsaRcgCourseFees;
   const taxableEarnedIncome = Math.max(0, annualEarnedIncome - totalDeductions);
 
-  // Income Tax on earned income ($18,200 threshold)
-  let earnedIncomeTax = 0;
-  if (taxableEarnedIncome > 18200) {
-    earnedIncomeTax = (taxableEarnedIncome - 18200) * 0.15; // 15% 2026-27 rate under $45k
-  }
+  // Income Tax on earned income using official ATO brackets
+  const earnedIncomeTax = calcIncomeTax(taxableEarnedIncome);
 
   // Division 6AA Minor Unearned Income Tax Math
   let unearnedTax = 0;
@@ -61,17 +120,25 @@ export function TeenTaxCalculator() {
 
   const chartData = useMemo(() => {
     return [
-      { name: 'After-Tax Pay Keep', value: Math.round(netKeepIncome), color: '#10b981' },
-      { name: 'Income Tax', value: Math.round(earnedIncomeTax), color: '#f59e0b' },
-      { name: 'Work Deductions', value: Math.round(totalDeductions), color: '#3b82f6' },
+      { name: 'After-Tax Pay Keep', value: Math.round(netKeepIncome), color: 'var(--chart-2, #10b981)' },
+      { name: 'Income Tax', value: Math.round(earnedIncomeTax), color: 'var(--chart-3, #f59e0b)' },
+      { name: 'Work Deductions', value: Math.round(totalDeductions), color: 'var(--chart-1, #3b82f6)' },
     ];
   }, [netKeepIncome, earnedIncomeTax, totalDeductions]);
 
-  const chartConfig = useMemo(() => {
-    return {
-      value: { label: 'Amount ($)', color: '#10b981' },
-    };
-  }, []);
+  const summaryText = useMemo(() => {
+    return [
+      '--- Teen Income Tax & Deductions Summary ---',
+      `Annual Earned Income: ${formatCurrency(annualEarnedIncome)} (${weeklyHours} hrs/wk @ $${hourlyRate.toFixed(2)}/hr)`,
+      `Work-Related Deductions: ${formatCurrency(totalDeductions)} (Uniforms: $${uniformExpenses}, Courses: $${rsaRcgCourseFees})`,
+      `Taxable Income: ${formatCurrency(taxableEarnedIncome)}`,
+      `Estimated Annual Tax: ${formatCurrency(earnedIncomeTax)} (${taxableEarnedIncome <= 18200 ? 'Tax-Free Threshold Active' : `${((earnedIncomeTax / taxableEarnedIncome) * 100).toFixed(1)}% effective`})`,
+      `Net Take-Home Pay: ${formatCurrency(netKeepIncome)}/yr (${formatCurrency(payslip.netWeekly)}/wk)`,
+      `Weekly Superannuation: ${formatCurrency(payslip.superWeekly)}/wk (12% SG)`,
+      ...(unearnedInterestIncome > 416 ? [`Division 6AA Penalty Tax: ${formatCurrency(unearnedTax)} on unearned income`] : []),
+      `Calculated via AusFinTools Teen Tax Engine`,
+    ].join('\n');
+  }, [annualEarnedIncome, weeklyHours, hourlyRate, totalDeductions, uniformExpenses, rsaRcgCourseFees, taxableEarnedIncome, earnedIncomeTax, netKeepIncome, payslip, unearnedInterestIncome, unearnedTax]);
 
   return (
     <Card variant="glass" className="p-6 space-y-6">
@@ -89,6 +156,14 @@ export function TeenTaxCalculator() {
           2026-27 Stage 3 ATO Rates
         </Badge>
       </div>
+
+      {/* Quick Presets */}
+      <QuickPresetBar
+        presets={TEEN_TAX_PRESETS}
+        activePresetId={activePreset}
+        onSelect={handleApplyPreset}
+        title="Teen Work & Study Tax Scenarios"
+      />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div className="space-y-4">
@@ -163,7 +238,7 @@ export function TeenTaxCalculator() {
       {/* Donut Chart Visualizer */}
       <div className="bg-card/50 border border-border/60 rounded-xl p-4 flex flex-col items-center justify-center min-h-[200px]">
         <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2 font-mono">Gross Income Breakdown</h3>
-        <ChartContainer config={chartConfig} className="h-[180px] w-full">
+        <ChartContainer config={CHART_CONFIG} className="h-[180px] w-full">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
@@ -317,6 +392,13 @@ export function TeenTaxCalculator() {
           </div>
         </div>
       )}
+
+      {/* Action buttons */}
+      <CalculatorActions
+        onReset={handleReset}
+        summaryText={summaryText}
+        summaryTitle="Teen Tax Summary"
+      />
 
       <div className="flex flex-wrap gap-2 pt-2">
         <WebReferenceLink link={OFFICIAL_WEB_LINKS.ato_under18} />

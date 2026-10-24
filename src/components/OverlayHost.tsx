@@ -17,6 +17,13 @@ import { PerformanceModal } from '@/components/shared/PerformanceModal';
 export function OverlayHost() {
   const [perfOpen, setPerfOpen] = useState(false);
 
+  // Tell the lazy loader that the dialog children have registered their
+  // document listeners. Without this, the first open event can be dispatched
+  // while React is still committing and is silently missed.
+  useEffect(() => {
+    document.dispatchEvent(new CustomEvent('overlay-host-ready'));
+  }, []);
+
   useEffect(() => {
     const open = () => setPerfOpen(true);
     const close = () => setPerfOpen(false);

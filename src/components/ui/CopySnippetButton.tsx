@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
 import { Copy, Check } from 'lucide-react';
 import confetti from 'canvas-confetti';
-import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
+import { useReducedMotionSafe } from '@/hooks/useReducedMotionSafe';
 import { sound } from '@/lib/sound-synthesizer';
 import { cn } from '@/lib/utils';
 
@@ -24,7 +24,7 @@ export function CopySnippetButton({
 }: CopySnippetButtonProps) {
   const [copied, setCopied] = useState(false);
   const btnRef = useRef<HTMLButtonElement>(null);
-  const reducedMotion = useReducedMotion() ?? false;
+  const reducedMotion = useReducedMotionSafe();
 
   const handleCopy = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -54,13 +54,12 @@ export function CopySnippetButton({
   };
 
   return (
-    <motion.button
+    <button
       ref={btnRef}
       type="button"
       onClick={handleCopy}
-      whileTap={reducedMotion ? {} : { scale: 0.92 }}
       className={cn(
-        'inline-flex items-center gap-1.5 font-medium transition-all cursor-pointer select-none rounded-xl border',
+        'inline-flex items-center gap-1.5 font-medium transition-all cursor-pointer select-none rounded-xl border active:scale-[0.96]',
         copied
           ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-600 dark:text-emerald-400'
           : 'bg-card border-border hover:bg-muted text-foreground hover:border-primary/40',
@@ -69,33 +68,17 @@ export function CopySnippetButton({
       )}
       aria-label={copied ? copiedLabel : label}
     >
-      <AnimatePresence mode="wait" initial={false}>
-        {copied ? (
-          <motion.span
-            key="check"
-            initial={{ scale: 0.5, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.5, opacity: 0 }}
-            transition={{ type: 'spring', stiffness: 400, damping: 20 }}
-            className="flex items-center gap-1"
-          >
-            <Check className={cn('shrink-0 text-emerald-500', size === 'sm' ? 'w-3.5 h-3.5' : 'w-4 h-4')} />
-            <span>{copiedLabel}</span>
-          </motion.span>
-        ) : (
-          <motion.span
-            key="copy"
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.8, opacity: 0 }}
-            transition={{ duration: 0.15 }}
-            className="flex items-center gap-1"
-          >
-            <Copy className={cn('shrink-0 text-muted-foreground', size === 'sm' ? 'w-3.5 h-3.5' : 'w-4 h-4')} />
-            <span>{label}</span>
-          </motion.span>
-        )}
-      </AnimatePresence>
-    </motion.button>
+      {copied ? (
+        <span key="check" className="animate-pop-in flex items-center gap-1">
+          <Check className={cn('shrink-0 text-emerald-500', size === 'sm' ? 'w-3.5 h-3.5' : 'w-4 h-4')} />
+          <span>{copiedLabel}</span>
+        </span>
+      ) : (
+        <span key="copy" className="animate-pop-in flex items-center gap-1">
+          <Copy className={cn('shrink-0 text-muted-foreground', size === 'sm' ? 'w-3.5 h-3.5' : 'w-4 h-4')} />
+          <span>{label}</span>
+        </span>
+      )}
+    </button>
   );
 }

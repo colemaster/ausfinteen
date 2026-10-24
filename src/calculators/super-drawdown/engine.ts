@@ -337,7 +337,7 @@ export function simulateRetirementPlan(params: RetirementPlanParams): Retirement
  * must be moved out of the retirement phase.
  *
  * Assumptions:
- * - Uses SUPER_RULES.transferBalanceCap ($1.9M general cap).
+ * - Uses SUPER_RULES.transferBalanceCap ($2.1M general cap from 1 July 2026; indexed from $1.9M in FY24-25 and $2.0M in FY25-26).
  *
  * @param projectedBalance - Projected super balance ($)
  * @param age - Member age (reserved for future age-based cap indexation)

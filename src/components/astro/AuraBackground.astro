@@ -11,6 +11,13 @@ const { class: className = '' } = Astro.props;
   aria-hidden="true"
   style="content-visibility: auto; contain-intrinsic-size: auto 100%;"
 >
+  {/* Layer 1 — fine dot grid: quiet structural texture that gives the aurora
+      something to sit behind instead of a flat void. Masked so it dissolves into
+      the background instead of ending on a hard edge. */}
+  <div class="hero-grid absolute inset-0"></div>
+
+  {/* Layer 2 — the original drifting aura orbs (accent + green), kept for
+      continuity with the existing palette */}
   <div
     class="aura-orb-1 will-change-transform opacity-70 dark:opacity-60 blur-3xl transition-opacity duration-700"
     style="transform: translate3d(0, 0, 0);"
@@ -19,4 +26,18 @@ const { class: className = '' } = Astro.props;
     class="aura-orb-2 will-change-transform opacity-60 dark:opacity-50 blur-3xl transition-opacity duration-700"
     style="transform: translate3d(0, 0, 0);"
   ></div>
+
+  {/* Layer 3 — secondary chromatic mesh glows (violet + cyan) so the ambience
+      is a full triad rather than two flat blobs. Desktop/tablet only: four
+      blurred elements is the sensible paint budget on phones. */}
+  <div class="mesh-glow-lg hidden md:block top-[35%] -right-[8%]"></div>
+  <div class="mesh-glow-sm hidden lg:block bottom-[28%] left-[22%]"></div>
+
+  {/* Layer 4 — a slow, heavily blurred diagonal sheet of accent light for a
+      "studio lamp" sweep across the whole canvas */}
+  <div class="light-sheet"></div>
+
+  {/* Layer 5 — film grain: kills gradient banding in the layers above and adds
+      a tactile paper-like finish at a near-invisible 4% opacity */}
+  <div class="noise-grain"></div>
 </div>

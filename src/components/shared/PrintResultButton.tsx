@@ -29,6 +29,7 @@ import { sound } from '@/lib/sound-synthesizer';
 
 export const PRINT_SECTION_ATTR = 'data-print-section';
 export const NO_PRINT_CLASS = 'no-print';
+export const DEFAULT_PRINT_SELECTOR = `[${PRINT_SECTION_ATTR}]`;
 
 const PRINT_STYLE_ID = 'ausfintools-print-styles';
 
@@ -146,14 +147,15 @@ export interface PrintResultButtonProps {
 export function PrintResultButton({
   label = 'Print / Save PDF',
   className,
-  selector = `[${PRINT_SECTION_ATTR}]`,
+  selector,
   variant = 'outline',
 }: PrintResultButtonProps) {
+  const activeSelector = selector ?? DEFAULT_PRINT_SELECTOR;
   const { print } = usePrint({ intercept: true });
 
   const handleClick = () => {
     if (typeof document === 'undefined') return;
-    if (!document.querySelector(selector)) return;
+    if (!document.querySelector(activeSelector)) return;
     print();
   };
 

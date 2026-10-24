@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { useSearchParams } from '@/lib/router';
 
 type Primitive = string | number | boolean;
@@ -37,19 +37,25 @@ export function useUrlParams<T extends ParamDefaults>(
 
   const [state, setState] = useState<T>(parse);
 
+  // `useSearchParams` adopts the real query string after hydration and also
+  // updates on back/forward navigation, so re-parse whenever it changes.
+  useEffect(() => {
+    setState(parse());
+  }, [parse]);
+
   const setParams = useCallback(
     (updates: Partial<T>) => {
-      setState(prev => {
-        const next = { ...prev, ...updates };
-        const p = new URLSearchParams(searchParams);
-        for (const key in updates) {
-          p.set(key, String(updates[key]));
-        }
-        setSearchParams(p, { replace: true });
-        return next;
-      });
+      setState(prev => ({ ...prev, ...updates }));
+
+      // Side effects belong outside the state updater: React may invoke the
+      // updater twice (Strict Mode) and it must stay a pure function.
+      const p = new URLSearchParams(window.location.search);
+      for (const key in updates) {
+        p.set(key, String(updates[key]));
+      }
+      setSearchParams(p, { replace: true });
     },
-    [searchParams, setSearchParams],
+    [setSearchParams],
   );
 
   return [state, setParams];

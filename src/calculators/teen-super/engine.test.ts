@@ -7,6 +7,7 @@ import {
 } from './engine';
 import { SUPER_RULES } from '@/data/super-rules';
 
+// Figures verified 18 October 2026 against ATO 2026-27 rates and thresholds.
 describe('superComparison', () => {
   it('invests 85 cents per pre-tax dollar via super vs 68 cents outside at a 32% marginal rate', () => {
     const res = superComparison(1000, 0.32);
@@ -31,6 +32,13 @@ describe('superComparison', () => {
   it('flags Division 293 for high incomes', () => {
     expect(superComparison(300000, 0.47).division293Applies).toBe(true);
     expect(superComparison(50000, 0.30).division293Applies).toBe(false);
+  });
+
+  it('flags Division 293 at the $250,000 income + SG threshold', () => {
+    // income + employer SG (12%) crosses $250,000 between these two incomes
+    expect(superComparison(223214, 0.47).division293Applies).toBe(false);
+    expect(superComparison(223215, 0.47).division293Applies).toBe(true);
+    expect(SUPER_RULES.division293Threshold).toBe(250000);
   });
 
   it('handles zero income and clamps extreme personal rates', () => {

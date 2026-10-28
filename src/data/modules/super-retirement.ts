@@ -2,138 +2,167 @@ import { OFFICIAL_WEB_LINKS } from '../statutory-links';
 import type { MandyModule } from './types';
 
 export const superRetirementModule: MandyModule = {
-    id: 'super-retirement',
-    title: 'Super & Retirement',
-    emoji: '⭐️',
-    graphicUrl: '/assets/graphics/popmart_super.jpg',
-    description: 'Master Australia\'s 12.0% Super Guarantee, find lost super, compare high-growth funds, and harness 40-year compound interest.',
-    route: '/super-retirement',
-    topics: [
-      {
-        id: 'sr-1',
-        moduleId: 'super-retirement',
-        moduleTitle: 'Super & Retirement ⭐️',
-        question: '1. What Is Superannuation & How Does The 12.0% Super Guarantee Work?',
-        answer: 'Superannuation is compulsory long-term investment money your employer pays on top of your wage into a tax-sheltered fund for your future. Effective 1 July 2025, the statutory Super Guarantee (SG) rate is legislated at 12.0% for FY 2026-27. Super is not deducted from your base take-home wage—it is an additional 12.0% on top of your Ordinary Time Earnings (OTE). For example, if you earn $500 gross in a qualifying week, your employer must deposit an extra $60 directly into your super fund.',
-        actionStep: 'Check your payslip every payday to verify your employer is calculating 12.0% super on your gross earnings.',
-        webLink: OFFICIAL_WEB_LINKS.ato_super_guarantee,
-      },
-      {
-        id: 'sr-2',
-        moduleId: 'super-retirement',
-        moduleTitle: 'Super & Retirement ⭐️',
-        question: '2. What Is The 15yo Super Rule Under SGAA 1992 s 27(1)(a) (30 Hours/Week)?',
-        answer: 'Under Section 27(1)(a) of the Superannuation Guarantee (Administration) Act 1992 (SGAA), if an employee is under 18 years of age, their employer is only legally required to pay Super Guarantee contributions if they work MORE than 30 hours in a single calendar week. If a 15-year-old works 32 hours during school holidays, super is payable on the ENTIRE earnings for that week. If they work 8 to 15 hours during school term, the employer is not legally mandated to pay super (though some good employers and enterprise agreements pay it voluntarily!).',
-        actionStep: 'Track your weekly work hours during school holidays—if you exceed 30 hours in any week, ensure 12% super is paid on that payslip.',
-        webLink: OFFICIAL_WEB_LINKS.ato_super_guarantee,
-      },
-      {
-        id: 'sr-3',
-        moduleId: 'super-retirement',
-        moduleTitle: 'Super & Retirement ⭐️',
-        question: '3. What Happens To My Super When I Turn 18 (30-Hour Rule Drops)?',
-        answer: 'The under-18 30-hour weekly threshold under SGAA s 27(1)(a) disappears completely on your 18th birthday! Following the abolition of the old $450/month earnings threshold, an 18-year-old worker is legally entitled to 12.0% Super Guarantee on every single dollar earned, regardless of whether they work 2 hours or 38 hours in a week.',
-        actionStep: 'Set a calendar reminder for your 18th birthday to check that 12.0% super is automatically paid on all your casual shifts moving forward.',
-        webLink: OFFICIAL_WEB_LINKS.ato_super_guarantee,
-      },
-      {
-        id: 'sr-4',
-        moduleId: 'super-retirement',
-        moduleTitle: 'Super & Retirement ⭐️',
-        question: '4. What Is The Treasury 3% Low-Balance Fee Cap For Balances Under $6,000?',
-        answer: 'Under the Treasury Laws Amendment (Protecting Your Superannuation Package) Act 2019, super funds are legally barred from charging more than 3.0% per year in combined administration and investment fees on accounts with balances under $6,000 at the end of the financial year. All exit and rollover fees are also 100% banned. For example, if a teen has $500 in super from holiday shifts, the maximum annual fee is capped at just $15 ($500 × 3%), preventing fees from eroding small student balances.',
-        actionStep: 'Log into your super online portal and verify that your annual administration fee does not exceed 3% of your balance.',
-        webLink: OFFICIAL_WEB_LINKS.ato_super_guarantee,
-      },
-      {
-        id: 'sr-5',
-        moduleId: 'super-retirement',
-        moduleTitle: 'Super & Retirement ⭐️',
-        question: '5. Why Are Under-25s Protected From Automatic Insurance Fees (PMIF Act)?',
-        answer: 'Under the Treasury Laws Amendment (Putting Members’ Interests First) Act 2019 (PMIF), super funds cannot automatically sign up new members aged under 25 (or with balances under $6,000) for default Life and Total & Permanent Disability (TPD) insurance. Previously, young casual workers were losing $300 to $500 per year in automatic insurance premiums on small balances they didn\'t need. Under PMIF, insurance is strictly opt-in for under 25s, preserving 100% of your money for compound growth.',
-        actionStep: 'Check your super member statement to confirm that zero insurance premiums are being deducted from your teen balance.',
-        webLink: OFFICIAL_WEB_LINKS.moneysmart_super,
-      },
-      {
-        id: 'sr-6',
-        moduleId: 'super-retirement',
-        moduleTitle: 'Super & Retirement ⭐️',
-        question: '6. Why Should Teens Choose Indexed High Growth Over Balanced Super Funds?',
-        answer: 'Because teenagers and young adults have a 40-to-45-year investment runway before reaching preservation age (60), short-term market dips don\'t matter. Default "Balanced" (MySuper) funds allocate 20%–30% into defensive cash and bonds, generating lower average returns (~6.5% p.a.). Choosing an "Indexed High Growth" or "Indexed Shares" option allocates 90%–100% into Australian and global equities with rock-bottom index management fees (~0.05%–0.20% p.a. vs 0.80%–1.20% for active managers). Compounding at 8.5% instead of 6.5% over 40 years can mean an extra $300,000+ at retirement!',
-        actionStep: 'Log into your super app, navigate to "Investment Choice", and compare switching your allocation to Indexed High Growth or Australian/International Shares.',
-        webLink: OFFICIAL_WEB_LINKS.moneysmart_super,
-      },
-      {
-        id: 'sr-7',
-        moduleId: 'super-retirement',
-        moduleTitle: 'Super & Retirement ⭐️',
-        question: '7. How Do I Find & Consolidate Lost Super Accounts On myGov At 15?',
-        answer: 'Changing casual jobs (e.g. fast food to retail to cafes) often creates duplicate super accounts, with each fund charging separate administration fees. You can fix this in under 2 minutes: 1) Log into myGov and open the linked ATO online services. 2) Click on the "Super" tab and select "Manage" then "Transfer super". 3) The ATO shows every account in your name and any ATO-held super. 4) Select your single chosen stapled fund to roll everything together with zero paper forms and zero exit fees.',
-        actionStep: 'Link the ATO in myGov and check your Super summary to consolidate any multiple accounts into your primary stapled fund.',
-        webLink: OFFICIAL_WEB_LINKS.ato_lost_super,
-      },
-      {
-        id: 'sr-8',
-        moduleId: 'super-retirement',
-        moduleTitle: 'Super & Retirement ⭐️',
-        question: '8. How Does The $500 Government Super Co-Contribution Work For Low Earners?',
-        answer: 'If you earn under the lower income threshold ($49,293 / indexed 2026-27) and at least 10% of your total income comes from eligible employment or running a business, the Federal Government will match your personal after-tax (non-concessional) super contributions at 50 cents on the dollar, up to a maximum co-contribution of $500! If you contribute $1,000 from your bank account into your super fund, the ATO deposits a free $500 bonus directly into your super fund tax-free—an instant 50% guaranteed return.',
-        actionStep: 'If you earn income from a casual job, make a personal after-tax contribution of up to $1,000 to trigger the ATO $500 co-contribution.',
-        webLink: OFFICIAL_WEB_LINKS.ato_super_co_contribution,
-      },
-      {
-        id: 'sr-9',
-        moduleId: 'super-retirement',
-        moduleTitle: 'Super & Retirement ⭐️',
-        question: '9. What Is Super Stapling & How Do I Fill Out ATO Form NAT 13080?',
-        answer: 'Super Stapling links your chosen super fund to your Tax File Number for life. Whenever you start a new job, if you don\'t nominate a fund, your employer is legally required to check with the ATO to find your existing "stapled" fund rather than opening a new default fund. To ensure your employer pays into your chosen fund from day one, complete ATO Superannuation Standard Choice Form (NAT 13080) with your Fund Name, Unique Superannuation Identifier (USI), and Member Number.',
-        actionStep: 'Download ATO Form NAT 13080, save your super fund USI and member number, and hand it to your manager when starting a new job.',
-        webLink: OFFICIAL_WEB_LINKS.ato_super_choice_form,
-      },
-      {
-        id: 'sr-10',
-        moduleId: 'super-retirement',
-        moduleTitle: 'Super & Retirement ⭐️',
-        question: '10. Barefoot Investor Advice: How Does 40-Year Super Compounding Build Millions?',
-        answer: 'Scott Pape (*The Barefoot Investor*) calls super the greatest compound interest machine on earth. Because you cannot touch it until retirement, the money doubles repeatedly without you interfering. For example: $1,000 invested at age 15 compounding at an average of 8.5% p.a. grows into over $38,000 by age 60 without adding another cent. Adding regular 12.0% employer contributions of just $50/week across a normal career compounds into over $1,200,000 at retirement!',
-        actionStep: 'Use our Teen Super Calculator on this page to simulate how different weekly contributions compound by your 60th birthday.',
-        webLink: OFFICIAL_WEB_LINKS.moneysmart_compound,
-      },
-      {
-        id: 'sr-11',
-        moduleId: 'super-retirement',
-        moduleTitle: 'Super & Retirement ⭐️',
-        question: '11. Why Is Super Australia’s Most Powerful Tax Shelter?',
-        answer: 'Inside complying Australian super funds, investment earnings (dividends and interest) are taxed at a flat concessional rate of only 15%, compared to top individual tax rates of up to 47%. Furthermore, capital gains on assets held for over 12 months inside super receive a 33.3% discount (an effective 10% tax rate). Once you reach age 60 and move your super into the retirement pension phase, earnings and drawdowns become 100% TAX-FREE (0% Exempt Current Pension Income / ECPI rate)!',
-        actionStep: 'Bookmark the Moneysmart guide to understanding super tax advantages and investment returns.',
-        webLink: OFFICIAL_WEB_LINKS.moneysmart_super,
-      },
-      {
-        id: 'sr-12',
-        moduleId: 'super-retirement',
-        moduleTitle: 'Super & Retirement ⭐️',
-        question: '12. When Can I Access Super & What Is The FHSSS First Home Scheme?',
-        answer: 'Super is preserved until you reach your "Preservation Age" (age 60 for anyone born after 1 July 1964) and satisfy a condition of release (such as retiring). However, there is one major exception for young adults: the First Home Super Saver Scheme (FHSSS). Under FHSSS, you can make voluntary contributions (up to $15,000/year, max $50,000 total) into your super fund and later withdraw them (plus deemed earnings) to buy your first home, benefiting from super\'s low 15% tax rate to build a deposit much faster!',
-        actionStep: 'Learn about the First Home Super Saver Scheme (FHSSS) as a powerful tool to save for a home deposit in your early twenties.',
-        webLink: OFFICIAL_WEB_LINKS.moneysmart_super,
-      },
-      {
-        id: 'sr-13',
-        moduleId: 'super-retirement',
-        moduleTitle: 'Super & Retirement ⭐️',
-        question: '13. Payday Super (From 1 July 2026): Your Super Must Arrive Every Payday',
-        answer: 'Quarterly super is gone — from 1 July 2026 your employer must have your 12% super RECEIVED by your fund within 7 business days of each payday (20 business days for a brand-new fund). It is reported every pay run via Single Touch Payroll, and late payments trigger the Super Guarantee Charge plus penalties. Teens miss super most often, so check each payslip against your fund app and myGov > ATO > Super — if money is missing after ~7 business days, ask payroll in writing.',
-        actionStep: 'After your next payday, confirm the super landed in your fund within 7 business days.',
-        webLink: OFFICIAL_WEB_LINKS.ato_super_guarantee,
-      },
-      {
-        id: 'sr-14',
-        moduleId: 'super-retirement',
-        moduleTitle: 'Super & Retirement ⭐️',
-        question: '14. Division 296 "Rich Super" Tax — Know It, Ignore It (For Now)',
-        answer: 'From 1 July 2026, super balances above $3 million pay an extra 15% tax on earnings (plus 10% more above $10 million) — both thresholds indexed, realised earnings only, first assessments in late 2027–28. It affects ~80,000 Australians and zero teenagers (median teen super is under $5k). Why learn it? It teaches the real lesson: super\'s low 15% tax rate is so valuable the government had to cap the perks. Your job is compounding, not tax planning.',
-        actionStep: 'Find your super balance in myGov > ATO and watch it compound — ignore Division 296 until you\'re a millionaire.',
-        webLink: OFFICIAL_WEB_LINKS.moneysmart_super,
-      },
-    ],
-  };
+  id: 'super-retirement',
+  title: 'Super & Retirement',
+  emoji: '⭐️',
+  graphicUrl: '/assets/graphics/popmart_super.jpg',
+  description:
+    "Master Australia's 12.0% Super Guarantee, find and consolidate lost super via myGov, understand Payday Super, and harness 44-year compound growth in low-cost indexed funds.",
+  route: '/super-retirement',
+  topics: [
+    {
+      id: 'sr-1',
+      moduleId: 'super-retirement',
+      moduleTitle: 'Super & Retirement ⭐️',
+      question: '1. What Is Superannuation & How Does The 12.0% Super Guarantee Work?',
+      answer:
+        'Superannuation is compulsory long-term investment money your employer pays directly into a tax-sheltered fund to build your wealth for retirement. Effective 1 July 2025, the statutory Superannuation Guarantee (SG) rate is legislated at 12.0% for FY 2025-26 and FY 2026-27 under the Superannuation Guarantee (Administration) Act 1992 (SGAA).\n\nCrucially, super is NOT deducted from your agreed hourly wage—it is an additional 12.0% paid on top of your Qualifying Earnings (QE) / Ordinary Time Earnings (OTE). For example, if a 17-year-old barista or retail worker earns $800 gross in a qualifying week ($25/hr × 32 hours), their employer must deposit an extra $96 ($800 × 12.0%) directly into their super fund. The worker receives their full $800 wage (less PAYG tax withholding), while their employer funds the $96 super separately, bringing total remuneration to $896. Under Payday Super legislation (commencing 1 July 2026), this $96 must land in your super fund within 7 business days of each payday.',
+      actionStep:
+        'Check your payslip every payday: verify that your employer calculates 12.0% super on your gross earnings, and confirm the deposit arrives in your super fund within 7 business days.',
+      webLink: OFFICIAL_WEB_LINKS.ato_super_guarantee,
+    },
+    {
+      id: 'sr-2',
+      moduleId: 'super-retirement',
+      moduleTitle: 'Super & Retirement ⭐️',
+      question: '2. What Is The 15yo Super Rule Under SGAA 1992 s 27(1)(a) (30 Hours/Week)?',
+      answer:
+        'Under Section 27(1)(a) of the Superannuation Guarantee (Administration) Act 1992 (SGAA), an employer is only legally mandated to pay Super Guarantee contributions to an employee under 18 years of age if they work MORE than 30 hours in a single calendar week for that employer.\n\nTwo critical statutory rules apply to this under-18 threshold:\n1. Strict Weekly Calculation (No Averaging): The 30-hour test is evaluated strictly on a calendar week (Monday to Sunday) basis and cannot be averaged across fortnights or months. If a 15-year-old works 12 hours during school term ($300 wage), the employer is not legally required to pay super. However, if they work 32 hours during school holidays ($800 wage), the employer must pay 12.0% super on ALL 32 hours ($96.00 super), not just the 2 hours above 30!\n2. Per-Employer Assessment: Hours cannot be combined across different employers. Working 16 hours at Coles and 15 hours at a local cafe does not trigger super at either job, as neither independently exceeds 30 hours.\n\nNote: While s 27(1)(a) sets the legal minimum, many progressive employers, enterprise agreements (EBAs), and industry awards voluntarily pay 12.0% super on all hours worked by teens regardless of age.',
+      actionStep:
+        'Track your weekly hours during school holidays. If you exceed 30 hours in any single Monday-to-Sunday cycle, check your payslip to confirm 12.0% super is paid on your entire earnings for that week.',
+      webLink: OFFICIAL_WEB_LINKS.ato_super_guarantee,
+    },
+    {
+      id: 'sr-3',
+      moduleId: 'super-retirement',
+      moduleTitle: 'Super & Retirement ⭐️',
+      question: '3. What Happens To My Super When I Turn 18 (30-Hour Rule Drops)?',
+      answer:
+        'The under-18 30-hour weekly threshold under SGAA s 27(1)(a) disappears permanently on your 18th birthday! Following the historic abolition of the old $450/month earnings threshold on 1 July 2022 (Treasury Laws Amendment 2021), every worker aged 18 and over is legally entitled to 12.0% Super Guarantee on every single dollar earned—regardless of whether they work 2 hours, 10 hours, or 38 hours in a week.\n\nReal-world example: A student working casual retail shifts (10 hours per week at $28/hr = $280/wk) receives $0 super at age 17. The moment they turn 18, their employer is legally required to pay 12.0% super ($33.60 every single week, or $1,747.20 per year) straight into their super fund. Over 3 years of university, that ensures over $5,200 in principal contributions (plus compound investment earnings) is banked into their wealth-building nest egg instead of being missed.',
+      actionStep:
+        'Set a calendar reminder for your 18th birthday: notify payroll and inspect your very first pay stub after turning 18 to confirm 12.0% super is paid on all your shifts moving forward.',
+      webLink: OFFICIAL_WEB_LINKS.ato_super_guarantee,
+    },
+    {
+      id: 'sr-4',
+      moduleId: 'super-retirement',
+      moduleTitle: 'Super & Retirement ⭐️',
+      question: '4. What Is The Treasury 3% Low-Balance Fee Cap For Balances Under $6,000?',
+      answer:
+        'Under the Treasury Laws Amendment (Protecting Your Superannuation Package) Act 2019 (PYS Act), super funds are legally barred from charging more than 3.0% per year in combined administration and investment fees on accounts with a balance under $6,000 at the end of the fund\'s income year (30 June). In addition, all exit and rollover fees are 100% permanently banned across all Australian super funds.\n\nWhy this statutory cap is vital for teenagers:\nWithout this protection, an adult fund charging a $78 fixed annual administration fee plus 0.5% in investment fees would deduct $83 on a teen\'s $1,000 balance—eroding an outrageous 8.3% of their savings in a single year!\nWith the 3% cap: The total fees are strictly capped at $30.00 ($1,000 × 3%). If the fund deducted $83 throughout the financial year, it is legally required to calculate the excess at 30 June and automatically refund $53.00 back into your account within 3 months (by 30 September).',
+      actionStep:
+        'Check your annual super member statement issued around September/October. Verify that total fees do not exceed 3% of your balance if it is under $6,000, and look for an automatic "low-balance fee rebate" line item.',
+      webLink: OFFICIAL_WEB_LINKS.ato_super_guarantee,
+    },
+    {
+      id: 'sr-5',
+      moduleId: 'super-retirement',
+      moduleTitle: 'Super & Retirement ⭐️',
+      question: '5. Why Are Under-25s Protected From Automatic Insurance Fees (PMIF Act)?',
+      answer:
+        'Under the Treasury Laws Amendment (Putting Members’ Interests First) Act 2019 (PMIF Act), super funds cannot automatically enrol new members aged under 25 (or members with balances under $6,000) into default Life (Death) and Total & Permanent Disability (TPD) insurance policies.\n\nBefore PMIF, young casual workers opening their first super account routinely had $300 to $500 per year automatically shaved off in insurance premiums for cover they rarely needed (as teenagers without dependants, debts, or mortgages) and often could not claim on due to strict employment eligibility rules. These deductions routinely drained student balances to $0 within 2 to 3 years.\n\nUnder PMIF, insurance is strictly OPT-IN for workers under 25. If a young worker has dependants, a mortgage, or works in a high-risk trade and genuinely needs Life, TPD, or Income Protection cover, they can easily log into their fund\'s online portal and elect to opt in. For everyone else, keeping insurance turned off preserves 100% of contributions for compound growth.',
+      actionStep:
+        'Log into your super fund mobile app, click "Insurance", and confirm that your cover is inactive ($0/month premiums) so that zero insurance fees are deducted from your balance.',
+      webLink: OFFICIAL_WEB_LINKS.moneysmart_super,
+    },
+    {
+      id: 'sr-6',
+      moduleId: 'super-retirement',
+      moduleTitle: 'Super & Retirement ⭐️',
+      question: '6. Why Should Teens Choose Indexed High Growth Over Balanced Super Funds?',
+      answer:
+        'Because teenagers and young adults have a 40-to-45-year runway before reaching preservation age (60), short-term market fluctuations are completely irrelevant. When you won\'t touch the money until the 2060s or 2070s, what matters most is maximizing long-term compound growth while minimizing fee drag.\n\nMost default "Balanced" (MySuper) funds allocate 20% to 30% of your money into defensive cash and bonds, generating lower average returns (~6.5% p.a.) while charging 0.70% to 1.10% in active management fees. In contrast, an "Indexed High Growth" or "Indexed Shares" option allocates 90% to 100% into Australian and international equities (thousands of top companies) with rock-bottom index management fees (~0.05% to 0.20% p.a.).\n\nThe 42-year compounding difference on $50/week super ($2,600/year):\n• Default Balanced fund (6.5% net return): ~$570,000 at age 60.\n• Indexed High Growth (8.5% net return): ~$1,050,000 at age 60.\nSwitching from default Balanced to low-cost Indexed High Growth creates an extra $480,000+ in retirement wealth—all from a single 60-second setting change in your super app!',
+      actionStep:
+        'Log into your super fund app, click "Investment Choice", and compare switching your asset allocation from default Balanced to Indexed High Growth or Australian/International Shares.',
+      webLink: OFFICIAL_WEB_LINKS.moneysmart_super,
+    },
+    {
+      id: 'sr-7',
+      moduleId: 'super-retirement',
+      moduleTitle: 'Super & Retirement ⭐️',
+      question: '7. How Do I Find & Consolidate Lost Super Accounts On myGov At 15?',
+      answer:
+        'Teens who work multiple casual jobs (e.g. fast food, retail, lifeguarding, hospitality) often end up with multiple super accounts, each charging separate fixed administration fees that erode balances. Consolidating everything into one chosen high-performing fund takes under 2 minutes through myGov:\n\n1. Sign In to myGov: Log into my.gov.au and select your linked Australian Taxation Office (ATO) service (or link the ATO using your TFN and identity documents).\n2. Open Super Tab: Click the "Super" navigation menu and select "Manage" > "Transfer super".\n3. View All Accounts: The ATO displays every active super account registered to your TFN across Australia, as well as any "ATO-held super" (funds transferred from inactive accounts under the Inactive Low-Balance Account rules).\n4. Consolidate with One Click: Select your preferred primary fund (e.g. your low-fee Industry Super Fund), select "Transfer all", confirm your details, and submit.\n5. Fast Electronic Rollover: The ATO coordinates the electronic transfer directly within 3 business days. There are no paper forms, no phone calls, and zero exit fees.\n\nImportant: Before consolidating, check if an older fund has an insurance policy you want to keep. If not, consolidating stops multiple fee deductions immediately!',
+      actionStep:
+        'Link the ATO in your myGov portal today and submit an electronic super rollover to combine any duplicate accounts into your single chosen stapled fund.',
+      webLink: OFFICIAL_WEB_LINKS.ato_lost_super,
+    },
+    {
+      id: 'sr-8',
+      moduleId: 'super-retirement',
+      moduleTitle: 'Super & Retirement ⭐️',
+      question: '8. How Does The $500 Government Super Co-Contribution & LISTO Work For Low Earners?',
+      answer:
+        'The Australian Government provides two powerful superannuation bonuses to boost low-to-middle income earners\' retirement savings: the Super Co-Contribution and the Low Income Super Tax Offset (LISTO).\n\n1. Government Super Co-Contribution:\nIf you earn low-to-middle income and at least 10% of your total income comes from eligible employment or running a business, the Government matches your personal after-tax (non-concessional) super contributions at 50 cents on the dollar, up to a maximum free bonus of $500!\n• Full $500 Bonus: If your total income is at or below the lower threshold ($49,293 for FY 2026-27), you receive the maximum 50% match ($1,000 personal contribution = $500 bonus).\n• Phase-Out: The bonus gradually phases out by 3.333 cents per dollar for incomes between $49,293 and $64,293. Above $64,293, entitlement is zero.\n• Real-world example: A 17-year-old barista earns $12,000. In May, they transfer $1,000 after-tax into super via BPAY. The ATO deposits a free $500 bonus tax-free—an instant, guaranteed 50% return that compounds to ~$17,000 over 43 years.\n\n2. Low Income Super Tax Offset (LISTO):\nFor incomes up to $37,000, the ATO automatically refunds 100% of the 15% contributions tax paid on your employer SG and concessional contributions, up to $500 per year! (Under legislated reforms, LISTO expands from 1 July 2027 to an income threshold of $45,000 and maximum payment of $810). Best of all: LISTO requires no application—the ATO calculates and deposits it straight into your fund automatically after you lodge your tax return.',
+      actionStep:
+        'If you earn casual income, make an after-tax personal contribution of up to $1,000 via BPAY before 30 June to claim your free $500 co-contribution, and lodge your tax return to automatically receive your LISTO refund.',
+      webLink: OFFICIAL_WEB_LINKS.ato_super_co_contribution,
+    },
+    {
+      id: 'sr-9',
+      moduleId: 'super-retirement',
+      moduleTitle: 'Super & Retirement ⭐️',
+      question: '9. What Is Super Stapling & How Do I Fill Out ATO Form NAT 13080?',
+      answer:
+        'Under the Treasury Laws Amendment (Your Future, Your Super) Act 2021, your super fund is "stapled" to your Tax File Number for life. This means your chosen super fund follows you from job to job automatically, putting an end to duplicate accounts and multiple sets of fees.\n\nHow it works when starting a new job:\n1. The Choice Form (NAT 13080): Your employer will give you the ATO Superannuation Standard Choice Form (NAT 13080). To ensure contributions go to your preferred fund, fill out Section A with your Fund Name, Australian Business Number (ABN), Unique Superannuation Identifier (USI), and your Member Number.\n2. The Stapling Safety Net: If you forget to complete the choice form, your employer CANNOT simply open a new default account for you. By law, they must log into ATO Online Services for Business and "Request Stapled Super Fund" details for your TFN. The ATO directs them to pay into your existing stapled fund.\n\nWhy stapling matters: If you work 6 different casual jobs through your teens and early twenties, super stapling ensures all 6 employers pay into the exact same fund—saving you hundreds of dollars in duplicate account-keeping fees.',
+      actionStep:
+        'Look up your super fund\'s USI and your Member Number in your super fund app, save them in your phone notes, and write them on ATO Form NAT 13080 whenever you start a new job.',
+      webLink: OFFICIAL_WEB_LINKS.ato_super_choice_form,
+    },
+    {
+      id: 'sr-10',
+      moduleId: 'super-retirement',
+      moduleTitle: 'Super & Retirement ⭐️',
+      question: '10. Barefoot Investor Advice: How Does 40-Year Super Compounding Build Millions?',
+      answer:
+        'Scott Pape (The Barefoot Investor) calls superannuation the ultimate compound interest machine because it combines the two superpowers of wealth creation: compulsory contributions and uninterrupted time. Because you cannot withdraw your super until retirement, you can never panic-sell during market crashes, allowing your money to double repeatedly over decades.\n\nThe Rule of 72 & The 44-Year Runway:\nAt an 8.5% average annual return (typical long-run return for Australian and global shares), your money doubles every ~8.5 years (72 ÷ 8.5). Over a 44-year career (age 16 to 60), your money doubles more than 5 times—multiplying your initial savings by over 32 times!\n\nTwo Eye-Opening Teen Examples:\n• Case 1 (A single $1,200 holiday paycheck): A 16-year-old banks $1,200 into an Indexed High Growth fund. Left untouched to compound at 8.5% p.a. until age 60 (44 years), that single $1,200 paycheck grows into ~$43,800—without ever adding another cent!\n• Case 2 (The $620,000 Cost of Waiting):\n  - Worker A starts receiving $50/week ($2,600/yr) in super at age 18. Compounding at 8.5% net p.a. to age 60 (42 years), their super balance reaches over $1,050,000.\n  - Worker B delays thinking about super until age 28. Even if they contribute the exact same $50/week, their super at age 60 (32 years) reaches only ~$430,000.\nStarting at 18 gives Worker A an extra $620,000 for retirement!',
+      actionStep:
+        'Launch our Teen Super Calculator on this page: input your age and weekly super contributions to see your 40-year compounding trajectory in real dollars.',
+      webLink: OFFICIAL_WEB_LINKS.moneysmart_compound,
+    },
+    {
+      id: 'sr-11',
+      moduleId: 'super-retirement',
+      moduleTitle: 'Super & Retirement ⭐️',
+      question: '11. Why Is Super Australia’s Most Powerful Tax Shelter?',
+      answer:
+        'Superannuation is Australia\'s most tax-advantaged investment environment, designed by Parliament to encourage Australians to fund their own retirement rather than relying on the Centrelink Age Pension.\n\nComparing Taxes Inside vs Outside Super:\n1. Contributions Tax: When your employer deposits 12.0% super (or you salary sacrifice), it is taxed at a flat concessional rate of only 15% inside the fund. Compare this to personal income tax brackets, which take 16%, 30%, 37%, or 45% (plus 2% Medicare levy).\n2. Investment Earnings Tax: Dividends, interest, and rent earned inside your super fund are taxed at a maximum of 15%, compared to up to 47% outside super.\n3. Discounted Capital Gains: If your super fund holds an asset for more than 12 months before selling, it receives a 33.3% CGT discount, reducing the effective capital gains tax to just 10.0%.\n4. 100% Tax-Free in Retirement (ECPI): Once you reach preservation age (60) and convert your super into an account-based pension, the tax rate on fund earnings drops to 0.0% (Exempt Current Pension Income), and all pension payments to you are completely tax-free!',
+      actionStep:
+        'Review the Moneysmart super tax guide to understand how super\'s 15% flat tax shelter accelerates compound interest far beyond ordinary taxable bank accounts.',
+      webLink: OFFICIAL_WEB_LINKS.moneysmart_super,
+    },
+    {
+      id: 'sr-12',
+      moduleId: 'super-retirement',
+      moduleTitle: 'Super & Retirement ⭐️',
+      question: '12. When Can I Access Super & What Is The FHSSS First Home Scheme?',
+      answer:
+        'Superannuation is strictly preserved by law until you satisfy a statutory "condition of release". For anyone born on or after 1 July 1964, your Preservation Age is 60 years. You can access your preserved super when you turn 60 and permanently retire, when you reach 65 even if still working, or under strict compassionate/hardship grounds assessed by the ATO.\n\nThe Big Exception for Young Adults: First Home Super Saver Scheme (FHSSS):\nYou do NOT need to wait until age 60 to access super for a home deposit! Under the FHSSS:\n• Contribution Caps: You can make voluntary concessional (salary sacrifice / personal tax-deductible) or non-concessional contributions of up to $15,000 per financial year, up to a maximum lifetime limit of $50,000 across all years.\n• Couples Advantage: Limits apply per individual—two partners buying together can release up to $100,000 combined in contributions plus deemed earnings.\n• Tax Savings: Concessional contributions are taxed at only 15% inside super compared to 30% or 37% marginal income tax rates, accelerating your deposit savings by thousands of dollars.\n• September 2024 Legislative Reforms: Landmark amendments under Treasury Laws Amendment (2023 Measures No. 3) Act 2023 significantly enhanced scheme flexibility: buyers can now request an FHSS determination after signing a purchase contract (provided they are not yet the registered owner), notification and release request deadlines were expanded from 14/28 days to 90 days, and determinations can now be amended or revoked if plans change.',
+      actionStep:
+        'Learn the basics of the First Home Super Saver Scheme (FHSSS) now so you can use voluntary super contributions to turbocharge your first home deposit in your early twenties.',
+      webLink: OFFICIAL_WEB_LINKS.moneysmart_super,
+    },
+    {
+      id: 'sr-13',
+      moduleId: 'super-retirement',
+      moduleTitle: 'Super & Retirement ⭐️',
+      question: '13. Payday Super (From 1 July 2026): Your Super Must Arrive Every Payday',
+      answer:
+        'Under the Treasury Laws Amendment (Payday Superannuation) Act 2025, the old quarterly super payment system was permanently abolished on 1 July 2026. Employers are now legally required to pay your 12.0% Super Guarantee at the same time wages are paid.\n\nKey statutory rules of Payday Super:\n1. The 7-Business-Day Rule: Your employer must ensure that super contributions are received and allocated by your eligible super fund within 7 business days of each regular payday (extended to 20 business days for the very first contribution to a brand-new fund).\n2. Fund Turnaround (3 Days): Super funds are legally required to allocate or return contributions within 3 business days of receiving them.\n3. Qualifying Earnings (QE) Baseline: Super is calculated on Qualifying Earnings (QE)—capturing ordinary hours, paid leave, allowances, and bonuses, while excluding overtime.\n4. Real-Time ATO Enforcement: Payday Super is reported via Single Touch Payroll (STP). If an employer misses the 7-day deadline, the ATO automatically issues an assessment for the Superannuation Guarantee Charge (SGC), including 100% of unpaid super, daily compounding interest at the General Interest Charge (GIC) rate, and administrative penalties.\n\nTeens and casual workers have historically suffered the highest rate of unpaid super. With Payday Super, you no longer wait 4 months to find out if your boss paid your super—you can check your fund app after every single pay run!',
+      actionStep:
+        'After your next payday, open your super fund\'s mobile app and verify that your 12.0% super contribution cleared into your balance within 7 business days.',
+      webLink: OFFICIAL_WEB_LINKS.ato_super_guarantee,
+    },
+    {
+      id: 'sr-14',
+      moduleId: 'super-retirement',
+      moduleTitle: 'Super & Retirement ⭐️',
+      question: '14. Division 296 "Rich Super" Tax — Know It, Ignore It (For Now)',
+      answer:
+        'Commencing 1 July 2026, Division 296 introduces an additional tax on earnings for superannuation balances exceeding $3 million:\n• An extra 15% tax applies to the proportion of taxable super earnings attributable to your Total Super Balance (TSB) above $3 million (bringing the effective earnings tax rate on that slice to 30%).\n• A further 10% tax applies to earnings attributable to the proportion above $10 million (bringing the rate on that top slice to 40%).\n• Both the Large Super Balance Threshold ($3M) and Very Large Super Balance Threshold ($10M) are indexed by CPI in $150,000 and $500,000 increments.\n• The tax applies to realised earnings (fund taxable income adjusted for realised capital gains; unrealised paper gains are NOT taxed, with funds permitted an election for a 30 June 2026 market-value cost-base reset). The first assessments will be issued by the ATO in late 2027–28.\n\nWhy this matters for teenagers: Division 296 affects approximately 80,000 high-wealth Australians (under 0.5% of workers) and zero teenagers (median teen super is under $5,000). But learning about Division 296 teaches a profound lesson: superannuation\'s tax perks are so powerful for building wealth that the Federal Government had to introduce a multi-million-dollar cap. Your mission as a teenager is compounding your first $10,000—leave Division 296 worries for when you are a multi-millionaire!',
+      actionStep:
+        'Find your current super balance in myGov > ATO and track its growth year over year—celebrate your first $1,000 and $10,000 milestones while ignoring Division 296!',
+      webLink: OFFICIAL_WEB_LINKS.moneysmart_super,
+    },
+  ],
+};

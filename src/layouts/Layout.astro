@@ -30,6 +30,10 @@ const {
     <SEOHead {...seoProps} />
   </head>
   <body class="min-h-screen flex flex-col bg-background text-foreground transition-colors duration-300 selection:bg-primary/25 selection:text-primary antialiased relative overflow-x-hidden">
+    <!-- Full-viewport ambient wash. Sits behind everything, so every route gets
+         the same softly lit backdrop without each page re-declaring gradients. -->
+    <div class="page-ambient" aria-hidden="true"></div>
+
     <!-- Subtle noise overlay for tactile finish -->
     <div class="noise-grain fixed inset-0 pointer-events-none z-[5] mix-blend-overlay opacity-[0.03] dark:opacity-[0.02]" aria-hidden="true"></div>
     

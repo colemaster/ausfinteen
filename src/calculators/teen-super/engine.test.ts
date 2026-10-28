@@ -3,9 +3,75 @@ import {
   superComparison,
   compoundGrowthWithFees,
   teenMarginalRate,
+  isUnder18SuperEligible,
+  modelCasualSuperCompounding,
   SUPER_COMPARISON_ASSUMPTIONS,
 } from './engine';
 import { SUPER_RULES } from '@/data/super-rules';
+
+describe('isUnder18SuperEligible (SGAA 1992 s 27(1)(a))', () => {
+  it('exempts under-18 workers working 30 hours or fewer per week', () => {
+    expect(isUnder18SuperEligible(15, 0)).toBe(false);
+    expect(isUnder18SuperEligible(15, 15)).toBe(false);
+    expect(isUnder18SuperEligible(16, 25)).toBe(false);
+    expect(isUnder18SuperEligible(17, 30)).toBe(false);
+  });
+
+  it('mandates employer SG for under-18 workers working MORE than 30 hours per week', () => {
+    expect(isUnder18SuperEligible(15, 30.5)).toBe(true);
+    expect(isUnder18SuperEligible(16, 31)).toBe(true);
+    expect(isUnder18SuperEligible(17, 38)).toBe(true);
+  });
+
+  it('mandates employer SG for workers aged 18 and over regardless of hours worked', () => {
+    expect(isUnder18SuperEligible(18, 1)).toBe(true);
+    expect(isUnder18SuperEligible(18, 10)).toBe(true);
+    expect(isUnder18SuperEligible(19, 15)).toBe(true);
+    expect(isUnder18SuperEligible(25, 0)).toBe(true);
+  });
+});
+
+describe('modelCasualSuperCompounding ($50/wk casual compounding over 45 years)', () => {
+  it('models $50/wk compounding from age 15 to 60 (45-year horizon)', () => {
+    const res = modelCasualSuperCompounding(50, 15, 60, 0.085, 0.005);
+    expect(res.startAge).toBe(15);
+    expect(res.preservationAge).toBe(60);
+    expect(res.compoundingYears).toBe(45);
+    expect(res.totalContributionsPaid).toBe(50 * 52 * 45); // $117,000
+    expect(res.netReturnRate).toBeCloseTo(0.08, 4);
+
+    // FV at 8% net over 45 years should exceed $1.1M
+    expect(res.futureValueWithFees).toBeGreaterThan(1100000);
+    expect(res.futureValueWithFees).toBeLessThan(1200000);
+
+    // Compounding generates more than 9x the total deposits
+    expect(res.compoundingMultiplier).toBeGreaterThan(9);
+
+    // Without fees (8.5% gross), balance exceeds $1.3M -> significant fee drag loss
+    expect(res.futureValueNoFees).toBeGreaterThan(1300000);
+    expect(res.feeDragLoss).toBeGreaterThan(200000);
+    expect(res.feeDragPct).toBeGreaterThan(15);
+  });
+
+  it('scales proportionally with weekly contribution amounts', () => {
+    const res25 = modelCasualSuperCompounding(25, 15, 60);
+    const res50 = modelCasualSuperCompounding(50, 15, 60);
+    expect(res50.futureValueWithFees).toBeCloseTo(res25.futureValueWithFees * 2, -2);
+    expect(res50.totalContributionsPaid).toBe(res25.totalContributionsPaid * 2);
+  });
+
+  it('handles edge cases: zero weekly contribution and zero compounding years', () => {
+    const zeroWeekly = modelCasualSuperCompounding(0, 15, 60);
+    expect(zeroWeekly.futureValueWithFees).toBe(0);
+    expect(zeroWeekly.totalContributionsPaid).toBe(0);
+    expect(zeroWeekly.compoundingMultiplier).toBe(0);
+
+    const zeroYears = modelCasualSuperCompounding(50, 60, 60);
+    expect(zeroYears.compoundingYears).toBe(0);
+    expect(zeroYears.futureValueWithFees).toBe(0);
+    expect(zeroYears.totalContributionsPaid).toBe(0);
+  });
+});
 
 // Figures verified 18 October 2026 against ATO 2026-27 rates and thresholds.
 describe('superComparison', () => {
@@ -59,6 +125,13 @@ describe('superComparison', () => {
     const factor = 12 * ((Math.pow(1 + r, n) - 1) / r);
     expect(res.futureValueSuper).toBe(Math.round(factor * 1000 * 0.85));
     expect(res.futureValueOutside).toBe(Math.round(factor * 1000 * 0.68));
+  });
+
+  it('supports custom horizons (e.g. 45 years from age 15 to 60)', () => {
+    const res45 = superComparison(1000, 0.32, SUPER_RULES.sgRate, 45, 0.08);
+    expect(res45.yearsTo60).toBe(45);
+    expect(res45.growthRate).toBe(0.08);
+    expect(res45.futureValueSuper).toBeGreaterThan(superComparison(1000, 0.32).futureValueSuper);
   });
 });
 

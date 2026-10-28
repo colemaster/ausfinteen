@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/Badge';
 import { InfoTooltip } from '@/components/ui/InfoTooltip';
 import { PaymentPeriodToggle, type PaymentPeriod } from '@/components/ui/PaymentPeriodToggle';
 import { CalculatorActions } from '@/components/shared/CalculatorActions';
-import { OFFICIAL_WEB_LINKS } from '@/data/teen-finance-data';
+import { OFFICIAL_WEB_LINKS } from '@/data/statutory-links';
 import { WebReferenceLink } from '@/components/shared/WebReferenceLink';
 import { PieChart as PieChartIcon, Sparkles } from 'lucide-react';
 import { useTeenProfile } from '@/context/TeenProfileContext';

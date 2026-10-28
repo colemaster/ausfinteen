@@ -27,7 +27,7 @@ export const STATUTORY_LINKS: Record<string, WebLink> = {
   },
   "acsc_cyber_safety": {
     "title": "Cyber.gov.au: Australian Cyber Security Centre (ACSC)",
-    "url": "https://www.cyber.gov.au/protect-yourself/resources",
+    "url": "https://www.cyber.gov.au/protect-yourself-and-your-family-online",
     "source": "Federal Government",
     "description": "Official Australian Government guidance on multi-factor authentication (MFA), passkeys, phishing defense, and reporting cyber incidents."
   },
@@ -37,9 +37,15 @@ export const STATUTORY_LINKS: Record<string, WebLink> = {
     "source": "University",
     "description": "ACU degrees in nursing, paramedicine, education, physiotherapy, and law."
   },
+  "afca_financial_disputes": {
+    "title": "AFCA: Australian Financial Complaints Authority",
+    "url": "https://www.afca.org.au/",
+    "source": "AFCA",
+    "description": "Free, independent external dispute resolution body (1800 931 678) resolving consumer complaints against banks, BNPL providers, and insurers."
+  },
   "aip_fuel_prices": {
     "title": "Australian Institute of Petroleum (AIP): Weekly Petrol Prices",
-    "url": "https://www.aip.com.au/pricing/weekly-petrol-prices",
+    "url": "https://aip.com.au/pricing/weekly-prices-reports/",
     "source": "Research",
     "description": "Official national and state terminal gate and retail fuel price data."
   },
@@ -49,15 +55,21 @@ export const STATUTORY_LINKS: Record<string, WebLink> = {
     "source": "APRA",
     "description": "Official Australian Government guarantee protecting up to $250,000 per depositor per bank (ADI)."
   },
+  "asic_info_269": {
+    "title": "ASIC INFO 269: Discussing Financial Products & Services Online",
+    "url": "https://asic.gov.au/regulatory-resources/financial-services/giving-financial-product-advice/discussing-financial-products-and-services-online/",
+    "source": "ASIC",
+    "description": "Official ASIC regulatory guidance on social media 'finfluencers', unlicenced financial product advice, affiliate link dealing, and penalties under the Corporations Act 2001."
+  },
   "asx_etf_centre": {
     "title": "ASX: ETF & ETP Products Hub",
-    "url": "https://www.asx.com.au/markets/trade-our-cash-market/list-of-etfs",
+    "url": "https://www.asx.com.au/markets/trade-our-cash-market/overview/etfs-and-other-etps",
     "source": "ASX",
     "description": "Official ASX list of all exchange traded products including ETFs, monthly FUM data and product documents."
   },
   "asx_invest_education": {
     "title": "ASX: Learn How to Invest in Shares & ETFs",
-    "url": "https://www.asx.com.au/education",
+    "url": "https://www.asx.com.au/investors/investment-tools-and-resources/online-courses",
     "source": "ASX",
     "description": "Free ASX investor education covering how the market works, index investing, diversification and trading basics."
   },
@@ -67,6 +79,24 @@ export const STATUTORY_LINKS: Record<string, WebLink> = {
     "source": "ATO",
     "description": "Rules for claiming compulsory logo uniforms, $150 laundry allowance without receipts, protective gear, and work-required certificates."
   },
+  "ato_deductions_wfh": {
+    "title": "ATO: Working from Home Fixed Rate Method (PCG 2023/1)",
+    "url": "https://www.ato.gov.au/individuals-and-families/income-deductions-offsets-and-records/deductions-you-can-claim/working-from-home-expenses",
+    "source": "ATO",
+    "description": "Revised fixed rate method (70c/hour per PCG 2023/1) covering electricity, gas, internet, mobile phone usage, and stationery without separate apportionment."
+  },
+  "ato_deductions_travel": {
+    "title": "ATO: Motor Vehicle Cents-Per-Km & Travel Deductions",
+    "url": "https://www.ato.gov.au/individuals-and-families/income-deductions-offsets-and-records/deductions-you-can-claim/work-related-deductions/cars-transport-and-travel",
+    "source": "ATO",
+    "description": "Cents-per-kilometre deduction rate (91c/km up to 5,000 km) and logbook methods for claiming work-related travel between separate workplaces."
+  },
+  "ato_instant_asset_write_off": {
+    "title": "ATO: Small Business Instant Asset Write-Off ($20,000 Threshold)",
+    "url": "https://www.ato.gov.au/businesses-and-organisations/income-deductions-and-concessions/depreciation-and-capital-expenses-and-allowances/simpler-depreciation-for-small-business/instant-asset-write-off",
+    "source": "ATO",
+    "description": "Small business instant asset write-off allowing sole traders and small businesses under $10M turnover to immediately deduct eligible assets under $20,000."
+  },
   "ato_lito": {
     "title": "ATO: Low Income Tax Offset (LITO Up to $700)",
     "url": "https://www.ato.gov.au/individuals-and-families/income-deductions-offsets-and-records/tax-offsets/low-and-middle-income-earner-tax-offsets",
@@ -75,7 +105,7 @@ export const STATUTORY_LINKS: Record<string, WebLink> = {
   },
   "ato_lost_super": {
     "title": "ATO: Find & Consolidate Lost Super",
-    "url": "https://www.ato.gov.au/individuals-and-families/super-for-individuals-and-families/super/find-and-consolidate-your-super",
+    "url": "https://www.ato.gov.au/individuals-and-families/super-for-individuals-and-families/super/growing-and-keeping-track-of-your-super/keeping-track-of-your-super",
     "source": "ATO",
     "description": "Use myGov to find lost super accounts, check balances and roll everything into one stapled fund to stop fee drain."
   },
@@ -87,7 +117,7 @@ export const STATUTORY_LINKS: Record<string, WebLink> = {
   },
   "ato_mygov": {
     "title": "ATO: myGov & Digital Identity Portal",
-    "url": "https://www.ato.gov.au/online-services/online-services-for-individuals-and-sole-traders/mygov",
+    "url": "https://www.ato.gov.au/online-services/online-services-for-individuals-and-sole-traders/ato-online-services-and-mygov/create-a-mygov-account-and-link-it-to-the-ato",
     "source": "ATO",
     "description": "Official Australian Government portal connecting ATO tax, Medicare, and Centrelink."
   },
@@ -112,13 +142,13 @@ export const STATUTORY_LINKS: Record<string, WebLink> = {
   },
   "ato_super_co_contribution": {
     "title": "ATO: Super Co-Contribution for Low Earners ($500 Matching)",
-    "url": "https://www.ato.gov.au/individuals-and-families/super-for-individuals-and-families/super/growing-and-keeping-track-of-your-super/caps-limits-and-tax/super-co-contribution",
+    "url": "https://www.ato.gov.au/individuals-and-families/super-for-individuals-and-families/super/growing-and-keeping-track-of-your-super/how-to-save-more-in-your-super/government-super-contributions/super-co-contribution",
     "source": "ATO",
     "description": "Federal Government co-contribution matches 50c per dollar of after-tax super contributions up to $500 for low and middle-income earners."
   },
   "ato_super_guarantee": {
     "title": "ATO: Super Guarantee Eligibility Rules",
-    "url": "https://www.ato.gov.au/businesses-and-organisations/super-for-employers/work-out-if-you-need-to-pay-super",
+    "url": "https://www.ato.gov.au/businesses-and-organisations/super-for-employers/work-out-if-you-have-to-pay-super",
     "source": "ATO",
     "description": "Under 18 super guarantee rule: must work >30 hours in a calendar week under SGAA 1992 s 19(10) to receive 12.0% Super."
   },
@@ -136,13 +166,13 @@ export const STATUTORY_LINKS: Record<string, WebLink> = {
   },
   "ato_tfn_bank": {
     "title": "ATO: Providing Your TFN to Banks (Section 202D)",
-    "url": "https://www.ato.gov.au/individuals-and-families/tax-file-number/in-what-situations-do-you-need-a-tfn",
+    "url": "https://www.ato.gov.au/individuals-and-families/tax-file-number/what-is-a-tax-file-number",
     "source": "ATO",
     "description": "ATO rule: providing your TFN to your bank prevents 47% top marginal withholding tax on savings interest."
   },
   "ato_tfn_form": {
     "title": "ATO: Tax File Number Declaration Form (NAT 3092)",
-    "url": "https://www.ato.gov.au/forms-and-instructions/tax-file-number-declaration",
+    "url": "https://www.ato.gov.au/forms-and-instructions/tfn-declaration",
     "source": "ATO",
     "description": "Official ATO form completed when starting a new job to claim the $18,200 Tax-Free Threshold.",
     "formCode": "NAT 3092"
@@ -167,13 +197,13 @@ export const STATUTORY_LINKS: Record<string, WebLink> = {
   },
   "bcc_council_carparks": {
     "title": "Brisbane City Council: King George Square & Wickham Tce Car Parks",
-    "url": "https://www.brisbane.qld.gov.au/traffic-and-transport/parking-in-brisbane/council-car-parks",
+    "url": "https://www.brisbane.qld.gov.au/transport-and-parking/parking/council-car-parks",
     "source": "Brisbane City Council",
     "description": "Official council parking facilities in the Brisbane CBD with night and weekend flat rate specials."
   },
   "bcc_parking": {
     "title": "Brisbane City Council: Parking Meters, Zones & Permits",
-    "url": "https://www.brisbane.qld.gov.au/traffic-and-transport/parking-in-brisbane/metered-parking",
+    "url": "https://www.brisbane.qld.gov.au/transport-and-parking/parking/parking-meters-and-fees",
     "source": "Brisbane City Council",
     "description": "Zones 1–3 on-street parking rates, free 15-minute parking, and weekend/night parking rules."
   },
@@ -197,7 +227,7 @@ export const STATUTORY_LINKS: Record<string, WebLink> = {
   },
   "etfinfo": {
     "title": "ASX: ETF Course & Information Hub",
-    "url": "https://www.asx.com.au/markets/trade-our-cash-market/asx-investment-products-directory/etfs",
+    "url": "https://www.asx.com.au/markets/trade-our-cash-market/overview/etfs-and-other-etps",
     "source": "ASX",
     "description": "ASX official directory and educational materials for exchange-traded funds."
   },
@@ -235,7 +265,7 @@ export const STATUTORY_LINKS: Record<string, WebLink> = {
   },
   "fairwork_min_age": {
     "title": "Fair Work Ombudsman: Minimum Working Age Rules",
-    "url": "https://www.fairwork.gov.au/starting-employment/young-workers-and-students/minimum-working-age",
+    "url": "https://www.fairwork.gov.au/find-help-for/young-workers-and-students/minimum-working-age",
     "source": "Fair Work",
     "description": "Official rules on the minimum age for work in each state and territory, including school attendance protections."
   },
@@ -253,7 +283,7 @@ export const STATUTORY_LINKS: Record<string, WebLink> = {
   },
   "fairwork_penalty_rates": {
     "title": "Fair Work: Penalty Rates & Public Holiday Pay",
-    "url": "https://www.fairwork.gov.au/pay-and-wages/penalty-rates-and-allowances",
+    "url": "https://www.fairwork.gov.au/pay-and-wages/penalty-rates-allowances-and-other-payments/penalty-rates",
     "source": "Fair Work",
     "description": "Overtime and penalty multiplier percentages for Saturday, Sunday, late-night shifts, and public holiday work."
   },
@@ -287,6 +317,12 @@ export const STATUTORY_LINKS: Record<string, WebLink> = {
     "source": "University",
     "description": "Griffith University degrees across South Bank, Nathan, and Gold Coast."
   },
+  "mob_strong_debt": {
+    "title": "Mob Strong Debt Help: First Nations Financial Rights",
+    "url": "https://financialrights.org.au/mob-strong-debt-help/",
+    "source": "Financial Rights Legal Centre",
+    "description": "Dedicated, culturally safe free legal and financial advice service on 1800 808 488 for Aboriginal and Torres Strait Islander mob across Australia."
+  },
   "moneysmart_banking": {
     "title": "Moneysmart: Bank Accounts & High-Interest Savings",
     "url": "https://moneysmart.gov.au/banking",
@@ -307,7 +343,7 @@ export const STATUTORY_LINKS: Record<string, WebLink> = {
   },
   "moneysmart_compound": {
     "title": "Moneysmart: Compound Interest Explained",
-    "url": "https://moneysmart.gov.au/saving-and-budgeting/compound-interest",
+    "url": "https://moneysmart.gov.au/budgeting/compound-interest-calculator",
     "source": "Moneysmart",
     "description": "Government interactive compound interest tool showing how early investing supercharges long-term growth."
   },
@@ -316,6 +352,12 @@ export const STATUTORY_LINKS: Record<string, WebLink> = {
     "url": "https://moneysmart.gov.au/managing-debt",
     "source": "Moneysmart",
     "description": "Government guide on BNPL risks, credit cards, and National Debt Helpline (1800 007 007) support."
+  },
+  "ndh_helpline": {
+    "title": "National Debt Helpline (NDH): Free Financial Counselling",
+    "url": "https://ndh.org.au/",
+    "source": "Federal Government",
+    "description": "100% free, confidential, government-funded community financial counselling on 1800 007 007, 24/7 online chat, and legal hardship templates."
   },
   "moneysmart_investing": {
     "title": "Moneysmart: How to Invest in Shares & ETFs",
@@ -355,13 +397,13 @@ export const STATUTORY_LINKS: Record<string, WebLink> = {
   },
   "nsw_dkt_practice": {
     "title": "Transport for NSW: Practice Driver Knowledge Test (DKT)",
-    "url": "https://www.nsw.gov.au/driving-boating-and-transport/driver-and-rider-licences/driver-licences/learner-driver-licence/driver-knowledge-test",
+    "url": "https://www.service.nsw.gov.au/services/learner-driver-licence",
     "source": "Transport",
     "description": "Official NSW practice test tool for 15-year-olds preparing to get their Learner licence on their 16th birthday."
   },
   "ppsr_check": {
     "title": "PPSR: Official Australian Vehicle Financial Search ($2)",
-    "url": "https://www.ppsr.gov.au/searching/do-used-car-check",
+    "url": "https://www.ppsr.gov.au/searching/do-used-car-or-vehicle-search",
     "source": "PPSR",
     "description": "Official government register to check if a second-hand car has money owing or was written off ($2 fee)."
   },
@@ -391,9 +433,16 @@ export const STATUTORY_LINKS: Record<string, WebLink> = {
   },
   "qld_boost_to_buy": {
     "title": "Queensland Government: Boost to Buy Shared Equity Scheme",
-    "url": "https://www.qld.gov.au/housing/buying-owning-home/financial-help-concessions/boost-to-buy",
+    "url": "https://www.treasury.qld.gov.au/policies-and-programs/home-ownership/boost-to-buy/",
     "source": "QLD Government",
     "description": "Queensland Government shared equity scheme helping eligible buyers purchase with a 2% deposit."
+  },
+  "qld_child_employment_ce1": {
+    "title": "Queensland Government: Parent's Consent Form CE1 (Child Employment Act 2006)",
+    "url": "https://www.business.qld.gov.au/running-business/employing/hiring-recruitment/employing-children",
+    "source": "QLD Government",
+    "description": "Statutory Form CE1 parent consent form required for school-aged children under 16 working in Queensland.",
+    "formCode": "CE1"
   },
   "qld_fhog": {
     "title": "Queensland Revenue Office: $30,000 First Home Owner Grant",
@@ -409,9 +458,9 @@ export const STATUTORY_LINKS: Record<string, WebLink> = {
   },
   "qld_hpt": {
     "title": "Queensland Government: Hazard Perception Test (HPT)",
-    "url": "https://www.qld.gov.au/transport/licensing/getting-licence/hazard-perception-test",
+    "url": "https://www.qld.gov.au/transport/licensing/getting/hazard-perception-test",
     "source": "QLD Government",
-    "description": "Online test required before booking your practical driving test ($44.15 fee, valid 12 months)."
+    "description": "Online test required before booking your practical driving test ($42.70 fee, valid 12 months)."
   },
   "qld_licence_fees": {
     "title": "Queensland Government: Driver Licensing Fees (2026-27)",
@@ -421,21 +470,21 @@ export const STATUTORY_LINKS: Record<string, WebLink> = {
   },
   "qld_licence_steps": {
     "title": "Queensland Government: Getting a Driver Licence (PrepL to Open)",
-    "url": "https://www.qld.gov.au/transport/licensing/getting-licence",
+    "url": "https://www.qld.gov.au/transport/licensing/getting",
     "source": "QLD Government",
     "description": "Official step-by-step roadmap from PrepL at 15.9 to Learner licence at 16, 100 logbook hours, P1, P2, and open licence."
   },
   "qld_practical_test": {
     "title": "Queensland Government: Booking Your Practical Driving Test (Q-SAFE)",
-    "url": "https://www.qld.gov.au/transport/licensing/getting-licence/tests/practical-driving-test",
+    "url": "https://www.qld.gov.au/transport/licensing/getting/practical-tests-driving-test",
     "source": "QLD Government",
-    "description": "How to prepare and book your 30-minute on-road practical driving test with TMR ($71.75 fee)."
+    "description": "How to prepare and book your 30-minute on-road practical driving test with TMR ($69.40 fee)."
   },
   "qld_prepl": {
     "title": "Queensland Government: PrepL Online Driving Course & Test",
-    "url": "https://www.qld.gov.au/transport/licensing/getting-licence/prepl",
+    "url": "https://www.qld.gov.au/transport/licensing/getting/learner/prepl",
     "source": "QLD Government",
-    "description": "Sit your QLD learner driver knowledge test online at home from age 15 years 11 months ($30.70 fee)."
+    "description": "Sit your QLD learner driver knowledge test online at home from age 15 years 11 months ($29.70 fee)."
   },
   "qld_rego": {
     "title": "Queensland Government: Vehicle Registration & Transfer Duty",
@@ -444,10 +493,10 @@ export const STATUTORY_LINKS: Record<string, WebLink> = {
     "description": "Official breakdown of registration fees, traffic improvement fees, and vehicle registration duty in QLD."
   },
   "qld_rta": {
-    "title": "Residential Tenancies Authority (RTA) Queensland: Rental Bonds",
+    "title": "Residential Tenancies Authority (RTA) Queensland: Rental Bonds & Tenant Rights",
     "url": "https://www.rta.qld.gov.au/starting-a-tenancy/rental-bond",
     "source": "QLD Government",
-    "description": "Official QLD rental bond rules: 4-week maximum bond for rent <=$700/wk and mandatory 10-day lodgement with the RTA."
+    "description": "Official QLD rental rules: 4-week maximum bond for all tenancies, 12-month limit on rent increases attached to the property, and mandatory 10-day bond lodgement."
   },
   "qld_school_based": {
     "title": "QLD: School-Based Apprenticeships & Traineeships (SATs)",
@@ -475,7 +524,7 @@ export const STATUTORY_LINKS: Record<string, WebLink> = {
   },
   "rba_cash_rate": {
     "title": "Reserve Bank of Australia: Cash Rate Target Decisions",
-    "url": "https://www.rba.gov.au/monetary-policy/cash-rate-target.html",
+    "url": "https://www.rba.gov.au/statistics/cash-rate/",
     "source": "Reserve Bank",
     "description": "Official RBA board decisions on the monetary policy cash rate target and policy statements."
   },
@@ -487,7 +536,7 @@ export const STATUTORY_LINKS: Record<string, WebLink> = {
   },
   "safework_au": {
     "title": "SafeWork Australia: Young Worker Health & Safety",
-    "url": "https://www.safeworkaustralia.gov.au/safety-topic/industry-and-business/young-workers",
+    "url": "https://www.safeworkaustralia.gov.au/safety-topic/managing-health-and-safety/young-workers/overview",
     "source": "SafeWork",
     "description": "Workplace health and safety (WHS) rights, injury reporting, and WorkCover insurance for teens."
   },
@@ -505,10 +554,17 @@ export const STATUTORY_LINKS: Record<string, WebLink> = {
   },
   "services_australia_medicare_15": {
     "title": "Services Australia: Getting Your Own Medicare Card at 15 (Form MS011)",
-    "url": "https://www.servicesaustralia.gov.au/how-to-get-your-own-medicare-card-or-number",
+    "url": "https://www.servicesaustralia.gov.au/have-your-own-medicare-card-and-number-if-youre-15-or-older-and-enrolled-medicare",
     "source": "Services Australia",
     "description": "From age 15, Australian teens can get their own green Medicare card (via myGov or Form MS011) for confidential doctor visits and bulk-billing.",
     "formCode": "MS011"
+  },
+  "services_australia_medicare_ms004": {
+    "title": "Services Australia: Application to Copy or Transfer from Medicare Card (Form MS004)",
+    "url": "https://www.servicesaustralia.gov.au/ms004",
+    "source": "Services Australia",
+    "description": "Statutory application form to transfer or copy from one Medicare card to another for young people aged 15 and older.",
+    "formCode": "MS004"
   },
   "services_australia_rent_assistance": {
     "title": "Services Australia: Commonwealth Rent Assistance",
@@ -547,10 +603,16 @@ export const STATUTORY_LINKS: Record<string, WebLink> = {
     "description": "Over 40+ tuition-free diploma/cert courses and 130+ free apprenticeships for under 25s."
   },
   "translink_50c_fares": {
-    "title": "Translink: Queensland 50-Cent Public Transport Fares",
+    "title": "Translink: Queensland 50-Cent Public Transport Fares & Smart Ticketing",
     "url": "https://translink.com.au/tickets-and-fares/50-cent-fares",
     "source": "QLD Government",
-    "description": "Official details on Queensland's flat 50-cent fare initiative across trains, buses, ferries, and light rail."
+    "description": "Official details on Queensland's permanent flat 50-cent fare and Smart Ticketing contactless payment rules across SEQ trains, buses, ferries, and light rail."
+  },
+  "translink_smart_ticketing": {
+    "title": "Translink: Smart Ticketing Payment Rules & Contactless Travel",
+    "url": "https://translink.com.au/about-translink/projects-and-initiatives/smart-ticketing",
+    "source": "QLD Government",
+    "description": "Official rules for contactless Visa/Mastercard tap-on/off, device tokens, and card clash prevention across SEQ transit."
   },
   "translink_gocard": {
     "title": "Translink: Go Card & Concession Fares",
@@ -734,19 +796,19 @@ export const STATUTORY_LINKS: Record<string, WebLink> = {
   },
   "vodafone_student_discount": {
     "title": "Vodafone Australia: Student Discount Plans",
-    "url": "https://www.vodafone.com.au/student",
+    "url": "https://www.vodafone.com.au/students",
     "source": "Student Discount",
     "description": "Official Vodafone Australia student hub offering 10% off month-to-month SIM plans with endless data."
   },
   "qld_playon_sports_vouchers": {
     "title": "Queensland Government: Play On! Sports Vouchers",
-    "url": "https://www.qld.gov.au/recreation/sports/funding/play-on",
+    "url": "https://www.qld.gov.au/recreation/sports/funding/playon",
     "source": "QLD Government",
     "description": "Queensland Department of Tourism and Sport vouchers providing up to $200 per financial year for youth sport club memberships."
   },
   "nsw_active_creative_kids": {
     "title": "Service NSW: Active and Creative Kids Voucher Scheme",
-    "url": "https://www.service.nsw.gov.au/transaction/apply-for-active-and-creative-kids-vouchers",
+    "url": "https://www.service.nsw.gov.au/transaction/apply-for-an-active-and-creative-kids-voucher",
     "source": "Federal Government",
     "description": "Service NSW voucher program providing two $50 vouchers per eligible child per year for sport, dance, coding, and music."
   },
@@ -779,6 +841,90 @@ export const STATUTORY_LINKS: Record<string, WebLink> = {
     "url": "https://nt.gov.au/community/sport/sport-voucher-scheme-urban",
     "source": "Federal Government",
     "description": "Northern Territory Government grants providing two $100 vouchers per year for urban school-enrolled students for sport, recreation, and arts."
+  },
+  "spriggy_pocket_money": {
+    "title": "Spriggy: Pocket Money & Prepaid Card for Australian Kids and Teens",
+    "url": "https://www.spriggy.com.au/",
+    "source": "Bank",
+    "description": "Australian family pocket money platform and prepaid Visa card featuring automated chores, visual savings goals, and SPRK teen mode."
+  },
+  "kit_pocket_money": {
+    "title": "Kit: Pocket Money App & Prepaid Card by CommBank (x15ventures)",
+    "url": "https://www.heykit.com.au/",
+    "source": "Bank",
+    "description": "Financial education and digital pocket money app by Commonwealth Bank with Money Quests, Split PayDay, and merchant controls."
+  },
+  "mission_australia_youth_survey": {
+    "title": "Mission Australia: National Youth Survey Report",
+    "url": "https://www.missionaustralia.com.au/publications/youth-survey",
+    "source": "Research",
+    "description": "Australia's largest annual survey of teenagers aged 14–19 tracking cost of living, financial stress, mental health, and housing concerns."
+  },
+  "everyday_mobile_woolworths": {
+    "title": "Everyday Mobile from Woolworths (10% Monthly Grocery Discount)",
+    "url": "https://everyday.com.au/mobile",
+    "source": "Student Discount",
+    "description": "Prepaid and SIM-only mobile plans powered by the Telstra Wholesale Network with 10% off one in-store Woolworths shop per month."
+  },
+  "prime_student_au": {
+    "title": "Amazon Prime Student Australia (50% Off)",
+    "url": "https://www.amazon.com.au/joinstudent",
+    "source": "Student Discount",
+    "description": "Discounted student membership with Prime Video, free priority shipping, Amazon Music, and Deliveroo Plus subscription perks."
+  },
+  "moneysmart_micro_investing": {
+    "title": "Moneysmart: Micro-Investing Apps Explained",
+    "url": "https://moneysmart.gov.au/how-to-invest/micro-investing",
+    "source": "Moneysmart",
+    "description": "Australian Government consumer guide on micro-investing apps, recurring fee drag, and custodial structures."
+  },
+  "asic_day_trading_warning": {
+    "title": "ASIC: Retail Trading & CFD Risk Warnings",
+    "url": "https://www.asic.gov.au/about-asic/news-centre/find-a-media-release/2023-releases/23-243mr-asic-takes-aim-at-the-distribution-of-otc-derivatives-and-other-high-risk-products-to-retail-clients/",
+    "source": "ASIC",
+    "description": "ASIC reports showing over 68% of retail CFD day traders lose money with net losses exceeding $458 million."
+  },
+  "pearler_headstart": {
+    "title": "Pearler: Headstart & Minor Trust Investing",
+    "url": "https://pearler.com/headstart",
+    "source": "Pearler",
+    "description": "Long-term ETF investing platform for Australian teens and kids with automated micro and CHESS-sponsored accounts."
+  },
+  "betashares_direct": {
+    "title": "Betashares Direct: Kids & Bare Trust Accounts",
+    "url": "https://www.betashares.com.au/direct/",
+    "source": "Betashares",
+    "description": "Zero-brokerage ETF investing platform offering dedicated informal minor trust accounts for Australian children."
+  },
+  "payid_platform": {
+    "title": "PayID: Fast & Secure Bank Payments",
+    "url": "https://payid.com.au/",
+    "source": "AP+",
+    "description": "Official Australian PayID addressing service linking your mobile number or email for instant, typo-free payments without disclosing BSB/account numbers."
+  },
+  "payto_platform": {
+    "title": "PayTo: Modern Digital Direct Debits",
+    "url": "https://payto.com.au/",
+    "source": "AP+",
+    "description": "Official PayTo platform offering pre-authorised digital payment agreements with complete in-app visibility and instant pause/cancel controls."
+  },
+  "osko_platform": {
+    "title": "Osko: 24/7 Real-Time Fast Payments",
+    "url": "https://osko.com.au/",
+    "source": "BPAY / AP+",
+    "description": "NPP retail overlay enabling instant payments settling in under 60 seconds 24/7/365 across participating Australian financial institutions."
+  },
+  "npp_australia": {
+    "title": "New Payments Platform (NPP Australia)",
+    "url": "https://nppa.com.au/",
+    "source": "AP+",
+    "description": "Australia's national real-time payment rails supporting ISO 20022 rich data messaging and instant settlement."
+  },
+  "oaic_cdr_privacy": {
+    "title": "OAIC: Consumer Data Right Privacy Safeguards",
+    "url": "https://www.oaic.gov.au/consumer-data-right",
+    "source": "OAIC",
+    "description": "Official Australian Information Commissioner guidance on the 13 CDR Privacy Safeguards and personal financial data protection."
   }
 };
 

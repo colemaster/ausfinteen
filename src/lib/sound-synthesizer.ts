@@ -29,9 +29,18 @@ class SoundSynthesizer {
   constructor() {
     // Load persisted mute preference if available
     try {
+      if (typeof window !== 'undefined') {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get(SOUND_URL_PARAM) === '1') {
+          this.enabled = true;
+        }
+      }
       const savedMute = localStorage.getItem('au_sound_muted');
       if (savedMute !== null) {
         this.isMuted = savedMute === 'true';
+        if (!this.isMuted) {
+          this.enabled = true;
+        }
       }
     } catch {
       // Ignore SSR / localStorage restrictions
@@ -44,19 +53,20 @@ class SoundSynthesizer {
    */
   public setSoundEnabled(enabled: boolean): void {
     this.enabled = enabled;
-    if (!enabled && this.ctx) {
+    if (enabled) {
+      this.setMuted(false);
+    } else if (this.ctx) {
       this.ctx.suspend().catch(() => {});
     }
   }
 
   /** Current global sound toggle state (default false). */
   public isSoundEnabled(): boolean {
-    return this.enabled;
+    return this.enabled && !this.isMuted;
   }
 
   private init(): boolean {
-    if (!this.enabled) return false;
-    if (this.isMuted) return false;
+    if (!this.enabled || this.isMuted) return false;
 
     // Check prefers-reduced-motion
     if (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -87,12 +97,17 @@ class SoundSynthesizer {
   }
 
   public toggleMute(): boolean {
+    if (!this.enabled) {
+      this.enabled = true;
+      this.setMuted(false);
+      return false;
+    }
     this.setMuted(!this.isMuted);
     return this.isMuted;
   }
 
   public getIsMuted(): boolean {
-    return this.isMuted;
+    return !this.enabled || this.isMuted;
   }
 
   public setVolume(vol: number): void {

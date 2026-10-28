@@ -19,6 +19,7 @@ import {
   DollarSign,
   Medal,
   Compass,
+  Calendar,
 } from 'lucide-react';
 import {
   ResponsiveContainer,
@@ -30,6 +31,13 @@ import {
   Cell,
 } from '@/components/charts';
 import { DETAILED_BRISBANE_UNIS, type DetailedBrisbaneUni, type UniCourse } from '@/data/brisbane-data';
+import {
+  calculateQtacSelectionRank,
+  SSAF_CAP_2026,
+  SSAF_CAP_2027,
+  QTAC_DATES_2026_2027,
+  type QldUniversityCode,
+} from './engine';
 import { cn } from '@/lib/utils';
 
 const FIELD_COLORS: Record<string, string> = {
@@ -45,6 +53,279 @@ const FIELD_COLORS: Record<string, string> = {
 
 type SortKey = 'atarMin' | 'medianGraduateSalary' | 'cspBandFee' | 'title';
 
+interface QldUniPathwaysInfo {
+  code: QldUniversityCode | 'TAFE';
+  name: string;
+  logo: string;
+  campusLocations: string;
+  earlySchemeName: string;
+  deadline: string;
+  criteria: string;
+  guaranteedScope: string;
+  adjustmentRules: {
+    maxCap: number;
+    subjectBonus: string;
+    easBonus: string;
+    ruralBonus: string;
+  };
+  sampleCutoffs: Array<{ course: string; cutoff: string }>;
+  ssafCap: string;
+  website: string;
+}
+
+const ALL_QLD_UNIVERSITIES_PATHWAYS: QldUniPathwaysInfo[] = [
+  {
+    code: 'UQ',
+    name: 'The University of Queensland',
+    logo: '🏰',
+    campusLocations: 'St Lucia, Herston, Gatton & Brisbane CBD',
+    earlySchemeName: 'UQ Guaranteed ATAR & Subject Incentive Scheme',
+    deadline: 'December QTAC Major Round (23 Dec 2026)',
+    criteria: 'Meet published selection rank on first QTAC preference + subject prerequisite checks.',
+    guaranteedScope: 'Guaranteed entry into 85%+ undergraduate degrees upon achieving threshold.',
+    adjustmentRules: {
+      maxCap: 5.0,
+      subjectBonus: '+2 for Maths Methods, +2 Specialist, +2 Physics, +2 LOTE (max 5)',
+      easBonus: 'Up to +5 points for financial hardship, medical, home or school disadvantage',
+      ruralBonus: '+2 rank points for applicants from regional/rural QLD (ASGS-RA 2-5)',
+    },
+    sampleCutoffs: [
+      { course: 'Medicine (provisional)', cutoff: '95.00 excl / 98.10 incl (median 99.65 + UCAT/MMI)' },
+      { course: 'Laws (Honours)', cutoff: '93.95 excl / 97.60 incl' },
+      { course: 'Engineering (Honours)', cutoff: '79.45 excl / 84.00 incl' },
+      { course: 'Nursing', cutoff: '78.40 excl / 83.10 incl' },
+      { course: 'Science', cutoff: '75.40 excl / 80.00 incl' },
+    ],
+    ssafCap: `$${SSAF_CAP_2026} (2026) / $${SSAF_CAP_2027} (2027) • SA-HELP eligible`,
+    website: 'https://study.uq.edu.au',
+  },
+  {
+    code: 'QUT',
+    name: 'Queensland University of Technology',
+    logo: '🏛️',
+    campusLocations: 'Gardens Point (CBD) & Kelvin Grove',
+    earlySchemeName: 'QUT Year 12 Offer Guarantee & Early Offer Scheme',
+    deadline: 'Late November / December QTAC Rounds',
+    criteria: 'Achieve the published guarantee selection rank and list QUT as highest eligible preference.',
+    guaranteedScope: 'Guaranteed placement for all non-quota bachelor programs (Business, IT, Engineering, Law, etc.).',
+    adjustmentRules: {
+      maxCap: 5.0,
+      subjectBonus: '+2 for Maths Methods, +2 Specialist Maths, +2 Physics, +2 LOTE',
+      easBonus: 'Up to +5 points via QTAC Educational Access Scheme',
+      ruralBonus: '+2 rank points for students from regional and remote Queensland schools',
+    },
+    sampleCutoffs: [
+      { course: 'Laws (Honours)', cutoff: '76.85 excl / 84.00 incl' },
+      { course: 'Engineering (Honours)', cutoff: '74.50 excl / 84.00 incl' },
+      { course: 'Medical Imaging', cutoff: '89.70 excl / 99.00 incl' },
+      { course: 'Paramedic Science', cutoff: '87.10 threshold' },
+      { course: 'Nursing', cutoff: '67.70 excl / 74.00 incl' },
+    ],
+    ssafCap: `$${SSAF_CAP_2026} (2026) / $${SSAF_CAP_2027} (2027) • SA-HELP eligible`,
+    website: 'https://www.qut.edu.au/study',
+  },
+  {
+    code: 'GRIFFITH',
+    name: 'Griffith University',
+    logo: '🌊',
+    campusLocations: 'Nathan, Gold Coast, South Bank, Mt Gravatt, Logan',
+    earlySchemeName: 'Griffith Guaranteed Admission Scheme',
+    deadline: 'Mid-November QTAC Early Offer Round',
+    criteria: 'Achieve indicative rank threshold or VET Cert III/IV prior to final exams.',
+    guaranteedScope: 'Guaranteed placement across 24+ high-demand undergraduate degrees.',
+    adjustmentRules: {
+      maxCap: 6.0,
+      subjectBonus: '+2 for Maths Methods, +2 Specialist, +2 Physics, +2 Chem, +2 LOTE',
+      easBonus: 'Up to +5 points via EAS disadvantage categories',
+      ruralBonus: '+2 points for regional applicants; +1 priority rank for Logan/Gold Coast residents',
+    },
+    sampleCutoffs: [
+      { course: 'Medicine (MD provisional)', cutoff: '99.85 excl / 99.95 incl' },
+      { course: 'Physiotherapy (Honours)', cutoff: '89.90 excl / 97.50 incl' },
+      { course: 'Biomedical Science (MD Pathway)', cutoff: '82.00 threshold' },
+      { course: 'Nursing', cutoff: '64.10 excl / 72.05 incl' },
+      { course: 'Business / Data Science', cutoff: '63.00 threshold' },
+    ],
+    ssafCap: `$${SSAF_CAP_2026} (2026) / $${SSAF_CAP_2027} (2027) • SA-HELP eligible`,
+    website: 'https://www.griffith.edu.au/apply',
+  },
+  {
+    code: 'UniSC',
+    name: 'University of the Sunshine Coast',
+    logo: '☀️',
+    campusLocations: 'Moreton Bay (Petrie), Sippy Downs, Caboolture, Fraser Coast',
+    earlySchemeName: 'UniSC Early Offer Guarantee & TPP Pathway',
+    deadline: 'Early November (offers released before ATAR)',
+    criteria: "School principal recommendation based on Year 12 results to date + ATAR readiness.",
+    guaranteedScope: 'Guaranteed offer in November into preferred bachelor degree prior to Year 12 external exam results.',
+    adjustmentRules: {
+      maxCap: 5.0,
+      subjectBonus: '+2 for Maths Methods, +2 Specialist Maths, +2 Physics/Science',
+      easBonus: 'Up to +5 points for educational access challenges',
+      ruralBonus: '+3 bonus rank points for Moreton Bay, Sunshine Coast, Gympie & Fraser Coast residents',
+    },
+    sampleCutoffs: [
+      { course: 'Paramedicine', cutoff: '80.00 threshold' },
+      { course: 'Nursing', cutoff: '70.00 threshold' },
+      { course: 'Primary Education', cutoff: '70.00 threshold' },
+      { course: 'Psychology', cutoff: '65.00 threshold' },
+      { course: 'Business & Commerce', cutoff: '60.00 threshold' },
+    ],
+    ssafCap: `$${SSAF_CAP_2026} (2026) / $${SSAF_CAP_2027} (2027) • SA-HELP eligible`,
+    website: 'https://www.usc.edu.au/study',
+  },
+  {
+    code: 'UniSQ',
+    name: 'University of Southern Queensland',
+    logo: '🌾',
+    campusLocations: 'Springfield, Ipswich, Toowoomba',
+    earlySchemeName: 'UniSQ Accelerated Entry Guarantee & Head Start',
+    deadline: 'September / November Early Rounds',
+    criteria: 'Year 12 semester 1 school report and principal recommendation or completion of Head Start subject.',
+    guaranteedScope: 'Guaranteed direct placement into 90%+ bachelor courses.',
+    adjustmentRules: {
+      maxCap: 6.0,
+      subjectBonus: '+2 for advanced senior mathematics, physics, and science',
+      easBonus: 'Up to +5 points for financial/personal disadvantage',
+      ruralBonus: '+2 to +4 bonus ranks for Darling Downs, Ipswich, Lockyer Valley and regional postcodes',
+    },
+    sampleCutoffs: [
+      { course: 'Aviation (Flight Operations)', cutoff: '68.00 threshold' },
+      { course: 'Engineering (Honours)', cutoff: '75.00 threshold' },
+      { course: 'Paramedicine', cutoff: '65.60 threshold (median 76.95)' },
+      { course: 'Nursing', cutoff: '60.00 threshold' },
+      { course: 'Education', cutoff: '70.00 threshold' },
+    ],
+    ssafCap: `$${SSAF_CAP_2026} (2026) / $${SSAF_CAP_2027} (2027) • SA-HELP eligible`,
+    website: 'https://www.unisq.edu.au/study',
+  },
+  {
+    code: 'ACU',
+    name: 'Australian Catholic University',
+    logo: '✝️',
+    campusLocations: 'Banyo (North Brisbane)',
+    earlySchemeName: 'ACU Guarantee (Year 11 Results Early Entry)',
+    deadline: 'September Early Rounds (applications open July)',
+    criteria: 'Assessed on Year 11 academic report cards + personal statement (open to all faiths and backgrounds).',
+    guaranteedScope: 'Guaranteed place offered in September before Year 12 exams begin.',
+    adjustmentRules: {
+      maxCap: 5.0,
+      subjectBonus: '+1 to +2 points for senior English, Maths, Sciences, Religion studies',
+      easBonus: 'Up to +5 adjustment points through Access ACU scheme',
+      ruralBonus: '+2 bonus points for designated regional high schools',
+    },
+    sampleCutoffs: [
+      { course: 'Physiotherapy', cutoff: '82.90 excl / 94.10 incl' },
+      { course: 'Nursing / Paramedicine dual', cutoff: '77.65 excl / 87.25 incl' },
+      { course: 'Paramedicine', cutoff: '67.70 excl / 79.45 incl' },
+      { course: 'Education (Primary)', cutoff: '65.00 threshold' },
+      { course: 'Nursing', cutoff: '56.75 excl / 65.00 incl' },
+    ],
+    ssafCap: `$${SSAF_CAP_2026} (2026) / $${SSAF_CAP_2027} (2027) • SA-HELP eligible`,
+    website: 'https://www.acu.edu.au/study-at-acu',
+  },
+  {
+    code: 'Bond',
+    name: 'Bond University',
+    logo: '🦅',
+    campusLocations: 'Robina (Gold Coast) & Brisbane Executive Centre',
+    earlySchemeName: 'Bond Early Offer Program (Accelerated 2-Year Degrees)',
+    deadline: 'Offers made from August of Year 12 (Direct application)',
+    criteria: 'Assessed on Year 11 and Year 12 Semester 1 report cards + extracurricular leadership.',
+    guaranteedScope: 'Direct conditional/unconditional offers into bachelor degrees (excl. competitive medical quota).',
+    adjustmentRules: {
+      maxCap: 5.0,
+      subjectBonus: 'Holistic review of academic and leadership achievements',
+      easBonus: 'Full scholarship consideration for financial disadvantage / First Nations',
+      ruralBonus: 'Community leadership and rural excellence scholarships available',
+    },
+    sampleCutoffs: [
+      { course: 'Medical Program', cutoff: 'Competitive ~96+ (full-fee, UCAT/MMI interview)' },
+      { course: 'Laws (Honours)', cutoff: '85.00 indicative' },
+      { course: 'Actuarial Science', cutoff: '90.00 indicative' },
+      { course: 'Biomedical Science', cutoff: '75.00 indicative' },
+      { course: 'Business / Commerce', cutoff: '65.00 indicative' },
+    ],
+    ssafCap: '$0 separate SSAF (included in tuition fees; FEE-HELP eligible)',
+    website: 'https://bond.edu.au',
+  },
+  {
+    code: 'CQU',
+    name: 'CQUniversity Australia',
+    logo: '🏢',
+    campusLocations: 'Brisbane City (160 Ann St, 9 floors) + Rockhampton, Bundaberg, Mackay, Cairns',
+    earlySchemeName: "Principal's Recommendation Scheme & Start Uni",
+    deadline: 'Early December QTAC Round',
+    criteria: "School principal endorsement confirming student's ability to succeed at university level.",
+    guaranteedScope: 'Guaranteed early offer across 40+ degree programs without waiting for final ATAR.',
+    adjustmentRules: {
+      maxCap: 5.0,
+      subjectBonus: '+2 for Maths Methods, Specialist Maths, and Sciences',
+      easBonus: 'Up to +5 points through QTAC Educational Access Scheme',
+      ruralBonus: '+2 bonus rank points for regional/rural Queensland applicants',
+    },
+    sampleCutoffs: [
+      { course: 'Medical Sonography', cutoff: '88.00 threshold' },
+      { course: 'Engineering (Honours)', cutoff: '70.00 threshold' },
+      { course: 'Nursing', cutoff: '70.00 threshold' },
+      { course: 'Education', cutoff: '70.00 threshold' },
+      { course: 'Business', cutoff: '60.00 threshold' },
+    ],
+    ssafCap: `$${SSAF_CAP_2026} (2026) / $${SSAF_CAP_2027} (2027) • SA-HELP eligible`,
+    website: 'https://www.cqu.edu.au',
+  },
+  {
+    code: 'JCU',
+    name: 'James Cook University',
+    logo: '🌴',
+    campusLocations: 'Brisbane (349 Queen St), Townsville (Bebegu Yumba) & Cairns',
+    earlySchemeName: 'JCU Early Offer Program & Rural Health Pathway',
+    deadline: 'Early offers issued from September',
+    criteria: 'Principal or career advisor recommendation based on Year 12 progress and commitment.',
+    guaranteedScope: 'Guaranteed offers across arts, business, science, IT and education. Unique written rural medicine entry.',
+    adjustmentRules: {
+      maxCap: 5.0,
+      subjectBonus: '+2 for Maths Methods, Chemistry, Physics, and LOTE',
+      easBonus: 'Up to +5 points for educational access challenges',
+      ruralBonus: '+2 to +4 bonus ranks for Northern, Central, and Regional Queensland residents',
+    },
+    sampleCutoffs: [
+      { course: 'Medicine (MBBS)', cutoff: '84.15 lowest / 97.90 median (written application, no UCAT; rural focus)' },
+      { course: 'Dentistry', cutoff: '95.00 threshold' },
+      { course: 'Veterinary Science', cutoff: '88.00 threshold' },
+      { course: 'Marine Biology', cutoff: '70.00 threshold' },
+      { course: 'Nursing', cutoff: '66.35 threshold' },
+    ],
+    ssafCap: `$${SSAF_CAP_2026} (2026) / $${SSAF_CAP_2027} (2027) • SA-HELP eligible`,
+    website: 'https://www.jcu.edu.au',
+  },
+  {
+    code: 'TAFE',
+    name: 'TAFE Queensland',
+    logo: '🔧',
+    campusLocations: 'South Bank, Mt Gravatt, Alexandra Hills, Loganlea, Bracken Ridge',
+    earlySchemeName: 'Direct Enrollment & University Degree Articulation Pathways',
+    deadline: 'Rolling admissions / Semester 1 & 2',
+    criteria: 'Zero ATAR required. Open to all Queensland residents 15+.',
+    guaranteedScope: 'Guaranteed credit transfers (up to 1.5 yrs credit) into bachelor degrees at UQ, QUT, Griffith, UniSC, UniSQ & CQU.',
+    adjustmentRules: {
+      maxCap: 0,
+      subjectBonus: 'N/A (Zero ATAR threshold)',
+      easBonus: 'Full concessions and fee-free funding for priority cohorts',
+      ruralBonus: 'Travel allowances and regional apprentice subsidies',
+    },
+    sampleCutoffs: [
+      { course: 'Diploma of Nursing (HLT54121)', cutoff: 'Zero ATAR (Fee-Free TAFE 2026) → B Nursing rank 82' },
+      { course: 'Cert III in Information Technology', cutoff: 'Zero ATAR (Fee-Free TAFE 2026)' },
+      { course: 'Cert III in Early Childhood (ECEC)', cutoff: 'Zero ATAR (Fee-Free TAFE 2026) → B Education rank 68' },
+      { course: 'Cert III in Individual Support', cutoff: 'Zero ATAR (Fee-Free TAFE 2026)' },
+      { course: 'Cert III in Electrotechnology', cutoff: 'Free Apprenticeship U25 (to 30 Jun 2027)' },
+    ],
+    ssafCap: '$0 SSAF (TAFE does not charge Student Services Fees)',
+    website: 'https://tafeqld.edu.au',
+  },
+];
+
 export function BrisbaneUniExplorer() {
   const [selectedUniCode, setSelectedUniCode] = useState<string>('ALL');
   const [activeTab, setActiveTab] = useState<string>('overview');
@@ -54,11 +335,33 @@ export function BrisbaneUniExplorer() {
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
   const [qiltMetric, setQiltMetric] = useState<'salary' | 'employment' | 'satisfaction' | 'firstInFamily'>('salary');
 
-  // ATAR Matcher State
+  // Enhanced QTAC ATAR Matcher State
   const [rawATAR, setRawATAR] = useState<number>(78.0);
-  const [subjectBonuses, setSubjectBonuses] = useState<number>(3.0);
+  const [targetUni, setTargetUni] = useState<QldUniversityCode>('UQ');
+  const [mathsMethods, setMathsMethods] = useState<boolean>(true);
+  const [specialistMaths, setSpecialistMaths] = useState<boolean>(false);
+  const [physics, setPhysics] = useState<boolean>(false);
+  const [chemistry, setChemistry] = useState<boolean>(false);
+  const [lote, setLote] = useState<boolean>(false);
+  const [easPoints, setEasPoints] = useState<number>(0);
+  const [ruralBonus, setRuralBonus] = useState<boolean>(false);
 
-  const effectiveATAR = useMemo(() => Math.min(99.95, rawATAR + subjectBonuses), [rawATAR, subjectBonuses]);
+  // Compute Selection Rank via Engine
+  const qtacRankResult = useMemo(() => {
+    return calculateQtacSelectionRank({
+      rawAtar: rawATAR,
+      mathsMethodsPassed: mathsMethods,
+      specialistMathsPassed: specialistMaths,
+      physicsPassed: physics,
+      chemistryPassed: chemistry,
+      lotePassed: lote,
+      easCategoriesCount: easPoints,
+      ruralRegionalApplicant: ruralBonus,
+      institution: targetUni,
+    });
+  }, [rawATAR, mathsMethods, specialistMaths, physics, chemistry, lote, easPoints, ruralBonus, targetUni]);
+
+  const effectiveATAR = qtacRankResult.selectionRank;
 
   // Selected University
   const selectedUni = useMemo(
@@ -159,16 +462,44 @@ export function BrisbaneUniExplorer() {
           <div className="flex items-center gap-2 mb-1">
             <GraduationCap className="w-6 h-6 text-emerald-500" />
             <h2 className="text-xl sm:text-2xl font-extrabold text-foreground tracking-tight">
-              Brisbane & SEQ Tertiary Institutions Explorer (2026/2027)
+              Queensland Tertiary Institutions Explorer (2026/2027)
             </h2>
           </div>
           <p className="text-xs sm:text-sm text-muted-foreground">
-            Official metrics, rankings, enrollments, ATAR selection thresholds, HECS fee bands, QILT graduate outcomes, early offer schemes, and 50c public transport across 7 SEQ tertiary leaders.
+            Entry cutoffs, guaranteed pathways, rural/SES bonus ranks, SSAF fee caps, and graduate salaries across UQ, QUT, Griffith, UniSC, UniSQ, ACU, Bond, CQU, JCU &amp; TAFE.
           </p>
         </div>
-        <Badge variant="success" className="shrink-0 font-bold">
-          7 Major Tertiary Hubs • QLD 2026/27 Data
-        </Badge>
+        <div className="flex flex-col sm:items-end gap-1 shrink-0">
+          <Badge variant="success" className="font-bold">
+            QLD 2026/27 Universities &amp; TAFE
+          </Badge>
+          <span className="text-[11px] text-muted-foreground font-mono">
+            SSAF Full-Time: ${SSAF_CAP_2026} (2026) • ${SSAF_CAP_2027} (2027)
+          </span>
+        </div>
+      </div>
+
+      {/* QTAC Admissions Milestone Bar */}
+      <div className="p-3.5 rounded-2xl border border-emerald-500/30 bg-emerald-500/5 flex flex-wrap items-center justify-between gap-3 text-xs">
+        <div className="flex items-center gap-2">
+          <Calendar className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+          <span className="font-bold text-foreground">QTAC 2026–2027 Key Dates:</span>
+          <span className="text-muted-foreground">
+            ATAR Release: <strong className="text-emerald-600 dark:text-emerald-400 font-mono">{QTAC_DATES_2026_2027.atarReleaseDateShort}</strong> (9am) • Dec Offer Round: <strong className="text-foreground font-mono">23 Dec 2026</strong> • Jan Major Offer Round: <strong className="text-foreground font-mono">{QTAC_DATES_2026_2027.januaryMajorOfferRoundShort}</strong>
+          </span>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-[11px] text-muted-foreground font-mono">SA-HELP Loan = $0 Cash Upfront</span>
+          <a
+            href="https://www.qtac.edu.au"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-2.5 py-1 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-[11px] flex items-center gap-1 transition-colors"
+          >
+            <span>QTAC.edu.au</span>
+            <ExternalLink className="w-3 h-3" />
+          </a>
+        </div>
       </div>
 
       {/* University Selector Pills */}
@@ -214,9 +545,9 @@ export function BrisbaneUniExplorer() {
       <Tabs
         tabs={[
           { id: 'overview', label: '📊 Uni Profiles & Transit' },
-          { id: 'courses', label: '🎓 Top 70 Degrees & Fees' },
+          { id: 'courses', label: '🎓 Top Degrees & Fees' },
           { id: 'atar-matcher', label: '🎯 QTAC ATAR Matcher' },
-          { id: 'pathways', label: '🚀 Guaranteed Early Offers' },
+          { id: 'pathways', label: '🚀 All 9 QLD Unis & Guaranteed Pathways' },
           { id: 'qilt-charts', label: '📈 QILT Salaries & Outcomes' },
           { id: 'housing-transit', label: '🏡 Housing & 50c Travel' },
           { id: 'news', label: '🥇 2032 Olympics & News' },
@@ -295,7 +626,7 @@ export function BrisbaneUniExplorer() {
                       onClick={() => setSelectedUniCode(uni.code)}
                       className="w-full py-2 rounded-xl bg-primary/10 hover:bg-primary text-primary hover:text-primary-foreground text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-2xs"
                     >
-                      <span>Inspect Full Metrics & Degrees</span>
+                      <span>Inspect Full Metrics &amp; Degrees</span>
                       <Sparkles className="w-3.5 h-3.5" />
                     </button>
                     <a
@@ -379,7 +710,7 @@ export function BrisbaneUniExplorer() {
                 <Card variant="glass" className="p-5 space-y-4">
                   <div className="flex items-center gap-2 border-b border-border pb-2">
                     <Users className="w-5 h-5 text-blue-500" />
-                    <h3 className="font-bold text-foreground text-sm">Student Demographics & Profiles</h3>
+                    <h3 className="font-bold text-foreground text-sm">Student Demographics &amp; Profiles</h3>
                   </div>
                   <div className="space-y-3 text-xs">
                     <div>
@@ -423,7 +754,7 @@ export function BrisbaneUniExplorer() {
 
                     {/* Specialist Strengths */}
                     <div className="pt-2 border-t border-border/60">
-                      <div className="text-xs font-bold text-foreground mb-1.5">Specialist Academic & Industry Strengths</div>
+                      <div className="text-xs font-bold text-foreground mb-1.5">Specialist Academic &amp; Industry Strengths</div>
                       <div className="space-y-1">
                         {selectedUni.specialistStrengths.map((s, idx) => (
                           <div key={idx} className="flex items-center gap-1.5 text-muted-foreground">
@@ -439,7 +770,7 @@ export function BrisbaneUniExplorer() {
                 <Card variant="glass" className="p-5 space-y-4">
                   <div className="flex items-center gap-2 border-b border-border pb-2">
                     <MapPin className="w-5 h-5 text-emerald-500" />
-                    <h3 className="font-bold text-foreground text-sm">Campuses & 50c Translink Transit</h3>
+                    <h3 className="font-bold text-foreground text-sm">Campuses &amp; 50c Translink Transit</h3>
                   </div>
                   <div className="space-y-3 text-xs">
                     {selectedUni.campuses.map((c, i) => (
@@ -473,7 +804,7 @@ export function BrisbaneUniExplorer() {
         </div>
       )}
 
-      {/* TAB 2: TOP 70 COURSES & FEES */}
+      {/* TAB 2: TOP COURSES & FEES */}
       {activeTab === 'courses' && (
         <div className="space-y-5">
           {/* Controls: Search, Field Filter, and Sort Controls */}
@@ -506,6 +837,13 @@ export function BrisbaneUniExplorer() {
                 </button>
               ))}
             </div>
+          </div>
+
+          <div className="p-3 rounded-xl bg-muted/40 border border-border text-[11px] text-muted-foreground flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <span>
+              💡 <strong>SSAF:</strong> $373/yr (2026) / $386/yr (2027) full-time cap. Deferrable via SA-HELP ($0 upfront cash required).
+            </span>
+            <span className="font-mono">Showing {displayCourses.length} courses</span>
           </div>
 
           {/* Courses Table */}
@@ -547,7 +885,7 @@ export function BrisbaneUniExplorer() {
                     className="py-3 px-3 font-bold text-foreground cursor-pointer hover:text-primary transition-colors"
                   >
                     <div className="flex items-center gap-1">
-                      <span>Graduate Career & Salary</span>
+                      <span>Graduate Career &amp; Salary</span>
                       <ArrowUpDown className="w-3 h-3 text-muted-foreground" />
                     </div>
                   </th>
@@ -625,20 +963,44 @@ export function BrisbaneUniExplorer() {
       {activeTab === 'atar-matcher' && (
         <div className="space-y-6">
           <Card variant="glass" className="p-5 space-y-5 border-emerald-500/30 bg-emerald-500/5">
-            <div className="flex items-center gap-2 border-b border-border pb-3">
-              <CheckCircle2 className="w-5 h-5 text-emerald-500" />
-              <div>
-                <h3 className="font-extrabold text-foreground text-base">QTAC Year 12 ATAR Course Matcher</h3>
-                <p className="text-xs text-muted-foreground">
-                  Enter your raw or target ATAR plus subject bonus adjustments to see all guaranteed Brisbane university course matches!
-                </p>
+            <div className="flex items-center justify-between border-b border-border pb-3">
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+                <div>
+                  <h3 className="font-extrabold text-foreground text-base">QTAC Year 12 Selection Rank &amp; Course Matcher</h3>
+                  <p className="text-xs text-muted-foreground">
+                    Model institutional adjustment caps (UQ, QUT, Griffith, UniSC, UniSQ, ACU, Bond, CQU, JCU) to find guaranteed course matches.
+                  </p>
+                </div>
               </div>
+              <Badge variant="success" className="font-mono text-xs">
+                2026/2027 QTAC Rules
+              </Badge>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div className="space-y-4">
+                <div className="space-y-1">
+                  <label className="text-xs font-semibold text-muted-foreground">Target Queensland Institution:</label>
+                  <select
+                    value={targetUni}
+                    onChange={e => setTargetUni(e.target.value as any)}
+                    className="w-full px-3 py-2 rounded-xl border border-border bg-card text-xs font-bold text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                  >
+                    <option value="UQ">University of Queensland (UQ) — Max +5 points</option>
+                    <option value="QUT">Queensland University of Technology (QUT) — Max +5 points</option>
+                    <option value="GRIFFITH">Griffith University — Max +6 points (incl. GC/Logan)</option>
+                    <option value="UniSC">University of the Sunshine Coast (UniSC) — Max +5 points</option>
+                    <option value="UniSQ">University of Southern Queensland (UniSQ) — Max +6 points</option>
+                    <option value="ACU">Australian Catholic University (ACU) — Max +5 points</option>
+                    <option value="CQU">CQUniversity (CQU) — Max +5 points</option>
+                    <option value="JCU">James Cook University (JCU) — Max +5 points</option>
+                    <option value="Bond">Bond University — Max +5 points</option>
+                  </select>
+                </div>
+
                 <SliderControl
-                  label="Your Raw / Target ATAR Score"
+                  label="Your Raw / Projected ATAR Score"
                   value={rawATAR}
                   onChange={setRawATAR}
                   min={50.0}
@@ -647,19 +1009,85 @@ export function BrisbaneUniExplorer() {
                   suffix=""
                 />
 
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold text-muted-foreground">Subject Adjustment Bonuses (+2 points each):</label>
+                  <div className="grid grid-cols-2 gap-2 text-xs">
+                    <label className="flex items-center gap-2 p-2 rounded-xl border border-border bg-card cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={mathsMethods}
+                        onChange={e => setMathsMethods(e.target.checked)}
+                        className="rounded text-primary focus:ring-0"
+                      />
+                      <span>Maths Methods (+2)</span>
+                    </label>
+                    <label className="flex items-center gap-2 p-2 rounded-xl border border-border bg-card cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={specialistMaths}
+                        onChange={e => setSpecialistMaths(e.target.checked)}
+                        className="rounded text-primary focus:ring-0"
+                      />
+                      <span>Specialist Maths (+2)</span>
+                    </label>
+                    <label className="flex items-center gap-2 p-2 rounded-xl border border-border bg-card cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={physics}
+                        onChange={e => setPhysics(e.target.checked)}
+                        className="rounded text-primary focus:ring-0"
+                      />
+                      <span>Physics (+2)</span>
+                    </label>
+                    <label className="flex items-center gap-2 p-2 rounded-xl border border-border bg-card cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={chemistry}
+                        onChange={e => setChemistry(e.target.checked)}
+                        className="rounded text-primary focus:ring-0"
+                      />
+                      <span>Chemistry (+2)</span>
+                    </label>
+                    <label className="flex items-center gap-2 p-2 rounded-xl border border-border bg-card cursor-pointer col-span-2">
+                      <input
+                        type="checkbox"
+                        checked={lote}
+                        onChange={e => setLote(e.target.checked)}
+                        className="rounded text-primary focus:ring-0"
+                      />
+                      <span>LOTE / Languages other than English (+2)</span>
+                    </label>
+                  </div>
+                </div>
+
                 <SliderControl
-                  label="QTAC Subject Adjustment Bonus Points (Maths Methods, Specialist, Physics, EAS, Rural)"
-                  value={subjectBonuses}
-                  onChange={setSubjectBonuses}
-                  min={0.0}
-                  max={6.0}
-                  step={0.5}
+                  label="Educational Access Scheme (EAS / Low-SES / Hardship categories)"
+                  value={easPoints}
+                  onChange={setEasPoints}
+                  min={0}
+                  max={5}
+                  step={1}
                   suffix=" pts"
                 />
 
-                <div className="rounded-xl border border-emerald-500/40 bg-emerald-500/10 p-3.5 text-xs text-emerald-700 dark:text-emerald-300 font-semibold flex items-center justify-between">
-                  <span>Effective Selection Rank:</span>
-                  <span className="text-xl font-extrabold font-mono text-emerald-600 dark:text-emerald-400">
+                <label className="flex items-center gap-2 p-2.5 rounded-xl border border-border bg-card text-xs cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={ruralBonus}
+                    onChange={e => setRuralBonus(e.target.checked)}
+                    className="rounded text-primary focus:ring-0"
+                  />
+                  <span>Regional / Rural Queensland Applicant Scheme (+2 points)</span>
+                </label>
+
+                <div className="rounded-xl border border-emerald-500/40 bg-emerald-500/10 p-3.5 text-xs text-emerald-800 dark:text-emerald-300 font-semibold flex items-center justify-between">
+                  <div>
+                    <div>Effective Selection Rank ({targetUni}):</div>
+                    <div className="text-[11px] opacity-80">
+                      Raw {rawATAR.toFixed(2)} + {qtacRankResult.effectiveBonusPoints.toFixed(1)} bonus pts (capped at {qtacRankResult.institutionCap.toFixed(1)})
+                    </div>
+                  </div>
+                  <span className="text-2xl font-extrabold font-mono text-emerald-600 dark:text-emerald-400">
                     {effectiveATAR.toFixed(2)}
                   </span>
                 </div>
@@ -668,14 +1096,18 @@ export function BrisbaneUniExplorer() {
               <div className="rounded-xl border border-border bg-background/60 p-4 space-y-3 text-xs">
                 <h4 className="font-bold text-foreground flex items-center gap-1.5">
                   <Sparkles className="w-4 h-4 text-amber-500" />
-                  <span>QTAC Rank Adjustment Rules (Queensland)</span>
+                  <span>Rank Calculation Notes for {qtacRankResult.institutionName}:</span>
                 </h4>
-                <ul className="space-y-1.5 text-muted-foreground">
-                  <li>• <strong>Maths Methods (Unit 3/4)</strong>: +2 bonus rank points at UQ, QUT, Griffith.</li>
-                  <li>• <strong>Specialist Mathematics</strong>: +2 bonus rank points.</li>
-                  <li>• <strong>Physics / Chemistry / LOTE</strong>: +2 bonus rank points per subject (max +5/6 total).</li>
-                  <li>• <strong>EAS (Educational Access Scheme)</strong>: Up to +5 points for financial hardship or medical conditions.</li>
-                  <li>• <strong>Regional Access Scheme</strong>: Up to +2 points if living outside metro Brisbane.</li>
+                <ul className="space-y-1.5 text-muted-foreground leading-relaxed">
+                  {qtacRankResult.notes.map((n, i) => (
+                    <li key={i}>• {n}</li>
+                  ))}
+                  <li className="pt-2 text-foreground font-semibold border-t border-border/60">
+                    Guaranteed Pathway Scope:
+                  </li>
+                  <li className="text-muted-foreground">
+                    {qtacRankResult.guaranteedOffersSummary}
+                  </li>
                 </ul>
               </div>
             </div>
@@ -766,50 +1198,98 @@ export function BrisbaneUniExplorer() {
         </div>
       )}
 
-      {/* TAB 4: GUARANTEED EARLY OFFERS */}
+      {/* TAB 4: GUARANTEED EARLY OFFERS & ALL 9 QLD UNIVERSITIES */}
       {activeTab === 'pathways' && (
         <div className="space-y-6">
           <Card variant="glass" className="p-5 space-y-4 border-primary/30 bg-primary/5">
-            <div className="flex items-center gap-2 border-b border-border pb-3">
-              <Award className="w-5 h-5 text-primary" />
-              <div>
-                <h3 className="font-extrabold text-foreground text-base">Queensland Early Offer & Guaranteed Entry Pathways (2026/2027)</h3>
-                <p className="text-xs text-muted-foreground">
-                  Lock in your university placement before final Year 12 exams via official Queensland institution guarantee schemes.
-                </p>
+            <div className="flex items-center justify-between border-b border-border pb-3">
+              <div className="flex items-center gap-2">
+                <Award className="w-5 h-5 text-primary" />
+                <div>
+                  <h3 className="font-extrabold text-foreground text-base">
+                    Queensland Early Offers, Guaranteed Entry &amp; Adjustment Bonus Schemes (2026/2027)
+                  </h3>
+                  <p className="text-xs text-muted-foreground">
+                    Comprehensive comparison across all 9 Queensland universities (UQ, QUT, Griffith, UniSC, UniSQ, ACU, Bond, CQU, JCU) and TAFE Queensland.
+                  </p>
+                </div>
               </div>
+              <Badge variant="default" className="text-xs font-mono font-bold">
+                10 Institutions
+              </Badge>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {DETAILED_BRISBANE_UNIS.map(uni => (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {ALL_QLD_UNIVERSITIES_PATHWAYS.map(uni => (
                 <div key={uni.code} className="rounded-2xl border border-border bg-card p-4 space-y-3 flex flex-col justify-between">
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
+                  <div className="space-y-2.5">
+                    <div className="flex items-start justify-between gap-2 border-b border-border/60 pb-2">
                       <div className="flex items-center gap-2">
-                        <span className="text-2xl">{uni.logoEmoji}</span>
-                        <span className="font-bold text-foreground text-sm">{uni.code}</span>
+                        <span className="text-2xl">{uni.logo}</span>
+                        <div>
+                          <div className="font-extrabold text-foreground text-sm">{uni.name}</div>
+                          <div className="text-[10px] text-muted-foreground flex items-center gap-1">
+                            <MapPin className="w-3 h-3" />
+                            <span>{uni.campusLocations}</span>
+                          </div>
+                        </div>
                       </div>
-                      <Badge variant="default" className="text-[10px] font-mono">
-                        {uni.earlyOfferScheme.deadline}
+                      <Badge variant="default" className="text-[10px] font-mono shrink-0">
+                        {uni.code}
                       </Badge>
                     </div>
 
-                    <h4 className="font-extrabold text-foreground text-sm">{uni.earlyOfferScheme.name}</h4>
-                    <p className="text-xs text-muted-foreground leading-relaxed">{uni.earlyOfferScheme.criteria}</p>
+                    <div>
+                      <div className="text-[10px] uppercase font-bold text-primary">{uni.earlySchemeName}</div>
+                      <div className="text-[11px] text-muted-foreground mt-0.5">{uni.criteria}</div>
+                    </div>
 
                     <div className="p-2.5 rounded-xl bg-background/60 border border-border/80 text-[11px] space-y-1">
-                      <div className="font-semibold text-emerald-600 dark:text-emerald-400">Guaranteed Scope:</div>
-                      <div className="text-muted-foreground">{uni.earlyOfferScheme.guaranteedRanks}</div>
+                      <div className="font-bold text-foreground">Guaranteed Scope &amp; Deadline:</div>
+                      <div className="text-muted-foreground">{uni.guaranteedScope}</div>
+                      <div className="text-[10px] text-emerald-600 dark:text-emerald-400 font-mono font-semibold">
+                        Deadline: {uni.deadline}
+                      </div>
+                    </div>
+
+                    <div className="p-2.5 rounded-xl bg-background/60 border border-border/80 text-[11px] space-y-1">
+                      <div className="font-bold text-foreground">Adjustment Factor Caps (Max {uni.adjustmentRules.maxCap} pts):</div>
+                      <div className="text-muted-foreground text-[10px]">
+                        • <strong>Subject:</strong> {uni.adjustmentRules.subjectBonus}
+                      </div>
+                      <div className="text-muted-foreground text-[10px]">
+                        • <strong>EAS / SES:</strong> {uni.adjustmentRules.easBonus}
+                      </div>
+                      <div className="text-muted-foreground text-[10px]">
+                        • <strong>Regional/Rural:</strong> {uni.adjustmentRules.ruralBonus}
+                      </div>
+                    </div>
+
+                    <div className="space-y-1">
+                      <div className="text-[10px] font-bold text-foreground uppercase">Sample Degree Cutoffs:</div>
+                      <div className="grid grid-cols-1 gap-1">
+                        {uni.sampleCutoffs.map((sc, idx) => (
+                          <div key={idx} className="flex justify-between text-[11px] border-b border-border/40 pb-0.5">
+                            <span className="text-muted-foreground">{sc.course}:</span>
+                            <span className="font-mono font-semibold text-foreground text-right">{sc.cutoff}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between text-[10px] text-muted-foreground font-mono pt-1">
+                      <span>SSAF Fee:</span>
+                      <span className="text-foreground font-bold">{uni.ssafCap}</span>
                     </div>
                   </div>
 
                   <a
-                    href={uni.url}
+                    href={uni.website}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-full mt-2 py-1.5 rounded-xl bg-muted hover:bg-primary/10 text-foreground hover:text-primary text-xs font-bold transition-colors flex items-center justify-center gap-1.5"
                   >
-                    <span>Check Early Entry Requirements</span>
+                    <span>Check Early Entry &amp; Apply</span>
                     <ExternalLink className="w-3.5 h-3.5" />
                   </a>
                 </div>
@@ -936,9 +1416,9 @@ export function BrisbaneUniExplorer() {
               <div className="p-3 rounded-xl bg-card border border-border">
                 <div className="font-bold text-foreground">Top Salary Leader</div>
                 <div className="text-base font-extrabold font-mono text-emerald-600 dark:text-emerald-400 mt-0.5">
-                  UniSQ ($78,200)
+                  UniSQ ($87,100)
                 </div>
-                <p className="text-[10px] text-muted-foreground mt-0.5">Driven by aviation, engineering & spatial surveying.</p>
+                <p className="text-[10px] text-muted-foreground mt-0.5">Driven by aviation, engineering &amp; spatial surveying.</p>
               </div>
               <div className="p-3 rounded-xl bg-card border border-border">
                 <div className="font-bold text-foreground">Top Employment Rate</div>
@@ -966,7 +1446,7 @@ export function BrisbaneUniExplorer() {
             <div className="flex items-center gap-2 border-b border-border pb-3">
               <MapPin className="w-5 h-5 text-sky-500" />
               <div>
-                <h3 className="font-extrabold text-foreground text-base">50c Translink Concession Fare Calculator</h3>
+                <h3 className="font-extrabold text-foreground text-base">50c Translink Concession Fare (Permanent QLD 2026)</h3>
                 <p className="text-xs text-muted-foreground">
                   All full-time university and TAFE students in Queensland get 50c flat-rate public transport across train, bus, ferry and CityCat!
                 </p>
@@ -996,7 +1476,7 @@ export function BrisbaneUniExplorer() {
           <div className="space-y-4">
             <h3 className="font-bold text-foreground text-sm flex items-center gap-2">
               <Building className="w-4 h-4 text-purple-500" />
-              <span>Campus Residential Colleges & Nearby Sharehouse Rents</span>
+              <span>Campus Residential Colleges &amp; Nearby Sharehouse Rents</span>
             </h3>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1032,7 +1512,7 @@ export function BrisbaneUniExplorer() {
         <div className="space-y-4">
           <div className="flex items-center gap-2 border-b border-border pb-2">
             <Medal className="w-5 h-5 text-amber-500" />
-            <h3 className="font-extrabold text-foreground text-sm">Brisbane 2032 Olympic Innovation Hubs & 2026/2027 News</h3>
+            <h3 className="font-extrabold text-foreground text-sm">Brisbane 2032 Olympic Innovation Hubs &amp; 2026/2027 News</h3>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

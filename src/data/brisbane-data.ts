@@ -22,15 +22,15 @@ export interface BudgetItem {
   note: string;
 }
 
-/** Typical weekly living costs for a student / young adult in Brisbane (sharehouse) — Sept 2026 */
+/** Typical weekly living costs for a student / young adult in Brisbane (sharehouse) — 2026-27 */
 export const BRISBANE_WEEKLY_BUDGET: BudgetItem[] = [
-  { category: 'Rent (sharehouse room)', emoji: '🏠', weekly: 250, note: 'Median shared room inner Brisbane $235–$260/wk (2026, RTA bond medians; range $180 Kelvin Grove – $350 New Farm)' },
-  { category: 'Groceries & food', emoji: '🛒', weekly: 100, note: 'Aldi/Woolies deals; West End & Rocklea markets' },
-  { category: 'Public transport (50c Translink fares)', emoji: '🚌', weekly: 5, note: 'Queensland permanent 50-cent flat fare across all SE QLD trains, buses & ferries ≈ $5/wk (Go Card or contactless debit/smartphone)' },
-  { category: 'Phone + internet', emoji: '📱', weekly: 15, note: 'Budget SIM plans from $15/mo' },
+  { category: 'Rent (sharehouse room)', emoji: '🏠', weekly: 250, note: 'Median shared room inner/middle Brisbane $235–$270/wk (2026 RTA bond medians; $200–$250 middle ring, $320–$450 inner riverfront)' },
+  { category: 'Groceries & food', emoji: '🛒', weekly: 100, note: 'Aldi/Woolies specials + Rocklea Sunday and West End markets' },
+  { category: 'Public transport (50c Translink fares)', emoji: '🚌', weekly: 5, note: 'Queensland permanent 50-cent flat fare across all SE QLD trains, buses, ferries & light rail ≈ $5/wk (Visa/Mastercard/Go Card; Amex discontinued Dec 2025; Airtrain excluded)' },
+  { category: 'Phone + internet', emoji: '📱', weekly: 15, note: 'Budget SIM plans from $15/mo (Boost/Aldi Mobile) + split sharehouse NBN' },
   { category: 'Utilities (electricity, water, gas share)', emoji: '💡', weekly: 25, note: 'Split between sharehouse housemates' },
-  { category: 'Eating out & coffee', emoji: '☕', weekly: 50, note: 'Lunch $15-25, coffee $4-6' },
-  { category: 'Entertainment & misc', emoji: '🎬', weekly: 35, note: 'South Bank, uni clubs, free events' },
+  { category: 'Eating out & coffee', emoji: '☕', weekly: 50, note: 'Lunch $15–$25, specialty coffee $4.50–$6' },
+  { category: 'Entertainment & misc', emoji: '🎬', weekly: 35, note: 'South Bank, uni clubs, student cinema & free cultural events' },
 ];
 
 export const BRISBANE_BUDGET_TOTAL_WEEKLY = BRISBANE_WEEKLY_BUDGET.reduce((s, i) => s + i.weekly, 0);
@@ -86,6 +86,7 @@ export interface DetailedBrisbaneUni {
   feesAndFinancials: {
     avgCSPAnnual: number;
     ssafAnnual: number;
+    ssafAnnual2027?: number;
     scholarshipPool: string;
     hecsHelpEligible: boolean;
   };
@@ -239,12 +240,13 @@ export const DETAILED_BRISBANE_UNIS: DetailedBrisbaneUni[] = [
     feesAndFinancials: {
       avgCSPAnnual: 9850,
       ssafAnnual: 373,
+      ssafAnnual2027: 386,
       scholarshipPool: '$25M+ awarded annually in academic, sports & equity support',
       hecsHelpEligible: true,
     },
     qiltMetrics: {
       fullTimeEmpPct: 84.5,
-      medianGraduateSalary: 76500,
+      medianGraduateSalary: 78000,
       overallSatisfactionPct: 83.2,
     },
     studentLife: {
@@ -320,12 +322,13 @@ export const DETAILED_BRISBANE_UNIS: DetailedBrisbaneUni[] = [
     feesAndFinancials: {
       avgCSPAnnual: 9550,
       ssafAnnual: 373,
+      ssafAnnual2027: 386,
       scholarshipPool: '$18M+ Vice-Chancellor\'s & Equity Scholarships pool',
       hecsHelpEligible: true,
     },
     qiltMetrics: {
       fullTimeEmpPct: 86.1,
-      medianGraduateSalary: 74800,
+      medianGraduateSalary: 77000,
       overallSatisfactionPct: 84.5,
     },
     studentLife: {
@@ -402,12 +405,13 @@ export const DETAILED_BRISBANE_UNIS: DetailedBrisbaneUni[] = [
     feesAndFinancials: {
       avgCSPAnnual: 9200,
       ssafAnnual: 373,
+      ssafAnnual2027: 386,
       scholarshipPool: '$15M+ Griffith Remarkable & First Peoples scholarship pool',
       hecsHelpEligible: true,
     },
     qiltMetrics: {
       fullTimeEmpPct: 83.8,
-      medianGraduateSalary: 72500,
+      medianGraduateSalary: 77800,
       overallSatisfactionPct: 85.1,
     },
     studentLife: {
@@ -483,12 +487,13 @@ export const DETAILED_BRISBANE_UNIS: DetailedBrisbaneUni[] = [
     feesAndFinancials: {
       avgCSPAnnual: 8900,
       ssafAnnual: 373,
+      ssafAnnual2027: 386,
       scholarshipPool: '$8M+ access & merit scholarship funding',
       hecsHelpEligible: true,
     },
     qiltMetrics: {
       fullTimeEmpPct: 85.4,
-      medianGraduateSalary: 71000,
+      medianGraduateSalary: 74500,
       overallSatisfactionPct: 88.7,
     },
     studentLife: {
@@ -554,7 +559,7 @@ export const DETAILED_BRISBANE_UNIS: DetailedBrisbaneUni[] = [
       guaranteedRanks: 'Unconditional early offers for aviation, engineering, nursing and business.',
     },
     specialistStrengths: [
-      '#1 in Australia for Graduate Starting Salaries ($78,200 QILT Median)',
+      '#1 in Australia for Graduate Starting Salaries ($87,100 QILT GOS Median / $83,300 prior GOS benchmark)',
       'Commercial-grade Boeing 737 Flight Simulators at Springfield',
       'Aerospace, Space Propulsion & Rocketry Research Hub',
       'High-Fidelity Simulated Hospital Wards replicating real ambulance intakes',
@@ -563,12 +568,13 @@ export const DETAILED_BRISBANE_UNIS: DetailedBrisbaneUni[] = [
     feesAndFinancials: {
       avgCSPAnnual: 8950,
       ssafAnnual: 373,
+      ssafAnnual2027: 386,
       scholarshipPool: '$10M+ Regional & Industry Excellence scholarships',
       hecsHelpEligible: true,
     },
     qiltMetrics: {
       fullTimeEmpPct: 87.9,
-      medianGraduateSalary: 78200,
+      medianGraduateSalary: 87100,
       overallSatisfactionPct: 85.0,
     },
     studentLife: {
@@ -580,7 +586,7 @@ export const DETAILED_BRISBANE_UNIS: DetailedBrisbaneUni[] = [
       ],
     },
     recentNews: [
-      { headline: 'UniSQ Ranked #1 in Australia for Graduate Starting Salaries in QILT 2026', year: '2026', summary: 'Graduates achieve national top median salary of $78,200 thanks to practical industry training.' },
+      { headline: 'UniSQ Ranked #1 in Australia for Graduate Starting Salaries in QILT 2026', year: '2026', summary: 'Graduates achieve national top median salary of $87,100 thanks to practical industry training.' },
       { headline: 'UniSQ Springfield Opens $40M Boeing 737 Flight Simulator & Space Hub', year: '2026', summary: 'Aviation students train on commercial-grade flight simulators for major Australian airlines.' },
       { headline: 'UniSQ Ipswich Expands Nursing & Paramedicine Simulation Hospital Wards', year: '2026', summary: 'New emergency medical training suite replicating real QAS ambulance responses.' },
     ],
@@ -642,12 +648,13 @@ export const DETAILED_BRISBANE_UNIS: DetailedBrisbaneUni[] = [
     feesAndFinancials: {
       avgCSPAnnual: 8750,
       ssafAnnual: 373,
+      ssafAnnual2027: 386,
       scholarshipPool: '$12M+ ACU Guarantee & Community Leadership scholarships',
       hecsHelpEligible: true,
     },
     qiltMetrics: {
       fullTimeEmpPct: 86.8,
-      medianGraduateSalary: 76000,
+      medianGraduateSalary: 76900,
       overallSatisfactionPct: 86.2,
     },
     studentLife: {
@@ -723,6 +730,7 @@ export const DETAILED_BRISBANE_UNIS: DetailedBrisbaneUni[] = [
     feesAndFinancials: {
       avgCSPAnnual: 3200,
       ssafAnnual: 0,
+      ssafAnnual2027: 0,
       scholarshipPool: 'Fee-Free TAFE Queensland scheme covers 100% of tuition for eligible priority courses',
       hecsHelpEligible: false,
     },
@@ -809,46 +817,50 @@ export const QTAC_FEES_2027 = {
   majorOfferRound2: 'Thu 14 Jan 2027',
 } as const;
 
-/** Median weekly rents by Brisbane suburb (early 2026) */
-export interface SuburbRent {
-  suburb: string;
-  sharedWeekly: string; // room in sharehouse
-  unitWeekly: string; // 1-2 bed unit median
-  commute: string;
-  vibe: string;
-}
-
-/** Median weekly rents by Brisbane suburb (RTA Q1 2026 new-tenancy medians via rental-market data, Mar 2026; sharehouse rooms indicative listings) */
+/** Median weekly rents by Brisbane suburb (2026-27 RTA new-tenancy medians & SQM rental metrics; sharehouse rooms indicative listings) */
 export interface SuburbRent {
   suburb: string;
   sharedWeekly: string; // room in sharehouse (indicative listings range)
-  unitWeekly: string; // 1-2 bed unit median (RTA Q1 2026 new tenancies unless noted)
+  unitWeekly: string; // 1-2 bed unit median (RTA new tenancies / SQM metrics)
   commute: string;
   vibe: string;
+  ring?: string;
 }
 
 export const BRISBANE_SUBURBS: SuburbRent[] = [
-  { suburb: 'St Lucia', sharedWeekly: '$350–500', unitWeekly: '$690 (~$815 house)', commute: 'Bus/ferry 15 min', vibe: 'UQ student hub (UQ premium; catered colleges $509–777/wk)' },
-  { suburb: 'Toowong', sharedWeekly: '$280–400', unitWeekly: '$500–690 (asking ~$690; RTA page split)', commute: 'Train 10 min', vibe: 'Convenient, safe' },
-  { suburb: 'South Bank / West End', sharedWeekly: '$380–520', unitWeekly: '$750+ (asking; RTA page empty)', commute: 'Walk/bus 10 min', vibe: 'Trendy, riverside' },
-  { suburb: 'Fortitude Valley', sharedWeekly: '$400–600', unitWeekly: '$510–750 (sources conflict — verify)', commute: 'Train 5 min', vibe: 'Nightlife district (~81% renters)' },
-  { suburb: 'New Farm', sharedWeekly: '$400–600', unitWeekly: '$740 (~$830 house)', commute: 'Ferry/bus 10 min', vibe: 'Riverside premium' },
-  { suburb: 'Teneriffe', sharedWeekly: '$400–600', unitWeekly: '$800 (houses rare)', commute: 'CityCat + bus 10–15 min', vibe: 'Woolstore-chic riverfront apartments' },
-  { suburb: 'Paddington', sharedWeekly: '$350–500', unitWeekly: '$675 (~$860 house)', commute: 'Bus + train 15 min', vibe: 'Village-y inner-west, character cottages' },
-  { suburb: 'Auchenflower', sharedWeekly: '$330–480', unitWeekly: '$675 (~$990 house)', commute: 'Train + bus 10 min', vibe: 'River walks, quick city access' },
-  { suburb: 'Taringa', sharedWeekly: '$280–420', unitWeekly: '$650 (~$780 house)', commute: 'Train 10–15 min', vibe: 'UQ student heartland, cheap eats' },
-  { suburb: 'Indooroopilly', sharedWeekly: '$280–400', unitWeekly: '$725 (~$735 house)', commute: 'Train 20 min', vibe: 'Affordable, family-friendly' },
-  { suburb: 'Bulimba', sharedWeekly: '$380–520', unitWeekly: '$720 (~$960 house)', commute: 'CityCat ferry 20–25 min', vibe: 'Polished riverside east, Oxford St dining' },
-  { suburb: 'Camp Hill', sharedWeekly: '$280–400', unitWeekly: '$480 (~$800 house)', commute: 'Bus 20–30 min', vibe: 'Leafy family hill, big-block Queenslanders' },
-  { suburb: 'Carina', sharedWeekly: '$260–380', unitWeekly: '$650 (~$720 house)', commute: 'Bus 25–30 min', vibe: 'Quiet suburban value near Cannon Hill' },
-  { suburb: 'Moorooka', sharedWeekly: '$240–360', unitWeekly: '$570 (~$725 house)', commute: 'Train 15–20 min', vibe: 'Vintage strip, affordable Queenslander shares' },
-  { suburb: 'Salisbury', sharedWeekly: '$220–330', unitWeekly: '$410 (~$650 house)', commute: 'Train 20–25 min', vibe: 'Cheapest southside entry in this set' },
-  { suburb: 'Annerley', sharedWeekly: '$240–350', unitWeekly: '$580 (~$720 house)', commute: 'Bus 25 min', vibe: 'Budget south-side option' },
-  { suburb: 'Kelvin Grove', sharedWeekly: '$330–450', unitWeekly: '$720 (~$725 house)', commute: 'Bus 15 min', vibe: 'QUT creative campus (rooms from ~$180)' },
-  { suburb: 'Chermside', sharedWeekly: '$250–350', unitWeekly: '$650 (~$700 house)', commute: 'Bus 30 min', vibe: 'Suburban value' },
+  // Inner Ring (0–5km from CBD)
+  { suburb: 'St Lucia', ring: 'Inner (0–5km)', sharedWeekly: '$350–500', unitWeekly: '$690 (~$815 house)', commute: 'Bus/CityCat 15 min', vibe: 'UQ student hub (UQ premium; catered colleges $509–777/wk)' },
+  { suburb: 'Toowong', ring: 'Inner (0–5km)', sharedWeekly: '$280–400', unitWeekly: '$620 (~$750 house)', commute: 'Train/bus 10 min', vibe: 'Inner-west retail hub, quick UQ/CBD access, safe' },
+  { suburb: 'South Bank / West End', ring: 'Inner (0–5km)', sharedWeekly: '$380–520', unitWeekly: '$750 (~$920 house)', commute: 'Walk/CityCat 10 min', vibe: 'Vibrant dining, cultural precinct & riverside markets' },
+  { suburb: 'Fortitude Valley', ring: 'Inner (0–5km)', sharedWeekly: '$360–500', unitWeekly: '$580–720 (~81% renters)', commute: 'Train 5 min', vibe: 'Nightlife district & music scene, high-density living' },
+  { suburb: 'New Farm', ring: 'Inner (0–5km)', sharedWeekly: '$400–600', unitWeekly: '$740 (~$850 house)', commute: 'CityCat/bus 10 min', vibe: 'Leafy riverside premium, Howard Smith Wharves dining' },
+  { suburb: 'Teneriffe', ring: 'Inner (0–5km)', sharedWeekly: '$400–600', unitWeekly: '$800 (houses rare)', commute: 'CityCat + bus 12 min', vibe: 'Woolstore-chic riverfront apartments & cafés' },
+  { suburb: 'Paddington', ring: 'Inner (0–5km)', sharedWeekly: '$350–500', unitWeekly: '$675 (~$880 house)', commute: 'Bus 15 min', vibe: 'Village-y inner-west, character cottages & boutique dining' },
+  { suburb: 'Auchenflower', ring: 'Inner (0–5km)', sharedWeekly: '$330–460', unitWeekly: '$660 (~$920 house)', commute: 'Train/bus 8 min', vibe: 'Quiet riverside enclave, Wesley Hospital, quick city access' },
+  { suburb: 'Kangaroo Point / Woolloongabba', ring: 'Inner (0–5km)', sharedWeekly: '$320–460', unitWeekly: '$620 (~$750 house)', commute: 'Bus/Cross River Rail 10 min', vibe: '2032 Olympic transit precinct, river cliffs & pubs' },
+  { suburb: 'Spring Hill', ring: 'Inner (0–5km)', sharedWeekly: '$300–440', unitWeekly: '$590 (~$780 house)', commute: 'Walk to CBD 10 min', vibe: 'Historic hill, new National Aquatic Centre site' },
+
+  // Middle Ring (5–15km from CBD)
+  { suburb: 'Kelvin Grove', ring: 'Middle (5–15km)', sharedWeekly: '$260–400', unitWeekly: '$650 (~$720 house)', commute: 'Busway 10 min', vibe: 'QUT creative campus, Urban Village weekend markets' },
+  { suburb: 'Taringa', ring: 'Middle (5–15km)', sharedWeekly: '$260–380', unitWeekly: '$620 (~$760 house)', commute: 'Train 12 min', vibe: 'UQ student heartland, budget Asian dining' },
+  { suburb: 'Indooroopilly', ring: 'Middle (5–15km)', sharedWeekly: '$270–390', unitWeekly: '$680 (~$750 house)', commute: 'Train 15 min', vibe: 'Major westside shopping hub, student-friendly trains' },
+  { suburb: 'Bulimba', ring: 'Middle (5–15km)', sharedWeekly: '$360–500', unitWeekly: '$700 (~$950 house)', commute: 'CityCat ferry 20 min', vibe: 'Polished riverside east, Oxford St dining & cinemas' },
+  { suburb: 'Camp Hill', ring: 'Middle (5–15km)', sharedWeekly: '$260–380', unitWeekly: '$520 (~$780 house)', commute: 'Bus 25 min', vibe: 'Leafy family hill, big-block Queenslanders' },
+  { suburb: 'Carina', ring: 'Middle (5–15km)', sharedWeekly: '$250–360', unitWeekly: '$620 (~$700 house)', commute: 'Bus 25 min', vibe: 'Quiet suburban value near Westfield Carindale bus hub' },
+  { suburb: 'Moorooka', ring: 'Middle (5–15km)', sharedWeekly: '$220–320', unitWeekly: '$550 (~$690 house)', commute: 'Train 18 min', vibe: 'Vintage shopping strip, affordable Queenslander shares' },
+  { suburb: 'Salisbury', ring: 'Middle (5–15km)', sharedWeekly: '$210–300', unitWeekly: '$450 (~$640 house)', commute: 'Train 22 min', vibe: 'Artisan microbreweries, cheapest southside entry' },
+  { suburb: 'Annerley', ring: 'Middle (5–15km)', sharedWeekly: '$230–340', unitWeekly: '$560 (~$700 house)', commute: 'Busway 15 min', vibe: 'PA Hospital corridor, vintage shops, budget shares' },
+  { suburb: 'Chermside', ring: 'Middle (5–15km)', sharedWeekly: '$240–340', unitWeekly: '$620 (~$680 house)', commute: 'Northern Busway 25 min', vibe: 'Westfield megamall, Prince Charles Hospital transit hub' },
+  { suburb: 'Mount Gravatt / Nathan', ring: 'Middle (5–15km)', sharedWeekly: '$220–320', unitWeekly: '$540 (~$680 house)', commute: 'SE Busway 20 min', vibe: 'Griffith Nathan campus, bushland trails, student budget eats' },
+
+  // Outer Ring (15km+ / Greater SEQ)
+  { suburb: 'Petrie / Moreton Bay', ring: 'Outer (15km+)', sharedWeekly: '$190–260', unitWeekly: '$460 (~$580 house)', commute: 'Train 35 min', vibe: 'UniSC Moreton Bay rail hub, lakeside parks' },
+  { suburb: 'Springfield Central', ring: 'Outer (15km+)', sharedWeekly: '$190–260', unitWeekly: '$470 (~$600 house)', commute: 'Train 40 min', vibe: 'UniSQ campus, masterplanned health & education city' },
+  { suburb: 'Ipswich CBD', ring: 'Outer (15km+)', sharedWeekly: '$180–240', unitWeekly: '$420 (~$520 house)', commute: 'Train 50 min', vibe: 'Heritage city centre, UniSQ & TAFE Queensland hub' },
+  { suburb: 'Logan Central', ring: 'Outer (15km+)', sharedWeekly: '$180–240', unitWeekly: '$430 (~$530 house)', commute: 'Train/bus 40 min', vibe: 'Multicultural food hub near Griffith University Logan' },
 ];
 
-/** QLD first home buyer help (Sept 2026 — verify with QRO/Housing Australia before exchange) */
+/** QLD first home buyer help (2026-27 — verify with QRO/Housing Australia before exchange) */
 export const QLD_FIRST_HOME_HELP = [
   { name: 'First Home Owner Grant', amount: '$30,000', note: 'New homes under $750,000 (contracts from 20 Nov 2023; extended in 2026-27 Budget, ongoing from 1 July 2026)' },
   { name: 'First Home Transfer Duty Concession', amount: 'Up to 100% off', note: 'Nil duty on established homes ≤$700k, sliding scale to $800k (saves up to $24,525); NEW homes get FULL relief with NO cap from 1 May 2025' },
@@ -867,40 +879,150 @@ export const QLD_TEEN_RULES: QLDRule[] = [
   {
     title: 'Rental bond = max 4 weeks',
     emoji: '🔑',
-    detail: 'In Queensland your bond is capped at 4 weeks rent (no rent threshold since Sep 2024). The agent must lodge it with the RTA within 10 days.',
+    detail: 'In Queensland your bond is strictly capped at 4 weeks rent for all residential tenancies (the former $700/week threshold was abolished). The lessor/agent must lodge it with the RTA within 10 days using Form 2 or RTA Web Services.',
+  },
+  {
+    title: 'Rent increases capped to 12 months',
+    emoji: '📅',
+    detail: 'Rent can only be increased once every 12 months in Queensland, and the cap is attached to the PROPERTY itself, not the tenant. If a previous tenant vacated after an increase, rent cannot be hiked until 12 full months have elapsed. 2 months written notice is mandatory.',
+  },
+  {
+    title: 'Rent bidding banned by law',
+    emoji: '🚫',
+    detail: 'Landlords and real estate agents cannot advertise properties without a fixed price, solicit rental bids above the listed price, or accept offers higher than advertised under the RTRA Act.',
   },
   {
     title: '50c flat fares permanent',
     emoji: '🚌',
-    detail: 'Queensland 50-cent flat fares are permanent by law across all TransLink public transport (bus, train, ferry, tram in SEQ and regional urban buses). Tap on/off with Go Card or contactless Visa/Mastercard/smartphone wallet. Free transfers within 60 minutes; under-5s always free, weekend travel free for kids 5–14 on child Go Card.',
+    detail: 'Queensland 50-cent flat fares are permanent by statutory enactment across all TransLink public transport (buses, QR Citytrain lines, Brisbane CityCats & ferries, Gold Coast G:link tram, and 9 regional city bus networks including Cairns, Townsville, Toowoomba, Mackay, Rockhampton, Bundaberg, Gladstone, and Hervey Bay/Maryborough). Free weekend travel for primary school students on Child Go Card. Airtrain excluded. Tap on/off with contactless Visa/Mastercard or Go Card. Free transfers within 60 minutes.',
   },
   {
-    title: 'QLD rego = 3 parts',
+    title: 'Smart Ticketing: Visa & Mastercard',
+    emoji: '💳',
+    detail: 'Tap on/off with contactless physical Visa/Mastercard or digital phone wallets (Apple/Google/Samsung Pay). American Express was discontinued on 15 December 2025 across all readers. Always tap on and off with the exact same device or card to avoid card clash and double default fares.',
+  },
+  {
+    title: 'QLD rego = 3 parts (CTP by car class)',
     emoji: '🚗',
-    detail: 'Queensland rego combines the registration fee, traffic improvement fee, and CTP insurance. CTP is priced on your car class (not your age) — QLD has the lowest CTP in mainland Australia.',
+    detail: 'Queensland rego combines the registration fee, traffic improvement fee, and CTP insurance. CTP is priced on vehicle class (not driver age) — saving young drivers hundreds compared to NSW Greenslips.',
   },
   {
-    title: 'Learner licence from 16',
+    title: 'Learner licence from 16 (PrepL)',
     emoji: '🪪',
-    detail: 'You can get your Ls at 16 in Queensland (PrepL online road rules test). Under 25s must log 100 supervised driving hours (incl. 10 at night) before the P1 test — use the QLD Learner Logbook app to track them.',
+    detail: 'You can get your Ls at 16 in Queensland via the PrepL online road rules test ($29.70). Under 25s must log 100 supervised driving hours (incl. 10 at night; 10 professional lessons count as 30 hours) before the P1 practical driving test.',
   },
   {
     title: 'Super for under 18s',
     emoji: '⭐️',
-    detail: 'Same ATO rule nationwide: under 18, employers must pay 12% super only if you work more than 30 hours in a calendar week. Over 18, super is on all hours.',
+    detail: 'Same ATO rule nationwide: under 18, employers must pay 12% super only if you work more than 30 hours in a calendar week (SGAA 1992 s 19(10)). Over 18, super is paid on all eligible hours.',
   },
   {
-    title: 'Public holidays',
+    title: 'Public holiday penalty rates',
     emoji: '🎉',
-    detail: 'QLD public holidays (Easter, Ekka Show Day in August, Christmas) earn penalty rates of +125% to +150% for casuals — a great weekend pay boost.',
+    detail: 'QLD public holidays (Easter, Ekka Show Day in August, Labour Day, Christmas) earn casual penalty rates of +125% to +150% (225%–250% total pay) — a substantial weekend earnings boost for young workers.',
   },
 ];
+
+/**
+ * TransLink South East Queensland Public Transport Policy & Smart Ticketing (2026/2027).
+ * Permanent statutory 50-cent flat fare across all TransLink SEQ modes and regional urban bus networks.
+ */
+export const TRANSLINK_SEQ_POLICY = {
+  flatFareAUD: 0.50,
+  statutoryPermanent: true,
+  statutoryBasis: 'Transport Operations (Passenger Transport) Act and Queensland State Budgetary Enactment (permanent statutory policy)',
+  modesIncluded: [
+    'Brisbane City Council & SEQ Buses (Metro, busways & suburban)',
+    'Queensland Rail (Citytrain network extending Gympie North, Rosewood, Varsity Lakes)',
+    'G:link Light Rail (Gold Coast tram Helensvale to Broadbeach South)',
+    'TransLink Ferries (CityCat, CityHopper, Kangaroo Point Cross River Ferry)',
+    'Regional urban bus networks (Cairns, Townsville, Toowoomba, Mackay, Rockhampton, Bundaberg, Gladstone, Hervey Bay, Maryborough)',
+  ],
+  regionalBusNetworks: [
+    'Cairns (Sunbus / Kinetic)',
+    'Townsville (Sunbus / Kinetic)',
+    'Toowoomba (Bus Queensland Toowoomba network)',
+    'Mackay (Translink / Mackay Transit Coaches)',
+    'Rockhampton & Capricorn Coast / Yeppoon (Young\'s Bus Service / CDC QLD)',
+    'Bundaberg (Duffy\'s City Buses)',
+    'Gladstone (Bus Queensland Gladstone)',
+    'Hervey Bay & Maryborough (Wide Bay Transit Fraser Coast)',
+    'Whitsundays, Bowen, Innisfail, Warwick & Gympie',
+  ],
+  smartTicketingPaymentMethods: [
+    'Contactless Visa & Mastercard debit and credit cards',
+    'Smart devices via digital wallets (Apple Pay, Google Pay, Samsung Pay on smartphones and smartwatches)',
+    'TransLink Go Card (Adult, Child, Concession, Senior)',
+    'Single paper tickets (train stations)',
+  ],
+  smartTicketingRules: {
+    supportedCards: ['Visa', 'Mastercard'],
+    supportedWallets: ['Apple Pay', 'Google Pay', 'Samsung Pay'],
+    discontinuedCards: ['American Express (Amex discontinued on 15 December 2025 across all readers)'],
+    discontinuationDateAmex: '2025-12-15',
+    hardwareRollout: 'Complete across all SEQ buses, Queensland Rail train stations, G:link tram platforms, and CityCat ferry terminals',
+    goldenRule: 'Always tap on and tap off with the exact same physical card or device token. Mixing card and phone registers as two separate incomplete journeys, incurring two maximum default fares.',
+  },
+  transferRules: {
+    freeTransferWindowMinutes: 60,
+    note: 'Free transfers between bus, train, tram, and ferry journeys initiated within 60 minutes of touching off (maximum 3 transfers within 3.5-hour total journey).',
+  },
+  concessionRules: {
+    under5: 'Children aged 4 and under travel 100% free at all times with an adult (no ticket or card required)',
+    children5to14: '50c flat fare on weekdays; 100% free travel on weekends with Child Go Card',
+    primaryAndChildDetails: {
+      fareWeekend: 0.00,
+      fareWeekday: 0.50,
+      weekendTravel: 'Free travel all day Saturday and Sunday year-round across all SEQ modes with an orange Child Go Card (card must have a positive balance to validate at gates)',
+      weekdayTravel: 'Standard 50c flat fare per trip Monday to Friday during school terms and Queensland school holidays',
+      schoolHolidaysNote: 'Weekend free travel does not automatically apply to weekdays during school holidays; standard 50c flat concession fare applies Monday–Friday',
+    },
+    secondaryStudents15to18: '50c flat fare on weekdays; free travel on weekends with approved Child Go Card and secondary school photo ID',
+    studentsAndConcession: 'Standard 50c flat fare applies uniformly across all SEQ zones (no surcharge)',
+    tertiaryAndUniStudents: 'Standard flat 50c fare across all SEQ zones. Tertiary students can tap directly with contactless Visa/Mastercard without needing concession application paperwork',
+    airtrainSpecialFlatRate: 10.90, // $10.90 between Brisbane Airport and Brisbane City stations (regular Airtrain spur excluded from 50c flat fare)
+  },
+  weeklyEstimatedCost: 5.00, // 10 trips/week @ 50c
+  annualEstimatedSavings: 1898, // ~$1,898/yr compared to pre-50c zonal fares
+} as const;
+
+export const TRANSLINK_50C_FLAT_FARE = 0.50;
+
+/**
+ * Economic comparison between full-time TransLink 50c transit vs private car ownership in Brisbane.
+ * Demonstrates the massive cost-of-living benefit for students and young workers.
+ */
+export const TRANSLINK_CAR_VS_TRANSIT_COMPARISON = {
+  dailyCommuteTransit: {
+    tripsPerDay: 2,
+    costPerTrip: 0.50,
+    dailyCost: 1.00,
+    weeklyCost5Days: 5.00,
+    annualCost48Weeks: 240.00, // 240 working/study days (48 weeks x 5 days) = $240/yr
+    annualCost52Weeks: 260.00,
+  },
+  carAnnualRunningCosts: {
+    fuel: 1650, // ~10,000-12,000 km/yr @ 8.0L/100km @ $1.90/L
+    qldRegoAndCTP: 880, // QLD 4-cylinder private rego + Class 1 CTP + Traffic Improvement Fee
+    comprehensiveInsurance: 1600, // Under-25 driver median comprehensive insurance
+    maintenanceAndTyres: 750, // Basic annual logbook service, brake pads, tyres
+    subtotalOperating: 4880, // ~$4,880/yr minimum car baseline
+    parkingUniOrCBD: 1500, // $15–$30/day part-time uni/work parking
+    totalWithParking: 6380,
+  },
+  annualSavings: {
+    baselineSavings: 4640, // $4,880 car running - $240 transit = ~$4,640/yr savings
+    savingsWithParking: 6140, // $6,380 - $240 = $6,140/yr savings
+    weeklyCashFlowBoost: 89.23, // ~$90/wk back in pocket
+    summary: 'Commuting on TransLink 50c flat fares costs just $1.00/day ($240/yr) compared to $4,000–$6,000+/yr to operate a car in Brisbane — saving young adults and students over $3,500 to $5,500 net cash every year.',
+  },
+} as const;
 
 // ═══════════════════════════════════════════════════════════════════════════
 // QUEENSLAND UNIVERSITIES (2026-27)
 // Sources: QS World University Rankings 2027 (published 18 Jun 2026), THE World 2026, institutional websites, StudyAssist 1 Jan 2026
 // CSP 2026: $4,738 (Education/Nursing/Agriculture) / $9,537 (Allied Health/Engineering/Science/Computing) / $13,558 (Medicine/Dentistry/Vet) / $17,399 (Law/Commerce)
-// SSAF cap 2026: $373 for all providers ($279.75 part-time; was $365 in 2025)
+// SSAF cap 2026: $373 for all providers ($279.75 part-time; was $365 in 2025; $386 in 2027)
 // ═══════════════════════════════════════════════════════════════════════════
 
 export interface University {
@@ -916,6 +1038,11 @@ export interface University {
   domesticUndergradFees: string;
   cspBands: { band1: number; band2: number; band3: number; band4: number };
   ssaf2026: number;
+  ssaf2027?: number;
+  qiltSalary?: number;          // 2025/2026 QILT GOS undergraduate median starting salary
+  qiltFullTimeEmpPct?: number;  // QILT GOS full-time employment rate (%)
+  qiltStudentSatisfaction?: number; // QILT SES student experience / satisfaction rating (%)
+  earlyOfferProgram?: string;   // Verified early offer / guarantee admission scheme
   notable: string;
   website: string;
 }
@@ -931,9 +1058,14 @@ export const QLD_UNIVERSITIES: University[] = [
     campuses: ['St Lucia', 'Gatton', 'Herston', 'Ponce (UQ Downtown)'],
     typicalATAR: '80–90',
     competitiveATAR: 'Medicine 95 adj + UCAT/MMI (99+ competitive) / Law 97.5 / Dentistry 98+',
-    domesticUndergradFees: 'CSP $4,738–$17,399/yr + SSAF $373',
+    domesticUndergradFees: 'CSP $4,738–$17,399/yr + SSAF $373 ($386 in 2027)',
     cspBands: { band1: 4738, band2: 9537, band3: 13558, band4: 17399 },
     ssaf2026: 373,
+    ssaf2027: 386,
+    qiltSalary: 78000,
+    qiltFullTimeEmpPct: 84.5,
+    qiltStudentSatisfaction: 83.2,
+    earlyOfferProgram: 'UQ Guaranteed ATAR & Subject Incentive Scheme (up to 5 adjustment ranks for Maths Methods, Specialist Maths, Languages, or approved university studies)',
     notable: 'Group of Eight. QS =40 world (up 2 from =42 in 2026), THE =80 (2026 rankings). Strong in medicine, agriculture, mining, business. St Lucia riverside campus.',
     website: 'https://www.uq.edu.au',
   },
@@ -947,9 +1079,14 @@ export const QLD_UNIVERSITIES: University[] = [
     campuses: ['Gardens Point', 'Kelvin Grove'],
     typicalATAR: '70–85',
     competitiveATAR: 'Law 84 threshold / 87 guarantee / Nursing 74 / Engineering 82',
-    domesticUndergradFees: 'CSP $4,738–$17,399/yr + SSAF $373',
+    domesticUndergradFees: 'CSP $4,738–$17,399/yr + SSAF $373 ($386 in 2027)',
     cspBands: { band1: 4738, band2: 9537, band3: 13558, band4: 17399 },
     ssaf2026: 373,
+    ssaf2027: 386,
+    qiltSalary: 77000,
+    qiltFullTimeEmpPct: 86.1,
+    qiltStudentSatisfaction: 84.5,
+    earlyOfferProgram: 'QUT Year 12 Offer Guarantee & START QUT (guaranteed entry threshold for specific degrees; up to 4 study adjustments; early offer round in November)',
     notable: 'Real-world, industry-focused. QS 240 (down 14 from 226 in 2026), strong in creative industries, IT, business, law. Two inner-city campuses.',
     website: 'https://www.qut.edu.au',
   },
@@ -963,9 +1100,14 @@ export const QLD_UNIVERSITIES: University[] = [
     campuses: ['Nathan', 'Gold Coast', 'Mt Gravatt', 'South Bank', 'Logan'],
     typicalATAR: '65–80',
     competitiveATAR: 'Medicine 99.90 (Gold Coast/Brisbane South) / Law 78–88',
-    domesticUndergradFees: 'CSP $4,738–$17,399/yr + SSAF $373',
+    domesticUndergradFees: 'CSP $4,738–$17,399/yr + SSAF $373 ($386 in 2027)',
     cspBands: { band1: 4738, band2: 9537, band3: 13558, band4: 17399 },
     ssaf2026: 373,
+    ssaf2027: 386,
+    qiltSalary: 77800,
+    qiltFullTimeEmpPct: 83.8,
+    qiltStudentSatisfaction: 85.1,
+    earlyOfferProgram: 'Griffith Guaranteed Admission & Early Offer Scheme (assessment based on Year 12 semester 1 results + principal recommendation for 70+ degrees)',
     notable: 'QS 230 (up 38 from 268 in 2026 — largest AU jump top 250). Strong in environmental science, tourism, criminology, music. Five SEQ campuses.',
     website: 'https://www.griffith.edu.au',
   },
@@ -979,9 +1121,14 @@ export const QLD_UNIVERSITIES: University[] = [
     campuses: ['Sippy Downs', 'Sunshine Coast Health (Birtinya)', 'Moreton Bay', 'Fraser Coast', 'Gympie'],
     typicalATAR: '60–75',
     competitiveATAR: 'Nursing 70 / Education 70 / Paramedicine 80',
-    domesticUndergradFees: 'CSP $4,738–$17,399/yr + SSAF $373',
+    domesticUndergradFees: 'CSP $4,738–$17,399/yr + SSAF $373 ($386 in 2027)',
     cspBands: { band1: 4738, band2: 9537, band3: 13558, band4: 17399 },
     ssaf2026: 373,
+    ssaf2027: 386,
+    qiltSalary: 74500,
+    qiltFullTimeEmpPct: 85.4,
+    qiltStudentSatisfaction: 88.7,
+    earlyOfferProgram: 'UniSC Early Offer Guarantee (offers released in November before final ATARs based on school recommendation)',
     notable: 'Fast-growing regional (20,782 students, 2025). THE 501–600. #1 in QLD for student experience (QILT SES). Strong in nursing, education, sport science. Moreton Bay campus at Petrie station.',
     website: 'https://www.usc.edu.au',
   },
@@ -995,10 +1142,15 @@ export const QLD_UNIVERSITIES: University[] = [
     campuses: ['Toowoomba', 'Springfield', 'Ipswich'],
     typicalATAR: '60–75',
     competitiveATAR: 'Aviation 68 / Engineering 75 / Education 70',
-    domesticUndergradFees: 'CSP $4,738–$17,399/yr + SSAF $373',
+    domesticUndergradFees: 'CSP $4,738–$17,399/yr + SSAF $373 ($386 in 2027)',
     cspBands: { band1: 4738, band2: 9537, band3: 13558, band4: 17399 },
     ssaf2026: 373,
-    notable: 'QS 411 (down 1 from 410 in 2026) — #1 QLD regional for online. Leader in engineering, agriculture, surveying, aviation.',
+    ssaf2027: 386,
+    qiltSalary: 87100,
+    qiltFullTimeEmpPct: 87.9,
+    qiltStudentSatisfaction: 85.0,
+    earlyOfferProgram: 'UniSQ Accelerated Early Offer & Principal Recommendation (guaranteed early entry in September/October with automated progression)',
+    notable: 'QS 411 (down 1 from 410 in 2026) — #1 QLD regional for online. #1 in Australia for graduate starting salaries ($87,100 QILT GOS / $83,300 prior benchmark). Leader in engineering, agriculture, surveying, aviation.',
     website: 'https://www.unisq.edu.au',
   },
   {
@@ -1011,10 +1163,15 @@ export const QLD_UNIVERSITIES: University[] = [
     campuses: ['Banyo', 'North Sydney', 'Melbourne', 'Canberra', 'Ballarat'],
     typicalATAR: '60–80',
     competitiveATAR: 'Nursing 75 / Education 70 / Paramedicine 85',
-    domesticUndergradFees: 'CSP $4,738–$17,399/yr + SSAF $373',
+    domesticUndergradFees: 'CSP $4,738–$17,399/yr + SSAF $373 ($386 in 2027)',
     cspBands: { band1: 4738, band2: 9537, band3: 13558, band4: 17399 },
     ssaf2026: 373,
-    notable: 'QS 851–900 (stable). THE 501–600. Strong in nursing, education, health, social work. Banyo campus north Brisbane.',
+    ssaf2027: 386,
+    qiltSalary: 76900,
+    qiltFullTimeEmpPct: 86.8,
+    qiltStudentSatisfaction: 86.2,
+    earlyOfferProgram: 'ACU Guarantee Scheme (entry based on Year 11 results, community involvement, and personal statements released in September)',
+    notable: 'QS 851–900 (stable). THE 501–600. #1 in Australia for graduate employer satisfaction (QILT). Strong in nursing, education, health, social work. Banyo campus north Brisbane.',
     website: 'https://www.acu.edu.au',
   },
   {
@@ -1027,9 +1184,14 @@ export const QLD_UNIVERSITIES: University[] = [
     campuses: ['Brisbane City — 160 Ann St, 4000 (9 floors, near Central station)', 'Rockhampton', 'Bundaberg', 'Cairns', 'Gladstone', 'Mackay', 'Melbourne', 'Sydney', 'Perth'],
     typicalATAR: '60–75 (plus extensive VET-to-degree pathways)',
     competitiveATAR: 'Engineering 70 / Nursing 70 / Education 70',
-    domesticUndergradFees: 'CSP $4,738–$17,399/yr + SSAF $373',
+    domesticUndergradFees: 'CSP $4,738–$17,399/yr + SSAF $373 ($386 in 2027)',
     cspBands: { band1: 4738, band2: 9537, band3: 13558, band4: 17399 },
     ssaf2026: 373,
+    ssaf2027: 386,
+    qiltSalary: 83500,
+    qiltFullTimeEmpPct: 86.4,
+    qiltStudentSatisfaction: 81.2,
+    earlyOfferProgram: "CQUni Principal's Recommendation Scheme (direct early entry based on school principal recommendation, no ATAR required)",
     notable: 'Largest regional uni in Australia (30k students, 20 campuses). QS 436 (up 63 from 499 in 2026). Leader in online/distance and apprenticeships. Fee-Free TAFE partner.',
     website: 'https://www.cqu.edu.au',
   },
@@ -1043,9 +1205,14 @@ export const QLD_UNIVERSITIES: University[] = [
     campuses: ['Brisbane — 349 Queen St, 4000 (JCUB, with Russo Higher Education)', 'Townsville', 'Cairns (Nguma-bada)', 'Mackay', 'Mount Isa'],
     typicalATAR: '60–80',
     competitiveATAR: 'Medicine 84.15 lowest / 97.90 median (rural-access) / Dentistry 95+ / Marine Biology 70',
-    domesticUndergradFees: 'CSP $4,738–$17,399/yr + SSAF $373',
+    domesticUndergradFees: 'CSP $4,738–$17,399/yr + SSAF $373 ($386 in 2027)',
     cspBands: { band1: 4738, band2: 9537, band3: 13558, band4: 17399 },
     ssaf2026: 373,
+    ssaf2027: 386,
+    qiltSalary: 78500,
+    qiltFullTimeEmpPct: 85.0,
+    qiltStudentSatisfaction: 82.0,
+    earlyOfferProgram: 'JCU Early Offer Program (guaranteed offer based on Year 12 mid-year report card and principal endorsement)',
     notable: 'QS 438= (up 2 from 440 in 2026), THE 351–400. World leader in tropical medicine, marine biology (Reef), and rural health.',
     website: 'https://www.jcu.edu.au',
   },
@@ -1059,10 +1226,15 @@ export const QLD_UNIVERSITIES: University[] = [
     campuses: ['Robina (Gold Coast)', 'Brisbane teaching — 433 Boundary St, Spring Hill + L26, 240 Queen St (Executive Ed hub)'],
     typicalATAR: 'No ATAR threshold — psychometric + interview (competitive ~95+ for Medicine)',
     competitiveATAR: 'Law ~85+ / Medicine (full-fee, UCAT + interview, competitive 96+)',
-    domesticUndergradFees: 'Full-fee private: ~$50k–$75k/yr (accelerated 2-yr bachelor; no CSP)',
+    domesticUndergradFees: 'Full-fee private: ~$50k–$75k/yr (accelerated 2-yr bachelor; no CSP; no SSAF)',
     cspBands: { band1: 0, band2: 0, band3: 0, band4: 0 },
     ssaf2026: 0,
-    notable: 'Private not-for-profit, QS 518= (up 73 from 591 in 2026). Trimester model — finish bachelor in 2 years. Full-fee only (FEE-HELP available).',
+    ssaf2027: 0,
+    qiltSalary: 74000,
+    qiltFullTimeEmpPct: 87.2,
+    qiltStudentSatisfaction: 89.5,
+    earlyOfferProgram: 'Bond University Early Offer Scheme (conditional or direct offers based on Year 11 / Year 12 semester 1 results + co-curricular portfolio)',
+    notable: 'Private not-for-profit, QS 518= (up 73 from 591 in 2026). #1 in Australia for undergraduate student experience 18 years running (QILT SES). Trimester model — finish bachelor in 2 years. Full-fee only (FEE-HELP available).',
     website: 'https://bond.edu.au',
   },
   {
@@ -1078,6 +1250,11 @@ export const QLD_UNIVERSITIES: University[] = [
     domesticUndergradFees: 'Full-fee private: ~$30k–$50k/yr (Bachelor of Film, Audio, Design, Games)',
     cspBands: { band1: 0, band2: 0, band3: 0, band4: 0 },
     ssaf2026: 0,
+    ssaf2027: 0,
+    qiltSalary: 62000,
+    qiltFullTimeEmpPct: 72.5,
+    qiltStudentSatisfaction: 81.0,
+    earlyOfferProgram: 'SAE Early Admission & Creative Portfolio Pathway',
     notable: 'Global creative media school (audio, film, animation, games). 40+ years, 50+ campuses worldwide. Practical industry-led degrees with professional facilities.',
     website: 'https://www.sae.edu.au',
   },
@@ -1094,6 +1271,11 @@ export const QLD_UNIVERSITIES: University[] = [
     domesticUndergradFees: 'Full-fee private: ~$25k–$45k/yr',
     cspBands: { band1: 0, band2: 0, band3: 0, band4: 0 },
     ssaf2026: 0,
+    ssaf2027: 0,
+    qiltSalary: 68000,
+    qiltFullTimeEmpPct: 78.0,
+    qiltStudentSatisfaction: 82.5,
+    earlyOfferProgram: 'Torrens University Early Entry Program & Industry Scholarship Scheme',
     notable: 'Part of Strategic Education (US-listed). Strong in hospitality, tourism, events, sports management, UX/UI design. Multiple intakes per year.',
     website: 'https://www.torrens.edu.au',
   },
@@ -1110,6 +1292,11 @@ export const QLD_UNIVERSITIES: University[] = [
     domesticUndergradFees: 'Full-fee private: ~$25k–$40k/yr',
     cspBands: { band1: 0, band2: 0, band3: 0, band4: 0 },
     ssaf2026: 0,
+    ssaf2027: 0,
+    qiltSalary: 59000,
+    qiltFullTimeEmpPct: 70.0,
+    qiltStudentSatisfaction: 83.0,
+    earlyOfferProgram: 'JMC Early Entry Creative Audition / Portfolio Admission',
     notable: 'Australia\'s leading creative arts entertainment college (music, audio engineering, film, digital media). Industry-connected, professional grade facilities. 35+ years.',
     website: 'https://www.jmcacademy.edu.au',
   },
@@ -1149,6 +1336,14 @@ export const QLD_YEAR12_OVERVIEW: QCEInfo[] = [
   {
     title: 'Literacy & numeracy',
     detail: 'QCE requires demonstrated literacy and numeracy — met via C or higher in a General/Applied English or Maths (Units 3&4), or C in QCAA Short Courses (Literacy/Numeracy), or 4+ in IB, or recognised studies. Literacy: English, EAL, Literature, English & Literature Extension or Essential English. Numeracy: General/Essential Mathematics, Maths Methods, Specialist Mathematics.',
+  },
+  {
+    title: 'Mutually exclusive subjects (QTAC exclusion rule)',
+    detail: 'You cannot include both a General and an Applied/Essential subject from the same study area (e.g. General Mathematics & Essential Mathematics, or English & Essential English) in your Best 5 ATAR calculation. Only one will count. Additionally, a strict maximum of ONE Applied subject or ONE completed VET qualification (Cert III or higher) may contribute to your ATAR aggregate.',
+  },
+  {
+    title: 'QTAC Selection Rank & adjustments (EAS & subject bonuses)',
+    detail: 'Universities (UQ, QUT, Griffith, etc.) convert raw ATAR into a Selection Rank by adding adjustment points. Subject bonuses grant +2 points for passing Mathematical Methods, Specialist Mathematics, Physics, Chemistry, or an approved Language (capped at +5.0 UQ / +6.0 Griffith). The Educational Access Scheme (EAS) grants up to 5 equity points across 5 categories.',
   },
 ];
 
@@ -1247,8 +1442,13 @@ export interface HighSchool {
   name: string;
   type: 'State' | 'Catholic' | 'Independent';
   suburb: string;
+  region?: string;
   yearLevels: string;
   indicativeICSEA?: number;   // Index of Community Socio-Educational Advantage (ACARA, 1–1500 approx)
+  betterEducationRank?: number; // Better Education QLD secondary rank (top 100)
+  betterEducationScore?: number; // Better Education rating score (e.g. 100, 99, 98, 97)
+  naplanBenchmark?: string;    // e.g. 'Well Above Average' | 'Above Average'
+  medianATAR?: number | string; // e.g. 96.2, 94.1, 92.0, or IB equivalent
   notable: string;
   website: string;
 }
@@ -1260,6 +1460,10 @@ export const QLD_HIGH_SCHOOLS: HighSchool[] = [
     suburb: 'South Brisbane',
     yearLevels: '7–12',
     indicativeICSEA: 1145,
+    betterEducationRank: 4,
+    betterEducationScore: 100,
+    naplanBenchmark: 'Well Above Average (Top 1% QLD State)',
+    medianATAR: 89.5,
     notable: 'Selective entry (academic + cultural + sporting). Consistently top-performing state school; strong ATAR results (94th percentile). MySchool 2025: 3,594 students.',
     website: 'https://brisbaneshs.eq.edu.au',
   },
@@ -1269,7 +1473,11 @@ export const QLD_HIGH_SCHOOLS: HighSchool[] = [
     suburb: 'Spring Hill',
     yearLevels: 'Prep–12',
     indicativeICSEA: 1212,
-    notable: 'Boys school, non-selective. GPS. Consistently top NAPLAN/ATAR (median ATAR ~92, 60%+ achieve 90+). Y12 fees ~$36,300 (2026). Tutoring Lounge composite score 98.5.',
+    betterEducationRank: 3,
+    betterEducationScore: 100,
+    naplanBenchmark: 'Well Above Average (Top 1% QLD)',
+    medianATAR: 92.5,
+    notable: 'Boys school, non-selective. GPS. Consistently top NAPLAN/ATAR (median ATAR ~92.5, 60%+ achieve 90+). Y12 fees ~$36,300 (2026). Tutoring Lounge composite score 98.5.',
     website: 'https://www.brisbanegrammar.com',
   },
   {
@@ -1278,6 +1486,10 @@ export const QLD_HIGH_SCHOOLS: HighSchool[] = [
     suburb: 'Spring Hill',
     yearLevels: '7–12',
     indicativeICSEA: 1206,
+    betterEducationRank: 2,
+    betterEducationScore: 100,
+    naplanBenchmark: 'Well Above Average (Top 1% QLD)',
+    medianATAR: 96.2,
     notable: 'Girls school. Median ATAR 96.2 (2024), strong academic tradition. Most selective girls school in QLD.',
     website: 'https://www.bggs.qld.edu.au',
   },
@@ -1287,6 +1499,10 @@ export const QLD_HIGH_SCHOOLS: HighSchool[] = [
     suburb: 'East Brisbane',
     yearLevels: 'Prep–12',
     indicativeICSEA: 1173,
+    betterEducationRank: 7,
+    betterEducationScore: 99,
+    naplanBenchmark: 'Well Above Average (Top 2% QLD)',
+    medianATAR: 90.0,
     notable: 'Boys school, GPS. NAPLAN avg 506.6 (2025). Y12 ~$32k. 60% improvement in numeracy/writing vs similar schools.',
     website: 'https://www.churchie.com.au',
   },
@@ -1296,6 +1512,10 @@ export const QLD_HIGH_SCHOOLS: HighSchool[] = [
     suburb: 'Corinda',
     yearLevels: 'Prep–12',
     indicativeICSEA: 1158,
+    betterEducationRank: 9,
+    betterEducationScore: 99,
+    naplanBenchmark: 'Well Above Average (Top 2% QLD)',
+    medianATAR: 94.1,
     notable: 'Girls school. Median ATAR 94.1 (2024), high NAPLAN results.',
     website: 'https://www.staidans.qld.edu.au',
   },
@@ -1305,6 +1525,10 @@ export const QLD_HIGH_SCHOOLS: HighSchool[] = [
     suburb: 'Spring Hill',
     yearLevels: '5–12',
     indicativeICSEA: 1135,
+    betterEducationRank: 10,
+    betterEducationScore: 99,
+    naplanBenchmark: 'Well Above Average (Top 3% QLD)',
+    medianATAR: 89.0,
     notable: 'Boys Catholic school. Strong academics and rugby; fees ~$24,214 (Y12 2026).',
     website: 'https://www.terrace.qld.edu.au',
   },
@@ -1314,6 +1538,10 @@ export const QLD_HIGH_SCHOOLS: HighSchool[] = [
     suburb: 'Ormiston',
     yearLevels: 'Prep–12',
     indicativeICSEA: 1140,
+    betterEducationRank: 5,
+    betterEducationScore: 99,
+    naplanBenchmark: 'Well Above Average (Top 2% QLD)',
+    medianATAR: 91.0,
     notable: 'Co-ed independent. Consistently strong NAPLAN results.',
     website: 'https://www.ormistoncollege.com.au',
   },
@@ -1323,6 +1551,10 @@ export const QLD_HIGH_SCHOOLS: HighSchool[] = [
     suburb: 'Indooroopilly',
     yearLevels: '7–12',
     indicativeICSEA: 1090,
+    betterEducationRank: 14,
+    betterEducationScore: 97,
+    naplanBenchmark: 'Above Average (Top 5% QLD State)',
+    medianATAR: 84.0,
     notable: 'Large suburban state school with strong academic and IB options.',
     website: 'https://indoorooshs.eq.edu.au',
   },
@@ -1332,6 +1564,10 @@ export const QLD_HIGH_SCHOOLS: HighSchool[] = [
     suburb: 'Mansfield',
     yearLevels: '7–12',
     indicativeICSEA: 1080,
+    betterEducationRank: 15,
+    betterEducationScore: 97,
+    naplanBenchmark: 'Above Average (Top 5% QLD State)',
+    medianATAR: 85.0,
     notable: 'High-performing south-side state school with selective STEM and languages.',
     website: 'https://mansfieldshs.eq.edu.au',
   },
@@ -1341,6 +1577,10 @@ export const QLD_HIGH_SCHOOLS: HighSchool[] = [
     suburb: 'Holland Park',
     yearLevels: '7–12',
     indicativeICSEA: 1075,
+    betterEducationRank: 18,
+    betterEducationScore: 95,
+    naplanBenchmark: 'Above Average',
+    medianATAR: 82.0,
     notable: 'Popular south-side state school with strong academic and sporting programs.',
     website: 'https://cavendishroadshs.eq.edu.au',
   },
@@ -1350,6 +1590,10 @@ export const QLD_HIGH_SCHOOLS: HighSchool[] = [
     suburb: 'South Brisbane',
     yearLevels: 'Prep–12',
     indicativeICSEA: 1186,
+    betterEducationRank: 8,
+    betterEducationScore: 99,
+    naplanBenchmark: 'Well Above Average (Top 2% QLD)',
+    medianATAR: 92.9,
     notable: 'Girls independent (Uniting Church). NAPLAN avg 513.1 (2025, #3 QLD). Median ATAR ~92.9. Y12 ~$31,872.',
     website: 'https://www.somerville.qld.edu.au',
   },
@@ -1359,6 +1603,10 @@ export const QLD_HIGH_SCHOOLS: HighSchool[] = [
     suburb: 'Toowong',
     yearLevels: 'Prep–12',
     indicativeICSEA: 1164,
+    betterEducationRank: 26,
+    betterEducationScore: 97,
+    naplanBenchmark: 'Well Above Average',
+    medianATAR: 88.5,
     notable: 'Boys independent school (Uniting Church). Strong academics, sport and music. Y12 ~$33,260.',
     website: 'https://www.bbc.qld.edu.au',
   },
@@ -1368,6 +1616,10 @@ export const QLD_HIGH_SCHOOLS: HighSchool[] = [
     suburb: 'Ascot',
     yearLevels: 'Prep–12',
     indicativeICSEA: 1175,
+    betterEducationRank: 27,
+    betterEducationScore: 98,
+    naplanBenchmark: 'Well Above Average',
+    medianATAR: 90.0,
     notable: 'Girls independent school. Consistently high ATAR and boarding facilities.',
     website: 'https://www.stmargarets.qld.edu.au',
   },
@@ -1377,6 +1629,10 @@ export const QLD_HIGH_SCHOOLS: HighSchool[] = [
     suburb: 'Fortitude Valley',
     yearLevels: 'Year 5–12',
     indicativeICSEA: 1182,
+    betterEducationRank: 11,
+    betterEducationScore: 98,
+    naplanBenchmark: 'Well Above Average',
+    medianATAR: 88.5,
     notable: 'Catholic girls school. Long academic tradition, central city; fees ~$18,950 (2026).',
     website: 'https://www.ahs.qld.edu.au',
   },
@@ -1404,6 +1660,10 @@ export const QLD_HIGH_SCHOOLS: HighSchool[] = [
     suburb: 'Indooroopilly',
     yearLevels: 'Prep–12',
     indicativeICSEA: 1186,
+    betterEducationRank: 6,
+    betterEducationScore: 99,
+    naplanBenchmark: 'Well Above Average (Top 2% QLD)',
+    medianATAR: 90.5,
     notable: 'Co-ed independent (Lutheran). NAPLAN avg 515.2 (2025, #2 QLD). Day and boarding, strong academics and music.',
     website: 'https://www.stpeters.qld.edu.au',
   },
@@ -1413,8 +1673,25 @@ export const QLD_HIGH_SCHOOLS: HighSchool[] = [
     suburb: 'Toowong',
     yearLevels: '7–12',
     indicativeICSEA: 1185,
+    betterEducationRank: 1,
+    betterEducationScore: 100,
+    naplanBenchmark: 'Well Above Average (Top 0.5% QLD)',
+    medianATAR: '38 IB (~95.5+)',
     notable: 'Selective IB World School. Median IB 38 (ATAR 95+), top state performer. Entry by exam + interview.',
     website: 'https://qasmt.eq.edu.au',
+  },
+  {
+    name: 'Queensland Academies Creative Industries (QACI)',
+    type: 'State',
+    suburb: 'Kelvin Grove',
+    yearLevels: '10–12',
+    indicativeICSEA: 1162,
+    betterEducationRank: 13,
+    betterEducationScore: 99,
+    naplanBenchmark: 'Well Above Average (Top 1% QLD State)',
+    medianATAR: '36 IB (~93.5+)',
+    notable: 'Selective IB World School specializing in creative industries (Design, Film, Music, Theatre, Visual Arts) and rigorous academics. Entry via selective exam + portfolio/interview.',
+    website: 'https://qaci.eq.edu.au',
   },
   {
     name: 'Somerset College',
@@ -1422,6 +1699,10 @@ export const QLD_HIGH_SCHOOLS: HighSchool[] = [
     suburb: 'Mudgeeraba (Gold Coast)',
     yearLevels: 'Prep–12',
     indicativeICSEA: 1165,
+    betterEducationRank: 16,
+    betterEducationScore: 98,
+    naplanBenchmark: 'Well Above Average (Gold Coast #1)',
+    medianATAR: 89.5,
     notable: 'Co-ed independent. Consistently Gold Coast’s top ATAR school, strong IB and NAPLAN.',
     website: 'https://www.somerset.qld.edu.au',
   },
@@ -1431,6 +1712,10 @@ export const QLD_HIGH_SCHOOLS: HighSchool[] = [
     suburb: 'Mackay',
     yearLevels: 'Prep–12',
     indicativeICSEA: 1120,
+    betterEducationRank: 17,
+    betterEducationScore: 98,
+    naplanBenchmark: 'Well Above Average (Top Regional QLD)',
+    medianATAR: 90.0,
     notable: 'Regional star: 22% of cohort achieved 99+ ATAR (2024), top regional QLD performer.',
     website: 'https://www.whitsunday.qld.edu.au',
   },
@@ -1460,6 +1745,90 @@ export const QLD_HIGH_SCHOOLS: HighSchool[] = [
     indicativeICSEA: 1155,
     notable: 'Girls Catholic school. Consistently high ATAR, Clayfield prestige precinct.',
     website: 'https://www.stritas.qld.edu.au',
+  },
+  {
+    name: 'Clayfield College',
+    type: 'Independent',
+    suburb: 'Clayfield',
+    yearLevels: 'Prep–12',
+    indicativeICSEA: 1165,
+    betterEducationScore: 97,
+    naplanBenchmark: 'Well Above Average',
+    medianATAR: 89.0,
+    notable: 'Independent PMSA school with innovative Parallel Learning model (transitioned to co-ed). High ATAR outcomes and boarding in inner north.',
+    website: 'https://www.clayfield.qld.edu.au',
+  },
+  {
+    name: 'St Joseph\'s Nudgee College',
+    type: 'Catholic',
+    suburb: 'Boondall',
+    yearLevels: 'Prep–12',
+    indicativeICSEA: 1115,
+    betterEducationScore: 96,
+    naplanBenchmark: 'Well Above Average',
+    medianATAR: 88.6,
+    notable: 'GPS boys Catholic college (est 1891, Edmund Rice tradition). 25.6% achieved 95+ ATAR, 99% QCE attainment, extensive VET/SATs, famous rugby and rowing.',
+    website: 'https://www.nudgee.qld.edu.au',
+  },
+  {
+    name: 'St Laurence\'s College',
+    type: 'Catholic',
+    suburb: 'South Brisbane',
+    yearLevels: '5–12',
+    indicativeICSEA: 1117,
+    betterEducationScore: 95,
+    naplanBenchmark: 'Above Average',
+    medianATAR: 87.5,
+    notable: 'AIC boys Catholic college (est 1915). 100% QCE attainment, strong dual ATAR + VET pathways (400+ certs/diplomas completed annually), central South Bank precinct.',
+    website: 'https://www.slc.qld.edu.au',
+  },
+  {
+    name: 'Lourdes Hill College',
+    type: 'Catholic',
+    suburb: 'Hawthorne',
+    yearLevels: '7–12',
+    indicativeICSEA: 1125,
+    betterEducationScore: 96,
+    naplanBenchmark: 'Well Above Average',
+    medianATAR: 86.0,
+    notable: 'Catholic girls college (Good Samaritan tradition) overlooking Brisbane River. High academic and creative arts performance, ~1,300 students.',
+    website: 'https://www.lhc.qld.edu.au',
+  },
+  {
+    name: 'Moreton Bay College',
+    type: 'Independent',
+    suburb: 'Manly West',
+    yearLevels: 'Prep–12',
+    indicativeICSEA: 1145,
+    betterEducationScore: 97,
+    naplanBenchmark: 'Well Above Average',
+    medianATAR: 88.5,
+    notable: 'Independent girls school (Uniting Church) with sister school MBBC. Consistently strong NAPLAN and ATAR results in the bayside precinct.',
+    website: 'https://www.mbc.qld.edu.au',
+  },
+  {
+    name: 'The Gap State High School',
+    type: 'State',
+    suburb: 'The Gap',
+    yearLevels: '7–12',
+    indicativeICSEA: 1085,
+    betterEducationScore: 96,
+    naplanBenchmark: 'Above Average',
+    medianATAR: 83.5,
+    notable: 'High-performing western suburbs state high school with Accelerated STEM, Leadership Training Centre, and renowned arts programs.',
+    website: 'https://thegapshs.eq.edu.au',
+  },
+  {
+    name: 'Mount Gravatt State High School',
+    type: 'State',
+    suburb: 'Mount Gravatt',
+    yearLevels: '7–12',
+    indicativeICSEA: 1070,
+    betterEducationScore: 95,
+    naplanBenchmark: 'Above Average',
+    medianATAR: 82.0,
+    notable: 'Well-regarded southside state high school. Strong university pathways (close to Griffith University Nathan/Mt Gravatt) and academic excellence classes.',
+    website: 'https://mtgravattshs.eq.edu.au',
   },
   {
     name: 'Cairns State High School',
@@ -1768,7 +2137,8 @@ export const QLD_HIGH_SCHOOLS: HighSchool[] = [
     type: 'State',
     suburb: 'Brassall (Ipswich)',
     yearLevels: '7–12',
-    notable: 'Major Ipswich state school with strong academic, sporting and cultural programs.',
+    indicativeICSEA: 935,
+    notable: 'Major Ipswich state school with strong academic, sporting and cultural programs. MySchool: ~1,850 students.',
     website: 'https://ipswichshs.eq.edu.au',
   },
   {
@@ -1822,7 +2192,8 @@ export const QLD_HIGH_SCHOOLS: HighSchool[] = [
     type: 'State',
     suburb: 'Victoria Point (Redlands)',
     yearLevels: '7–12',
-    notable: 'Bayside Redlands state school with strong academic and marine science programs.',
+    indicativeICSEA: 1015,
+    notable: 'Bayside Redlands state school with strong academic and marine science programs. MySchool: ~1,380 students.',
     website: 'https://vpshs.eq.edu.au',
   },
   // ─── Moreton Bay ─────────────────────────────────────────────────────────
@@ -1850,8 +2221,13 @@ export const QLD_HIGH_SCHOOLS: HighSchool[] = [
     type: 'State',
     suburb: 'Southport (Gold Coast)',
     yearLevels: '10–12',
+    indicativeICSEA: 1170,
+    betterEducationRank: 12,
+    betterEducationScore: 100,
+    naplanBenchmark: 'Well Above Average (Top 1% QLD State)',
+    medianATAR: '37 IB (~94.5+)',
     notable: 'Selective IB World School for health sciences. Entry by exam + interview; top-3 QLD IB results, direct Griffith health pathways.',
-    website: 'https://qa.eq.edu.au',
+    website: 'https://qahs.eq.edu.au',
   },
   {
     name: 'Citipointe Christian College',
@@ -2079,7 +2455,8 @@ export const QLD_HIGH_SCHOOLS: HighSchool[] = [
     type: 'Independent',
     suburb: 'Reedy Creek (Gold Coast)',
     yearLevels: 'Prep–12',
-    notable: 'Co-ed Christian college (est 1982). Strong community school in the southern Gold Coast growth belt.',
+    indicativeICSEA: 1060,
+    notable: 'Co-ed Christian college (est 1982, ~1,500 students). Strong community school in the southern Gold Coast growth belt.',
     website: 'https://www.hillcrest.qld.edu.au',
   },
   {
@@ -2260,7 +2637,7 @@ export const QLD_TAFE = {
     'MSL40122 Certificate IV in Laboratory Techniques — lab technician',
     'CHC33021 Certificate III in Individual Support (traineeship route) — aged care',
   ],
-  feeFreeNote: 'Fee-Free TAFE runs to 31 Dec 2026 at TAFE QLD + CQUniversity only (CQU 2026 places filled — check availability). One Fee-Free qualification per student 2023–2026 (exception: both Cert III + Diploma of Early Childhood allowed). Open to QLD residents 15+ not enrolled at school/uni, with priority cohorts (under 25, jobseekers, First Nations, carers, disability) guaranteed. Trades, nursing and community courses below sit under sibling programs (Free Apprenticeships U25 / Free Nursing) — check the exact program before enrolling.',
+  feeFreeNote: 'Fee-Free TAFE runs to 31 Dec 2026 under the Commonwealth-State National Skills Agreement (NSA) at TAFE QLD + CQUniversity only (CQU 2026 places filled — check availability). One Fee-Free qualification per student 2023–2026 (exception: both Cert III + Diploma of Early Childhood allowed). Open to QLD residents 15+ not enrolled at school/uni, with priority cohorts (under 25, jobseekers, First Nations, carers, disability) guaranteed. Trades, nursing and community courses below sit under sibling programs (Free Apprenticeships U25 / Free Nursing) — check the exact program before enrolling.',
   freeApprenticeships: {
     note: 'Free Apprenticeships for Under 25s extended to 30 June 2027. Covers 130+ priority apprenticeships and traineeships across automotive, construction, engineering, electrotechnology, hospitality, horticulture, manufacturing, retail, and more. Training fees (~$1.60/hr) fully subsidised by QLD Government.',
     industries: ['Automotive', 'Construction & Civil', 'Electrotechnology & Utilities', 'Engineering & Aviation', 'Hospitality & Cookery', 'Agriculture & Horticulture', 'Manufacturing & Furnishing', 'Community Services', 'Arts & Entertainment', 'Retail & Recreation'],

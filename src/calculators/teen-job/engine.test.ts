@@ -50,6 +50,28 @@ describe('getJuniorRatePct', () => {
     expect(res.pct).toBe(0.50);
     expect(res.label).toContain('50% of Adult Rate');
   });
+
+  it('handles hair and beauty junior rates (under 17 = 50%, 17 = 75%, 18+ = 100%)', () => {
+    expect(getJuniorRatePct(15, 'hair_beauty').pct).toBe(0.50);
+    expect(getJuniorRatePct(16, 'hair_beauty').pct).toBe(0.50);
+    expect(getJuniorRatePct(17, 'hair_beauty').pct).toBe(0.75);
+    expect(getJuniorRatePct(18, 'hair_beauty').pct).toBe(1.00);
+    expect(getJuniorRatePct(19, 'hair_beauty').pct).toBe(1.00);
+  });
+
+  it('handles registered clubs award junior rates (under 18 = 60%, 18 = 70%, 19 = 85%, 20+ = 100%)', () => {
+    expect(getJuniorRatePct(16, 'clubs').pct).toBe(0.60);
+    expect(getJuniorRatePct(17, 'clubs').pct).toBe(0.60);
+    expect(getJuniorRatePct(18, 'clubs').pct).toBe(0.70);
+    expect(getJuniorRatePct(19, 'clubs').pct).toBe(0.85);
+    expect(getJuniorRatePct(20, 'clubs').pct).toBe(1.00);
+  });
+
+  it('handles cinema award junior rates under MA000091 (under 17 = 45%, 17 = 55%, 18 = 65%)', () => {
+    expect(getJuniorRatePct(16, 'cinema').pct).toBe(0.45);
+    expect(getJuniorRatePct(17, 'cinema').pct).toBe(0.55);
+    expect(getJuniorRatePct(18, 'cinema').pct).toBe(0.65);
+  });
 });
 
 describe('netPayWithAllowances', () => {

@@ -1,6 +1,6 @@
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
-import { ReceiptText } from 'lucide-react';
+import { ReceiptText, Info } from 'lucide-react';
 import type { PayslipBreakdownRow } from './engine';
 
 interface PaySlipPreviewProps {
@@ -11,7 +11,10 @@ interface PaySlipPreviewProps {
   annualGross: number;
   weeklyHours: number;
   hourlyRate: number;
-  claimExemption: boolean;
+  claimExemption?: boolean;
+  statusBadgeLabel?: string;
+  hasTFN?: boolean;
+  claimsTaxFreeThreshold?: boolean;
 }
 
 /**
@@ -27,17 +30,30 @@ export function PaySlipPreview({
   annualGross,
   weeklyHours,
   hourlyRate,
-  claimExemption,
+  claimExemption: _claimExemption = true,
+  statusBadgeLabel,
+  hasTFN = true,
+  claimsTaxFreeThreshold = true,
 }: PaySlipPreviewProps) {
+  const badgeText = statusBadgeLabel ?? (
+    !hasTFN
+      ? '47% No-TFN Withholding'
+      : claimsTaxFreeThreshold
+        ? (grossWeekly <= 350 ? 'Tax-Free Threshold ($0 Withheld)' : 'Standard PAYG Withheld (15% on >$350)')
+        : '15% No-Threshold Withheld'
+  );
+
+  const badgeVariant = !hasTFN ? 'warning' : 'success';
+
   return (
     <Card variant="glass" className="p-5 space-y-4">
-      <div className="flex items-center justify-between gap-2 border-b border-border pb-3">
+      <div className="flex items-center justify-between gap-2 border-b border-border pb-3 flex-wrap">
         <div className="flex items-center gap-2">
           <ReceiptText className="w-4 h-4 text-emerald-500" />
           <h3 className="text-sm font-bold text-foreground">Your Weekly Pay Slip (Preview)</h3>
         </div>
-        <Badge variant={claimExemption ? 'success' : 'warning'}>
-          {claimExemption ? 'TFN Exemption Claimed' : '47% No-TFN Withholding'}
+        <Badge variant={badgeVariant}>
+          {badgeText}
         </Badge>
       </div>
 
@@ -75,13 +91,16 @@ export function PaySlipPreview({
           <div className="font-mono text-sm font-bold text-foreground">${hourlyRate.toFixed(2)}/hr</div>
         </div>
         <div className="rounded-lg bg-muted/40 border border-border/50 px-2 py-2">
-          <div className="text-[9px] uppercase tracking-wider text-muted-foreground font-semibold">Annual</div>
+          <div className="text-[9px] uppercase tracking-wider text-muted-foreground font-semibold">Annual Gross</div>
           <div className="font-mono text-sm font-bold text-foreground">${annualGross.toLocaleString('en-AU')}</div>
         </div>
       </div>
 
-      <p className="text-[10px] text-muted-foreground">
-        Weekly gross ${grossWeekly.toFixed(2)} → net ${netWeekly.toFixed(2)}. Employer super of ${superWeekly.toFixed(2)} is paid ON TOP of your pay — it is not taken out of your wages.
+      <p className="text-[10px] text-muted-foreground leading-relaxed flex items-start gap-1.5">
+        <Info className="w-3.5 h-3.5 text-primary shrink-0 mt-0.5" />
+        <span>
+          Weekly gross ${grossWeekly.toFixed(2)} → net ${netWeekly.toFixed(2)}. Employer super of ${superWeekly.toFixed(2)} (12% SG) is paid ON TOP of your wage into your super fund — it never reduces your take-home pay.
+        </span>
       </p>
     </Card>
   );

@@ -69,6 +69,9 @@ export const asxTopEtfConfig = {
   dace: { label: "DACE", color: "var(--chart-1)" },
   v1ac: { label: "V1AC", color: "var(--chart-2)" },
   vts: { label: "VTS", color: "var(--chart-3)" },
+  bgbl: { label: "BGBL", color: "var(--chart-4)" },
+  dhhf: { label: "DHHF", color: "var(--chart-5)" },
+  vdhg: { label: "VDHG", color: "var(--chart-6)" },
 } satisfies ChartConfig;
 
 /** ASX ETF dividend yield comparison chart colors */

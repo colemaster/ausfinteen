@@ -38,6 +38,11 @@ export interface ASXETF {
   trailing: { '1Y': number | null; '3Y': number | null; '5Y': number | null; '10Y': number | null };
   topHoldings: string[];
   description: string;
+  assetAllocation?: {
+    growthPct: number;
+    defensivePct: number;
+    summary: string;
+  };
 }
 
 export const TOP_10_ASX_ETFS: ASXETF[] = [
@@ -72,6 +77,11 @@ export const TOP_10_ASX_ETFS: ASXETF[] = [
       'Westpac Banking Corp (4.3%)',
       'National Australia Bank Ltd (4.2%)',
     ],
+    assetAllocation: {
+      growthPct: 100,
+      defensivePct: 0,
+      summary: '100% Australian Equities (S&P/ASX 300 index across large, mid, and small cap)',
+    },
     description:
       'Australia’s largest ETF, providing broad exposure to the top 300 companies listed on the ASX with significant franked dividend yields.',
   },
@@ -81,7 +91,7 @@ export const TOP_10_ASX_ETFS: ASXETF[] = [
     issuer: 'Vanguard',
     tracks: 'MSCI World ex-Australia (~1,300 companies across 23 countries)',
     mer: 0.18,
-    fum: 18.0,
+    fum: 18.6,
     dividendYield: 1.28,
     payFrequency: 'Quarterly',
     inception: '2014',
@@ -102,6 +112,11 @@ export const TOP_10_ASX_ETFS: ASXETF[] = [
       'Amazon.com Inc (2.6%)',
       'Alphabet Inc (2.1%)',
     ],
+    assetAllocation: {
+      growthPct: 100,
+      defensivePct: 0,
+      summary: '100% Global Equities (~1,300 companies across 23 developed countries ex-Australia)',
+    },
     description:
       'The core unhedged international equities benchmark for Australian investors, offering broad diversification across ~1,300 developed-market companies.',
   },
@@ -110,8 +125,8 @@ export const TOP_10_ASX_ETFS: ASXETF[] = [
     name: 'iShares Core S&P 500 ETF',
     issuer: 'iShares (BlackRock)',
     tracks: 'S&P 500 Index (500 largest US companies)',
-    mer: 0.04,
-    fum: 14.8,
+    mer: 0.03,
+    fum: 14.9,
     dividendYield: 1.09,
     payFrequency: 'Quarterly',
     inception: '2012',
@@ -137,8 +152,13 @@ export const TOP_10_ASX_ETFS: ASXETF[] = [
       'Amazon.com Inc (3.7%)',
       'Meta Platforms Inc (2.4%)',
     ],
+    assetAllocation: {
+      growthPct: 100,
+      defensivePct: 0,
+      summary: '100% US Large-Cap Equities (500 leading companies tracking the S&P 500 Index)',
+    },
     description:
-      'Ultra low-cost vehicle tracking the 500 largest US companies, acting as a foundational growth engine for global portfolios.',
+      'Ultra low-cost vehicle tracking the 500 largest US companies (0.03% MER; underlying US vehicle / 0.04% local ASX PDS), acting as a foundational growth engine for global portfolios.',
   },
   {
     code: 'A200',
@@ -146,7 +166,7 @@ export const TOP_10_ASX_ETFS: ASXETF[] = [
     issuer: 'BetaShares',
     tracks: 'Solactive Australia 200 Index (largest 200 AU companies)',
     mer: 0.04,
-    fum: 10.7,
+    fum: 11.3,
     dividendYield: 4.29,
     payFrequency: 'Quarterly',
     inception: '2018',
@@ -168,6 +188,11 @@ export const TOP_10_ASX_ETFS: ASXETF[] = [
       'National Australia Bank Ltd (4.4%)',
       'ANZ Group Holdings Ltd (4.1%)',
     ],
+    assetAllocation: {
+      growthPct: 100,
+      defensivePct: 0,
+      summary: '100% Australian Equities (Solactive Australia 200 Index)',
+    },
     description:
       'The lowest-cost Australian equity ETF on the ASX (0.04% MER), targeting the top 200 companies with high dividend yields and franking credits.',
   },
@@ -177,7 +202,7 @@ export const TOP_10_ASX_ETFS: ASXETF[] = [
     issuer: 'VanEck',
     tracks: 'MSCI World ex-Australia Quality (~300 high-ROE developed-market companies)',
     mer: 0.4,
-    fum: 8.9,
+    fum: 9.2,
     dividendYield: 1.16,
     payFrequency: 'Semi-Annual',
     inception: '2014',
@@ -198,6 +223,11 @@ export const TOP_10_ASX_ETFS: ASXETF[] = [
       'Meta Platforms Inc (3.9%)',
       'Eli Lilly & Co (3.1%)',
     ],
+    assetAllocation: {
+      growthPct: 100,
+      defensivePct: 0,
+      summary: '100% Global Quality Equities (~300 high-ROE developed market companies)',
+    },
     description:
       'Factor-based smart-beta ETF capturing international quality leaders selected for high Return on Equity (ROE), low leverage, and earnings stability.',
   },
@@ -207,7 +237,7 @@ export const TOP_10_ASX_ETFS: ASXETF[] = [
     issuer: 'iShares (BlackRock)',
     tracks: 'S&P/ASX 200 Accumulation Index (top 200 AU companies, dividends reinvested)',
     mer: 0.05,
-    fum: 9.2,
+    fum: 9.6,
     dividendYield: 3.31,
     payFrequency: 'Quarterly',
     inception: '2010',
@@ -228,6 +258,11 @@ export const TOP_10_ASX_ETFS: ASXETF[] = [
       'National Australia Bank Ltd (4.3%)',
       'Westpac Banking Corp (4.2%)',
     ],
+    assetAllocation: {
+      growthPct: 100,
+      defensivePct: 0,
+      summary: '100% Australian Equities (S&P/ASX 200 Accumulation Index)',
+    },
     description:
       'BlackRock’s flagship low-cost Australian equity fund benchmarked against the S&P/ASX 200 Accumulation Index.',
   },
@@ -237,7 +272,7 @@ export const TOP_10_ASX_ETFS: ASXETF[] = [
     issuer: 'BetaShares',
     tracks: 'NASDAQ-100 Index (100 largest US-listed non-financial tech companies)',
     mer: 0.48,
-    fum: 9.4,
+    fum: 9.9,
     dividendYield: 1.5,
     payFrequency: 'Semi-Annual',
     inception: '2015',
@@ -262,6 +297,11 @@ export const TOP_10_ASX_ETFS: ASXETF[] = [
       'Amazon.com Inc (4.7%)',
       'Broadcom Inc (4.5%)',
     ],
+    assetAllocation: {
+      growthPct: 100,
+      defensivePct: 0,
+      summary: '100% US & Global Tech/Innovation Equities (Nasdaq-100 Index)',
+    },
     description:
       'High-growth tech and innovation focus tracking the top 100 non-financial companies listed on the US NASDAQ exchange.',
   },
@@ -291,6 +331,11 @@ export const TOP_10_ASX_ETFS: ASXETF[] = [
       'Woodside Energy Group Ltd (3.1%)',
       'Rio Tinto Ltd (2.9%)',
     ],
+    assetAllocation: {
+      growthPct: 100,
+      defensivePct: 0,
+      summary: '100% Australian Equities tilted towards value, size, and profitability factors',
+    },
     description:
       'Dimensional’s actively structured core ETF that tilts systematically toward Australian value, small-cap, and high-profitability factors.',
   },
@@ -320,6 +365,11 @@ export const TOP_10_ASX_ETFS: ASXETF[] = [
       'Meta Platforms Inc (4.5%)',
       'Mastercard Inc (4.1%)',
     ],
+    assetAllocation: {
+      growthPct: 100,
+      defensivePct: 0,
+      summary: '100% Global Equities (quantitative factor long alpha portfolio)',
+    },
     description:
       'Former Magellan Global Fund converted 5 June 2026 to Vinva’s systematic alpha strategy (0.89% fee, no performance fee). Pre-transition returns belong to the old Magellan strategy — not indicative of Vinva management.',
   },
@@ -351,12 +401,135 @@ export const TOP_10_ASX_ETFS: ASXETF[] = [
       'Amazon.com Inc (3.2%)',
       'Meta Platforms Inc (2.2%)',
     ],
+    assetAllocation: {
+      growthPct: 100,
+      defensivePct: 0,
+      summary: '100% Total US Stock Market (~4,000 all-cap US equities)',
+    },
     description:
       'Cross-listed Vanguard ETF giving ultra-cheap exposure to all ~4,000 investable stocks in the US equity market.',
   },
 ];
 
-export const ASX_ETF_DATA_AS_AT = 'September 2026 (see source notes above)';
+/** Popular starter and all-in-one ETFs referenced across starter portfolios */
+export const STARTER_ETFS: ASXETF[] = [
+  {
+    code: 'DHHF',
+    name: 'Betashares Diversified All Growth ETF',
+    issuer: 'BetaShares',
+    tracks: 'All-Growth multi-asset index (~100% equities across ~8,000 AU, US, developed & emerging companies)',
+    mer: 0.19,
+    fum: 1.65,
+    dividendYield: 2.65,
+    payFrequency: 'Quarterly',
+    inception: '2020',
+    url: 'https://www.betashares.com.au/fund/diversified-all-growth-etf',
+    annualReturns: {
+      '2021': 20.35,
+      '2022': -11.24,
+      '2023': 16.82,
+      '2024': 18.25,
+      '2025': 12.1,
+    },
+    trailing: { '1Y': 11.2, '3Y': 13.5, '5Y': 10.85, '10Y': null },
+    topHoldings: [
+      'Betashares Australia 200 ETF [A200] (36.2%)',
+      'Vanguard Total Stock Market ETF [VTI] (37.8%)',
+      'SPDR Portfolio Developed World ex-US [SPDW] (18.6%)',
+      'SPDR Portfolio Emerging Markets [SPEM] (7.4%)',
+    ],
+    assetAllocation: {
+      growthPct: 100,
+      defensivePct: 0,
+      summary: '100% Growth / 0% Defensive (100% all-equity globally diversified across ~8,000 stocks)',
+    },
+    description:
+      'The premier all-in-one equity ETF on the ASX, holding ~100% growth assets across 8,000+ stocks in Australia, the US, developed and emerging markets with zero bonds and automatic rebalancing.',
+  },
+  {
+    code: 'VDHG',
+    name: 'Vanguard Diversified High Growth Index ETF',
+    issuer: 'Vanguard',
+    tracks: '90% Growth Equities (AU + Global) / 10% Defensive Fixed Interest & Bonds',
+    mer: 0.27,
+    fum: 4.14,
+    dividendYield: 3.25,
+    payFrequency: 'Quarterly',
+    inception: '2017',
+    url: 'https://www.vanguard.com.au/personal/products/en/detail/etf/8221/diversified',
+    annualReturns: {
+      '2018': -3.42,
+      '2019': 19.34,
+      '2020': 3.52,
+      '2021': 16.64,
+      '2022': -9.12,
+      '2023': 13.91,
+      '2024': 15.82,
+      '2025': 10.9,
+    },
+    trailing: { '1Y': 9.85, '3Y': 12.15, '5Y': 9.42, '10Y': null },
+    topHoldings: [
+      'Vanguard Australian Shares Index Fund (35.8%)',
+      'Vanguard International Shares Index Fund (26.7%)',
+      'Vanguard Int Shares Index Fund (Hedged) (15.8%)',
+      'Vanguard Emerging Markets Shares Index Fund (5.1%)',
+      'Global & Australian Aggregate Fixed Interest (9.9%)',
+    ],
+    assetAllocation: {
+      growthPct: 90,
+      defensivePct: 10,
+      summary: '90% Growth (equities) / 10% Defensive (global and Australian bonds) with automatic rebalancing',
+    },
+    description:
+      'Vanguard’s legendary all-in-one multi-asset portfolio, holding 90% Australian and global shares paired with a 10% bond cushion, auto-rebalancing across 10,000+ securities.',
+  },
+  {
+    code: 'BGBL',
+    name: 'Betashares Global Shares ETF',
+    issuer: 'BetaShares',
+    tracks: 'Solactive GBS Developed Markets ex-Australia Large & Mid Cap Index (~1,500 global stocks)',
+    mer: 0.08,
+    fum: 5.54,
+    dividendYield: 1.25,
+    payFrequency: 'Semi-Annual',
+    inception: '2023',
+    url: 'https://www.betashares.com.au/fund/global-shares-etf',
+    annualReturns: {
+      '2024': 27.8,
+      '2025': 13.5,
+    },
+    trailing: { '1Y': 10.25, '3Y': 16.45, '5Y': null, '10Y': null },
+    topHoldings: [
+      'Apple Inc (5.2%)',
+      'NVIDIA Corp (5.1%)',
+      'Microsoft Corp (4.8%)',
+      'Amazon.com Inc (2.9%)',
+      'Meta Platforms Inc (2.2%)',
+    ],
+    assetAllocation: {
+      growthPct: 100,
+      defensivePct: 0,
+      summary: '100% International Developed Markets Equities ex-Australia (ultra-low 0.08% fee)',
+    },
+    description:
+      'BetaShares ultra-low-cost developed-market international equities index fund (0.08% MER), competing directly with VGS for core global exposure.',
+  },
+];
+
+export const ALL_POPULAR_ASX_ETFS: ASXETF[] = [
+  ...TOP_10_ASX_ETFS,
+  ...STARTER_ETFS,
+];
+
+/**
+ * ASX ETF Registry — dictionary keyed by ticker symbol for O(1) lookups.
+ * Includes all top 10 FUM ETFs plus popular all-in-one and starter favorites (DHHF, VDHG, BGBL).
+ */
+export const ASX_ETF_REGISTRY: Record<string, ASXETF> = Object.fromEntries(
+  ALL_POPULAR_ASX_ETFS.map(etf => [etf.code, etf])
+);
+
+export const ASX_ETF_DATA_AS_AT = 'October 2026 (see source notes above)';
 
 /** Average annual total return of the top-10 index ETFs (VAS + VGS blend ~ 8.5%) */
 export const ASX_ETF_LONG_TERM_AVG_RETURN = 8.5;
@@ -396,6 +569,7 @@ export interface PortfolioStats {
   weighted1Y: number | null;
   weighted3Y: number | null;
   weighted5Y: number | null;
+  weighted10Y: number | null;
   weightedYield: number | null;
   weightedFum: number | null;
 }
@@ -403,17 +577,22 @@ export interface PortfolioStats {
 /** Weighted-average stats for an ETF portfolio option (weights sum to 100). */
 export function computePortfolioStats(
   allocations: ETFAllocation[],
-  allEtfs: ASXETF[]
+  allEtfs: ASXETF[] = ALL_POPULAR_ASX_ETFS
 ): PortfolioStats {
   const byCode = new Map(allEtfs.map(e => [e.code, e]));
+  ALL_POPULAR_ASX_ETFS.forEach(e => {
+    if (!byCode.has(e.code)) byCode.set(e.code, e);
+  });
+
   let w = 0;
   let mer = 0;
   let yieldSum = 0;
   let fum = 0;
-  const trailing: Record<'1Y' | '3Y' | '5Y', { w: number; sum: number }> = {
+  const trailing: Record<'1Y' | '3Y' | '5Y' | '10Y', { w: number; sum: number }> = {
     '1Y': { w: 0, sum: 0 },
     '3Y': { w: 0, sum: 0 },
     '5Y': { w: 0, sum: 0 },
+    '10Y': { w: 0, sum: 0 },
   };
 
   allocations.forEach(a => {
@@ -423,9 +602,9 @@ export function computePortfolioStats(
     mer += etf.mer * a.pct;
     yieldSum += etf.dividendYield * a.pct;
     fum += etf.fum * a.pct;
-    (['1Y', '3Y', '5Y'] as const).forEach(p => {
+    (['1Y', '3Y', '5Y', '10Y'] as const).forEach(p => {
       const v = etf.trailing[p];
-      if (v !== null) {
+      if (v !== null && v !== undefined) {
         trailing[p].w += a.pct;
         trailing[p].sum += v * a.pct;
       }
@@ -438,6 +617,7 @@ export function computePortfolioStats(
     weighted1Y: avg(trailing['1Y']),
     weighted3Y: avg(trailing['3Y']),
     weighted5Y: avg(trailing['5Y']),
+    weighted10Y: avg(trailing['10Y']),
     weightedYield: w === 0 ? null : yieldSum / w,
     weightedFum: w === 0 ? null : fum / w,
   };
@@ -448,57 +628,129 @@ export interface ETFAllocation {
   pct: number;
 }
 
+export interface ETFPortfolioVariant {
+  id: string;
+  label: string;
+  badge: string;
+  allocations: ETFAllocation[];
+  note: string;
+}
+
 export interface ETFPortfolioOption {
   id: string;
   name: string;
   tagline: string;
   risk: 'Low' | 'Balanced' | 'Growth' | 'High Growth';
   allocations: ETFAllocation[];
+  variants?: ETFPortfolioVariant[];
   note: string;
 }
 
 /**
- * Best 3 starter ETF portfolios, built only from the core index funds above.
- * These are model portfolios for education — not financial advice.
- * Weighted MER and returns are computed in the UI from TOP_10_ASX_ETFS.
+ * 3 Starter ETF Portfolios (2026-2027) built from core ASX index funds:
+ * 1. All-in-One Diversified (DHHF / VDHG)
+ * 2. Aussie Core + Global (VAS + VGS or A200 + BGBL)
+ * 3. Tech / Growth Tilt (VGS + NDQ + QUAL)
+ *
+ * Model portfolios for education — not financial advice.
+ * Live weighted MER, yields, and trailing returns computed live from current reference data.
  */
 export const BEST_3_ETF_PORTFOLIOS: ETFPortfolioOption[] = [
   {
-    id: 'balanced',
-    name: 'Balanced Starter',
-    tagline: 'Simple low-cost core — full ASX + global diversification',
+    id: 'all-in-one',
+    name: 'All-in-One Diversified',
+    tagline: 'Single-ticker set-and-forget — ~8,000 global & AU shares with auto-rebalancing',
+    risk: 'High Growth',
+    allocations: [
+      { code: 'DHHF', pct: 100 },
+    ],
+    variants: [
+      {
+        id: 'dhhf',
+        label: 'DHHF (100% All-Growth Equities)',
+        badge: '100% Equities',
+        allocations: [{ code: 'DHHF', pct: 100 }],
+        note: 'Betashares DHHF is 100% all-equity (zero bonds) across ~8,000 stocks in Australia, US, Developed ex-US, and Emerging markets. Zero manual rebalancing required.',
+      },
+      {
+        id: 'vdhg',
+        label: 'VDHG (90% Equities + 10% Bonds)',
+        badge: '90/10 High Growth',
+        allocations: [{ code: 'VDHG', pct: 100 }],
+        note: 'Vanguard VDHG holds 90% Australian and global shares paired with 10% fixed interest/bonds for automated defensive smoothing.',
+      },
+    ],
+    note: 'The pinnacle of hands-off investing: one ticker automatically rebalances thousands of global and Aussie companies for you with zero manual switching.',
+  },
+  {
+    id: 'aussie-core-global',
+    name: 'Aussie Core + Global',
+    tagline: 'Classic two-fund foundation — Aussie franking credits + worldwide developed growth',
     risk: 'Balanced',
     allocations: [
       { code: 'VAS', pct: 40 },
-      { code: 'VGS', pct: 30 },
-      { code: 'A200', pct: 30 },
+      { code: 'VGS', pct: 60 },
     ],
-    note: 'Maximises franking credits via two overlapping ASX funds (VAS + A200) — a common low-cost core.',
+    variants: [
+      {
+        id: 'vas-vgs',
+        label: 'Vanguard Core: VAS (40%) + VGS (60%)',
+        badge: '0.14% MER',
+        allocations: [
+          { code: 'VAS', pct: 40 },
+          { code: 'VGS', pct: 60 },
+        ],
+        note: 'Australia’s most battle-tested two-fund core: 40% ASX 300 for franked income, 60% MSCI World for developed global growth.',
+      },
+      {
+        id: 'a200-bgbl',
+        label: 'Ultra Low-Fee Core: A200 (30%) + BGBL (70%)',
+        badge: '0.07% MER',
+        allocations: [
+          { code: 'A200', pct: 30 },
+          { code: 'BGBL', pct: 70 },
+        ],
+        note: 'The lowest MER two-fund combination on the ASX: 0.04% for A200 + 0.08% for BGBL gives a remarkable 0.068% weighted fee.',
+      },
+    ],
+    note: 'The definitive DIY backbone for Australian investors: high franked local dividends paired with worldwide international market leaders.',
   },
   {
-    id: 'growth',
-    name: 'Global Growth',
-    tagline: 'Diversified growth with heavy global + tech exposure',
-    risk: 'Growth',
+    id: 'tech-growth',
+    name: 'Tech & Growth Tilt',
+    tagline: 'Core international backbone boosted with Nasdaq-100 & quality compounders',
+    risk: 'High Growth',
     allocations: [
-      { code: 'VAS', pct: 30 },
-      { code: 'VGS', pct: 40 },
-      { code: 'IVV', pct: 30 },
+      { code: 'VGS', pct: 50 },
+      { code: 'NDQ', pct: 25 },
+      { code: 'QUAL', pct: 25 },
     ],
-    note: '60%+ global exposure. IVV adds US large-cap concentration on top of the MSCI World in VGS.',
-  },
-  {
-    id: 'income',
-    name: 'Yield + Quality',
-    tagline: 'Dividend income with defensive quality tilt',
-    risk: 'Low',
-    allocations: [
-      { code: 'A200', pct: 40 },
-      { code: 'DACE', pct: 25 },
-      { code: 'QUAL', pct: 20 },
-      { code: 'V1AC', pct: 15 },
+    variants: [
+      {
+        id: 'vgs-ndq-qual',
+        label: 'Global Core + Tech + Quality (50/25/25)',
+        badge: 'Growth Tilt',
+        allocations: [
+          { code: 'VGS', pct: 50 },
+          { code: 'NDQ', pct: 25 },
+          { code: 'QUAL', pct: 25 },
+        ],
+        note: 'Blends broad developed-market diversification with high-conviction tilts toward top 100 non-financial US tech giants (NDQ) and global high-ROE quality businesses (QUAL).',
+      },
+      {
+        id: 'vas-vgs-ndq-qual',
+        label: '4-Way All-Rounder (VAS 20% / VGS 40% / NDQ 20% / QUAL 20%)',
+        badge: '4-Way Mix',
+        allocations: [
+          { code: 'VAS', pct: 20 },
+          { code: 'VGS', pct: 40 },
+          { code: 'NDQ', pct: 20 },
+          { code: 'QUAL', pct: 20 },
+        ],
+        note: 'Includes a 20% Australian dividend anchor while tilting 40% into innovation tech and high-ROE factor compounders.',
+      },
     ],
-    note: 'Blends franking-credit heavy AU funds with high-ROE international quality. Approx. 2.9% yield. V1AC (ex-Magellan MGOC) is now a Vinva systematic strategy — pre-June-2026 returns belong to old management.',
+    note: 'Optimised for long-horizon accumulators seeking secular growth in AI, technology, and compounding quality companies.',
   },
 ];
 
@@ -519,8 +771,8 @@ export const NEXT_BIG_ASX_ETF_TRENDS: NextBigEtf[] = [
   {
     theme: 'Global / Offshore exposure',
     trend: 'Investors are diversifying away from the ASX’s narrow, banking-heavy market',
-    examples: ['VGS', 'BGBL', 'IWLD', 'VTS'],
-    why: 'The Australian ETF market is now worth ~$346b and the fastest-growing bucket is overseas equities. ~80% of the ASX is banks, miners and consumer staples.',
+    examples: ['DHHF', 'VGS', 'BGBL', 'IWLD', 'VTS'],
+    why: 'The Australian ETF market is now worth ~$346b and the fastest-growing bucket is overseas equities and all-in-one global diversified funds. ~80% of the ASX is banks, miners and consumer staples.',
     caution: 'Currency risk: a rising AUD erodes returns on unhedged global funds.',
   },
   {

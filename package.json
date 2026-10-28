@@ -8,6 +8,9 @@
   "engines": {
     "node": ">=24.22.1"
   },
+  "sideEffects": [
+    "**/*.css"
+  ],
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",

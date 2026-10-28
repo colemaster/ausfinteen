@@ -12,6 +12,7 @@ import { Assumptions } from '../../components/shared/Assumptions';
 import { Disclaimer } from '../../components/shared/Disclaimer';
 import { AboutCalc } from '../../components/shared/AboutCalc';
 import { calculateAffordability, rateScenarioTable, monthlyBufferCheck, monthsToDeposit, type AustralianState } from './engine';
+import { getStateFHBOverview } from './stamp-duty';
 import { formatCurrency, formatPercent, formatPct } from '../../utils/formatters';
 import { usePortfolio } from '../../context/PortfolioContext';
 
@@ -24,6 +25,7 @@ const DEFAULTS = {
   state: 'VIC' as AustralianState,
   firstHomeBuyer: false,
   isNewHome: false,
+  firstHomeGuarantee: false,
   rate: 6.0,
   loanTerm: 30,
 };
@@ -37,6 +39,7 @@ interface HouseAffordabilityPreset {
   state: AustralianState;
   firstHomeBuyer: boolean;
   isNewHome: boolean;
+  firstHomeGuarantee?: boolean;
   rate: number;
   loanTerm: number;
 }
@@ -46,7 +49,7 @@ const PRESETS: ScenarioPreset<HouseAffordabilityPreset>[] = [
     id: 'first-home-qld',
     label: 'First Home Buyer (QLD)',
     badge: '$650k Entry',
-    description: '$95k income, $100k deposit on $650k Brisbane property with FHB stamp duty concession',
+    description: '$95k income, $100k deposit on $650k Brisbane property with FHB stamp duty concession & FHBG ($0 LMI)',
     values: {
       grossIncome: 95000,
       partnerIncome: 0,
@@ -56,6 +59,7 @@ const PRESETS: ScenarioPreset<HouseAffordabilityPreset>[] = [
       state: 'QLD',
       firstHomeBuyer: true,
       isNewHome: false,
+      firstHomeGuarantee: true,
       rate: 5.9,
       loanTerm: 30,
     },
@@ -74,6 +78,7 @@ const PRESETS: ScenarioPreset<HouseAffordabilityPreset>[] = [
       state: 'VIC',
       firstHomeBuyer: false,
       isNewHome: false,
+      firstHomeGuarantee: false,
       rate: 6.0,
       loanTerm: 30,
     },
@@ -82,7 +87,7 @@ const PRESETS: ScenarioPreset<HouseAffordabilityPreset>[] = [
     id: 'starter-wa',
     label: 'Regional Starter (WA)',
     badge: '$480k Starter',
-    description: '$85k + $65k dual income, $90k deposit on $480k Perth/Regional property',
+    description: '$85k + $65k dual income, $90k deposit on $480k Perth/Regional property with FHBG',
     values: {
       grossIncome: 85000,
       partnerIncome: 65000,
@@ -92,6 +97,7 @@ const PRESETS: ScenarioPreset<HouseAffordabilityPreset>[] = [
       state: 'WA',
       firstHomeBuyer: true,
       isNewHome: false,
+      firstHomeGuarantee: true,
       rate: 6.1,
       loanTerm: 30,
     },
@@ -120,6 +126,7 @@ export function HouseAffordability() {
     state: DEFAULTS.state as string,
     firstHomeBuyer: DEFAULTS.firstHomeBuyer,
     isNewHome: DEFAULTS.isNewHome,
+    firstHomeGuarantee: DEFAULTS.firstHomeGuarantee,
     rate: portfolio.mortgageRate > 0 ? portfolio.mortgageRate : DEFAULTS.rate,
     loanTerm: portfolio.mortgageYearsRemaining > 0 ? portfolio.mortgageYearsRemaining : DEFAULTS.loanTerm,
     bufferPct: 10,
@@ -128,6 +135,11 @@ export function HouseAffordability() {
   });
 
   const [activePreset, setActivePreset] = useState<string | undefined>(undefined);
+
+  const stateFhbOverview = useMemo(
+    () => getStateFHBOverview(params.state as AustralianState),
+    [params.state],
+  );
 
   const handleApplyPreset = useCallback((preset: ScenarioPreset<HouseAffordabilityPreset>) => {
     setActivePreset(preset.id);
@@ -141,6 +153,7 @@ export function HouseAffordability() {
       state: preset.values.state ?? DEFAULTS.state,
       firstHomeBuyer: preset.values.firstHomeBuyer ?? DEFAULTS.firstHomeBuyer,
       isNewHome: preset.values.isNewHome ?? DEFAULTS.isNewHome,
+      firstHomeGuarantee: preset.values.firstHomeGuarantee ?? DEFAULTS.firstHomeGuarantee,
       rate: preset.values.rate ?? DEFAULTS.rate,
       loanTerm: preset.values.loanTerm ?? DEFAULTS.loanTerm,
     });
@@ -157,6 +170,7 @@ export function HouseAffordability() {
       state: DEFAULTS.state,
       firstHomeBuyer: DEFAULTS.firstHomeBuyer,
       isNewHome: DEFAULTS.isNewHome,
+      firstHomeGuarantee: DEFAULTS.firstHomeGuarantee,
       rate: DEFAULTS.rate,
       loanTerm: DEFAULTS.loanTerm,
       bufferPct: 10,
@@ -182,6 +196,9 @@ export function HouseAffordability() {
         rate: effectiveRate,
         loanTerm: effectiveLoanTerm,
         state: params.state as AustralianState,
+        firstHomeBuyer: params.firstHomeBuyer,
+        isNewHome: params.isNewHome,
+        firstHomeGuarantee: params.firstHomeGuarantee,
       }),
     [params, effectiveGrossIncome, effectiveDeposit, effectivePropertyPrice, effectiveRate, effectiveLoanTerm],
   );
@@ -289,6 +306,12 @@ export function HouseAffordability() {
           link: 'https://en.wikipedia.org/wiki/Stamp_duty_in_Australia',
           linkLabel: 'Wikipedia: Stamp duty in Australia',
         },
+        {
+          term: 'What is the First Home Guarantee (FHBG)?',
+          definition: 'A Federal Government scheme administered by Housing Australia enabling eligible first home buyers to purchase a home with as little as a 5% deposit without paying Lenders Mortgage Insurance (LMI). Housing Australia guarantees up to 15% of the property value to participating lenders, saving buyers $10,000–$35,000+ in insurance costs.',
+          link: 'https://www.housingaustralia.gov.au/support-buy-home/first-home-guarantee',
+          linkLabel: 'Housing Australia: First Home Guarantee',
+        },
       ]} />
 
       {/* Inputs */}
@@ -331,10 +354,35 @@ export function HouseAffordability() {
             : <NumberInput label="Loan Term" value={params.loanTerm} onChange={v => setParams({ loanTerm: Math.round(v) })} min={10} max={40} step={1} suffix=" yrs" />
           }
         </div>
-        <div className="flex flex-wrap gap-6">
+        <div className="flex flex-wrap gap-6 items-center">
           <Toggle label="First Home Buyer" checked={params.firstHomeBuyer} onChange={v => setParams({ firstHomeBuyer: v })} description="Stamp duty concession may apply" />
           <Toggle label="New Home" checked={params.isNewHome} onChange={v => setParams({ isNewHome: v })} description="Affects FHOG eligibility" />
+          {params.firstHomeBuyer && (
+            <Toggle
+              label="First Home Guarantee (FHBG)"
+              checked={params.firstHomeGuarantee}
+              onChange={v => setParams({ firstHomeGuarantee: v })}
+              description="5% min deposit, $0 LMI via Housing Australia"
+            />
+          )}
         </div>
+        {params.firstHomeBuyer && (
+          <div className="bg-[var(--card)] border border-[var(--primary)]/30 rounded-lg p-3.5 mt-2">
+            <div className="flex flex-wrap items-center justify-between gap-2 mb-1.5">
+              <span className="text-xs font-bold uppercase tracking-wider text-[var(--primary)]">
+                {stateFhbOverview.stateName} — First Home Buyer Schemes
+              </span>
+              {stateFhbOverview.isUnlimitedNewHome && (
+                <span className="text-[10px] font-semibold bg-emerald-500/10 text-emerald-600 px-2 py-0.5 rounded-full">
+                  Uncapped New Home Exemption
+                </span>
+              )}
+            </div>
+            <p className="text-xs text-[var(--foreground)] leading-relaxed">
+              {stateFhbOverview.summary}
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Affordability Banner */}
@@ -377,11 +425,17 @@ export function HouseAffordability() {
         />
         <StatCard
           label="LMI Estimate"
-          value={result.lmi > 0 ? formatCurrency(result.lmi) : 'Nil'}
+          value={result.lmiSavedByFHBG && result.lmiSavedByFHBG > 0 ? '$0 (FHBG)' : result.lmi > 0 ? formatCurrency(result.lmi) : 'Nil'}
           numericValue={result.lmi}
           format="currency"
-          color={result.lmi > 0 ? 'red' : 'green'}
-          subtext={result.lvr > 80 ? `LVR ${formatPct(result.lvr)}` : 'LVR ≤ 80%'}
+          color={result.lmiSavedByFHBG && result.lmiSavedByFHBG > 0 ? 'green' : result.lmi > 0 ? 'red' : 'green'}
+          subtext={
+            result.lmiSavedByFHBG && result.lmiSavedByFHBG > 0
+              ? `Saved ${formatCurrency(result.lmiSavedByFHBG)} via FHBG`
+              : result.lvr > 80
+              ? `LVR ${formatPct(result.lvr)}`
+              : 'LVR ≤ 80%'
+          }
         />
         <StatCard
           label="Total Upfront Cost"

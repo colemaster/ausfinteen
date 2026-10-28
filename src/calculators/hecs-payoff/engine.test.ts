@@ -2,11 +2,14 @@ import { describe, it, expect } from 'vitest';
 import {
   calcMarginalHECSRepayment,
   calcLegacyTierHECSRepayment,
+  calcHECSRepayment,
   simulateHECSPayoff,
   projectDebtWithIndexation,
   comparePaydownVsInvest,
   repaymentSplitSchedule,
   compareIndexationScenarios,
+  calcRetrospectiveIndexationCredit,
+  applyAccordDebtReduction,
 } from './engine';
 
 describe('HECS-HELP Calculation Engine', () => {
@@ -15,22 +18,35 @@ describe('HECS-HELP Calculation Engine', () => {
     expect(calcMarginalHECSRepayment(60000)).toBe(0);
     expect(calcMarginalHECSRepayment(69528)).toBe(0);
 
-    // $80,000 income -> ($80,000 - $69,529) * 15% = $1,570.65
-    expect(calcMarginalHECSRepayment(80000)).toBeCloseTo(1570.65, 1);
+    // Edge case: zero or negative income
+    expect(calcMarginalHECSRepayment(0)).toBe(0);
+    expect(calcMarginalHECSRepayment(-5000)).toBe(0);
 
-    // $135,000 income -> Band 1 (9,028.20) + ($135,000 - $129,718) * 17% = 9,028.20 + 897.94 = 9,926.14
-    expect(calcMarginalHECSRepayment(135000)).toBeCloseTo(9926.14, 1);
+    // $80,000 income -> ($80,000 - $69,528) * 15% = $1,570.80
+    expect(calcMarginalHECSRepayment(80000)).toBeCloseTo(1570.80, 2);
 
-    // $200,000 income -> Band 1 (9,028.20) + Band 2 (9,576.44) + ($200,000 - $186,051) * 10% = 18,604.64 + 1,394.90 = 19,999.54
-    expect(calcMarginalHECSRepayment(200000)).toBeCloseTo(19999.54, 1);
+    // $135,000 income -> Band 1 (9,028.35) + ($135,000 - $129,717) * 17% = 9,028.35 + 898.11 = 9,926.46
+    expect(calcMarginalHECSRepayment(135000)).toBeCloseTo(9926.46, 2);
+
+    // $200,000 income -> flat 10% of total repayment income = $20,000.00
+    expect(calcMarginalHECSRepayment(200000)).toBe(20000);
   });
 
   it('correctly calculates legacy 2024-25 tiered repayments', () => {
     expect(calcLegacyTierHECSRepayment(50000)).toBe(0);
+    expect(calcLegacyTierHECSRepayment(0)).toBe(0);
+    expect(calcLegacyTierHECSRepayment(-1000)).toBe(0);
     // $60,000 in 2024 is tier 1 (1.0%) -> $600
     expect(calcLegacyTierHECSRepayment(60000)).toBeCloseTo(600, 1);
     // $100,000 in 2024 is tier 9 (5.5%) -> $5,500
     expect(calcLegacyTierHECSRepayment(100000)).toBeCloseTo(5500, 1);
+  });
+
+  it('calcHECSRepayment switches between marginal and legacy correctly', () => {
+    // Under 2026-27 marginal, $60k pays $0
+    expect(calcHECSRepayment(60000, true)).toBe(0);
+    // Under legacy 2024-25, $60k pays $600
+    expect(calcHECSRepayment(60000, false)).toBeCloseTo(600, 1);
   });
 
   it('simulates full payoff schedule and borrowing capacity impact', () => {
@@ -43,6 +59,7 @@ describe('HECS-HELP Calculation Engine', () => {
       monthlyVoluntaryPayment: 300,
       mortgageRate: 0.062,
       etfExpectedReturn: 0.08,
+      hisaRate: 0.05,
       useMarginal2025System: true,
       projectionYears: 15,
     });
@@ -51,6 +68,85 @@ describe('HECS-HELP Calculation Engine', () => {
     expect(result.schedule.length).toBe(15);
     expect(result.totalRepaidCompulsoryOnly).toBeGreaterThan(35000);
     expect(result.voluntaryPayoffYears).toBeLessThanOrEqual(result.compulsoryPayoffYears);
+    expect(result.finalWealthHISA).toBeGreaterThan(0);
+    expect(result.hisaNetRateAfterTax).toBeGreaterThan(0);
+    expect(['voluntary_payoff', 'invest_etf', 'mortgage_offset', 'hisa_savings']).toContain(result.optimalStrategy);
+  });
+
+  it('handles zero current debt gracefully with zero borrowing penalty', () => {
+    const result = simulateHECSPayoff({
+      currentDebt: 0,
+      annualIncome: 90000,
+      incomeGrowthRate: 0.03,
+      indexationRate: 0.028,
+      lumpSumAvailable: 5000,
+      monthlyVoluntaryPayment: 300,
+      mortgageRate: 0.06,
+      etfExpectedReturn: 0.08,
+      useMarginal2025System: true,
+      projectionYears: 10,
+    });
+
+    expect(result.compulsoryPayoffYears).toBe(0);
+    expect(result.voluntaryPayoffYears).toBe(0);
+    expect(result.totalIndexationCompulsoryOnly).toBe(0);
+    expect(result.totalRepaidCompulsoryOnly).toBe(0);
+    expect(result.apraBorrowingCapacityImpact).toBe(0);
+    expect(result.schedule).toHaveLength(10);
+    expect(result.schedule[0].endingBalance).toBe(0);
+  });
+
+  it('handles lump sum exceeding debt without over-allocating repayments', () => {
+    const result = simulateHECSPayoff({
+      currentDebt: 3000,
+      annualIncome: 80000,
+      incomeGrowthRate: 0.03,
+      indexationRate: 0.028,
+      lumpSumAvailable: 10000,
+      monthlyVoluntaryPayment: 200,
+      mortgageRate: 0.06,
+      etfExpectedReturn: 0.08,
+      useMarginal2025System: true,
+      projectionYears: 5,
+    });
+
+    expect(result.voluntaryPayoffYears).toBe(0);
+    expect(result.totalRepaidWithVoluntary).toBe(3000); // capped at starting debt
+    expect(result.schedule[0].startingBalance).toBe(0);
+  });
+});
+
+describe('Retrospective Indexation & Accord Debt Reduction', () => {
+  it('calculates retrospective 2023-2024 indexation credits accurately', () => {
+    // $30,000 debt:
+    // Original: 30,000 * 1.071 * 1.047 = 33,640.11 -> indexation = 3,640
+    // Reformed: 30,000 * 1.032 * 1.040 = 32,198.40 -> indexation = 2,198
+    // Saved: 3,640 - 2,198 = 1,442
+    const retro = calcRetrospectiveIndexationCredit(30000);
+    expect(retro.originalEnding).toBe(33640);
+    expect(retro.reformedEnding).toBe(32198);
+    expect(retro.creditSaved).toBe(1442);
+  });
+
+  it('handles zero or negative debt for retrospective indexation', () => {
+    const zero = calcRetrospectiveIndexationCredit(0);
+    expect(zero.creditSaved).toBe(0);
+    expect(zero.originalEnding).toBe(0);
+
+    const neg = calcRetrospectiveIndexationCredit(-1000);
+    expect(neg.creditSaved).toBe(0);
+  });
+
+  it('applies 20% Universities Accord debt reduction', () => {
+    const { reducedDebt, amountReduced } = applyAccordDebtReduction(40000);
+    expect(amountReduced).toBe(8000);
+    expect(reducedDebt).toBe(32000);
+  });
+
+  it('handles zero debt for 20% Accord debt reduction', () => {
+    const { reducedDebt, amountReduced } = applyAccordDebtReduction(0);
+    expect(amountReduced).toBe(0);
+    expect(reducedDebt).toBe(0);
   });
 });
 
@@ -105,6 +201,12 @@ describe('comparePaydownVsInvest', () => {
     const result = comparePaydownVsInvest(0, 500, 0.032, 0.08, 5);
     expect(result.finalDebtIfPaydown).toBe(0);
   });
+
+  it('zero years returns empty rows and zero net advantage', () => {
+    const result = comparePaydownVsInvest(20000, 200, 0.03, 0.07, 0);
+    expect(result.rows).toEqual([]);
+    expect(result.netAdvantageInvest).toBe(0);
+  });
 });
 
 describe('repaymentSplitSchedule', () => {
@@ -127,6 +229,11 @@ describe('repaymentSplitSchedule', () => {
     expect(rows.every(r => r.voluntary === 0)).toBe(true);
     expect(rows.every(r => r.compulsory > 0)).toBe(true);
   });
+
+  it('returns empty array if debt is zero or years is zero', () => {
+    expect(repaymentSplitSchedule(0, 90000, 0.03, 0.028, 200, 10)).toEqual([]);
+    expect(repaymentSplitSchedule(30000, 90000, 0.03, 0.028, 200, 0)).toEqual([]);
+  });
 });
 
 describe('compareIndexationScenarios', () => {
@@ -144,5 +251,13 @@ describe('compareIndexationScenarios', () => {
   it('very high indexation can prevent payoff within the window', () => {
     const rows = compareIndexationScenarios(120000, 60000, 0.02, 0, 50, [0.20]);
     expect(rows[0].payoffYears).toBe(50);
+  });
+
+  it('handles zero starting debt in indexation scenario comparison', () => {
+    const rows = compareIndexationScenarios(0, 90000, 0.03, 0, 200, [0.025, 0.05]);
+    expect(rows).toHaveLength(2);
+    expect(rows[0].payoffYears).toBe(0);
+    expect(rows[0].totalIndexation).toBe(0);
+    expect(rows[0].totalRepaid).toBe(0);
   });
 });

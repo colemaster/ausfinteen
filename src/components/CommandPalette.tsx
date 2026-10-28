@@ -368,7 +368,12 @@ export function CommandPalette() {
       window.open(hit.route, '_blank', 'noopener,noreferrer');
       return;
     }
-    navigate(hit.topicId ? `${hit.route}?topic=${hit.topicId}` : hit.route);
+    const targetRoute = hit.route.includes('?topic=')
+      ? hit.route
+      : hit.topicId
+        ? `${hit.route}?topic=${hit.topicId}`
+        : hit.route;
+    navigate(targetRoute);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {

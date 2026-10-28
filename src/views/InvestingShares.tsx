@@ -4,13 +4,15 @@ import { TeenCompoundGrowthCalc } from '@/calculators/teen-investing/TeenCompoun
 import { ASXETFExplorer } from '@/calculators/teen-investing/ASXETFExplorer';
 import { ETFPortfolioPicker } from '@/calculators/teen-investing/ETFPortfolioPicker';
 import { NextBigEtfs } from '@/calculators/teen-investing/NextBigEtfs';
+import { MicroInvestingPlatformMatrix } from '@/calculators/teen-investing/MicroInvestingPlatformMatrix';
+import { FrankingAndDrpVisualizer } from '@/calculators/teen-investing/FrankingAndDrpVisualizer';
 import { WebReferenceLink } from '@/components/shared/WebReferenceLink';
 import { ModulePrevNext } from '@/components/shared/ModulePrevNext';
 import { PrintShareFAB } from '@/components/shared/PrintShareFAB';
 import { TrendingUp, Layers, AlertTriangle, ExternalLink, GraduationCap } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
-import { OFFICIAL_WEB_LINKS } from '@/data/teen-finance-data';
+import { OFFICIAL_WEB_LINKS } from '@/data/statutory-links';
 import { SmartImage } from '@/components/ui/SmartImage';
 import { usePageTitle } from '@/hooks/usePageTitle';
 
@@ -22,6 +24,10 @@ const INVESTING_WEB_SOURCES = [
   OFFICIAL_WEB_LINKS.asx_invest_education,
   OFFICIAL_WEB_LINKS.moneysmart_investing,
   OFFICIAL_WEB_LINKS.moneysmart_compound,
+  OFFICIAL_WEB_LINKS.moneysmart_micro_investing,
+  OFFICIAL_WEB_LINKS.asic_day_trading_warning,
+  OFFICIAL_WEB_LINKS.pearler_headstart,
+  OFFICIAL_WEB_LINKS.betashares_direct,
   OFFICIAL_WEB_LINKS.vanguard_etfs,
   OFFICIAL_WEB_LINKS.betashares_etfs,
   OFFICIAL_WEB_LINKS.blackrock_etfs,
@@ -79,6 +85,12 @@ export function InvestingShares() {
 
       {/* Next big things in ASX ETFs */}
       <NextBigEtfs />
+
+      {/* Micro-Investing & Broker Matrix (CHESS vs Custodial) */}
+      <MicroInvestingPlatformMatrix />
+
+      {/* Franking Credits & DRP Compounding Visualizer */}
+      <FrankingAndDrpVisualizer />
 
       {/* Highlights Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

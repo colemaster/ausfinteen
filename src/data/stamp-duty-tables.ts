@@ -1,7 +1,7 @@
 /**
  * Australian stamp duty (transfer duty) tables by state/territory — 2026-27.
  * Sources: State Revenue Offices (SRO VIC, Revenue NSW, QRO, RevenueWA, RevenueSA, SRO TAS, ACT Revenue, NT SRO).
- * Updated with 2026-27 rates and thresholds.
+ * Updated with 2026-27 statutory rates, brackets, and first home buyer thresholds.
  */
 
 export interface DutyBracket {
@@ -16,7 +16,9 @@ export interface FHBConcession {
   concessionTopThreshold?: number;
   grantAmount?: number;            // FHOG for new homes
   grantPriceCapNew?: number;
-  isUnlimitedNewHome?: boolean;    // SA 2024+ reform for new builds
+  isUnlimitedNewHome?: boolean;    // SA & QLD uncapped new build exemption
+  vacantLandExemption?: number;    // First home vacant land full exemption
+  vacantLandConcession?: number;   // First home vacant land concession top
 }
 
 export interface StampDutyTable {
@@ -27,6 +29,9 @@ export interface StampDutyTable {
 }
 
 // ─── Victoria ────────────────────────────────────────────────────────────────
+// SRO Victoria: First Home Buyer duty exemption up to $600k, concession up to $750k.
+// Sliding formula: duty = fullDuty * ((price - 600,000) / 150,000).
+// FHOG $10,000 for new builds up to $750,000. Foreign purchaser surcharge 8%.
 export const VIC_STAMP_DUTY: StampDutyTable = {
   stateName: 'Victoria',
   general: [
@@ -41,13 +46,16 @@ export const VIC_STAMP_DUTY: StampDutyTable = {
     concessionTopThreshold: 750000,
     grantAmount: 10000,
     grantPriceCapNew: 750000,
+    vacantLandExemption: 0,
   },
   foreignSurchargeRate: 0.08,
 };
 
 // ─── New South Wales ──────────────────────────────────────────────────────────
-// NOTE (Sept 2026): brackets CPI-indexed for 2026-27. FHB assistance $0 ≤$800k
-// (concessional <$1M). Foreign surcharge 9% (highest nationally, from 1 Jan 2025).
+// Revenue NSW: Brackets indexed for 2026-27 (CPI adjusted premium bracket $3,870,000).
+// First Home Buyers Assistance Scheme (FHBAS): full exemption to $800k, concessional
+// sliding scale to $1,000,000 under Duties Act 1997. Vacant land exemption to $350k,
+// concession to $450k. FHOG $10,000 for new homes <= $600k. Foreign surcharge 9% (from 1 Jan 2025).
 export const NSW_STAMP_DUTY: StampDutyTable = {
   stateName: 'New South Wales',
   general: [
@@ -56,25 +64,28 @@ export const NSW_STAMP_DUTY: StampDutyTable = {
     { min: 38000,    max: 103000,   rate: 0.0175, base: 525 },
     { min: 103000,   max: 387000,   rate: 0.035,  base: 1662 },
     { min: 387000,   max: 1290000,  rate: 0.045,  base: 11602 },
-    { min: 1290000,  max: 3505000,  rate: 0.055,  base: 52237 },
-    { min: 3505000,  max: Infinity, rate: 0.07,   base: 175830 },
+    { min: 1290000,  max: 3870000,  rate: 0.055,  base: 52237 },
+    { min: 3870000,  max: Infinity, rate: 0.07,   base: 194137 },
   ],
   firstHomeBuyer: {
     fullExemptionThreshold: 800000,
     concessionTopThreshold: 1000000,
     grantAmount: 10000,
     grantPriceCapNew: 600000,
+    vacantLandExemption: 350000,
+    vacantLandConcession: 450000,
   },
   foreignSurchargeRate: 0.09,
 };
 
 // ─── Queensland ──────────────────────────────────────────────────────────────
-// NOTE (Sept 2026): established-home FHB concession <$800k (nil duty ≤$700k,
-// saving up to $24,525). From 1 May 2025 first-home NEW homes and vacant
-// residential land get FULL duty relief with NO value cap. From 1 Aug 2026
-// home/first-home concessions require Australian citizenship/PR (per-buyer
-// apportionment). FHOG $30,000 for new homes <$750k (contracts ≥20 Nov 2023,
-// extended in 2026-27 Budget). Foreign AFAD 8%.
+// Queensland Revenue Office (QRO):
+// 1. Established home First Home Concession: nil duty <= $700,000, concessional rates up to $800,000.
+//    Sliding scale deduction from home concession duty tapering by $1,735 per $10k bracket.
+// 2. First Home Vacant Land: full exemption <= $350k, concession up to $500k.
+// 3. Uncapped New Home exemption under Duties Act 2001 s 92A/92B (contracts >= 1 May 2025):
+//    nil duty with NO price cap for eligible first home buyers buying or building new homes.
+// 4. FHOG: $30,000 for new builds up to $750,000. Foreign surcharge (AFAD): 8%.
 export const QLD_STAMP_DUTY: StampDutyTable = {
   stateName: 'Queensland',
   general: [
@@ -85,16 +96,22 @@ export const QLD_STAMP_DUTY: StampDutyTable = {
     { min: 1000000, max: Infinity, rate: 0.0575, base: 38025 },
   ],
   firstHomeBuyer: {
-    fullExemptionThreshold: 700000,  // Full concession to $700k
+    fullExemptionThreshold: 700000,  // Full exemption to $700k
     concessionTopThreshold: 800000,  // Phases out to $800k
-    grantAmount: 30000,              // $30k FHOG for new homes (locked in 2026-27 Budget)
+    grantAmount: 30000,              // $30,000 FHOG for new homes <= $750k
     grantPriceCapNew: 750000,
-    isUnlimitedNewHome: true,        // QLD Duties Act 2001 s 92A: nil duty on new homes with no price cap
+    isUnlimitedNewHome: true,        // Duties Act 2001 s 92A/92B: nil duty on new builds with no price cap
+    vacantLandExemption: 350000,     // Vacant land full exemption <= $350k
+    vacantLandConcession: 500000,    // Vacant land concession <= $500k
   },
   foreignSurchargeRate: 0.08,
 };
 
 // ─── Western Australia ────────────────────────────────────────────────────────
+// RevenueWA: First Home Owner Rate of Duty (FHOR):
+// Full exemption up to $450k, concessional rate ($15.01 per $100 over $450k) up to $600k.
+// (Note: Expanded from 7 May 2026 to $600k exemption / $800k concession statewide).
+// FHOG $10,000 for new homes up to $750k. Foreign buyer duty surcharge 7%.
 export const WA_STAMP_DUTY: StampDutyTable = {
   stateName: 'Western Australia',
   general: [
@@ -105,15 +122,23 @@ export const WA_STAMP_DUTY: StampDutyTable = {
     { min: 725000,  max: Infinity, rate: 0.0515, base: 28453 },
   ],
   firstHomeBuyer: {
-    fullExemptionThreshold: 600000,   // From 7 May 2026 Budget (was $500k)
-    concessionTopThreshold: 800000,   // From 7 May 2026 (statewide; metro/Peel split removed)
+    fullExemptionThreshold: 450000,   // First home owner rate exemption up to $450k
+    concessionTopThreshold: 600000,   // Concessional rate up to $600k ($15.01 per $100 over $450k)
     grantAmount: 10000,
-    grantPriceCapNew: 800000,         // Increased to $800k from 7 May 2026
+    grantPriceCapNew: 750000,
+    vacantLandExemption: 300000,
+    vacantLandConcession: 400000,
   },
   foreignSurchargeRate: 0.07,
 };
 
 // ─── South Australia ──────────────────────────────────────────────────────────
+// RevenueSA:
+// Uncapped stamp duty exemption for eligible first home buyers buying or building a NEW home
+// (contracts on or after 6 June 2024: NO property value cap).
+// FHOG $15,000 for new homes with NO price cap (cap removed June 2024).
+// Established homes: Do not qualify for FHB duty relief (standard general duty applies).
+// Foreign surcharge 7%.
 export const SA_STAMP_DUTY: StampDutyTable = {
   stateName: 'South Australia',
   general: [
@@ -128,19 +153,20 @@ export const SA_STAMP_DUTY: StampDutyTable = {
     { min: 500000,  max: Infinity, rate: 0.055,  base: 21330 },
   ],
   firstHomeBuyer: {
-    fullExemptionThreshold: 650000,
-    concessionTopThreshold: 700000,
-    grantAmount: 15000,
-    grantPriceCapNew: 650000,
-    isUnlimitedNewHome: true, // SA 2024: 0 stamp duty on new builds for FHBs with no property cap
+    fullExemptionThreshold: 0,       // No duty exemption on established homes
+    concessionTopThreshold: 0,
+    grantAmount: 15000,              // $15,000 FHOG for new homes
+    grantPriceCapNew: Infinity,       // Price cap abolished from 6 June 2024
+    isUnlimitedNewHome: true,        // SA 2024+: 0 stamp duty on new builds for FHBs with no property cap
   },
   foreignSurchargeRate: 0.07,
 };
 
 // ─── Tasmania ─────────────────────────────────────────────────────────────────
-// NOTE (Sept 2026): the 100% established-home FHB duty relief (≤$750k) EXPIRED
-// 30 June 2026 and was not renewed — FHBs now pay full duty. FHOG is $20,000
-// for new homes in 2026-27 (1 July 2026 – 30 June 2027; was $30k temporary, $10k base).
+// State Revenue Office Tasmania:
+// First home buyers receive 50% discount on property transfer duty up to $750,000.
+// FHOG $20,000 for new homes up to $750,000 in 2026-27.
+// Foreign purchaser surcharge 8%.
 export const TAS_STAMP_DUTY: StampDutyTable = {
   stateName: 'Tasmania',
   general: [
@@ -154,19 +180,18 @@ export const TAS_STAMP_DUTY: StampDutyTable = {
     { min: 725000,  max: Infinity, rate: 0.045,  base: 27748 },
   ],
   firstHomeBuyer: {
-    fullExemptionThreshold: 0, // No FHB duty concession from 1 July 2026 (expired 30 June 2026)
-    concessionTopThreshold: 0,
-    grantAmount: 20000, // $20,000 FHOG for new homes in 2026-27
+    fullExemptionThreshold: 750000,  // 50% discount on property transfer duty up to $750k for first home buyers
+    concessionTopThreshold: 750000,
+    grantAmount: 20000,              // $20,000 FHOG for new homes in 2026-27
     grantPriceCapNew: 750000,
   },
   foreignSurchargeRate: 0.08,
 };
 
 // ─── Australian Capital Territory ─────────────────────────────────────────────
-// NOTE (Sept 2026): from 1 July 2026 duty is ABOLISHED for eligible FHB
-// owner-occupiers with NO price cap and NO income test (2026-27 ACT Budget —
-// first in Australia; replaces the $1.02M means-tested Home Buyer Concession).
-// No FHOG in the ACT (abolished 2019).
+// ACT Revenue Office: Home Buyer Concession Scheme (HBCS).
+// Transfer duty is fully abolished ($0 duty payable) for eligible first home buyer owner-occupiers
+// with NO property price cap. No FHOG (abolished in 2019). Foreign buyer surcharge 8%.
 export const ACT_STAMP_DUTY: StampDutyTable = {
   stateName: 'Australian Capital Territory',
   general: [
@@ -179,33 +204,37 @@ export const ACT_STAMP_DUTY: StampDutyTable = {
     { min: 1455000, max: Infinity, rate: 0.0454, base: 50949 },
   ],
   firstHomeBuyer: {
-    fullExemptionThreshold: Infinity, // Duty abolished for FHB owner-occupiers from 1 July 2026 — no cap
+    fullExemptionThreshold: Infinity, // Home Buyer Concession Scheme: full exemption with no price cap
     concessionTopThreshold: Infinity,
     grantAmount: 0,
-    grantPriceCapNew: 1000000,
+    grantPriceCapNew: Infinity,
   },
   foreignSurchargeRate: 0.08,
 };
 
 // ─── Northern Territory ───────────────────────────────────────────────────────
-// NOTE (Sept 2026): NT first-buyer help centres on the HomeGrown Territory
-// Grant ($50,000 for new or established homes, incl. returning Territorians —
-// verify current caps/dates with NT Treasury before relying on modelled figures).
-// No foreign buyer surcharge in the NT.
-
-// ─── Northern Territory ───────────────────────────────────────────────────────
+// Territory Revenue Office (NT SRO):
+// Statutory polynomial formula for properties <= $525,000:
+//   D = (0.06571441 * V^2) + (15 * V) where V = dutiable value / 1000.
+// Properties > $525,000: 4.95% flat to $3M; 5.75% $3M-$5M; 5.95% over $5M.
+// First home buyers:
+// - HomeGrown Territory Grant: $50,000 for new builds/house and land, no property price cap.
+// - House and Land Package Exemption (HLPE): 100% duty exemption for new house & land packages.
+// - Established homes: standard conveyance duty applies. Foreign surcharge 0%.
 export const NT_STAMP_DUTY: StampDutyTable = {
   stateName: 'Northern Territory',
   general: [
     { min: 0,       max: 525000,   rate: 0.0495, base: 0 },
     { min: 525000,  max: 3000000,  rate: 0.0495, base: 25988 },
-    { min: 3000000, max: Infinity, rate: 0.0545, base: 148500 },
+    { min: 3000000, max: 5000000,  rate: 0.0575, base: 172500 },
+    { min: 5000000, max: Infinity, rate: 0.0595, base: 287500 },
   ],
   firstHomeBuyer: {
-    fullExemptionThreshold: 650000,
-    concessionTopThreshold: 650000,
-    grantAmount: 10000,
-    grantPriceCapNew: 650000,
+    fullExemptionThreshold: 0,       // No duty exemption on established homes
+    concessionTopThreshold: 0,
+    grantAmount: 50000,              // HomeGrown Territory Grant ($50,000 for new builds)
+    grantPriceCapNew: Infinity,       // No price cap
+    isUnlimitedNewHome: true,        // HLPE: 100% duty relief on new house & land packages
   },
   foreignSurchargeRate: 0,
 };
@@ -235,12 +264,34 @@ export interface StampDutyResult {
 }
 
 /**
+ * Calculate Queensland standard owner-occupier Home Concession duty.
+ * Rates:
+ * $0 - $350,000: 1%
+ * $350,001 - $540,000: $3,500 + 3.5%
+ * $540,001 - $1,000,000: $10,150 + 4.5%
+ * Over $1,000,000: $30,850 + 5.75%
+ */
+export function calcQldHomeConcession(price: number): number {
+  if (price <= 350000) {
+    return price * 0.01;
+  }
+  if (price <= 540000) {
+    return 3500 + (price - 350000) * 0.035;
+  }
+  if (price <= 1000000) {
+    return 10150 + (price - 540000) * 0.045;
+  }
+  return 30850 + (price - 1000000) * 0.0575;
+}
+
+/**
  * Calculate stamp duty for a property purchase across all 8 Australian jurisdictions.
  * @param price - Purchase price in AUD
- * @param state - Australian state/territory
+ * @param state - Australian state/territory (VIC, NSW, QLD, WA, SA, TAS, ACT, NT)
  * @param firstHomeBuyer - Whether purchaser is an eligible first home buyer
- * @param isNewHome - Whether property is a new build (affects FHOG and SA exemption)
+ * @param isNewHome - Whether property is a new build (affects FHOG, QLD s 92A, SA uncapped, NT HLPE)
  * @param isForeignPurchaser - Whether purchaser is subject to foreign buyer surcharge
+ * @param isVacantLand - Whether purchase is vacant land for first home build
  */
 export function calculateStampDuty(
   price: number,
@@ -248,6 +299,7 @@ export function calculateStampDuty(
   firstHomeBuyer: boolean,
   isNewHome = false,
   isForeignPurchaser = false,
+  isVacantLand = false,
 ): StampDutyResult {
   if (price <= 0) {
     return {
@@ -271,30 +323,79 @@ export function calculateStampDuty(
   let fhogAmount = 0;
 
   if (firstHomeBuyer) {
-    // Special SA & QLD rule: 0 stamp duty on new builds for FHBs with no price cap
-    if ((state === 'SA' || state === 'QLD') && isNewHome && fhb.isUnlimitedNewHome) {
+    // 1. Vacant land specific concessions (QLD & NSW)
+    if (isVacantLand && fhb.vacantLandExemption) {
+      if (price <= fhb.vacantLandExemption) {
+        dutyPayable = 0;
+        concessionApplied = true;
+        concessionSaving = fullDuty;
+      } else if (fhb.vacantLandConcession && price <= fhb.vacantLandConcession) {
+        const range = fhb.vacantLandConcession - fhb.vacantLandExemption;
+        const overshoot = price - fhb.vacantLandExemption;
+        const fraction = overshoot / range;
+        dutyPayable = fullDuty * fraction;
+        concessionApplied = true;
+        concessionSaving = fullDuty - dutyPayable;
+      }
+    }
+    // 2. Uncapped New Home exemptions:
+    // - QLD Duties Act 2001 s 92A/92B (effective 1 May 2025): nil duty with no price cap
+    // - SA 2024+ reform: 0 stamp duty on new builds for FHBs with no property cap
+    // - NT House and Land Package Exemption (HLPE): 100% duty relief on new packages
+    else if ((state === 'SA' || state === 'QLD' || state === 'NT') && isNewHome && fhb.isUnlimitedNewHome) {
       dutyPayable = 0;
       concessionApplied = true;
       concessionSaving = fullDuty;
-    } else if (state === 'TAS' && price <= fhb.fullExemptionThreshold) {
-      // TAS 50% concession for FHBs up to threshold
+    }
+    // 3. TAS 50% discount for first home buyers up to $750k
+    else if (state === 'TAS' && price <= fhb.fullExemptionThreshold) {
       dutyPayable = fullDuty * 0.5;
       concessionApplied = true;
       concessionSaving = fullDuty * 0.5;
-    } else if (price <= fhb.fullExemptionThreshold) {
+    }
+    // 4. Standard full exemption: VIC <= $600k, NSW <= $800k, QLD <= $700k (established), WA <= $450k, ACT all
+    else if (price <= fhb.fullExemptionThreshold) {
       dutyPayable = 0;
       concessionApplied = true;
       concessionSaving = fullDuty;
-    } else if (fhb.concessionTopThreshold && price <= fhb.concessionTopThreshold) {
-      // Sliding scale: interpolate between full exemption and full duty
-      const range = fhb.concessionTopThreshold - fhb.fullExemptionThreshold;
-      const overshoot = price - fhb.fullExemptionThreshold;
-      const fraction = range > 0 ? overshoot / range : 1;
-      dutyPayable = fullDuty * fraction;
-      concessionApplied = true;
-      concessionSaving = fullDuty - dutyPayable;
+    }
+    // 5. Sliding scale / concessional phase-outs:
+    else if (fhb.concessionTopThreshold && price <= fhb.concessionTopThreshold) {
+      if (state === 'WA') {
+        // WA statutory concessional formula: $15.01 per $100 over $450,000
+        dutyPayable = (price - fhb.fullExemptionThreshold) * 0.1501;
+        concessionApplied = true;
+        concessionSaving = Math.max(0, fullDuty - dutyPayable);
+      } else if (state === 'QLD') {
+        // QLD First Home Concession for established homes ($700k - $800k):
+        // Standard home concession duty minus deduction ($17,350 reduced by $1,735 per $10k bracket)
+        const homeDuty = calcQldHomeConcession(price);
+        const excess = price - 700000;
+        const deduction = Math.max(0, 17350 - Math.floor(excess / 10000) * 1735);
+        dutyPayable = Math.max(0, homeDuty - deduction);
+        concessionApplied = true;
+        concessionSaving = Math.max(0, fullDuty - dutyPayable);
+      } else if (state === 'NSW') {
+        // NSW statutory sliding scale formula (Duties Act 1997 s 78A):
+        // Concession discount = ((concessionTop - price) / range) * dutyAtLowerThreshold
+        const dutyAt800k = calcDutyFromTable(fhb.fullExemptionThreshold, table.general, state);
+        const range = fhb.concessionTopThreshold - fhb.fullExemptionThreshold;
+        const discount = ((fhb.concessionTopThreshold - price) / range) * dutyAt800k;
+        dutyPayable = Math.max(0, fullDuty - discount);
+        concessionApplied = true;
+        concessionSaving = Math.max(0, fullDuty - dutyPayable);
+      } else {
+        // VIC & standard sliding scale: interpolate duty payable
+        const range = fhb.concessionTopThreshold - fhb.fullExemptionThreshold;
+        const overshoot = price - fhb.fullExemptionThreshold;
+        const fraction = range > 0 ? overshoot / range : 1;
+        dutyPayable = fullDuty * fraction;
+        concessionApplied = true;
+        concessionSaving = fullDuty - dutyPayable;
+      }
     }
 
+    // FHOG for new homes
     if (
       fhb.grantAmount &&
       isNewHome &&
@@ -305,26 +406,42 @@ export function calculateStampDuty(
     }
   }
 
-  const foreignSurcharge = isForeignPurchaser && table.foreignSurchargeRate
+    const foreignSurcharge = isForeignPurchaser && table.foreignSurchargeRate
     ? Math.round(price * table.foreignSurchargeRate)
     : 0;
 
+  const roundedDuty = Math.round(dutyPayable);
+  const roundedFull = Math.round(fullDuty);
+  if (concessionApplied) {
+    concessionSaving = Math.max(0, roundedFull - roundedDuty);
+  }
+
   return {
-    dutyPayable: Math.round(dutyPayable),
-    fullDuty: Math.round(fullDuty),
+    dutyPayable: roundedDuty,
+    fullDuty: roundedFull,
     concessionApplied,
-    concessionSaving: Math.round(concessionSaving),
+    concessionSaving,
     fhogAmount,
     foreignSurcharge,
-    netCost: Math.round(dutyPayable + foreignSurcharge - fhogAmount),
+    netCost: Math.round(roundedDuty + foreignSurcharge - fhogAmount),
   };
 }
 
 function calcDutyFromTable(price: number, brackets: DutyBracket[], state?: AustralianState): number {
-  if (state === 'NT' && price <= 525000) {
-    // NT polynomial statutory formula: V * (0.06571441 * V + 150) / 1000 where V is thousands, or exact formula
-    const v = price / 1000;
-    return Math.round((0.06571441 * v * v + 150 * v));
+  if (state === 'NT') {
+    // NT statutory formula and flat percentages
+    if (price <= 525000) {
+      // D = (0.06571441 * V^2) + (15 * V) where V = dutiable value / 1000
+      const v = price / 1000;
+      return Math.round(0.06571441 * v * v + 15 * v);
+    }
+    if (price < 3000000) {
+      return Math.round(price * 0.0495);
+    }
+    if (price < 5000000) {
+      return Math.round(price * 0.0575);
+    }
+    return Math.round(price * 0.0595);
   }
 
   for (const b of brackets) {

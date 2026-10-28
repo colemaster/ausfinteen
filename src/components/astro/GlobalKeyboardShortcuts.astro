@@ -54,11 +54,11 @@
     }
 
     if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+      e.preventDefault();
       // The palette toggles itself from its own listener once mounted, so only preload
       // and open while it is absent.
       void loadOverlay().then((m) => {
         if (m.isOverlayHostMounted()) return;
-        e.preventDefault();
         void m.openCommandPalette();
       });
       return;

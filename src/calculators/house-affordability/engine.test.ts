@@ -52,6 +52,29 @@ describe('calculateAffordability', () => {
     expect(result.lmi).toBe(0);
   });
 
+  it('First Home Guarantee (FHBG) waives LMI to $0 for eligible first home buyer with >80% LVR', () => {
+    const withoutFHBG = calculateAffordability({
+      ...baseParams,
+      propertyPrice: 600000,
+      deposit: 30000, // 5% deposit, LVR = 95%
+      firstHomeBuyer: true,
+      firstHomeGuarantee: false,
+    });
+    expect(withoutFHBG.lmi).toBeGreaterThan(10000);
+    expect(withoutFHBG.lmiSavedByFHBG).toBe(0);
+
+    const withFHBG = calculateAffordability({
+      ...baseParams,
+      propertyPrice: 600000,
+      deposit: 30000, // 5% deposit, LVR = 95%
+      firstHomeBuyer: true,
+      firstHomeGuarantee: true,
+    });
+    expect(withFHBG.lmi).toBe(0);
+    expect(withFHBG.lmiSavedByFHBG).toBe(withoutFHBG.lmi);
+    expect(withFHBG.totalUpfrontCost).toBe(withFHBG.stampDuty.dutyPayable + 30000);
+  });
+
   it('borrowing capacity increases with income', () => {
     const low = calculateAffordability({ ...baseParams, grossIncome: 80000 });
     const high = calculateAffordability({ ...baseParams, grossIncome: 200000 });

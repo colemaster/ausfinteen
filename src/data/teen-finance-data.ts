@@ -5,99 +5,17 @@
  */
 
 export { type WebLink, STATUTORY_LINKS as OFFICIAL_WEB_LINKS, STATUTORY_LINKS } from "./statutory-links";
-
-export interface AgePreset {
-  age: number;
-  label: string;
-  jobTitle: string;
-  hourlyRate: number;
-  hoursPerWeek: number;
-  claimsTaxFreeThreshold: boolean;
-  savingsGoalName: string;
-  savingsGoalTarget: number;
-  currentSavings: number;
-}
-
-/**
- * Age presets use the 2026-27 effective junior award rate for the worker's
- * age band (Fast Food / Retail Level 1 adult base $27.81/hr from 1 July 2026,
- * junior % applied: under 16 = 40%, 16 = 50%, 17 = 60%, 18 = 70%,
- * 19 = 80%, 20 = 90% (first 6 months with an employer)).
- * Note: from the first full pay period on or after 1 December 2026 the FWC
- * ([2026] FWCFB 75, PR813654) phases 18-20s with MORE than 6 months' service
- * up +5 percentage points per 1 Dec/1 Jul step until 100% — 20s by 1 Jul 2027,
- * 19s by 1 Jul 2028, 18s by 1 Jul 2029 (Retail, Fast Food & Pharmacy awards).
- * Under-18 rates and new starters (<=6 months' service) are unchanged.
- * Verified 18 Oct 2026 (calculate.fairwork.gov.au pay guides, fwc.gov.au).
- */
-export const AGE_PRESETS: Record<number, AgePreset> = {
-  15: {
-    age: 15,
-    label: '15yo First Job',
-    jobTitle: 'Fast Food / Retail Junior (Casual)',
-    hourlyRate: 13.90, // $11.12 base + 25% casual loading ($13.90/hr)
-    hoursPerWeek: 8,
-    claimsTaxFreeThreshold: true,
-    savingsGoalName: 'Mojo Safety Buffer ($500)',
-    savingsGoalTarget: 500,
-    currentSavings: 150,
-  },
-  16: {
-    age: 16,
-    label: '16yo Part-Timer',
-    jobTitle: 'Supermarket Service Assistant',
-    hourlyRate: 17.39, // $13.91 base + 25% casual loading ($17.39/hr)
-    hoursPerWeek: 12,
-    claimsTaxFreeThreshold: true,
-    savingsGoalName: 'First Car Deposit & Driving Lessons',
-    savingsGoalTarget: 3500,
-    currentSavings: 850,
-  },
-  17: {
-    age: 17,
-    label: '17yo Senior Student',
-    jobTitle: 'Cafe / Bakery Front-of-House',
-    hourlyRate: 20.86, // $16.69 base + 25% casual loading ($20.86/hr)
-    hoursPerWeek: 15,
-    claimsTaxFreeThreshold: true,
-    savingsGoalName: 'Car Rego, CTP & Insurance Sinking Fund',
-    savingsGoalTarget: 4500,
-    currentSavings: 1800,
-  },
-  18: {
-    age: 18,
-    label: '18yo School Leaver',
-    jobTitle: 'Junior Sports Referee / Retail Level 1',
-    hourlyRate: 24.34, // 70% ($19.47 base) + 25% casual loading = $24.34/hr; with >6mo service steps +5pp from 1 Dec 2026, reaching 100% by 1 Jul 2029 ([2026] FWCFB 75)
-    hoursPerWeek: 20,
-    claimsTaxFreeThreshold: true,
-    savingsGoalName: 'Emergency Buffer ($2,000) & Index ETFs',
-    savingsGoalTarget: 6000,
-    currentSavings: 3200,
-  },
-  19: {
-    age: 19,
-    label: '19yo Uni / TAFE Student',
-    jobTitle: 'Customer Service & Admin Team',
-    hourlyRate: 27.81, // 80% ($22.25 base) + 25% casual loading = $27.81/hr; 100% by 1 Jul 2028 with >6mo service ([2026] FWCFB 75)
-    hoursPerWeek: 22,
-    claimsTaxFreeThreshold: true,
-    savingsGoalName: 'Uni Laptop, Textbooks & Rental Bond Fund',
-    savingsGoalTarget: 8000,
-    currentSavings: 4500,
-  },
-  20: {
-    age: 20,
-    label: '20yo Young Adult',
-    jobTitle: 'Shift Supervisor / Department Coordinator',
-    hourlyRate: 31.29, // 90% ($25.03 base, first 6 months) + 25% casual loading = $31.29/hr; with >6mo service steps +5pp from 1 Dec 2026 to 100% by 1 Jul 2027 ([2026] FWCFB 75)
-    hoursPerWeek: 28,
-    claimsTaxFreeThreshold: true,
-    savingsGoalName: 'First Home Deposit & ETF Portfolio',
-    savingsGoalTarget: 15000,
-    currentSavings: 7800,
-  },
-};
+export {
+  type AgePreset,
+  type AgeMilestone,
+  type AgeChecklistItem,
+  type AgeWarningFlag,
+  type TypicalWeeklyBudget,
+  type SupportedPresetAge,
+  SUPPORTED_PRESET_AGES,
+  AGE_PRESETS,
+  getAgePreset,
+} from "./teen-age-presets";
 
 /**
  * ATO Division 6AA Minor Unearned Income Tax Rates (FY 2024–27).
@@ -152,7 +70,7 @@ export const JUNIOR_AWARD_RATES = {
       { age: '20 years (>6 months)', pct: 1.00, label: '100% — $27.81/hr (>6 months; from 1 Dec 2026 [2026] FWCFB 75)' },
       { age: '21+ years', pct: 1.00, label: '100% (Adult Rate) — $27.81/hr (Casual: $34.76/hr)' },
     ],
-    note: '3-hour minimum shift for casuals. 25% casual loading. Saturday: 125% perm / 150% casual; Sunday Level 1: 150%; Public Holiday: 250% casual.',
+    note: '3-hour minimum shift for casuals. 25% casual loading. Saturday: 125% perm / 150% casual; Sunday Level 1: 150% perm / 150% casual (Level 2: 160% casual, Level 3: 175% casual); Public Holiday: 225% perm / 250% casual. Late evening (Mon–Fri 10pm–midnight): 110% perm (+10% loading). Night (Mon–Fri midnight–6am): 115% perm (+15% loading). Transport reimbursement applies if shift finishes after 10pm or starts before 7am when regular transport is unavailable.',
   },
   retail: {
     code: 'MA000004',
@@ -168,7 +86,7 @@ export const JUNIOR_AWARD_RATES = {
       { age: '20 years (>6 months)', pct: 1.00, label: '100% — $27.81/hr (>6 months; from 1 Dec 2026 [2026] FWCFB 75)' },
       { age: '21+ years', pct: 1.00, label: '100% (Adult Rate) — $27.81/hr (Casual: $34.76/hr)' },
     ],
-    note: 'Junior rates apply to Levels 1–3 only; Levels 4+ always adult rate. 3-hour minimum shift (1.5-hour minimum for secondary school students working between 3:00pm–6:30pm on school days with written parental consent). Saturday: 150% casual; Sunday: 175% casual; Public Holiday: 250% casual.',
+    note: 'Junior rates apply to Levels 1–3 only; Levels 4+ always adult rate. 3-hour minimum shift (1.5-hour minimum for secondary school students working between 3:00pm–6:30pm on school days with written parental consent under clause 11.3). Saturday: 125% perm / 150% casual; Sunday: 150% perm / 175% casual; Public Holiday: 225% perm / 250% casual. Weekday evenings (Mon–Fri after 6:00pm): 125% perm / 150% casual (+25% evening penalty).',
   },
   restaurant: {
     code: 'MA000119',
@@ -181,7 +99,7 @@ export const JUNIOR_AWARD_RATES = {
       { age: '19 years', pct: 0.85, label: '85% of Adult Rate — $22.47/hr (Casual: $28.09/hr)' },
       { age: '20+ years', pct: 1.00, label: '100% (Adult Rate) — $26.44/hr (Casual: $33.05/hr)' },
     ],
-    note: '2-hour minimum shift for casuals. Saturday: 150% casual; Sunday (Intro–Level 2): 150% casual (Level 3+: 175%); Public Holiday: 250% casual.',
+    note: '2-hour minimum shift for casuals (4-hour minimum engagement on public holidays!). Liquor service exception (Clause 13.5/18.4): juniors serving liquor MUST be paid 100% full adult rate regardless of age. Saturday: 125% perm / 150% casual; Sunday (Intro–Level 2): 150% casual (Level 3+: 175% casual); Public Holiday: 225% perm / 250% casual. Late night allowances: Mon–Fri 10pm–midnight (~$2.95/hr extra), midnight–6am (~$4.42/hr extra).',
   },
   hospitality: {
     code: 'MA000009',
@@ -194,41 +112,40 @@ export const JUNIOR_AWARD_RATES = {
       { age: '19 years', pct: 0.85, label: '85% of Adult Rate — $22.47/hr (Casual: $28.09/hr)' },
       { age: '20+ years', pct: 1.00, label: '100% (Adult Rate) — $26.44/hr (Casual: $33.05/hr)' },
     ],
-    note: '2-hour minimum shift for casuals. Saturday: 150% casual; Sunday: 175% casual; Public Holiday: 250% casual.',
+    note: '2-hour minimum shift for casuals. Liquor service exception (Clause 18.4): juniors serving liquor MUST be paid 100% full adult rate regardless of age. Trade qualification exception: full adult rate. Saturday: 125% perm / 150% casual; Sunday: 150% perm / 175% casual; Public Holiday: 225% perm / 250% casual. Late night allowances: Mon–Fri 7pm–midnight (~$2.95/hr extra), midnight–7am (~$4.42/hr extra).',
   },
   clubs: {
     code: 'MA000058',
     name: 'Registered and Licensed Clubs Award 2020 [MA000058]',
-    adultBaseRate: 26.44, // Level 1 Adult Base 2026-27
+    adultBaseRate: 26.44, // Level 1 Adult Base 2026-27 ($1,004.72/wk)
     rates: [
-      { age: 'Under 17', pct: 0.50, label: '50% of Adult Rate — $13.22/hr (Casual: $16.53/hr)' },
-      { age: '17 years', pct: 0.60, label: '60% of Adult Rate — $15.86/hr (Casual: $19.83/hr)' },
+      { age: 'Under 18', pct: 0.60, label: '60% of Adult Rate — $15.86/hr (Casual: $19.83/hr)' },
       { age: '18 years', pct: 0.70, label: '70% of Adult Rate — $18.51/hr (Casual: $23.14/hr)' },
       { age: '19 years', pct: 0.85, label: '85% of Adult Rate — $22.47/hr (Casual: $28.09/hr)' },
       { age: '20+ years', pct: 1.00, label: '100% (Adult Rate) — $26.44/hr (Casual: $33.05/hr)' },
     ],
-    note: 'Liquor service exception: juniors serving liquor MUST be paid 100% full adult rate regardless of age. 2-hour minimum casual shift.',
+    note: 'Clause 13.1 liquor service exception: juniors employed as liquor service employees MUST be paid 100% full adult rate ($26.44/hr base / $33.05/hr casual) regardless of age. State liquor licensing laws generally restrict alcohol service to age 18+ with an RSA. 2-hour minimum casual shift.',
   },
   pharmacy: {
     code: 'MA000012',
-    name: 'Community Pharmacy Award 2020 [MA000012]',
-    adultBaseRate: 27.81, // Level 1, 2026-27
+    name: 'Pharmacy Industry Award 2020 [MA000012]',
+    adultBaseRate: 27.81, // Pharmacy Assistant Level 1, 2026-27 ($1,056.80/wk)
     rates: [
       { age: 'Under 16', pct: 0.45, label: '45% of Adult Rate — $12.51/hr (Casual: $15.64/hr)' },
       { age: '16 years', pct: 0.50, label: '50% of Adult Rate — $13.91/hr (Casual: $17.39/hr)' },
       { age: '17 years', pct: 0.60, label: '60% of Adult Rate — $16.69/hr (Casual: $20.86/hr)' },
       { age: '18 years', pct: 0.70, label: '70% of Adult Rate — $19.47/hr (Casual: $24.34/hr)' },
       { age: '19 years', pct: 0.80, label: '80% of Adult Rate — $22.25/hr (Casual: $27.81/hr)' },
-      { age: '20 years (≤6 months)', pct: 0.90, label: '90% — $25.03/hr (≤6 months)' },
+      { age: '20 years (≤6 months)', pct: 0.90, label: '90% — $25.03/hr (≤6 months with employer)' },
       { age: '20 years (>6 months)', pct: 1.00, label: '100% — $27.81/hr (>6 months; from 1 Dec 2026 [2026] FWCFB 75)' },
       { age: '21+ years', pct: 1.00, label: '100% (Adult Rate) — $27.81/hr (Casual: $34.76/hr)' },
     ],
-    note: 'Junior rates apply to Levels 1–2 only. Sunday work attracts a high 200% perm / 225% casual multiplier.',
+    note: 'Junior rates apply strictly to Pharmacy Assistant Levels 1 & 2 only (dispensary technician Level 3+ pays 100% full adult rate). Note: MA000108 is the Diving Award; MA000012 is the official Pharmacy Industry Award. 3-hour minimum casual shift. Saturday: 125% perm / 150% casual; Sunday: 150% perm / 175% casual (200% perm / 225% casual outside 7:00am–9:00pm); Public Holiday: 225% perm / 250% casual.',
   },
   fitness: {
     code: 'MA000094',
     name: 'Fitness Industry Award 2020 [MA000094]',
-    adultBaseRate: 27.81, // Level 1, 2026-27
+    adultBaseRate: 27.81, // Level 1–2 Adult Base benchmark (Level 1: $25.74/hr, Level 2: $26.44/hr, Level 3: $27.97/hr)
     rates: [
       { age: 'Under 17', pct: 0.55, label: '55% of Adult Rate — $15.30/hr (Casual: $19.13/hr)' },
       { age: '17 years', pct: 0.65, label: '65% of Adult Rate — $18.08/hr (Casual: $22.60/hr)' },
@@ -236,40 +153,39 @@ export const JUNIOR_AWARD_RATES = {
       { age: '19 years', pct: 0.85, label: '85% of Adult Rate — $23.64/hr (Casual: $29.55/hr)' },
       { age: '20+ years', pct: 1.00, label: '100% (Adult Rate) — $27.81/hr (Casual: $34.76/hr)' },
     ],
-    note: '3-hour minimum shift for casuals. Pool lifeguards, gym instructors and reception staff.',
+    note: 'Clause 15.2 junior percentages apply across the classification appropriate to the work performed (Level 1 attendant $25.74/hr, Level 2 customer service $26.44/hr, Level 3 gym/swim instructor $27.97/hr, Level 4A PT $32.13/hr). 20-year-olds receive 100% full adult rate. 3-hour minimum casual shift. Casuals receive 25% loading for ordinary hours, or 130% flat on weekends/public holidays. Permanent staff: Saturday 125%, Sunday 150%, Public Holiday 250%.',
   },
   hair_beauty: {
     code: 'MA000005',
     name: 'Hair and Beauty Industry Award 2020 [MA000005]',
-    adultBaseRate: 27.81, // Level 1, 2026-27
+    adultBaseRate: 27.81, // Level 1 Salon Assistant, 2026-27 ($1,056.80/wk)
     rates: [
-      { age: 'Under 16', pct: 0.40, label: '40% of Adult Rate — $11.12/hr (Casual: $13.90/hr)' },
-      { age: '16 years', pct: 0.50, label: '50% of Adult Rate — $13.91/hr (Casual: $17.39/hr)' },
-      { age: '17 years', pct: 0.60, label: '60% of Adult Rate — $16.69/hr (Casual: $20.86/hr)' },
-      { age: '18 years', pct: 0.70, label: '70% of Adult Rate — $19.47/hr (Casual: $24.34/hr)' },
-      { age: '19 years', pct: 0.80, label: '80% of Adult Rate — $22.25/hr (Casual: $27.81/hr)' },
-      { age: '20 years', pct: 0.90, label: '90% of Adult Rate — $25.03/hr (Casual: $31.29/hr)' },
-      { age: '21+ years', pct: 1.00, label: '100% (Adult Rate) — $27.81/hr (Casual: $34.76/hr)' },
+      { age: 'Under 17', pct: 0.50, label: '50% of Adult Rate — $13.91/hr (Casual: $17.39/hr)' },
+      { age: '17 years', pct: 0.75, label: '75% of Adult Rate — $20.86/hr (Casual: $26.08/hr)' },
+      { age: '18+ years', pct: 1.00, label: '100% (Adult Rate) — $27.81/hr (Casual: $34.76/hr)' },
     ],
-    note: 'Salon assistants and junior styling crew. 3-hour minimum shift for casuals.',
+    note: 'Salon assistants and receptionists (Level 1). Under Clause 17.2, Table 5: Under 17 = 50%, 17yo = 75%, 18+ = 100% (full adult rate from age 18 — no junior discount for 18–20s!). Apprentices progress over 4 stages based on Year 12 completion (Year 12: 55%/65%/77%/90%; non-Year 12: 50%/60%/77%/90% of Level 3 standard trade rate). Trade-qualified juniors get 100% adult rate. 3-hour minimum casual shift.',
   },
   cleaning: {
     code: 'MA000022',
     name: 'Cleaning Services Award 2020 [MA000022]',
-    adultBaseRate: 27.81, // Full adult rate applies to standard cleaners regardless of age!
+    adultBaseRate: 27.81, // Full adult rate applies to standard cleaners regardless of age! (CSE Level 1: $27.08/hr; Level 2: $27.97/hr)
     rates: [
       { age: 'Under 16 (General Cleaner)', pct: 1.00, label: '100% Adult Rate — $27.81/hr (No Junior Scale for Cleaners!)' },
       { age: '16–20 years (General Cleaner)', pct: 1.00, label: '100% Adult Rate — $27.81/hr (Casual: $34.76/hr)' },
-      { age: 'Under 16 (Trolley Collector)', pct: 0.50, label: '50% — $13.91/hr (Shopping Trolley Collection only)' },
-      { age: '16–17 (Trolley Collector)', pct: 0.60, label: '60% — $16.69/hr (Shopping Trolley Collection only)' },
-      { age: '18+ (Trolley Collector)', pct: 1.00, label: '100% Adult Rate — $27.81/hr' },
+      { age: 'Under 16 (Trolley Collector)', pct: 0.45, label: '45% — $12.51/hr (Shopping Trolley Collection only)' },
+      { age: '16 years (Trolley Collector)', pct: 0.50, label: '50% — $13.91/hr (Shopping Trolley Collection only)' },
+      { age: '17 years (Trolley Collector)', pct: 0.60, label: '60% — $16.69/hr (Shopping Trolley Collection only)' },
+      { age: '18 years (Trolley Collector)', pct: 0.70, label: '70% — $19.47/hr (Shopping Trolley Collection only)' },
+      { age: '19 years (Trolley Collector)', pct: 0.80, label: '80% — $22.25/hr (Shopping Trolley Collection only)' },
+      { age: '20+ years (Trolley Collector)', pct: 1.00, label: '100% Adult Rate — $27.81/hr' },
     ],
-    note: 'IMPORTANT: General cleaning staff have NO junior rates — any teen working as a cleaner receives 100% full adult wages ($27.81/hr base / $34.76/hr casual)!',
+    note: 'CRITICAL RULE: General cleaning staff have NO junior rates — any teen working as a cleaner receives 100% full adult wages ($27.08–$27.81/hr base / $33.85–$34.76/hr casual)! Trolley collection contractor juniors scale under Clause 15.2 (45% <16, 50% 16yo, 60% 17yo, 70% 18yo, 80% 19yo, 100% 20+). Casual minimum shift is tiered by site floor area (1 hr ≤300m², 2 hrs ≤2000m², 3 hrs 2000–5000m², 4 hrs 5000m²+). High penalty rates: Saturday casual 150%, Sunday casual 200%, Public Holiday casual 250%.',
   },
   amusement: {
     code: 'MA000080',
     name: 'Amusement, Events and Recreation Award 2020 [MA000080]',
-    adultBaseRate: 27.81, // Grade 1, 2026-27
+    adultBaseRate: 27.81, // Grade 1–2 Adult Base benchmark (Grade 1: $26.44/hr, Grade 2: $27.81/hr)
     rates: [
       { age: 'Under 17', pct: 0.55, label: '55% of Adult Rate — $15.30/hr (Casual: $19.13/hr)' },
       { age: '17 years', pct: 0.65, label: '65% of Adult Rate — $18.08/hr (Casual: $22.60/hr)' },
@@ -277,7 +193,21 @@ export const JUNIOR_AWARD_RATES = {
       { age: '19 years', pct: 0.85, label: '85% of Adult Rate — $23.64/hr (Casual: $29.55/hr)' },
       { age: '20+ years', pct: 1.00, label: '100% (Adult Rate) — $27.81/hr (Casual: $34.76/hr)' },
     ],
-    note: 'Theme parks, sports stadiums, bowling alleys, and entertainment centers. 3-hour minimum casual shift.',
+    note: 'Theme parks, sports stadiums, arenas, bowling alleys, showgrounds, and recreation centers (Grade 1 ride/event attendant base $26.44/hr; Grade 2 $27.81/hr). 3-hour minimum casual shift. NOTE: Dedicated commercial cinemas (Hoyts, Event Cinemas, Village) fall under the Broadcasting, Recorded Entertainment and Cinemas Award 2020 [MA000091], where junior percentages off Cinema Worker Level 4 are: ≤16yo: 45%, 17yo: 55%, 18yo: 65%, 19yo: 75%, 20yo: 85%, 21+: 100%.',
+  },
+  cinema: {
+    code: 'MA000091',
+    name: 'Broadcasting, Recorded Entertainment and Cinemas Award 2020 [MA000091]',
+    adultBaseRate: 27.81, // Cinema Worker Level 4 benchmark rate, 2026-27
+    rates: [
+      { age: 'Under 17', pct: 0.45, label: '45% of Adult Rate — $12.51/hr (Casual: $15.64/hr)' },
+      { age: '17 years', pct: 0.55, label: '55% of Adult Rate — $15.30/hr (Casual: $19.13/hr)' },
+      { age: '18 years', pct: 0.65, label: '65% of Adult Rate — $18.08/hr (Casual: $22.60/hr)' },
+      { age: '19 years', pct: 0.75, label: '75% of Adult Rate — $20.86/hr (Casual: $26.08/hr)' },
+      { age: '20 years', pct: 0.85, label: '85% of Adult Rate — $23.64/hr (Casual: $29.55/hr)' },
+      { age: '21+ years', pct: 1.00, label: '100% (Adult Rate) — $27.81/hr (Casual: $34.76/hr)' },
+    ],
+    note: 'Cinema workers (box office, candy bar, ushering, customer service). Under Clause 13.5(b), junior rates are calculated off Cinema Worker Level 4. 3-hour minimum casual shift. Distinct from theme parks/amusements under MA000080.',
   },
   children_services: {
     code: 'MA000120',
@@ -327,18 +257,19 @@ export const WORKPLACE_ALLOWANCES = {
 
 /** Car Cost Defaults for 16-20yo Drivers (QLD 2026-27, source: qld.gov.au / RACQ) */
 export const TEEN_CAR_COST_DEFAULTS = {
-  averagePurchasePrice: 4500,
+  averagePurchasePrice: 5000,
   ppsrCheckFee: 2.00,                      // Official PPSR register check at ppsr.gov.au
   qldTransferFee: 33.10,                   // TMR vehicle title transfer fee
   qldStampDutyPer100: 3.00,                // 1-4 cyl/hybrid/EV ($3 per $100 dutiable value)
-  regoAnnual: 453.00,                      // QLD 4-cyl: rego $385.45 + traffic improvement fee $67.25 (1 Jul 2026)
-  ctpGreenSlipAnnual: 418.00,              // QLD CTP Class 1 scheme average ($411.80-$424.80, 2026-27)
-  comprehensiveInsuranceUnder25: 1650.00,  // Under-25 young driver comprehensive policy avg ($1,400-$2,000)
-  thirdPartyPropertyUnder25: 520.00,       // Third-party property damage only (for low-value cash cars)
-  fuelWeekly: 56.40,                       // ~$50-$60/wk based on ~13,500km/yr at 6.8L/100km @ $2.34/L (Brisbane ULP 91, late Sept 2026)
+  regoAnnual: 450.00,                      // QLD 4-cyl: rego + traffic improvement fee (~$450/yr)
+  ctpGreenSlipAnnual: 400.00,              // QLD CTP Class 1 scheme average (~$400/yr, total rego + CTP ~$850/yr)
+  comprehensiveInsuranceUnder25: 2000.00,  // Under-25 young driver comprehensive policy avg (~$2,000/yr)
+  thirdPartyPropertyUnder25: 550.00,       // Third-party property damage only (for low-value cash cars)
+  fuelWeekly: 55.00,                       // ~$55/wk based on ~15,000km/yr at 7.5L/100km @ $2.38/L
   servicingAnnual: 450.00,                 // Annual logbook minor service + fluid changes
-  tiresAndRepairsAnnual: 350.00,           // Tyres ($400-$600 set amortised over 3-4 yrs) + minor repairs
+  tiresAndRepairsAnnual: 350.00,           // Tyres amortised over life + minor repairs ($800/yr combined servicing & tyres)
   roadsideAssistanceAnnual: 125.00,        // RACQ Standard Roadside Cover
+  annualDepreciationRate: 0.15,            // Typical ~15%/yr depreciation on used vehicles
 };
 
 export interface TeenSavingsAccount {
@@ -352,6 +283,12 @@ export interface TeenSavingsAccount {
   canOpenIndependentlyAt15: boolean;
   requiresParentUnder16: boolean;
   hasCardlessOption: boolean;
+  minMonthlyDeposit?: number;
+  minCardPurchases?: number;
+  requiresBalanceGrowth?: boolean;
+  maxWithdrawals?: number;
+  maxBalanceCap?: number;
+  accountFeeMonthly?: number;
 }
 
 /** 
@@ -363,49 +300,70 @@ export const TEEN_SAVINGS_ACCOUNTS: TeenSavingsAccount[] = [
     bank: 'BOQ Future Saver (Under 18 Waiver)',
     maxRate: 5.80,
     baseRate: 0.05,
-    conditions: 'Criteria WAIVED for ages 14–17! Automatic 5.80% p.a. without deposit or card transaction hurdles up to $50,000.',
+    conditions: 'For ages 14–17: Criteria WAIVED! Automatic 5.80% p.a. without deposit or card transaction hurdles up to $50,000. For ages 18–35: Deposit $1,000+ from external bank + make 5+ settled card transactions each month.',
     maxAge: 35,
     minAge: 14,
-    bestFor: 'Top rate for 14–17 year olds with >$5k wanting zero monthly hurdles',
+    bestFor: 'Top rate for 14–17 year olds with >$5k wanting zero monthly hurdles (and young adults up to 35yo)',
     canOpenIndependentlyAt15: true,
     requiresParentUnder16: false,
     hasCardlessOption: true,
+    minMonthlyDeposit: 0,
+    minCardPurchases: 0,
+    requiresBalanceGrowth: false,
+    maxBalanceCap: 50000,
+    accountFeeMonthly: 0,
   },
   {
     bank: 'Newcastle Permanent Smart Saver (Under 25s)',
     maxRate: 5.75,
     baseRate: 0.05,
-    conditions: 'Grow balance by any amount + ≤2 withdrawals per calendar month (up to $50k)',
+    conditions: 'Grow balance by any amount (excluding interest) + ≤2 withdrawals per calendar month (up to $50k). Open online independently from age 14.',
     maxAge: 25,
     minAge: 0,
     bestFor: 'Highest rate under 25 with simple monthly growth hurdle',
     canOpenIndependentlyAt15: true,
     requiresParentUnder16: false,
     hasCardlessOption: true,
+    minMonthlyDeposit: 1,
+    minCardPurchases: 0,
+    requiresBalanceGrowth: true,
+    maxWithdrawals: 2,
+    maxBalanceCap: 50000,
+    accountFeeMonthly: 0,
   },
   {
     bank: 'Great Southern Bank Youth eSaver',
     maxRate: 5.50,
     baseRate: 5.50,
-    conditions: '100% condition-free: flat 5.50% p.a. on balances up to $5,000 (1.00% above $5k)',
+    conditions: '100% condition-free: flat 5.50% p.a. on balances up to $5,000 (1.00% above $5k). No monthly deposit or card transaction hurdles.',
     maxAge: 17,
     minAge: 0,
     bestFor: 'Best starter account for balances up to $5,000 with 0 conditions',
     canOpenIndependentlyAt15: true,
     requiresParentUnder16: false,
     hasCardlessOption: true,
+    minMonthlyDeposit: 0,
+    minCardPurchases: 0,
+    requiresBalanceGrowth: false,
+    maxBalanceCap: 5000,
+    accountFeeMonthly: 0,
   },
   {
     bank: 'ING Savings Maximiser (Orange Everyday Youth)',
     maxRate: 5.50,
     baseRate: 0.01,
-    conditions: 'Deposit $1,000+ from external bank + 5 settled card purchases + grow balance (up to $100k; Verified 27 Sept 2026)',
+    conditions: 'Deposit $1,000+ from external bank + 5 settled card purchases + grow balance (up to $100k; note: ING requires applicants to be 18+ for new accounts; existing Orange Everyday Youth holders grandfathered)',
     maxAge: 99,
-    minAge: 15,
-    bestFor: 'High $100k balance limit for working teens with regular paychecks',
+    minAge: 18,
+    bestFor: 'High $100k balance limit for working young adults with regular paychecks',
     canOpenIndependentlyAt15: false,
     requiresParentUnder16: true,
     hasCardlessOption: false,
+    minMonthlyDeposit: 1000,
+    minCardPurchases: 5,
+    requiresBalanceGrowth: true,
+    maxBalanceCap: 100000,
+    accountFeeMonthly: 0,
   },
   {
     bank: 'AMP Bank GO Save (No Conditions)',
@@ -418,6 +376,11 @@ export const TEEN_SAVINGS_ACCOUNTS: TeenSavingsAccount[] = [
     canOpenIndependentlyAt15: true,
     requiresParentUnder16: false,
     hasCardlessOption: true,
+    minMonthlyDeposit: 0,
+    minCardPurchases: 0,
+    requiresBalanceGrowth: false,
+    maxBalanceCap: 50000,
+    accountFeeMonthly: 0,
   },
   {
     bank: 'ANZ Plus (Growth Saver)',
@@ -430,6 +393,11 @@ export const TEEN_SAVINGS_ACCOUNTS: TeenSavingsAccount[] = [
     canOpenIndependentlyAt15: true,
     requiresParentUnder16: false,
     hasCardlessOption: true,
+    minMonthlyDeposit: 100,
+    minCardPurchases: 0,
+    requiresBalanceGrowth: true,
+    maxBalanceCap: 250000,
+    accountFeeMonthly: 0,
   },
   {
     bank: 'Westpac Bump Savings',
@@ -442,18 +410,28 @@ export const TEEN_SAVINGS_ACCOUNTS: TeenSavingsAccount[] = [
     canOpenIndependentlyAt15: true,
     requiresParentUnder16: false,
     hasCardlessOption: true,
+    minMonthlyDeposit: 1,
+    minCardPurchases: 0,
+    requiresBalanceGrowth: true,
+    maxBalanceCap: 30000,
+    accountFeeMonthly: 0,
   },
   {
-    bank: 'Westpac Life (18–29 Spend & Save)',
+    bank: 'Westpac Life (18–40 Spend & Save)',
     maxRate: 5.75,
     baseRate: 0.10,
-    conditions: 'Grow balance month-on-month + ≥1 deposit + 20 settled debit purchases per month (up to $150k; otherwise 5.00%/0.10%)',
-    maxAge: 29,
+    conditions: 'Grow balance month-on-month + ≥1 deposit + 20 settled debit purchases per month (up to $150k for ages 18–40; otherwise standard 5.00% rate)',
+    maxAge: 40,
     minAge: 18,
-    bestFor: 'Top Big Four rate once you turn 18 and can hit the monthly card-spend hurdle',
+    bestFor: 'Top Big Four rate once you turn 18 and can hit the 20 monthly card-spend hurdle (available up to 40yo)',
     canOpenIndependentlyAt15: false,
     requiresParentUnder16: false,
     hasCardlessOption: false,
+    minMonthlyDeposit: 1,
+    minCardPurchases: 20,
+    requiresBalanceGrowth: true,
+    maxBalanceCap: 150000,
+    accountFeeMonthly: 0,
   },
   {
     bank: 'CommBank Youthsaver',
@@ -466,6 +444,11 @@ export const TEEN_SAVINGS_ACCOUNTS: TeenSavingsAccount[] = [
     canOpenIndependentlyAt15: true,
     requiresParentUnder16: false,
     hasCardlessOption: true,
+    minMonthlyDeposit: 0.01,
+    minCardPurchases: 0,
+    requiresBalanceGrowth: true,
+    maxBalanceCap: 50000,
+    accountFeeMonthly: 0,
   },
   {
     bank: 'Up Bank (Savers)',
@@ -478,18 +461,29 @@ export const TEEN_SAVINGS_ACCOUNTS: TeenSavingsAccount[] = [
     canOpenIndependentlyAt15: false,
     requiresParentUnder16: false,
     hasCardlessOption: true,
+    minMonthlyDeposit: 0,
+    minCardPurchases: 5,
+    requiresBalanceGrowth: false,
+    maxWithdrawals: 0,
+    maxBalanceCap: 250000,
+    accountFeeMonthly: 0,
   },
   {
     bank: 'Macquarie Bank Savings Account',
     maxRate: 5.00,
     baseRate: 5.00,
-    conditions: 'Zero conditions — flat 5.00% ongoing to $2m (4-mo 5.35% welcome offer ended 14 Sept 2026). Earns 5.00% on everyday spending balance too!',
+    conditions: 'Zero conditions — flat 5.00% ongoing to $2m. Minors 12+ can apply independently online via Macquarie app/portal with $0 fees. Earns 5.00% on everyday spending balance too!',
     maxAge: 99,
     minAge: 12,
-    bestFor: 'Earn 5.00% on spending account, $0 international fees, refunds all domestic ATM fees',
-    canOpenIndependentlyAt15: false,
-    requiresParentUnder16: true,
+    bestFor: 'Earn 5.00% on spending account, $0 international fees, refunds all domestic ATM fees (open independently from 12yo)',
+    canOpenIndependentlyAt15: true,
+    requiresParentUnder16: false,
     hasCardlessOption: true,
+    minMonthlyDeposit: 0,
+    minCardPurchases: 0,
+    requiresBalanceGrowth: false,
+    maxBalanceCap: 2000000,
+    accountFeeMonthly: 0,
   },
 ];
 
@@ -523,53 +517,53 @@ export const AU_STATE_WORKING_HOURS_RULES: StateWorkingHoursRule[] = [
     legislation: 'Child Employment Act 2006 & Child Employment Regulation 2016',
     regulator: 'Office of Industrial Relations / Business Queensland',
     minAgeGeneral: '13 years (retail, fast food, hospitality)',
-    minAgeLightOrDelivery: '11 years (supervised delivery of newspapers & pamphlets)',
+    minAgeLightOrDelivery: '11 years (supervised delivery of newspapers & pamphlets between 6:00am and 6:00pm)',
     parentConsentMandatory: true,
     parentConsentDetails: 'Mandatory signed Parent Consent Form CE1 (chief-executive approved form under Child Employment Act 2006 s 10(3); formerly Form 1) required before starting work; must state school hours and be updated if school hours change.',
     schoolTermMaxHours: 'Max 12 hours per week during school terms',
     schoolDayMaxHours: 'Max 4 hours on a school day',
     nonSchoolDayMaxHours: 'Max 8 hours on a non-school day (weekend)',
     holidayMaxHours: 'Max 38 hours per week in school holidays (max 8 hrs/day)',
-    nightWorkRestrictions: 'Strict curfew: No work between 10:00pm and 6:00am',
+    nightWorkRestrictions: 'Strict curfew: No work between 10:00pm and 6:00am (6:00pm to 6:00am for 11–12yo deliveries); if finishing after 6:00pm, employer must ensure child is accompanied or safe transport is provided',
     mandatoryRestBreaks: '1-hour rest pause after 4 continuous hours; minimum 12-hour break between shifts',
     rulesFor15YearOlds: 'Under QLD law, 15-year-olds who have not completed Year 10 are classified as "school-aged children" and subject to the 12 hr/week term cap, 4 hr school-day limit, approved parent consent form, and 10pm curfew.',
-    keyRule: 'School attendance is compulsory; employers cannot roster students during school hours. The approved parent\'s consent form is legally mandatory for all workers under 16.',
+    keyRule: 'School attendance is compulsory; employers cannot roster students during school hours. Form CE1 is legally mandatory for all workers under 16.',
   },
   {
     state: 'Victoria (VIC)',
     stateCode: 'VIC',
-    legislation: 'Child Employment Act 2003 (as amended) & Education and Training Reform Act 2006',
-    regulator: 'Workforce Inspectorate Victoria (Wage Inspectorate)',
-    minAgeGeneral: '15 years without permit/licence (13–14 requires Child Employment Licence)',
-    minAgeLightOrDelivery: '13–14 years for light work (retail, food, delivery) with employer licence; under 13 entertainment only',
+    legislation: 'Child Employment Act 2003 (as amended by Child Employment Amendment Act 2022) & Education and Training Reform Act 2006',
+    regulator: 'Wage Inspectorate Victoria (Department of Premier and Cabinet)',
+    minAgeGeneral: '15 years without licence (13–14 requires employer Child Employment Licence; 11 for deliveries)',
+    minAgeLightOrDelivery: '11 years for delivery of newspapers/pamphlets; 13–14 years for light work (retail, food, delivery) with employer licence; under 13 entertainment only',
     parentConsentMandatory: true,
-    parentConsentDetails: 'Mandatory written parental consent for under-15 Child Employment Licence; optional standard HR consent once 15.',
+    parentConsentDetails: 'Mandatory written parental consent for under-15 Child Employment Licence; employer must hold licence before child works; all adult supervisors must hold valid WWCC.',
     schoolTermMaxHours: 'Max 12 hours per week during school terms (for under 15)',
     schoolDayMaxHours: 'Max 3 hours on a school day (for under 15)',
     nonSchoolDayMaxHours: 'Max 6 hours on a non-school day (for under 15)',
     holidayMaxHours: 'Max 30 hours per week in school holidays (max 6 hrs/day for under 15; 38 hrs/wk for 15+)',
     nightWorkRestrictions: 'Strict curfew: No work between 9:00pm and 6:00am (for under 15)',
-    mandatoryRestBreaks: '30-minute rest break after 3 continuous hours; minimum 12-hour break between shifts for under-15s',
-    rulesFor15YearOlds: 'At 15, teens are no longer classified as "children" under the Child Employment Act; employers do not need a licence for retail/hospitality. However, school is compulsory until 17 so work during school hours is prohibited.',
-    keyRule: 'Under Child Employment Act 2003, at 15 you can work in retail or hospitality without an employer permit. Under-15s require an employer licence and direct WWCC adult supervision.',
+    mandatoryRestBreaks: '30-minute rest break after 3 continuous hours; minimum 12-hour break between shifts for under-15s; direct adult supervision with WWCC required',
+    rulesFor15YearOlds: 'At 15, teens are no longer classified as "children" under the Child Employment Act 2003; employers do not need a licence for retail/hospitality. However, school is compulsory until 17 so work during school hours is prohibited.',
+    keyRule: 'Under Child Employment Act 2003, at 15 you can work in retail or hospitality without an employer licence. Under-15s require an employer licence from Wage Inspectorate Victoria and direct WWCC adult supervision.',
   },
   {
     state: 'New South Wales (NSW)',
     stateCode: 'NSW',
-    legislation: 'Industrial Relations (Child Employment) Act 2006 & Education Act 1990',
+    legislation: 'Children and Young Persons (Care and Protection) Act 1998, Industrial Relations (Child Employment) Act 2006 & Education Act 1990',
     regulator: 'NSW Industrial Relations / Office of the Children\'s Guardian',
-    minAgeGeneral: 'No statutory minimum age for retail/hospitality (Modern Awards apply)',
-    minAgeLightOrDelivery: 'Office of Children\'s Guardian authority required for entertainment, modelling & door-to-door sales',
+    minAgeGeneral: 'No statutory minimum age for general retail/hospitality (Modern Awards apply; employer policies typically 14 or 15)',
+    minAgeLightOrDelivery: '11 years for newspaper/pamphlet/pharmacy delivery; Office of Children\'s Guardian Authority & Code of Practice mandatory for entertainment, modelling & door-to-door',
     parentConsentMandatory: false,
-    parentConsentDetails: 'Standard employer HR onboarding practice for under-16s; legally mandatory in entertainment and door-to-door sales.',
-    schoolTermMaxHours: 'No strict statutory hour cap; compulsory schooling until 17 (work cannot interfere with education)',
+    parentConsentDetails: 'Standard employer HR onboarding practice for minors; legally mandatory in entertainment, modelling, and door-to-door sales under OCG Code of Practice.',
+    schoolTermMaxHours: 'No strict statutory hour cap in retail; compulsory schooling until 17 (work cannot interfere with education; guideline max 50h combined school+work)',
     schoolDayMaxHours: 'Max 4 hours on a school day (under 15 guideline); strictly outside school hours (8:30am–3:30pm)',
     nonSchoolDayMaxHours: 'Standard award limits (up to 8 hrs/day)',
     holidayMaxHours: 'Standard award full-time limits apply (max 38 hrs/week)',
-    nightWorkRestrictions: 'Cannot work after 9:00pm on school nights (under 15); safe travel home required for late shifts',
-    mandatoryRestBreaks: '1-hour rest break after 4 hours of work; minimum 12-hour break between shifts (under 15 guidelines)',
-    rulesFor15YearOlds: '15-year-olds can work in retail, supermarkets, and cafes outside school hours under Modern Awards (e.g. Retail or Fast Food Award). Must not work during official school hours.',
-    keyRule: 'Work must not interfere with education or health. Compulsory schooling applies until 17; employers must ensure shifts end with safe transport home.',
+    nightWorkRestrictions: 'Cannot work after 9:00pm on school nights (under 15 guideline); safe travel home required for late shifts',
+    mandatoryRestBreaks: '1-hour rest break after 4 hours of work; minimum 12-hour break between shifts (under 15 Code of Practice guideline)',
+    rulesFor15YearOlds: '15-year-olds can work in retail, supermarkets, and cafes outside school hours under Modern Awards (e.g. Retail or Fast Food Award). No child employment permit required for 15yos. Compulsory schooling applies until 17.',
+    keyRule: 'Work must not interfere with education or health. Compulsory schooling applies until 17; shifts must not clash with school hours and employers must ensure safe transport home.',
   },
   {
     state: 'Western Australia (WA)',
@@ -577,32 +571,32 @@ export const AU_STATE_WORKING_HOURS_RULES: StateWorkingHoursRule[] = [
     legislation: 'Children and Community Services Act 2004 (Part 7) & School Education Act 1999',
     regulator: 'Department of Energy, Mines, Industry Regulation and Safety (DEMIRS) / Wageline',
     minAgeGeneral: '15 years for general retail, food services & hospitality',
-    minAgeLightOrDelivery: '13–14 years for light work (shops, cafes, trolley collection, pamphlet delivery); 10–12 for paper rounds only',
+    minAgeLightOrDelivery: '13–14 years for light work (shops, cafes, trolley collection, pamphlet delivery) with written parent permission; 10–12 years for delivery accompanied by an adult (6:00am–7:00pm)',
     parentConsentMandatory: true,
-    parentConsentDetails: 'Mandatory written Wageline Parental Permission Form for 13–14 year olds before starting work; fines up to $120k for non-compliance.',
-    schoolTermMaxHours: 'No work during school hours; max 12–16 hrs/week recommended outside school times',
-    schoolDayMaxHours: 'Outside school hours only (after 3:30pm; between 6:00am and 10:00pm)',
-    nonSchoolDayMaxHours: 'Standard award limits (between 6:00am and 10:00pm)',
+    parentConsentDetails: 'Mandatory written Wageline Parental Permission Form for 13–14 year olds before starting work; severe statutory penalties up to $24,000 (individual) / $120,000 (body corporate) under s 190.',
+    schoolTermMaxHours: 'No work during school hours; max 12–16 hrs/week recommended outside school times; must not cause school fatigue',
+    schoolDayMaxHours: 'Outside school hours only (after 3:30pm; between 6:00am and 10:00pm for 13–14yos)',
+    nonSchoolDayMaxHours: 'Standard award limits (between 6:00am and 10:00pm for 13–14yos)',
     holidayMaxHours: 'Standard award full-time limits apply (max 38 hrs/week)',
-    nightWorkRestrictions: 'Strict curfew: No work between 10:00pm and 6:00am for 13–14 year olds',
+    nightWorkRestrictions: 'Strict curfew: No work between 10:00pm and 6:00am for 13–14 year olds (6:00pm–6:00am for 10–12yo deliveries)',
     mandatoryRestBreaks: 'Modern award meal and rest break rules apply; shifts must end with safe travel arrangements',
     rulesFor15YearOlds: '15-year-olds can work in retail, hospitality, and fast food outside school hours without the statutory 13–14 parent permission form. School attendance is compulsory until end of year turned 17.',
-    keyRule: 'Parental permission form is legally mandatory for 13–14 year olds under s 190. 15-year-olds can work retail and hospitality freely outside school hours.',
+    keyRule: 'Parental permission form is legally mandatory for 13–14 year olds under s 190 (fines up to $120k). 15-year-olds can work retail and hospitality freely outside school hours.',
   },
   {
     state: 'South Australia (SA)',
     stateCode: 'SA',
     legislation: 'Education and Children\'s Services Act 2019 (s 74) & Work Health and Safety Act 2012',
     regulator: 'SafeWork SA / Department for Education',
-    minAgeGeneral: 'No statutory minimum age (businesses set hiring policies, typically 14 or 15)',
+    minAgeGeneral: 'No statutory minimum age (businesses set hiring policies, typically 14 or 15 in line with Modern Awards)',
     minAgeLightOrDelivery: 'No statutory minimum age for light work',
     parentConsentMandatory: false,
     parentConsentDetails: 'Standard employer onboarding practice for minors; formal exemption from school principal required for full-time work at 15.',
-    schoolTermMaxHours: 'Cannot work during school hours; work must not render child unfit for school/education',
+    schoolTermMaxHours: 'Cannot work during school hours; work must not render child unfit for school/education or cause fatigue (s 74 offence)',
     schoolDayMaxHours: 'Outside school hours only (afternoons/evenings)',
     nonSchoolDayMaxHours: 'Standard award limits (up to 8 hrs/day)',
     holidayMaxHours: 'Standard award full-time limits apply (max 38 hrs/week)',
-    nightWorkRestrictions: 'No work that compromises sleep, health, safety, or school fitness (s 74 offence)',
+    nightWorkRestrictions: 'No work that compromises sleep, health, safety, or school fitness (s 74 offence, max $10,000 fine)',
     mandatoryRestBreaks: 'Standard Modern Award rest and meal break schedules apply',
     rulesFor15YearOlds: '15-year-olds can work part-time/casual shifts in retail and hospitality outside school hours. Full-time employment (30+ hrs/wk) requires a formal school exemption from the school principal.',
     keyRule: 'Section 74 of the Education and Children\'s Services Act 2019 makes it an offence (max $10,000 fine) to employ a school-aged child during school hours or if it causes school fatigue.',
@@ -610,70 +604,72 @@ export const AU_STATE_WORKING_HOURS_RULES: StateWorkingHoursRule[] = [
   {
     state: 'Tasmania (TAS)',
     stateCode: 'TAS',
-    legislation: 'Education Act 2016 & Work Health and Safety Act 2012',
+    legislation: 'Education Act 2016 (s 247) & Work Health and Safety Act 2012',
     regulator: 'WorkSafe Tasmania / Department for Education, Children and Young People (DECYP)',
-    minAgeGeneral: 'No statutory minimum age (employer policy applies, typically 14 or 15)',
+    minAgeGeneral: 'No statutory minimum age (employer policy applies, typically 14 or 15 in line with Modern Awards)',
     minAgeLightOrDelivery: 'No statutory minimum age for light work',
     parentConsentMandatory: false,
-    parentConsentDetails: 'Standard onboarding policy for under-16/18 employees; formal DECYP exemption needed for full-time work before 18.',
-    schoolTermMaxHours: 'Work must not conflict with school attendance (compulsory until 18 or Year 12 / Cert III)',
+    parentConsentDetails: 'Standard onboarding policy for under-16/18 employees; formal DECYP Secretary authorization needed for work during learning hours.',
+    schoolTermMaxHours: 'Work must not conflict with school attendance (compulsory until 18 or Year 12 / Cert III completion)',
     schoolDayMaxHours: 'Outside school hours only (after 3:30pm)',
     nonSchoolDayMaxHours: 'Standard award limits (up to 8 hrs/day)',
     holidayMaxHours: 'Standard award full-time limits apply (max 38 hrs/week)',
     nightWorkRestrictions: 'Modern Award late-night conditions; WorkSafe guidelines require safe transport home after dark',
     mandatoryRestBreaks: 'Modern Award break schedules apply (e.g. 10-min paid rest per 4 hrs, 30-min unpaid meal per 5+ hrs)',
     rulesFor15YearOlds: '15-year-olds are eligible for casual/part-time roles in supermarkets, fast food, and retail outside school hours. Education is compulsory until 18 unless in approved full-time vocational training.',
-    keyRule: 'Under Education Act 2016, employment during school hours is unlawful without DECYP exemption. Work outside school must not interfere with education or wellbeing.',
+    keyRule: 'Under Section 247 of the Education Act 2016, employment during school or approved learning hours is unlawful without DECYP Secretary authorization (fine up to 100 penalty units). Work outside school must not interfere with education or wellbeing.',
   },
   {
     state: 'Australian Capital Territory (ACT)',
     stateCode: 'ACT',
     legislation: 'Children and Young People Act 2008 (Chapter 21) & Education Act 2004',
     regulator: 'Access Canberra / ACT Community Services Directorate',
-    minAgeGeneral: '15 years ("young person" — no hour caps outside school)',
-    minAgeLightOrDelivery: 'Under 15 ("child" — restricted to light work, max 10 hrs/wk, max 6 days/wk)',
+    minAgeGeneral: '15 years ("young person" — 10 hr/wk light work cap lifts)',
+    minAgeLightOrDelivery: 'Under 15 ("child" — restricted to light work, max 10 hrs/wk total across all employers, max 6 hrs/day for 12–14yo, 1 shift/day)',
     parentConsentMandatory: true,
-    parentConsentDetails: 'Mandatory written parental consent for children under 15; employer must notify Director-General within 7 days for regular work.',
+    parentConsentDetails: 'Mandatory written parental consent for children under 15; employer must notify Director-General within 7 days for regular work; prohibited from high-risk work.',
     schoolTermMaxHours: 'Max 10 hours per week of light work for under-15s; no statutory cap for 15+ outside school hours',
-    schoolDayMaxHours: 'Outside school hours only (max 6 days in any week for under-15s)',
+    schoolDayMaxHours: 'Outside school hours only (max 1 shift per day; max 6 hrs/day for 12–14yo)',
     nonSchoolDayMaxHours: 'Outside school hours; subject to 10 hr/wk total cap for under-15s',
     holidayMaxHours: 'Max 10 hours per week for under-15s; max 38 hours per week for 15+ under Modern Awards',
     nightWorkRestrictions: 'Strict curfew: No work between 10:00pm and 6:00am for children under 15',
-    mandatoryRestBreaks: 'Modern award rest and meal breaks; safe travel home required for late evening shifts',
+    mandatoryRestBreaks: 'Minimum 12 continuous hours break between shifts; safe travel home required for late evening shifts',
     rulesFor15YearOlds: 'Under ACT law, 15-year-olds are classified as "young persons" rather than "children", meaning the 10 hr/week light work cap does not apply. They can work award hours outside compulsory school hours.',
-    keyRule: 'Children under 15 are restricted to 10 hrs/week of light work with mandatory parental consent. 15-year-olds can work general award hours outside school times.',
+    keyRule: 'Children under 15 are restricted to 10 hrs/week of light work across all employers with mandatory parental consent. 15-year-olds can work general award hours outside school times.',
   },
   {
     state: 'Northern Territory (NT)',
     stateCode: 'NT',
-    legislation: 'Care and Protection of Children Act 2007 (Part 5.3) & Education Act 2015',
+    legislation: 'Care and Protection of Children Act 2007 (Chapter 3, Part 3.2, s 203) & Education Act 2015',
     regulator: 'Territory Families, Housing and Communities / NT WorkSafe',
     minAgeGeneral: '15 years for general employment without child employment permit restrictions',
-    minAgeLightOrDelivery: 'Under 15 subject to Part 5.3 child employment protections and parent consent',
+    minAgeLightOrDelivery: 'Under 15 subject to Part 3.2 child employment protections, curfew, and parent consent',
     parentConsentMandatory: true,
     parentConsentDetails: 'Mandatory written parental consent for workers under 15; must be retained by employer.',
-    schoolTermMaxHours: 'Work must not interfere with school attendance or education (compulsory until 17)',
+    schoolTermMaxHours: 'Work must not interfere with school attendance or education (compulsory until 17 or Year 12)',
     schoolDayMaxHours: 'Outside school hours only',
     nonSchoolDayMaxHours: 'Standard award limits (up to 8 hrs/day)',
     holidayMaxHours: 'Standard award full-time limits apply (max 38 hrs/week)',
-    nightWorkRestrictions: 'Strict curfew: No work between 10:00pm and 6:00am for children under 15',
+    nightWorkRestrictions: 'Strict curfew: Section 203 prohibits work between 10:00pm and 6:00am for children under 15 (offence for employer and parent)',
     mandatoryRestBreaks: 'Minimum 12 continuous hours of rest between consecutive shifts for under-15s',
-    rulesFor15YearOlds: 'At 15, Part 5.3 child employment restrictions lift. 15-year-olds who have completed Year 10 can transition to full-time work or work casual/part-time award hours outside school times.',
-    keyRule: 'Under Care and Protection of Children Act 2007, under-15s cannot work 10pm–6am, must have 12-hour rest between shifts, and require written parent consent. 15-year-olds work under standard Modern Awards.',
+    rulesFor15YearOlds: 'At 15, Part 3.2 night curfew and child restrictions lift. 15-year-olds who have completed Year 10 can transition to full-time work or work casual/part-time award hours outside school times.',
+    keyRule: 'Under Section 203 of the Care and Protection of Children Act 2007, under-15s cannot work 10pm–6am, must have 12-hour rest between shifts, and require written parent consent. 15-year-olds work under standard Modern Awards.',
   },
 ];
 
 /** Minimum Shift Lengths Under Australian Modern Awards */
 export const MINIMUM_SHIFT_LENGTHS = [
   { award: 'Fast Food Industry Award [MA000003]', casualMin: '3 Hours', partTimeMin: '3 Hours', note: 'If sent home early, employer must still pay the full 3 hours.' },
-  { award: 'General Retail Industry Award [MA000004]', casualMin: '3 Hours', partTimeMin: '3 Hours', note: 'Applies to supermarkets, department stores, fashion & hardware.' },
-  { award: 'Restaurant Industry Award [MA000119]', casualMin: '2 Hours', partTimeMin: '3 Hours', note: 'Applies to cafes, restaurants and takeaway outlets.' },
-  { award: 'Hospitality Industry Award [MA000009]', casualMin: '2 Hours', partTimeMin: '3 Hours', note: 'Applies to hotels, resorts, event catering and function centres.' },
-  { award: 'Registered and Licensed Clubs Award [MA000058]', casualMin: '2 Hours', partTimeMin: '3 Hours', note: 'Applies to sporting, RSL, and community clubs.' },
-  { award: 'Community Pharmacy Award [MA000012]', casualMin: '3 Hours', partTimeMin: '3 Hours', note: 'Applies to pharmacy assistants and shop floor crew.' },
-  { award: 'Fitness Industry Award [MA000094]', casualMin: '3 Hours', partTimeMin: '3 Hours', note: 'Applies to pool lifeguards, gym receptionists, and swim instructors.' },
-  { award: 'Cleaning Services Award [MA000022]', casualMin: '2–3 Hours', partTimeMin: '3 Hours', note: 'Cleaners get 100% full adult rates ($27.81/hr) regardless of age!' },
-  { award: 'Amusement & Events Award [MA000080]', casualMin: '3 Hours', partTimeMin: '3 Hours', note: 'Applies to theme parks, bowling alleys, and sports grounds.' },
+  { award: 'General Retail Industry Award [MA000004]', casualMin: '3 Hours (1.5h school exception)', partTimeMin: '3 Hours', note: 'Standard 3-hour minimum shift. Clause 11.3 / 15.7 exception: 1.5-hour minimum shift permitted for full-time secondary school students working between 3:00pm–6:30pm on school days with written parent/guardian consent.' },
+  { award: 'Restaurant Industry Award [MA000119]', casualMin: '2 Hours (4h on Public Holidays)', partTimeMin: '3 Hours', note: 'Applies to cafes, restaurants and takeaway outlets. 4-hour minimum engagement on public holidays. Liquor service pays 100% adult rate.' },
+  { award: 'Hospitality Industry Award [MA000009]', casualMin: '2 Hours', partTimeMin: '3 Hours', note: 'Applies to hotels, resorts, event catering and function centres. Liquor service pays 100% adult rate regardless of age.' },
+  { award: 'Registered and Licensed Clubs Award [MA000058]', casualMin: '2 Hours', partTimeMin: '3 Hours', note: 'Applies to sporting, RSL, and community clubs. Clause 13.1: Liquor service pays 100% full adult rate regardless of age. Min 18 for alcohol service.' },
+  { award: 'Pharmacy Industry Award [MA000012]', casualMin: '3 Hours', partTimeMin: '3 Hours', note: 'Applies to pharmacy assistants and dispensary support staff. Dispensary technician Level 3+ pays full adult rate.' },
+  { award: 'Fitness Industry Award [MA000094]', casualMin: '3 Hours', partTimeMin: '3 Hours', note: 'Applies to pool lifeguards, gym receptionists, and instructors. Clause 15.2 junior percentages apply across classification levels (20yo receives 100% adult pay).' },
+  { award: 'Hair and Beauty Industry Award [MA000005]', casualMin: '3 Hours', partTimeMin: '3 Hours', note: 'Applies to salon assistants, shampooists, and junior stylists. 3-hour minimum casual engagement. Adult rate applies from age 18.' },
+  { award: 'Cleaning Services Award [MA000022]', casualMin: '1–4 Hours (site-based)', partTimeMin: '3 Hours', note: 'Cleaners get 100% adult pay ($27.08–$27.81/hr). Casual minimum engagement tiered by floor area: 1 hr ≤300m², 2 hrs ≤2000m², 3 hrs 2000–5000m², 4 hrs 5000m²+.' },
+  { award: 'Amusement, Events & Recreation Award [MA000080]', casualMin: '3 Hours', partTimeMin: '3 Hours', note: 'Applies to theme parks, bowling alleys, showgrounds, and sports stadiums.' },
+  { award: 'Broadcasting & Cinema Industry Award [MA000091]', casualMin: '3 Hours', partTimeMin: '3 Hours', note: 'Covers commercial cinemas (Hoyts, Event, Village) — box office, candy bar, ushering.' },
 ];
 
 /** Legal Meal & Rest Break Entitlements Under Modern Awards */
@@ -685,10 +681,36 @@ export const MEAL_AND_REST_BREAKS = [
 ];
 
 /** 100-Point Identification Checklist for 15-Year-Olds (Bank Accounts, TFN & Medicare) */
-export const TEEN_ID_CHECKLIST_15YO = [
-  { type: 'Primary ID (70 Points)', examples: 'Australian Birth Certificate, Australian Passport, Australian Citizenship Certificate', note: 'Most important document for 15yos' },
-  { type: 'Secondary Photo ID (40 Points)', examples: 'Current High School Student ID Card (with photo), Proof of Age Card, Learner Driver Licence', note: 'Must have your photo and full legal name' },
-  { type: 'Supporting Documents (25 Points each)', examples: 'Medicare Card (as a dependant or own card), Bank Debit Card, Letter from School Principal, Youth Transport Concession Card', note: 'Shows your current address or relationship' },
+export interface TeenIdDocument {
+  type: string;
+  points: number;
+  examples: string;
+  note: string;
+  howToObtain?: string;
+}
+
+export const TEEN_ID_CHECKLIST_15YO: TeenIdDocument[] = [
+  {
+    type: 'Primary ID (70 Points)',
+    points: 70,
+    examples: 'Australian Full Birth Certificate, Australian Passport (current or expired <2 yrs), Australian Citizenship Certificate',
+    note: 'Mandatory primary document for 15yos (worth 70 of the 100 points required).',
+    howToObtain: 'Order replacement birth certificate via state Registry of Births, Deaths & Marriages (BDM) if misplaced ($55–$65).',
+  },
+  {
+    type: 'Secondary Photo ID (40 Points)',
+    points: 40,
+    examples: 'Current High School Student ID Card (with photo and full legal name), State Proof of Age Card / Photo Card, Learner Driver Licence',
+    note: 'Combines with Primary ID (70 + 40 = 110 Points) to instantly surpass the 100-point threshold for banks and AusPost!',
+    howToObtain: 'Issued annually by secondary school administration or apply for a state Proof of Age Card / Photo Card at transport customer centre.',
+  },
+  {
+    type: 'Supporting Documents (25 Points each)',
+    points: 25,
+    examples: 'Medicare Card (as a dependant on parent card or own green card at 15), Bank Debit Card / Passbook, Official signed Letter from School Principal, Youth Transport Concession Card',
+    note: 'Validates legal name and residential address. Any 2 supporting documents provide 50 points.',
+    howToObtain: 'Request Medicare card via Services Australia myGov app, or obtain official signed letter from school principal on school letterhead.',
+  },
 ];
 
 /** Top Australian Employers for 15-Year-Old First Job Seekers */
@@ -839,39 +861,92 @@ export const TOP_TEEN_EMPLOYERS_AU = [
   },
 ];
 
+export interface RoadmapMilestone {
+  step: number;
+  title: string;
+  badge: string;
+  summary: string;
+  action: string;
+  linkKey: string;
+  formCode?: string;
+  statutoryRef?: string;
+  checkpoints: string[];
+  proTip: string;
+}
+
 /** 15-Year-Old Independence Roadmap Milestones */
-export const FIFTEEN_YO_ROADMAP_MILESTONES = [
+export const FIFTEEN_YO_ROADMAP_MILESTONES: RoadmapMilestone[] = [
   {
     step: 1,
     title: 'Apply for Your Free Tax File Number (TFN)',
     badge: 'Step 1 • Legal Prerequisite',
-    summary: 'Apply online through Australia Post or myGov. It is 100% free (never pay a third-party fee!). Giving it to your employer & bank stops 47% top marginal withholding tax.',
-    action: 'Book a free identity appointment at Australia Post with your Birth Certificate & Student ID.',
+    summary: 'Apply online through Australia Post or myGov using your 100-point ID (Birth Certificate [70pts] + School Student ID [40pts] = 110pts). It is 100% free (never pay a third-party fee!). Giving your TFN to your employer (via ATO Form NAT 3092) and bank stops 47% top marginal withholding tax.',
+    action: 'Book a free identity appointment at Australia Post with your Birth Certificate (70pts) and Student Photo ID (40pts).',
     linkKey: 'auspost_tfn',
+    formCode: 'ATO NAT 3092 / AusPost',
+    statutoryRef: 'Taxation Administration Act 1953',
+    checkpoints: [
+      'Gather 100 points of ID (Australian Birth Certificate [70 pts] + School Photo ID [40 pts] = 110 pts)',
+      'Complete the online TFN application for Australian residents on ato.gov.au',
+      'Print or save the official application summary barcode',
+      'Book and attend your free 5-minute identity appointment at Australia Post',
+      'Store your 9-digit TFN securely once it arrives by mail within 28 days',
+    ],
+    proTip: 'Never pay private third-party websites claiming to process a TFN for $50-$100. Applying through Australia Post and the ATO is completely free by law.',
   },
   {
     step: 2,
     title: 'Open a Zero-Fee 5.0%+ Youth Bank Account',
     badge: 'Step 2 • Banking & Savings',
     summary: 'Open a fee-free youth transaction account with Visa/Mastercard Debit and Apple Pay / Google Wallet. Provide your TFN to stop 47% tax on savings interest, and set up a cardless Mojo buffer.',
-    action: 'Compare BOQ Future Saver (5.80%), Newcastle Permanent (5.75%), or Great Southern Bank (5.50%).',
+    action: 'Compare BOQ Future Saver (5.80% up to 35yo, waived under 18), Newcastle Permanent (5.75%), Great Southern Bank (5.50%), or Macquarie (5.00% from 12yo).',
     linkKey: 'moneysmart_banking',
+    formCode: 'APRA $250k FCS Guarantee',
+    statutoryRef: 'Banking Act 1959 & AML/CTF Act 2006',
+    checkpoints: [
+      'Compare high-interest youth accounts (e.g. BOQ 5.80%, Newcastle Perm 5.75%, Great Southern 5.50%)',
+      'Open account independently at 15 with your 100-point ID (Birth Certificate + School Photo ID)',
+      'Provide your TFN to your bank to stop 47% withholding tax on earned interest',
+      'Link your digital debit card to Apple Wallet or Google Pay on your phone',
+      'Create a separate cardless sub-account dedicated to your $500 Mojo emergency buffer',
+    ],
+    proTip: 'Australian banks allow 15-year-olds to open accounts in their own name without parent co-signers at most major institutions once 100 points of ID are verified.',
   },
   {
     step: 3,
     title: 'Claim Your Own Green Medicare Card',
     badge: 'Step 3 • Healthcare Independence',
-    summary: 'From age 15 in Australia, Services Australia allows you to get your own separate green Medicare card (via myGov or Form MS011 / MS004) to visit bulk-billing doctors independently with 100% confidential medical privacy.',
+    summary: 'From age 15 in Australia, Services Australia allows you to get your own separate green Medicare card (via myGov or Form MS011 / MS004) to visit bulk-billing doctors independently with 100% confidential medical privacy. Parents are not notified.',
     action: 'Submit Services Australia Form MS011/MS004 or apply online via myGov under "Get a new card and number".',
     linkKey: 'services_australia_medicare_15',
+    formCode: 'Form MS004 & Form MS011',
+    statutoryRef: 'Health Insurance Act 1973',
+    checkpoints: [
+      'Link Medicare to your personal myGov account online or download Form MS004/MS011',
+      'Choose "Copy" to get your own green card while keeping family Medicare Safety Net coverage',
+      'Provide 2 identity documents (Birth Certificate or Passport + School Photo ID)',
+      'Download Express Plus Medicare app for instant digital card in Apple/Google Wallet',
+      'Understand your medical privacy: parents cannot view doctor visits from age 15',
+    ],
+    proTip: 'Choosing a "Copy" rather than a full "Transfer" allows your medical expenses to continue contributing toward your family’s Medicare Safety Net threshold.',
   },
   {
     step: 4,
     title: 'Land Your First Casual Job & Master Junior Pay',
     badge: 'Step 4 • First Paycheck',
-    summary: 'Understand your junior rate ($11.12–$15.64/hr base + 25% casual loading = $13.90–$16.53/hr), enforce the 3-hour minimum shift rule, paid 10-minute rest pauses, and the 1-hour unpaid trial limit.',
-    action: 'Use our Teen Resume Builder and submit applications to Woolies, Coles, Maccas, or sports refereeing.',
+    summary: 'Understand your junior rate ($11.12–$15.64/hr base + 25% casual loading = $13.90–$16.53/hr) across 10 Modern Awards. Enforce the 3-hour minimum shift rule (or 1.5-hr Retail clause 11.3/15.7 school day exception), paid 10-minute rest pauses, mandatory parent consent (e.g. QLD Form CE1, WA Wageline form, VIC employer licence), and the 1-hour unpaid trial limit.',
+    action: 'Submit applications to Woolies, Coles, Maccas, or sports refereeing, and provide QLD Form CE1 / state parent consent before starting.',
     linkKey: 'fairwork_awards',
+    formCode: 'Form CE1 / Awards',
+    statutoryRef: 'Fair Work Act 2009 & State Child Employment Legislation',
+    checkpoints: [
+      'Build a teen resume highlighting school achievements, sports, reliability, and references',
+      'Provide required parent consent before starting (e.g. QLD Form CE1 under Child Employment Act 2006, WA Wageline permission form)',
+      'Check your Award junior rate (e.g. Fast Food MA000003: $13.90/hr casual under 16; Retail MA000004: $15.64/hr casual)',
+      'Enforce the 3-hour minimum shift rule and 1-hour maximum unpaid skill trial limit',
+      'Ensure work hours stay within statutory limits (e.g. max 12h/school-week, 6am-10pm curfew, never during school hours)',
+    ],
+    proTip: 'Unpaid trials longer than 1 hour are illegal under the Fair Work Act. You must be paid full award wages for any induction shifts or regular working hours.',
   },
   {
     step: 5,
@@ -880,6 +955,16 @@ export const FIFTEEN_YO_ROADMAP_MILESTONES = [
     summary: 'Select YES to Question 8 on ATO Form NAT 3092. Combined with the $700 Low Income Tax Offset (LITO), you pay $0 tax up to $22,575. Fill out NAT 13080 to staple your super (12.0% SG over 30h/wk).',
     action: 'Submit Form NAT 3092 (TFN Declaration) and Form NAT 13080 (Super Choice) to your new employer.',
     linkKey: 'ato_tfn_form',
+    formCode: 'NAT 3092 & NAT 13080',
+    statutoryRef: 'ITAA 1997 s 6-1 & SGAA 1992 s 28',
+    checkpoints: [
+      'Complete ATO Form NAT 3092 Question 8 by selecting "YES" to claim the tax-free threshold',
+      'Confirm $0 tax is withheld on annual earnings up to $22,575 (with $700 LITO offset)',
+      'Fill out Section B of ATO Form NAT 13080 with your stapled super fund USI & Member ID',
+      'Verify 12.0% Superannuation Guarantee is paid on any week you work >30 hours (SGAA s 28)',
+      'Receive mandatory Fair Work Information Statement (FWIS) and Casual Statement (CEIS)',
+    ],
+    proTip: 'Starting a job mid-year does NOT pro-rate your $18,200 threshold as an Australian tax resident. Even if you start in April, you have the full threshold available for the financial year.',
   },
   {
     step: 6,
@@ -888,6 +973,16 @@ export const FIFTEEN_YO_ROADMAP_MILESTONES = [
     summary: 'Take advantage of $0 rent: allocate 60% Blow, 20% Mojo (until $500 safety buffer is reached), and 20% -> 40% Grow in a high-interest savings account for a first car bought in cash.',
     action: 'Set up T+0 payday bank automation so your Mojo and Grow funds transfer the instant your pay lands.',
     linkKey: 'moneysmart_budget',
+    formCode: '60/20/20 Barefoot Split',
+    statutoryRef: 'Moneysmart Barefoot Framework',
+    checkpoints: [
+      'Bucket 1 (Daily / Blow): Allocate 60% of each paycheck for social outings, lunches, and clothes',
+      'Bucket 2 (Mojo / Safety): Allocate 20% into high-interest savings until you hit $500 buffer',
+      'Bucket 3 (Grow / Goals): Allocate 20% (rising to 40% once Mojo is full) for a first car fund',
+      'Schedule payday auto-transfers so savings are moved the same minute pay arrives (T+0 automation)',
+      'Enforce the $500 Mojo rule: never spend emergency money on non-emergencies',
+    ],
+    proTip: 'Living with parents at 15 means zero rent and groceries. This is your lifetime peak savings rate window—saving 40% builds a $5,000 car fund in just over a year.',
   },
   {
     step: 7,
@@ -896,14 +991,34 @@ export const FIFTEEN_YO_ROADMAP_MILESTONES = [
     summary: 'At 15 years and 11 months you can enrol in PrepL (QLD $29.70) or practice the DKT (NSW) so your Learner licence issues on your 16th birthday. Remember: 10 professional lessons count as 30 logbook hours!',
     action: 'Run free practice road rules quizzes on your state transport portal and budget for lessons.',
     linkKey: 'qld_prepl',
+    formCode: 'PrepL / DKT Test',
+    statutoryRef: 'QLD Transport Operations / NSW Road Transport Act',
+    checkpoints: [
+      'Check your state eligibility age (QLD: PrepL from 15 years 11 months; NSW: DKT at 16)',
+      'Complete online PrepL learning modules and pass the road rules knowledge test',
+      'Prepare 100-point ID and vision test documents for your 16th birthday licence issue',
+      'Download your state learner logbook app (QLD Learner Logbook / NSW Learner Log)',
+      'Leverage the 3-for-1 rule: First 10 professional instructor hours count as 30 logbook hours',
+    ],
+    proTip: 'In Queensland, completing PrepL at 15.9 allows you to walk straight into TMR on your 16th birthday, pay the licence fee, and walk out with your physical yellow L plates!',
   },
   {
     step: 8,
     title: 'Unlock Student Concessions & Scam Protection',
     badge: 'Step 8 • Real World Savings',
-    summary: 'Get 50c public transport fares (QLD) or Concession Opal (NSW), join Student Edge / UNiDAYS for $3,000+/yr in discounts, and protect against money muling recruitment scams.',
+    summary: 'Get 50c public transport fares (QLD) or Concession Opal (NSW), join Student Edge / UNiDAYS for $3,000+/yr in discounts across tech, transport, food & entertainment, and protect against money muling recruitment scams.',
     action: 'Download Student Edge, verify your high school status, and never let anyone transfer money through your account.',
     linkKey: 'student_edge',
+    formCode: 'Student Edge / Translink 50c',
+    statutoryRef: 'ACCC Scamwatch & Translink Concessions',
+    checkpoints: [
+      'Activate your secondary student public transport concession (50c fares in QLD / Student Opal in NSW)',
+      'Register for free verified student discount apps (Student Edge and UNiDAYS)',
+      'Save $3,000+/yr on tech (Apple/JB Hi-Fi), phone plans, clothing, and movie tickets',
+      'Learn Scamwatch money muling warnings: never let anyone transfer money through your bank account',
+      'Audit every pay slip: check your hourly rate, 25% casual loading, and super guarantee line',
+    ],
+    proTip: 'Organised crime networks target Australian teens on social media offering easy money to receive transfers. This is illegal money muling that can lead to permanent banking bans and criminal charges.',
   },
 ];
 
@@ -1120,6 +1235,16 @@ export const STUDENT_DISCOUNTS_AU: StudentDiscountItem[] = [
     linkKey: "youtube_premium_student_au",
   },
   {
+    id: "amazon_prime_student",
+    category: "Music & Streaming",
+    title: "Amazon Prime Student (50% Off + Deliveroo Plus)",
+    provider: "Amazon Australia",
+    discount: "50% off Prime ($4.99/mo vs $9.99/mo) with Prime Video, free expedited delivery, Prime Gaming & Deliveroo Plus",
+    estimatedYearlySavings: 60,
+    howToGet: "Verify student status with .edu.au email address or student ID at amazon.com.au/joinstudent.",
+    linkKey: "prime_student_au",
+  },
+  {
     id: "event_cinemas_cinebuzz",
     category: "Cinema & Entertainment",
     title: "Event Cinemas Cinebuzz 50% Off Student Mondays",
@@ -1148,6 +1273,16 @@ export const STUDENT_DISCOUNTS_AU: StudentDiscountItem[] = [
     estimatedYearlySavings: 540,
     howToGet: "Bring your own unlocked handset and purchase a 30-day SIM-only plan outright.",
     linkKey: "boost_mobile_au",
+  },
+  {
+    id: "everyday_mobile_discount",
+    category: "Phone & Internet",
+    title: "Everyday Mobile 10% Monthly Grocery Discount Hack",
+    provider: "Everyday Mobile from Woolworths (Telstra Wholesale)",
+    discount: "10% off ONE full in-store Woolworths shop per month (saves $15–$25/mo on a $150–$250 shop — effectively pays for your SIM!)",
+    estimatedYearlySavings: 240,
+    howToGet: "Link an Everyday Mobile SIM plan ($20–$30/mo) to your registered Everyday Rewards card.",
+    linkKey: "everyday_mobile_woolworths",
   },
   {
     id: "optus_student_hub",
@@ -1240,6 +1375,24 @@ export const STUDENT_DISCOUNTS_AU: StudentDiscountItem[] = [
     linkKey: "nt_sport_voucher_scheme",
   },
 ];
+
+/**
+ * Annual Student Discounts Summary Breakdown
+ * Stacking verified student concessions across transport, tech, phone, and retail yields $3,000+ to $5,000+/year in real savings.
+ */
+export const STUDENT_SAVINGS_SUMMARY = {
+  minimumAnnualSavingsPotential: 3000,
+  typicalAnnualSavings: 4250,
+  categoryBreakdown: {
+    transportConcessionSavings: 850,     // State average (50c QLD $1,250, Opal $850, PTV $750, WA $800, SA $850)
+    techSoftwareAndHardwareSavings: 2500, // Microsoft 365 ($109) + Adobe ($695) + GitHub ($450) + Autodesk ($1500) + hardware ($200)
+    phoneAndInternetSavings: 540,        // SIM-only MVNO vs lock-in contract
+    musicAndStreamingSavings: 215,       // Apple Music + Apple TV+ bundle or Spotify
+    cinemaAndEntertainmentSavings: 140,  // Student cinema tickets (50% off Cinebuzz / $12.50 HOYTS)
+    retailFoodAndSportsSavings: 500,     // Student Edge/UNiDAYS + $200 sports voucher
+  },
+  note: 'Stacking transport concessions, free educational software (Microsoft 365, Adobe, GitHub), budget MVNO phone plans, and youth retail discounts saves Australian students $3,000+ per year.'
+} as const;
 
 /**
  * Proven Savings Goals & Paycheck Allocation Frameworks for Teens

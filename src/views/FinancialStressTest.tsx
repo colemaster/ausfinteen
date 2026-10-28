@@ -27,8 +27,24 @@ const STRESS_TEST_TOPICS = [
     moduleId: 'financial-stress-test',
     moduleTitle: 'Financial Runway & Crisis Planning 🛡️',
     question: 'What is the APRA +300 bps Interest Rate Buffer Test?',
-    answer: 'The Australian Prudential Regulation Authority (APRA) mandates that banks stress-test all home loan borrowers against a +3.00% (+300 basis points) interest rate spike above their current loan rate. Our stress test simulator models your cashflow resilience under this exact regulatory shock.',
+    answer: 'The Australian Prudential Regulation Authority (APRA) mandates that banks stress-test all home loan borrowers against a +3.00% (+300 basis points) interest rate spike above their current loan rate under Prudential Standard APS 220 and APG 223. Our stress test simulator models your cashflow resilience under this exact regulatory shock.',
     actionStep: 'Test your monthly surplus under the +300bps simulation card above.',
+  },
+  {
+    id: 'st-4',
+    moduleId: 'financial-stress-test',
+    moduleTitle: 'Financial Runway & Crisis Planning 🛡️',
+    question: 'What is Comprehensive Credit Reporting (CCR) and the 60-Day Mortgage Default Rule?',
+    answer: 'Under the National Credit Code (NCCP Act), if loan repayments remain unpaid for 60+ days, the lender can serve a formal Section 88 Default Notice. Unremedied defaults are lodged with Equifax, Experian, and illion for 5 full years, severely degrading your borrowing capacity. In addition, 24 months of Repayment History Information (RHI) records any payment missed by even 14 days.',
+    actionStep: 'If facing hardship, contact your bank hardship team early under the Banking Code of Practice or call the National Debt Helpline (1800 007 007).',
+  },
+  {
+    id: 'st-5',
+    moduleId: 'financial-stress-test',
+    moduleTitle: 'Financial Runway & Crisis Planning 🛡️',
+    question: 'How does the RBA 4.60% Cash Rate transmit into household mortgage repayments?',
+    answer: 'The Reserve Bank of Australia cash rate target sits at 4.60% (as established in September/October 2026). Commercial banks pass cash rate changes directly to variable mortgages. As a benchmark, each 0.25% (25 bps) rate hike increases monthly repayments by roughly $80 to $105 per $500,000 borrowed on a 30-year loan term.',
+    actionStep: 'Use the Reverse Stress Test card above to find your household\'s maximum survivable borrowing rate.',
   },
 ];
 

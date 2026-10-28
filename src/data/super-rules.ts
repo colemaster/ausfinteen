@@ -1,13 +1,22 @@
 /**
- * Australian superannuation rules for the 2026-27 financial year.
- * Verified 18 October 2026 against the ATO "Key super rates and thresholds"
- * (ato.gov.au/tax-rates-and-codes/key-superannuation-rates-and-thresholds)
- * and Division 296 guidance, plus APRA "Protecting Your Super" material.
+ * Australian superannuation rules for the 2026-27 and 2027-28 financial years.
+ * Verified October 2026 against official ATO "Key super rates and thresholds"
+ * (ato.gov.au/tax-rates-and-codes/key-superannuation-rates-and-thresholds),
+ * Treasury Division 296 guidance, APRA "Protecting Your Super" regulations,
+ * and the Payday Super legislation (effective 1 July 2026).
  *
- * 2026-27 headline figures: SG rate 12.0%, concessional cap $32,500,
- * non-concessional cap $130,000, 3-year bring-forward $390,000,
- * general transfer balance cap $2.1M (from 1 July 2026), Division 293
- * threshold $250,000 and Division 296 thresholds $3M / $10M.
+ * 2026-27 headline figures:
+ * - SG rate: 12.0% statutory rate (FY 2025-26, FY 2026-27 & FY 2027-28)
+ * - Concessional cap: $32,500 (indexed)
+ * - Non-concessional cap: $130,000 (4x concessional cap)
+ * - 3-year bring-forward: up to $390,000 (TSB < $1.84M)
+ * - General Transfer Balance Cap (TBC): $2.1M (indexed from 1 July 2026)
+ * - Division 293 threshold: $250,000 (15% additional tax)
+ * - Division 296 tax: $3M threshold (15% rate) & $10M tier (+10% rate)
+ * - Government Co-contribution: $500 max, lower threshold $49,293 (~$45,400 base), upper $64,293 (~$60,400 base)
+ * - Low Income Super Tax Offset (LISTO): 15% refund up to $500 for incomes up to $37,000 (expanding to $45k / $810 in 2027-28)
+ * - First Home Super Saver Scheme (FHSSS): $15,000 max/yr, $50,000 lifetime limit
+ * - Payday Super: legislated 1 July 2026 start date (7 business days payment window)
  */
 
 export const SUPER_RULES = {
@@ -85,7 +94,7 @@ export const SUPER_RULES = {
    * (from 1 July 2026, based on TSB at 30 June of the previous year):
    * - TSB < $1,840,000: 3-year bring-forward, $390,000
    * - TSB $1,840,000 to < $1,970,000: 2-year bring-forward, $260,000
-   * - TSB >= $1,970,000: no bring-forward, current-year cap only ($130,000)
+   * - TSB >= $1,970,000 to < $2,100,000: no bring-forward, current-year cap only ($130,000)
    * The annual non-concessional cap is nil if TSB >= the general TBC ($2.1M).
    */
   totalSuperBalanceNCCThreshold: 1840000,
@@ -103,6 +112,21 @@ export const SUPER_RULES = {
   lowBalanceThreshold: 6000,
 
   /**
+   * Inactive Low-Balance Accounts (ILBA): Accounts with a balance under $6,000
+   * that have not received a contribution or rollover for 16 months and have no
+   * insurance are transferred to the ATO, where they are fee-free and CPI-indexed.
+   */
+  inactiveLowBalanceThreshold: 6000,
+  inactiveLowBalanceMonths: 16,
+
+  /**
+   * Putting Members' Interests First (PMIF) Act 2019: Default insurance (Life/TPD)
+   * cannot be provided automatically to members under age 25 or with balances under
+   * $6,000; insurance is strictly opt-in for these members.
+   */
+  pmifUnder25InsuranceExemptionAge: 25,
+
+  /**
    * Minimum annual drawdown rates by age bracket (Schedule 7 SISR, account-based
    * pensions; the ATO states the first bracket as "under 65"). The 50% COVID-era
    * reduction ended in 2022-23 — normal rates apply from 2023-24 onwards.
@@ -116,6 +140,97 @@ export const SUPER_RULES = {
     { minAge: 90, maxAge: 94, rate: 0.11 },
     { minAge: 95, maxAge: Infinity, rate: 0.14 },
   ],
+
+  /**
+   * Government Super Co-contribution (for low-to-middle income earners):
+   * Matches 50% of eligible personal non-concessional contributions up to $500.
+   * - Maximum payment: $500
+   * - 2026-27 indexed lower income threshold: $49,293 (statutory base ~$45,400)
+   * - 2026-27 indexed upper income threshold: $64,293 (statutory base ~$60,400)
+   * - Phase-out rate: 3.333 cents per dollar (0.03333...) above lower threshold
+   * - Minimum payment: $20 if entitled
+   */
+  coContributionMax: 500,
+  coContributionMatchRate: 0.50,
+  coContributionLowerThreshold: 49293,
+  coContributionUpperThreshold: 64293,
+  coContributionBaseLowerThreshold: 45400,
+  coContributionBaseUpperThreshold: 60400,
+  coContributionMinPayment: 20,
+  coContributionReductionRate: 0.03333333333333333,
+
+  coContribution: {
+    maxContribution: 500,
+    matchRate: 0.50,
+    lowerIncomeThreshold: 49293,
+    upperIncomeThreshold: 64293,
+    baseLowerIncomeThreshold: 45400,
+    baseUpperIncomeThreshold: 60400,
+    reductionRate: 0.03333333333333333,
+    minPayment: 20,
+  },
+
+  /**
+   * Low Income Super Tax Offset (LISTO):
+   * 15% refund of concessional contributions for adjusted taxable income up to $37,000.
+   * - Maximum payment: $500
+   * - Income threshold: $37,000
+   * - Refund rate: 15%
+   * - Minimum payment: $10 if entitled
+   * (Legislated to increase to $45,000 income threshold and $810 max from 1 July 2027).
+   */
+  listoIncomeThreshold: 37000,
+  listoMaxAmount: 500,
+  listoRate: 0.15,
+  listoMinPayment: 10,
+  listoFutureIncomeThreshold2027: 45000,
+  listoFutureMaxAmount2027: 810,
+
+  listo: {
+    incomeThreshold: 37000,
+    maxAmount: 500,
+    rate: 0.15,
+    minPayment: 10,
+    futureThreshold2027: 45000,
+    futureMaxAmount2027: 810,
+  },
+
+  /**
+   * First Home Super Saver Scheme (FHSSS):
+   * Maximum voluntary contributions eligible for release:
+   * - Annual limit: $15,000 per financial year
+   * - Lifetime limit: $50,000 across all years
+   */
+  fhsssAnnualCap: 15000,
+  fhsssLifetimeCap: 50000,
+
+  fhsss: {
+    annualLimit: 15000,
+    lifetimeLimit: 50000,
+  },
+
+  /**
+   * Payday Super:
+   * Commenced 1 July 2026 under the Treasury Laws Amendment (Payday Superannuation) Act 2025.
+   * Super Guarantee contributions must be paid on each payday and received by the fund
+   * within 7 business days of payday (20 business days for brand-new funds / employees).
+   * Super funds must allocate contributions to the member account within 3 business days.
+   * Statutory baseline for calculations shifted from OTE to Qualifying Earnings (QE).
+   */
+  paydaySuperStartDate: '2026-07-01',
+  paydaySuperDueBusinessDays: 7,
+  paydaySuperNewFundDueBusinessDays: 20,
+  paydaySuperFundAllocationDays: 3,
+  paydaySuperBaseEarnings: 'Qualifying Earnings (QE)',
+
+  paydaySuper: {
+    startDate: '2026-07-01',
+    label: '1 July 2026',
+    paymentDueBusinessDays: 7,
+    newFundDueBusinessDays: 20,
+    fundAllocationDays: 3,
+    baseEarnings: 'Qualifying Earnings (QE)',
+  },
 } as const;
 
 /**
@@ -183,4 +298,231 @@ export function calcDivision296Tax(totalSuperBalance: number, superEarnings: num
     taxPayable += superEarnings * pctAbove10M * SUPER_RULES.division296UpperAdditionalRate;
   }
   return { applies: true, taxPayable };
+}
+
+/**
+ * Calculate the available non-concessional contribution cap and bring-forward period
+ * based on Total Super Balance (TSB) at 30 June of the prior financial year.
+ * @param totalSuperBalance - Total Super Balance at 30 June of prior year
+ */
+export function getNonConcessionalCap(totalSuperBalance: number): {
+  cap: number;
+  bringForwardYears: number;
+  eligible: boolean;
+} {
+  if (totalSuperBalance >= SUPER_RULES.transferBalanceCap) {
+    return { cap: 0, bringForwardYears: 0, eligible: false };
+  }
+  if (totalSuperBalance >= SUPER_RULES.totalSuperBalanceNCCUpperThreshold) {
+    return { cap: SUPER_RULES.nonConcessionalCap, bringForwardYears: 1, eligible: true };
+  }
+  if (totalSuperBalance >= SUPER_RULES.totalSuperBalanceNCCThreshold) {
+    return { cap: SUPER_RULES.bringForwardCap2Year, bringForwardYears: 2, eligible: true };
+  }
+  return { cap: SUPER_RULES.bringForwardCap, bringForwardYears: 3, eligible: true };
+}
+
+/**
+ * Calculate the Australian Government super co-contribution.
+ * Matches 50% of personal non-concessional contributions up to $500, phasing out
+ * between lower and upper income thresholds.
+ * @param income - Assessable income + reportable fringe benefits + reportable employer super
+ * @param personalNonConcessional - Eligible after-tax personal contributions made
+ * @param useBaseThresholds - Optional flag to use unindexed baseline thresholds (~$45.4k/~$60.4k) instead of 2026-27 indexed thresholds ($49,293/$64,293)
+ */
+export function calcCoContribution(
+  income: number,
+  personalNonConcessional: number,
+  useBaseThresholds: boolean = false,
+): { eligible: boolean; entitlement: number } {
+  if (personalNonConcessional <= 0) {
+    return { eligible: false, entitlement: 0 };
+  }
+  const lower = useBaseThresholds
+    ? SUPER_RULES.coContributionBaseLowerThreshold
+    : SUPER_RULES.coContributionLowerThreshold;
+  const upper = useBaseThresholds
+    ? SUPER_RULES.coContributionBaseUpperThreshold
+    : SUPER_RULES.coContributionUpperThreshold;
+
+  if (income >= upper) {
+    return { eligible: false, entitlement: 0 };
+  }
+
+  const maxMatch = Math.min(
+    SUPER_RULES.coContributionMax,
+    personalNonConcessional * SUPER_RULES.coContributionMatchRate,
+  );
+
+  let entitlement = maxMatch;
+  if (income > lower) {
+    const reduction = (income - lower) * SUPER_RULES.coContributionReductionRate;
+    entitlement = Math.max(0, maxMatch - reduction);
+  }
+
+  if (entitlement <= 0) {
+    return { eligible: false, entitlement: 0 };
+  }
+
+  // ATO rule: minimum payment is $20 if entitled
+  if (entitlement < SUPER_RULES.coContributionMinPayment) {
+    entitlement = SUPER_RULES.coContributionMinPayment;
+  }
+
+  return { eligible: true, entitlement: Math.round(entitlement * 100) / 100 };
+}
+
+/**
+ * Calculate the Low Income Super Tax Offset (LISTO).
+ * 15% refund of concessional contributions up to $500 for adjusted taxable income <= $37,000.
+ * @param adjustedTaxableIncome - Taxable income + reportable fringe benefits + reportable super + total net investment loss
+ * @param concessionalContributions - Total eligible concessional contributions (employer SG + salary sacrifice)
+ */
+export function calcListo(
+  adjustedTaxableIncome: number,
+  concessionalContributions: number,
+): { eligible: boolean; entitlement: number } {
+  if (adjustedTaxableIncome > SUPER_RULES.listoIncomeThreshold || concessionalContributions <= 0) {
+    return { eligible: false, entitlement: 0 };
+  }
+  const calculated = concessionalContributions * SUPER_RULES.listoRate;
+  let entitlement = Math.min(SUPER_RULES.listoMaxAmount, calculated);
+  // ATO rule: minimum payment is $10 if entitled
+  if (entitlement > 0 && entitlement < SUPER_RULES.listoMinPayment) {
+    entitlement = SUPER_RULES.listoMinPayment;
+  }
+  return { eligible: true, entitlement: Math.round(entitlement * 100) / 100 };
+}
+
+/**
+ * Check if an employee is legally entitled to Superannuation Guarantee under SGAA 1992 s 27(1)(a).
+ * - Employees aged 18+ qualify on all eligible earnings (no hours threshold).
+ * - Employees under 18 must work MORE than 30 hours in a single calendar week for that employer.
+ * @param age - Employee's current age
+ * @param weeklyHours - Hours worked in the specific calendar week (cannot be averaged across fortnights)
+ */
+export function isUnder18SuperEligible(age: number, weeklyHours: number): boolean {
+  if (age >= 18) return true;
+  return weeklyHours > SUPER_RULES.under18WeeklyHoursThreshold;
+}
+
+/**
+ * Calculate the capped fee on a low super balance (<$6,000) under the Protecting Your Super package.
+ * Administration and investment fees are capped at 3% p.a. Any excess charged during the financial
+ * year must be refunded by the fund within 3 months of 30 June.
+ * @param balance - Account balance at 30 June
+ * @param proposedAnnualFee - Total annual administration and investment fees before capping
+ */
+export function calcLowBalanceCappedFee(
+  balance: number,
+  proposedAnnualFee: number
+): { cappedFee: number; feeRebate: number; isCapped: boolean } {
+  if (balance <= 0) {
+    return { cappedFee: 0, feeRebate: 0, isCapped: false };
+  }
+  if (balance < SUPER_RULES.lowBalanceThreshold) {
+    const maxFee = balance * SUPER_RULES.lowBalanceFeeCap;
+    if (proposedAnnualFee > maxFee) {
+      return {
+        cappedFee: Math.round(maxFee * 100) / 100,
+        feeRebate: Math.round((proposedAnnualFee - maxFee) * 100) / 100,
+        isCapped: true,
+      };
+    }
+  }
+  return { cappedFee: proposedAnnualFee, feeRebate: 0, isCapped: false };
+}
+
+/**
+ * Project superannuation compound growth over a given number of years.
+ * Models regular weekly contributions plus initial balance with weekly compounding.
+ * @param initialBalance - Starting super balance (AUD)
+ * @param weeklyContribution - Employer + personal contribution per week (AUD)
+ * @param annualReturnRate - Net annual return rate (decimal, e.g. 0.085 for 8.5% p.a.)
+ * @param years - Investment runway in years (e.g. 42 years from age 18 to 60)
+ */
+export function calcSuperCompoundingProjection(
+  initialBalance: number,
+  weeklyContribution: number,
+  annualReturnRate: number,
+  years: number
+): { futureValue: number; totalContributions: number; totalInterest: number } {
+  const safeYears = Math.max(0, years);
+  const safeInitial = Math.max(0, initialBalance);
+  const safeContrib = Math.max(0, weeklyContribution);
+  const rWeekly = annualReturnRate / 52;
+  const nWeeks = safeYears * 52;
+
+  // FV of lump sum
+  const fvLumpSum = safeInitial * Math.pow(1 + annualReturnRate, safeYears);
+
+  // FV of weekly annuity
+  let fvAnnuity = 0;
+  if (rWeekly > 0 && nWeeks > 0) {
+    fvAnnuity = safeContrib * ((Math.pow(1 + rWeekly, nWeeks) - 1) / rWeekly);
+  } else {
+    fvAnnuity = safeContrib * nWeeks;
+  }
+
+  const futureValue = Math.round(fvLumpSum + fvAnnuity);
+  const totalContributions = Math.round(safeInitial + safeContrib * nWeeks);
+  const totalInterest = Math.max(0, futureValue - totalContributions);
+
+  return { futureValue, totalContributions, totalInterest };
+}
+
+/**
+ * Check if an individual meets the Total Super Balance test for carry-forward unused concessional cap amounts.
+ * Under ITAA 1997 s 291-142, carry-forward is accessible only if Total Super Balance (TSB)
+ * at 30 June of the previous financial year is strictly under $500,000.
+ * @param priorYearEndBalance - Total Super Balance at 30 June of the prior financial year
+ */
+export function isCarryForwardEligible(priorYearEndBalance: number): boolean {
+  return priorYearEndBalance < SUPER_RULES.carryForwardBalanceThreshold;
+}
+
+/**
+ * Calculate the maximum releasable voluntary contributions under the First Home Super Saver Scheme (FHSSS)
+ * pursuant to ITAA 1997 Division 131.
+ * - 100% of eligible personal non-concessional (after-tax) contributions
+ * - 85% of eligible voluntary concessional (pre-tax / salary sacrifice) contributions (15% tax retained)
+ * - Annual cap: $15,000 per financial year
+ * - Lifetime cap: $50,000 total across all years
+ * @param voluntaryConcessional - Eligible pre-tax voluntary contributions (capped at $15k/yr)
+ * @param voluntaryNonConcessional - Eligible post-tax voluntary contributions (capped at $15k/yr)
+ */
+export function calcFhsssMaxRelease(
+  voluntaryConcessional: number,
+  voluntaryNonConcessional: number
+): {
+  concessionalReleasable: number;
+  nonConcessionalReleasable: number;
+  totalReleasableContributions: number;
+  isCappedByLifetimeLimit: boolean;
+} {
+  const safeConc = Math.max(0, voluntaryConcessional);
+  const safeNonConc = Math.max(0, voluntaryNonConcessional);
+  const totalNominal = safeConc + safeNonConc;
+
+  let effectiveConc = safeConc;
+  let effectiveNonConc = safeNonConc;
+  let isCapped = false;
+
+  if (totalNominal > SUPER_RULES.fhsssLifetimeCap) {
+    isCapped = true;
+    const ratio = SUPER_RULES.fhsssLifetimeCap / totalNominal;
+    effectiveConc = safeConc * ratio;
+    effectiveNonConc = safeNonConc * ratio;
+  }
+
+  const concessionalReleasable = Math.round(effectiveConc * 0.85 * 100) / 100;
+  const nonConcessionalReleasable = Math.round(effectiveNonConc * 100) / 100;
+  const totalReleasableContributions = Math.round((concessionalReleasable + nonConcessionalReleasable) * 100) / 100;
+
+  return {
+    concessionalReleasable,
+    nonConcessionalReleasable,
+    totalReleasableContributions,
+    isCappedByLifetimeLimit: isCapped,
+  };
 }

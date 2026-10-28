@@ -8,14 +8,14 @@ import { InfoTooltip } from '@/components/ui/InfoTooltip';
 import { ComparisonPill } from '@/components/ui/ComparisonPill';
 import { QuickPresetBar, type ScenarioPreset } from '@/components/ui/QuickPresetBar';
 import { CalculatorActions } from '@/components/shared/CalculatorActions';
-import { OFFICIAL_WEB_LINKS } from '@/data/teen-finance-data';
+import { OFFICIAL_WEB_LINKS } from '@/data/statutory-links';
 import { SUPER_CO_CONTRIBUTION_2026_27 } from '@/data/constants';
 import { WebReferenceLink } from '@/components/shared/WebReferenceLink';
 import { Sparkles, Info, ShieldCheck, Scale } from 'lucide-react';
 import { useTeenProfile } from '@/context/TeenProfileContext';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip } from '@/components/charts';
 import { ChartContainer, ChartTooltipContent } from '@/components/ui/chart';
-import { compoundGrowthWithFees, superComparison, teenMarginalRate } from './engine';
+import { compoundGrowthWithFees, superComparison, teenMarginalRate, isUnder18SuperEligible, modelCasualSuperCompounding } from './engine';
 import { SUPER_RULES } from '@/data/super-rules';
 import { formatCurrency } from '@/utils/formatters';
 
@@ -26,29 +26,37 @@ interface TeenSuperPreset {
   hours: number;
   rate: number;
   strategy: 'indexed_high_growth' | 'default_mysuper';
+  age?: number;
 }
 
 const TEEN_SUPER_PRESETS: ScenarioPreset<TeenSuperPreset>[] = [
   {
+    id: 'casual-compounding-45yr',
+    label: '15yo Compounding ($50/wk)',
+    badge: '45-Yr Miracle',
+    description: 'Age 15 casual saving ~$50/wk super, compounding over 45 years to $1.1M+ at age 60',
+    values: { hours: 16, rate: 26.0, strategy: 'indexed_high_growth', age: 15 },
+  },
+  {
     id: 'part-time-fastfood',
     label: 'Student Casual (15h/wk)',
     badge: 'Under 18 Rule',
-    description: '15 hrs/wk at $18.50/hr. Super optional under 30 hrs for minors',
-    values: { hours: 15, rate: 18.5, strategy: 'indexed_high_growth' },
+    description: '15 hrs/wk at $18.50/hr. Super exempt under 30 hrs for minors (SGAA s 27(1)(a))',
+    values: { hours: 15, rate: 18.5, strategy: 'indexed_high_growth', age: 16 },
   },
   {
     id: 'full-time-gap-year',
     label: 'Gap Year Full-Time (38h/wk)',
     badge: '12% SG Active',
     description: '38 hrs/wk ($24.50/hr) unlocking mandatory 12% employer super',
-    values: { hours: 38, rate: 24.5, strategy: 'indexed_high_growth' },
+    values: { hours: 38, rate: 24.5, strategy: 'indexed_high_growth', age: 18 },
   },
   {
     id: 'hospitality-weekend',
     label: 'Cafe Casual (25h/wk)',
     badge: 'Hospitality Award',
-    description: '25 hrs/wk at $26.00/hr weekend casual rates',
-    values: { hours: 25, rate: 26.0, strategy: 'indexed_high_growth' },
+    description: '25 hrs/wk at $26.00/hr weekend casual rates (under 18 rule applies)',
+    values: { hours: 25, rate: 26.0, strategy: 'indexed_high_growth', age: 17 },
   },
 ];
 
@@ -57,7 +65,7 @@ export function TeenSuperCalculator() {
 
   const [hoursWk, setHoursWk] = useState<number>(profile.hoursPerWeek);
   const [hourlyPay, setHourlyPay] = useState<number>(profile.hourlyRate);
-  const [age] = useState<number>(profile.age);
+  const [age, setAge] = useState<number>(profile.age || 15);
   const [merPct, setMerPct] = useState<number>(0.5);
   const [fundStrategy, setFundStrategy] = useState<'indexed_high_growth' | 'default_mysuper'>('indexed_high_growth');
   const [activePreset, setActivePreset] = useState<string | undefined>();
@@ -67,35 +75,41 @@ export function TeenSuperCalculator() {
     if (preset.values.hours !== undefined) setHoursWk(preset.values.hours);
     if (preset.values.rate !== undefined) setHourlyPay(preset.values.rate);
     if (preset.values.strategy !== undefined) setFundStrategy(preset.values.strategy);
+    if (preset.values.age !== undefined) setAge(preset.values.age);
   };
 
   const handleReset = useCallback(() => {
     setActivePreset(undefined);
     setHoursWk(profile.hoursPerWeek || 15);
     setHourlyPay(profile.hourlyRate || 18.5);
+    setAge(profile.age || 15);
     setMerPct(0.5);
     setFundStrategy('indexed_high_growth');
   }, [profile]);
 
   const grossWk = hourlyPay * hoursWk;
-  const isEligible = age >= 18 || hoursWk > 30;
+  const isEligible = isUnder18SuperEligible(age, hoursWk);
 
   const annualSuper = isEligible ? grossWk * 52 * SUPER_SG_RATE_2026_27 : 0;
   
-  // 40-year compound super growth (age to 60)
+  // Compound super growth (current age to preservation age 60, e.g. 45 years for age 15)
   const returnRate = fundStrategy === 'indexed_high_growth' ? 0.085 : 0.065;
-  const years = 60 - age;
+  const years = Math.max(0, 60 - age);
   const monthlyContrib = annualSuper / 12;
 
   const growthWithFees = useMemo(() => {
     return compoundGrowthWithFees(monthlyContrib, years, returnRate, merPct / 100);
   }, [monthlyContrib, years, returnRate, merPct]);
 
+  const casual45YrCompounding = useMemo(() => {
+    return modelCasualSuperCompounding(50, 15, 60, 0.085, merPct / 100);
+  }, [merPct]);
+
   const decision = useMemo(() => {
     const annualIncome = grossWk * 52;
     const personalRate = teenMarginalRate(annualIncome);
-    return superComparison(annualIncome, personalRate, SUPER_RULES.sgRate);
-  }, [grossWk]);
+    return superComparison(annualIncome, personalRate, SUPER_RULES.sgRate, years);
+  }, [grossWk, years]);
 
   const summaryText = useMemo(() => {
     return [
@@ -160,7 +174,29 @@ export function TeenSuperCalculator() {
         title="Youth & Student Work Personas"
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="space-y-2">
+          <label className="text-xs font-semibold text-muted-foreground block">
+            Your Age ({age} y/o — {years} yrs to 60)
+          </label>
+          <div className="grid grid-cols-5 gap-1 p-1 bg-muted rounded-xl">
+            {[15, 16, 17, 18, 19].map(a => (
+              <button
+                key={a}
+                type="button"
+                onClick={() => setAge(a)}
+                className={`py-1.5 rounded-lg text-xs font-bold transition-all ${
+                  age === a
+                    ? 'bg-card text-foreground shadow-xs border border-border'
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                {a}
+              </button>
+            ))}
+          </div>
+        </div>
+
         <div className="space-y-4">
           <NumberInput
             label="Hourly Rate ($)"
@@ -175,7 +211,7 @@ export function TeenSuperCalculator() {
 
         <div className="space-y-4">
           <SliderControl
-            label="Hours Worked Per Week"
+            label="Hours Worked / Week"
             value={hoursWk}
             onChange={v => setHoursWk(v)}
             min={1}
@@ -187,11 +223,11 @@ export function TeenSuperCalculator() {
 
         <div className="space-y-2">
           <label className="text-xs font-semibold text-muted-foreground block">Barefoot Fund Strategy</label>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-1.5">
             <button
               type="button"
               onClick={() => setFundStrategy('indexed_high_growth')}
-              className={`py-2 px-2 rounded-xl border text-xs font-bold transition-all text-left ${
+              className={`py-2 px-1.5 rounded-xl border text-[11px] font-bold transition-all text-left ${
                 fundStrategy === 'indexed_high_growth'
                   ? 'bg-amber-500 text-white border-amber-500 shadow-xs'
                   : 'bg-card border-border hover:bg-muted text-foreground'
@@ -202,7 +238,7 @@ export function TeenSuperCalculator() {
             <button
               type="button"
               onClick={() => setFundStrategy('default_mysuper')}
-              className={`py-2 px-2 rounded-xl border text-xs font-bold transition-all text-left ${
+              className={`py-2 px-1.5 rounded-xl border text-[11px] font-bold transition-all text-left ${
                 fundStrategy === 'default_mysuper'
                   ? 'bg-primary text-primary-foreground border-primary shadow-xs'
                   : 'bg-card border-border hover:bg-muted text-foreground'
@@ -333,24 +369,73 @@ export function TeenSuperCalculator() {
         </p>
       </div>
 
-      {/* ATO Under 18 Rule Info */}
+      {/* ATO Under 18 Rule Info (SGAA 1992 s 27(1)(a)) */}
       {!isEligible ? (
-        <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-xs flex items-start gap-2 text-amber-900 dark:text-amber-200">
+        <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-xs flex items-start gap-2.5 text-amber-900 dark:text-amber-200">
           <Info className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
-          <div>
-            <span className="font-bold block mb-0.5">ATO Under 18 Rule:</span>
-            Because you work {hoursWk} hours/week (30 or fewer hours), super is not compulsory under ATO rules. If you work 31+ hours in any week, your employer MUST pay 12% super!
+          <div className="space-y-1">
+            <span className="font-bold block">ATO Under-18 30-Hour Rule — SGAA 1992 s 27(1)(a):</span>
+            <p className="leading-relaxed">
+              Because you are age {age} and work {hoursWk} hours/week (30 or fewer hours in a calendar week), superannuation guarantee is not compulsory under Section 27(1)(a) of the <em>Superannuation Guarantee (Administration) Act 1992</em> (Cth).
+              If you work <strong>more than 30 hours</strong> in any calendar week, or turn 18, your employer MUST pay 12.0% super on all ordinary time earnings!
+            </p>
           </div>
         </div>
       ) : (
-        <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-xs flex items-start gap-2 text-emerald-900 dark:text-emerald-200">
+        <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-xs flex items-start gap-2.5 text-emerald-900 dark:text-emerald-200">
           <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
-          <div>
-            <span className="font-bold block mb-0.5">12% Super Guarantee Active!</span>
-            Your employer is paying ${Math.round(annualSuper).toLocaleString()}/yr into your super fund — and since Payday Super started on 1 July 2026 it must reach your fund within 7 business days of each payday. Make sure to complete <strong>ATO Form NAT 13080</strong> to staple your existing fund!
+          <div className="space-y-1">
+            <span className="font-bold block">12.0% Super Guarantee Active! (SGAA 1992 s 27(1)(a) Met)</span>
+            <p className="leading-relaxed">
+              {age < 18
+                ? `As an under-18 employee working ${hoursWk} hours/week (>30 hrs/wk), you meet the statutory requirement of SGAA 1992 s 27(1)(a)! `
+                : `As an adult worker (age ${age}), you are entitled to mandatory 12.0% super guarantee on all ordinary hours regardless of weekly hours! `}
+              Your employer is paying ${Math.round(annualSuper).toLocaleString()}/yr into your super fund. Under <strong>Payday Super</strong> (statutory from 1 July 2026), contributions must reach your fund within 7 business days of each payday. Remember to complete <strong>ATO Form NAT 13080</strong> to staple your fund and avoid duplicate account fees!
+            </p>
           </div>
         </div>
       )}
+
+      {/* 45-Year Casual Compounding Feature ($50/wk casual contributions from Age 15 to 60) */}
+      <div className="rounded-2xl border border-primary/30 bg-primary/5 p-4 space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-primary" />
+            <h3 className="text-sm font-bold text-foreground">The 45-Year Compounding Super Power (Age 15 to 60)</h3>
+          </div>
+          <Badge variant="outline" className="text-[10px] font-mono">
+            {casual45YrCompounding.compoundingMultiplier}x Total Deposits
+          </Badge>
+        </div>
+        <p className="text-xs text-muted-foreground leading-relaxed">
+          Putting just <strong>$50/week</strong> ($2,600/year) into super starting at age 15 deposits a total of{' '}
+          <strong className="text-foreground">${casual45YrCompounding.totalContributionsPaid.toLocaleString()}</strong> across 45 years.
+          At 8.5% p.a. return (net {((casual45YrCompounding.netReturnRate) * 100).toFixed(1)}% after {merPct.toFixed(1)}% MER), that turns into{' '}
+          <strong className="text-emerald-600 dark:text-emerald-400 font-mono text-sm">${casual45YrCompounding.futureValueWithFees.toLocaleString()}</strong> by preservation age 60!
+        </p>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
+          <div className="p-2.5 rounded-xl bg-card border border-border text-center">
+            <div className="text-[10px] uppercase font-semibold text-muted-foreground">Total Invested</div>
+            <div className="text-sm font-extrabold font-mono text-foreground">${casual45YrCompounding.totalContributionsPaid.toLocaleString()}</div>
+            <div className="text-[9px] text-muted-foreground">45 yrs @ $50/wk</div>
+          </div>
+          <div className="p-2.5 rounded-xl bg-card border border-border text-center">
+            <div className="text-[10px] uppercase font-semibold text-muted-foreground">Projected at Age 60</div>
+            <div className="text-sm font-extrabold font-mono text-emerald-600 dark:text-emerald-400">${casual45YrCompounding.futureValueWithFees.toLocaleString()}</div>
+            <div className="text-[9px] text-muted-foreground">after fees ({casual45YrCompounding.compoundingMultiplier}x deposits)</div>
+          </div>
+          <div className="p-2.5 rounded-xl bg-card border border-border text-center">
+            <div className="text-[10px] uppercase font-semibold text-muted-foreground">Compound Returns</div>
+            <div className="text-sm font-extrabold font-mono text-primary">${(casual45YrCompounding.futureValueWithFees - casual45YrCompounding.totalContributionsPaid).toLocaleString()}</div>
+            <div className="text-[9px] text-muted-foreground">pure growth earned</div>
+          </div>
+          <div className="p-2.5 rounded-xl bg-card border border-border text-center">
+            <div className="text-[10px] uppercase font-semibold text-muted-foreground">Fee Drag Loss</div>
+            <div className="text-sm font-extrabold font-mono text-rose-500">-${casual45YrCompounding.feeDragLoss.toLocaleString()}</div>
+            <div className="text-[9px] text-muted-foreground">lost to {merPct}% MER fees</div>
+          </div>
+        </div>
+      </div>
 
       {/* 2026-27 ATO contribution limits & government help */}
       <div className="rounded-2xl border border-border bg-card/60 p-4 space-y-3">

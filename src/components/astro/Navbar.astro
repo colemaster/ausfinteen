@@ -26,18 +26,18 @@ const MOTION_OPTIONS = [
 ];
 
 const ACTIVE_INDICATOR =
-  'text-primary font-bold bg-primary/10 shadow-xs ring-1 ring-primary/25 after:absolute after:inset-x-3 after:bottom-1 after:h-[2.5px] after:rounded-full after:bg-gradient-to-r after:from-primary after:via-violet-400 after:to-emerald-400 after:shadow-[0_0_8px_rgba(16,185,129,0.5)] after:content-[""]';
+  'text-primary font-bold bg-primary/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.45),0_6px_16px_-8px_oklch(var(--accent-l)_var(--accent-c)_var(--accent-h)/0.55)] ring-1 ring-primary/25 after:absolute after:inset-x-3 after:bottom-1 after:h-[2.5px] after:rounded-full after:bg-gradient-to-r after:from-primary after:via-violet-400 after:to-emerald-400 after:shadow-[0_0_8px_rgba(16,185,129,0.5)] after:content-[""]';
 
 const navLinkClasses = (active: boolean): string =>
-  `nav-link relative flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold transition-all duration-200 ${
+  `nav-link group relative flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all duration-200 ${
     active
       ? ACTIVE_INDICATOR
-      : 'text-muted-foreground hover:text-foreground hover:bg-muted/60'
+      : 'text-muted-foreground hover:text-foreground hover:bg-muted/60 hover:-translate-y-0.5'
   }`;
 
 const dropdownItemClasses = (active: boolean): string =>
-  `nav-link relative flex items-center gap-2 px-3 py-2 rounded-xl text-xs transition-all ${
-    active ? ACTIVE_INDICATOR : 'text-foreground hover:bg-muted'
+  `nav-link group relative flex items-center gap-2 px-2.5 py-2 rounded-xl text-xs transition-all ${
+    active ? ACTIVE_INDICATOR : 'text-foreground hover:bg-muted hover:translate-x-0.5'
   }`;
 
 const CALC_ROUTES = [
@@ -56,8 +56,19 @@ const isCalcsActive = CALC_ROUTES.includes(path);
 const isModulesActive = path !== '/' && path !== '/profile' && !path.startsWith('/calculators');
 ---
 
-<header class="sticky top-0 z-40 w-full backdrop-blur-xl bg-background/80 border-b border-border/50 glass-nav" data-navbar>
+<header class="sticky top-0 z-40 w-full backdrop-blur-xl bg-background/75 border-b border-border/60 glass-nav shadow-[0_1px_3px_rgba(0,0,0,0.02)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3)]" data-navbar>
   <div class="h-[3px] w-full bg-gradient-to-r from-primary via-violet-500 to-amber-500 bg-[length:200%_100%] animate-text-shimmer" aria-hidden="true"></div>
+
+  {/* Soft chromatic wash behind the bar + a hairline of reflected light along
+      the bottom edge. Both are paint-only and cost one gradient each. */}
+  <div
+    aria-hidden="true"
+    class="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-primary/[0.07] via-violet-500/[0.03] to-transparent"
+  ></div>
+  <div
+    aria-hidden="true"
+    class="pointer-events-none absolute inset-x-0 -bottom-px h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent"
+  ></div>
 
   {/* Decorative ink blot behind the brand mark */}
   <div
@@ -71,29 +82,40 @@ const isModulesActive = path !== '/' && path !== '/profile' && !path.startsWith(
         href="/"
         data-sound="click"
         data-astro-prefetch="hover"
-        class="flex items-center gap-2.5 group"
+        class="flex shrink-0 items-center gap-2 sm:gap-2.5 group"
       >
         <div class="relative">
           {/* Living canvas glow behind the brand mark — brightens + lifts on hover */}
           <div
             aria-hidden="true"
-            class="absolute -inset-1 rounded-2xl bg-gradient-to-tr from-amber-500 via-primary to-violet-500 blur-md opacity-35 group-hover:opacity-70 transition-opacity duration-300 pointer-events-none"
+            class="absolute -inset-1.5 rounded-2xl bg-gradient-to-tr from-amber-500 via-primary to-violet-500 blur-md opacity-40 group-hover:opacity-80 transition-opacity duration-300 pointer-events-none"
           ></div>
-          <div class="p-2 rounded-xl bg-gradient-to-tr from-amber-500 via-primary to-violet-500 text-white shadow-xs card-specular group-hover:scale-105 group-hover:rotate-3 group-hover:shadow-lg group-active:scale-95 transition-transform duration-300 relative z-10">
-            <Icon name="sparkles" class="w-5 h-5 group-hover:animate-pulse-soft" />
+          {/* Playful orbit bead circling the coin mark */}
+          <span
+            aria-hidden="true"
+            class="orbit-ring -inset-2 opacity-0 transition-opacity duration-300 group-hover:opacity-100 hidden sm:block"
+          ></span>
+          {/* The mark itself: a glossy 3D coin with a specular top edge */}
+          <div class="relative z-10 grid h-10 w-10 place-items-center rounded-2xl border border-white/45 bg-gradient-to-br from-amber-300 via-primary to-violet-500 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.6),inset_0_-1px_0_rgba(0,0,0,0.18),0_5px_0_-1px_oklch(var(--accent-l)_var(--accent-c)_var(--accent-h)/0.35),0_12px_22px_-8px_oklch(var(--accent-l)_var(--accent-c)_var(--accent-h)/0.65)] transition-transform duration-300 group-hover:scale-105 group-hover:-rotate-6 group-active:scale-95 group-active:translate-y-0.5 sm:h-11 sm:w-11">
+            <Icon name="sparkles" class="w-5 h-5 drop-shadow-[0_1px_1px_rgba(0,0,0,0.25)] group-hover:animate-pulse-soft" />
           </div>
+          <span
+            aria-hidden="true"
+            class="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-amber-300 shadow-[0_0_0_3px_rgba(251,191,36,0.18),0_0_10px_rgba(251,191,36,0.95)] animate-twinkle"
+          ></span>
         </div>
         <div>
-          <span class="font-extrabold text-base sm:text-lg text-foreground tracking-tight block leading-tight">
-            AusFinance Suite
+          <span class="block whitespace-nowrap font-extrabold text-[15px] sm:text-lg text-foreground tracking-tight leading-tight">
+            AusFinance <span class="text-transparent bg-gradient-to-r from-primary via-primary to-violet-600 bg-clip-text dark:to-violet-300">Suite</span>
           </span>
-          <span class="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider block">
+          <span class="flex items-center gap-1 whitespace-nowrap text-[9px] font-semibold text-muted-foreground uppercase tracking-wide leading-tight sm:text-[10px] sm:tracking-wider">
+            <span class="h-1.5 w-1.5 rounded-full bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.9)]" aria-hidden="true"></span>
             2026-27 Compliant ⚡️
           </span>
         </div>
       </a>
 
-      <nav class="hidden md:flex items-center gap-1.5 text-xs font-semibold" aria-label="Primary">
+      <nav class="hidden xl:flex items-center gap-1.5 text-xs font-semibold" aria-label="Primary">
         <div class="relative" data-dropdown="calcs">
           <button
             type="button"
@@ -123,14 +145,19 @@ const isModulesActive = path !== '/' && path !== '/profile' && !path.startsWith(
             id="nav-calculators-panel"
             data-dropdown-panel="calcs"
             hidden
-            class="absolute top-full left-0 mt-2 w-80 p-2 rounded-2xl bg-popover border border-border shadow-xl grid grid-cols-1 gap-1 z-50 animate-slide-down-in card-depth card-specular"
+            class="play-surface play-gloss absolute top-full left-0 mt-3 w-80 p-2 rounded-2xl shadow-2xl ring-1 ring-black/5 dark:ring-white/5 grid grid-cols-1 gap-0.5 z-50 animate-slide-down-in card-depth"
           >
+            <div class="flex items-center justify-between px-2 pb-1.5 mb-1 border-b border-border/60">
+              <span class="text-[10px] uppercase tracking-[0.18em] font-bold text-muted-foreground">Next-gen calculators</span>
+              <span class="text-[9px] font-mono font-bold text-primary/80">{CALCS.length + 1} tools</span>
+            </div>
+
             <a
               href="/calculators"
               data-astro-prefetch="hover"
               data-sound="click"
               data-close-dropdown
-              class="p-2 rounded-xl bg-primary/10 text-primary font-bold flex items-center justify-between text-xs mb-1 card-specular"
+              class="p-2 rounded-xl bg-gradient-to-r from-primary/15 via-primary/10 to-violet-500/10 text-primary font-bold flex items-center justify-between text-xs mb-1 ring-1 ring-primary/20 shine-sweep"
             >
               <span><span aria-hidden="true">⚡️</span> Browse All Calculators</span>
               <span class="text-[10px] uppercase font-mono">Hub →</span>
@@ -144,10 +171,19 @@ const isModulesActive = path !== '/' && path !== '/profile' && !path.startsWith(
                 data-close-dropdown
                 class={dropdownItemClasses(path === c.route)}
               >
-                <span class="text-base" aria-hidden="true">{c.emoji}</span>
+                <span
+                  class="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-primary/15 to-violet-500/15 text-base ring-1 ring-border/60 transition-transform duration-200 group-hover:scale-110 group-hover:-rotate-3"
+                  aria-hidden="true"
+                >{c.emoji}</span>
                 <span class="truncate">{c.title}</span>
+                <span class="ml-auto text-primary opacity-0 transition-opacity group-hover:opacity-100" aria-hidden="true">→</span>
               </a>
             ))}
+
+            <div class="mt-1 flex items-center justify-between rounded-lg bg-muted/50 px-2 py-1.5 text-[9px] text-muted-foreground">
+              <span>Tip: press <kbd class="font-mono font-bold text-foreground">⌘K</kbd> from anywhere</span>
+              <span class="font-mono text-primary/70">v7.5</span>
+            </div>
           </div>
         </div>
 
@@ -169,8 +205,12 @@ const isModulesActive = path !== '/' && path !== '/profile' && !path.startsWith(
             id="nav-modules-panel"
             data-dropdown-panel="modules"
             hidden
-            class="absolute top-full left-0 mt-2 w-72 max-h-[70vh] overflow-y-auto p-2 rounded-2xl bg-popover border border-border shadow-xl grid grid-cols-1 gap-1 z-50 animate-slide-down-in card-depth card-specular"
+            class="play-surface play-gloss absolute top-full left-0 mt-3 w-72 max-h-[70vh] overflow-y-auto p-2 rounded-2xl shadow-2xl ring-1 ring-black/5 dark:ring-white/5 grid grid-cols-1 gap-0.5 z-50 animate-slide-down-in card-depth"
           >
+            <div class="sticky top-0 z-10 -mx-2 -mt-2 mb-1 flex items-center justify-between border-b border-border/60 bg-card/90 px-3.5 py-2 backdrop-blur-sm">
+              <span class="text-[10px] uppercase tracking-[0.18em] font-bold text-muted-foreground">Learning modules</span>
+              <span class="rounded-full bg-violet-500/15 px-1.5 py-0.5 text-[9px] font-mono font-bold text-violet-500">11</span>
+            </div>
             {NAV_MODULES.map(m => (
               <a
                 href={m.route}
@@ -180,7 +220,10 @@ const isModulesActive = path !== '/' && path !== '/profile' && !path.startsWith(
                 data-module-route={m.route}
                 class={dropdownItemClasses(path === m.route)}
               >
-                <span class="text-base" aria-hidden="true">{m.emoji}</span>
+                <span
+                  class="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-violet-500/15 to-primary/10 text-base ring-1 ring-border/60 transition-transform duration-200 group-hover:scale-110 group-hover:rotate-3"
+                  aria-hidden="true"
+                >{m.emoji}</span>
                 <span class="truncate">{m.title}</span>
               </a>
             ))}
@@ -211,20 +254,21 @@ const isModulesActive = path !== '/' && path !== '/profile' && !path.startsWith(
         </a>
       </nav>
 
-      <div class="flex items-center gap-1.5">
+      <div class="flex shrink-0 items-center gap-0.5 sm:gap-1.5">
         <a
           href="https://github.com/colemaster/ausfinteen/releases"
           target="_blank"
           rel="noreferrer"
-          title="What's new in v7.2.0 — changelog"
-          aria-label="What's new in v7.2.0 — changelog"
-          class="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border border-border bg-muted/40 text-muted-foreground hover:text-primary hover:border-primary/40 transition-all text-[10px] font-bold"
+          title="What's new in v7.5.0 — changelog"
+          aria-label="What's new in v7.5.0 — changelog"
+          class="play-surface sticker-badge shine-sweep hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-muted-foreground hover:text-primary hover:border-primary/40 transition-all text-[10px] font-bold"
+          style="--sticker-rotate: 1.5deg;"
         >
           <span class="relative flex h-2 w-2" aria-hidden="true">
             <span class="absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75 animate-ping motion-reduce:animate-none"></span>
-            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.9)]"></span>
           </span>
-          v7.2.0
+          v7.5.0
         </a>
 
         <button
@@ -233,10 +277,10 @@ const isModulesActive = path !== '/' && path !== '/profile' && !path.startsWith(
           data-sound="click"
           aria-label="Open command palette (Ctrl+K)"
           title="Command Center (Ctrl+K)"
-          class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted transition-all"
+          class="group flex items-center gap-1.5 rounded-xl border border-transparent px-1.5 py-1.5 text-muted-foreground transition-all hover:border-border hover:bg-card/80 hover:text-foreground hover:shadow-[0_4px_12px_-6px_oklch(var(--accent-l)_var(--accent-c)_var(--accent-h)/0.45)] sm:px-2.5"
         >
-          <Icon name="search" class="w-4 h-4" />
-          <kbd class="hidden sm:inline font-mono text-[10px] font-bold px-1.5 py-0.5 rounded-md border border-border/80 bg-card shadow-xs">⌘K</kbd>
+          <Icon name="search" class="w-4 h-4 transition-transform group-hover:scale-110 group-hover:-rotate-6" />
+          <kbd class="hidden sm:inline font-mono text-[10px] font-bold px-1.5 py-0.5 rounded-md border border-border/80 bg-card shadow-[0_1px_0_rgba(255,255,255,0.4)_inset]">⌘K</kbd>
         </button>
 
         <button
@@ -244,10 +288,10 @@ const isModulesActive = path !== '/' && path !== '/profile' && !path.startsWith(
           data-sound-toggle
           aria-label="Mute sound effects"
           title="Mute sound effects"
-          class="p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted transition-all"
+          class="group rounded-xl border border-transparent p-1.5 text-muted-foreground transition-all hover:border-border hover:bg-card/80 hover:text-foreground hover:shadow-[0_4px_12px_-6px_oklch(var(--accent-l)_var(--accent-c)_var(--accent-h)/0.45)] sm:p-2"
         >
-          <Icon name="volume-2" class="w-4 h-4 text-primary" data-icon-sound-on />
-          <Icon name="volume-x" class="w-4 h-4 opacity-60 hidden" data-icon-sound-off />
+          <Icon name="volume-2" class="w-4 h-4 text-primary transition-transform group-hover:scale-110" data-icon-sound-on />
+          <Icon name="volume-x" class="w-4 h-4 opacity-60 hidden transition-transform group-hover:scale-110" data-icon-sound-off />
         </button>
 
         <button
@@ -255,10 +299,10 @@ const isModulesActive = path !== '/' && path !== '/profile' && !path.startsWith(
           data-theme-toggle
           aria-label="Switch to Light Mode"
           title="Switch to Light Mode"
-          class="p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted transition-all"
+          class="group rounded-xl border border-transparent p-1.5 text-muted-foreground transition-all hover:border-border hover:bg-card/80 hover:text-foreground hover:shadow-[0_4px_12px_-6px_oklch(var(--accent-l)_var(--accent-c)_var(--accent-h)/0.45)] sm:p-2"
         >
-          <Icon name="sun" class="w-4 h-4 text-amber-400" data-icon-theme-dark />
-          <Icon name="moon" class="w-4 h-4 text-slate-700 hidden" data-icon-theme-light />
+          <Icon name="sun" class="w-4 h-4 text-amber-400 transition-transform duration-300 group-hover:rotate-45 group-hover:scale-110" data-icon-theme-dark />
+          <Icon name="moon" class="w-4 h-4 text-slate-700 hidden transition-transform duration-300 group-hover:-rotate-12 group-hover:scale-110" data-icon-theme-light />
         </button>
 
         <div class="relative" data-dropdown="appearance">
@@ -270,16 +314,22 @@ const isModulesActive = path !== '/' && path !== '/profile' && !path.startsWith(
             aria-expanded="false"
             aria-controls="appearance-popover"
             title="Appearance"
-            class="p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted transition-all"
+            class="group rounded-xl border border-transparent p-1.5 text-muted-foreground transition-all hover:border-border hover:bg-card/80 hover:text-foreground hover:shadow-[0_4px_12px_-6px_oklch(var(--accent-l)_var(--accent-c)_var(--accent-h)/0.45)] sm:p-2"
           >
-            <Icon name="palette" class="w-4 h-4" />
+            <Icon name="palette" class="w-4 h-4 transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110" />
           </button>
           <div
             id="appearance-popover"
             data-dropdown-panel="appearance"
             hidden
-            class="absolute right-0 top-full mt-2 z-50 w-64 rounded-2xl border border-border bg-card shadow-xl shadow-black/10 p-4 space-y-4 animate-slide-down-in card-depth card-specular"
+            class="play-surface play-gloss absolute right-0 top-full mt-3 z-50 w-64 rounded-2xl p-4 shadow-2xl ring-1 ring-black/5 dark:ring-white/5 space-y-4 animate-slide-down-in card-depth"
           >
+            <div class="-mx-4 -mt-4 mb-3 flex items-center gap-2 border-b border-border/60 bg-gradient-to-r from-primary/10 via-violet-500/5 to-transparent px-4 py-2.5">
+              <span class="grid h-6 w-6 place-items-center rounded-lg bg-gradient-to-br from-primary to-violet-500 text-white shadow-[0_3px_8px_-3px_oklch(var(--accent-l)_var(--accent-c)_var(--accent-h)/0.7)]">
+                <Icon name="palette" class="w-3 h-3" />
+              </span>
+              <span class="text-[10px] font-bold uppercase tracking-[0.16em] text-foreground">Make it yours</span>
+            </div>
             <div class="space-y-2">
               <p class="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
                 <Icon name="palette" class="w-3 h-3" /> Accent colour
@@ -292,7 +342,7 @@ const isModulesActive = path !== '/' && path !== '/profile' && !path.startsWith(
                     aria-label={a.label}
                     aria-pressed="false"
                     data-accent-value={a.value}
-                    class="h-5 w-5 shrink-0 cursor-pointer rounded-full transition-transform duration-200 hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background gradient-border-inner"
+                    class="relative h-6 w-6 shrink-0 cursor-pointer rounded-full transition-transform duration-200 hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background shadow-[inset_0_2px_2px_rgba(255,255,255,0.55),inset_0_-2px_3px_rgba(0,0,0,0.22),0_2px_4px_rgba(0,0,0,0.18)] ring-1 ring-black/10"
                     style={`background-color: ${a.swatch}`}
                   ></button>
                 ))}
@@ -307,14 +357,14 @@ const isModulesActive = path !== '/' && path !== '/profile' && !path.startsWith(
                   type="button"
                   data-font-scale-down
                   aria-label="Decrease font size"
-                  class="flex h-6 w-6 cursor-pointer items-center justify-center rounded-md border border-border text-xs font-bold text-foreground transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:opacity-40"
+                  class="flex h-7 w-7 cursor-pointer items-center justify-center rounded-lg border border-border bg-card text-xs font-bold text-foreground shadow-[0_1px_0_rgba(255,255,255,0.4)_inset,0_2px_4px_-2px_rgba(0,0,0,0.12)] transition-all hover:-translate-y-0.5 hover:bg-muted disabled:cursor-not-allowed disabled:opacity-40"
                   >A−</button
                 >
                 <button
                   type="button"
                   data-font-scale-up
                   aria-label="Increase font size"
-                  class="flex h-6 w-6 cursor-pointer items-center justify-center rounded-md border border-border text-sm font-bold text-foreground transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:opacity-40"
+                  class="flex h-7 w-7 cursor-pointer items-center justify-center rounded-lg border border-border bg-card text-sm font-bold text-foreground shadow-[0_1px_0_rgba(255,255,255,0.4)_inset,0_2px_4px_-2px_rgba(0,0,0,0.12)] transition-all hover:-translate-y-0.5 hover:bg-muted disabled:cursor-not-allowed disabled:opacity-40"
                   >A+</button
                 >
               </div>
@@ -341,7 +391,7 @@ const isModulesActive = path !== '/' && path !== '/profile' && !path.startsWith(
                     aria-checked="false"
                     data-motion-value={opt.value}
                     title={opt.title}
-                    class="flex-1 cursor-pointer rounded-md border border-border px-1.5 py-1 text-[10px] font-bold text-muted-foreground transition-colors hover:bg-muted hover:text-foreground aria-checked:border-primary aria-checked:bg-primary/10 aria-checked:text-primary"
+                    class="flex-1 cursor-pointer rounded-lg border border-border bg-card/60 px-1.5 py-1 text-[10px] font-bold text-muted-foreground transition-all hover:bg-muted hover:text-foreground aria-checked:border-primary aria-checked:bg-primary/10 aria-checked:text-primary aria-checked:shadow-[0_0_0_1px_oklch(var(--accent-l)_var(--accent-c)_var(--accent-h)/0.35),0_4px_10px_-4px_oklch(var(--accent-l)_var(--accent-c)_var(--accent-h)/0.5)]"
                   >
                     {opt.label}
                   </button>
@@ -361,10 +411,10 @@ const isModulesActive = path !== '/' && path !== '/profile' && !path.startsWith(
           aria-label="Open menu"
           aria-expanded="false"
           aria-controls="mobile-nav-drawer"
-          class="md:hidden p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted transition-all"
+          class="group rounded-xl border border-transparent p-1.5 text-muted-foreground transition-all hover:border-border hover:bg-card/80 hover:text-foreground sm:p-2 xl:hidden"
         >
-          <Icon name="menu" class="w-5 h-5" data-icon-menu-open />
-          <Icon name="x" class="w-5 h-5 hidden" data-icon-menu-close />
+          <Icon name="menu" class="w-5 h-5 transition-transform group-hover:scale-110" data-icon-menu-open />
+          <Icon name="x" class="w-5 h-5 hidden transition-transform group-hover:rotate-90" data-icon-menu-close />
         </button>
       </div>
     </div>
@@ -374,31 +424,52 @@ const isModulesActive = path !== '/' && path !== '/profile' && !path.startsWith(
     id="mobile-nav-drawer"
     data-mobile-drawer
     hidden
-    class="md:hidden border-t border-border bg-card/95 backdrop-blur-xl px-4 py-4 space-y-2 max-h-[80vh] overflow-y-auto glass-panel stagger-fade"
+    class="xl:hidden border-t border-border bg-card/95 backdrop-blur-xl px-4 py-4 space-y-1.5 max-h-[80vh] overflow-y-auto glass-panel relative"
   >
-    <a
-      href="/calculators"
-      data-astro-prefetch="hover"
-      data-sound="click"
-      data-close-mobile
-      class="flex items-center gap-2 p-2.5 rounded-xl bg-primary/10 text-primary font-bold text-xs card-specular"
-    >
-      <Icon name="calculator" class="w-4 h-4" />
-      <span>⚡️ 2026 Financial Calculators Suite</span>
-    </a>
-
+    {/* Profile hero — doubles as the "my profile" link and gives the drawer a
+        proper graphic header instead of starting with a list. */}
     <a
       href="/profile"
       data-astro-prefetch="hover"
       data-sound="click"
       data-close-mobile
-      class="flex items-center gap-2 p-2.5 rounded-xl bg-muted text-foreground font-bold text-xs card-specular"
+      class="play-surface play-gloss relative mb-2 flex items-center gap-3 overflow-hidden rounded-2xl p-3 pr-2.5 card-depth group"
     >
-      <Icon name="user" class="w-4 h-4" />
-      <span>My Profile (<span data-profile-name>Issy</span>, <span data-profile-age>15</span>yo)</span>
+      <span aria-hidden="true" class="conic-aurora -right-14 -top-16 h-40 w-40 opacity-40"></span>
+      <span class="relative z-10 grid h-11 w-11 shrink-0 place-items-center rounded-2xl border border-white/40 bg-gradient-to-br from-primary via-primary to-violet-500 text-base font-black text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.55),0_6px_14px_-6px_oklch(var(--accent-l)_var(--accent-c)_var(--accent-h)/0.8)]">
+        <Icon name="user" class="h-5 w-5" />
+      </span>
+      <span class="relative z-10 min-w-0 flex-1">
+        <span class="block text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">Welcome back</span>
+        <span class="block truncate text-sm font-extrabold text-foreground">
+          <span data-profile-name>Issy</span>, <span data-profile-age>15</span>yo
+        </span>
+        <span class="mt-0.5 flex items-center gap-1 text-[10px] font-semibold text-muted-foreground">
+          <Icon name="map-pin" class="h-3 w-3 text-primary" />
+          <span data-profile-location>Brisbane, QLD</span>
+        </span>
+      </span>
+      <span class="relative z-10 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-primary/10 text-primary ring-1 ring-primary/25 transition-transform group-hover:translate-x-0.5">
+        →
+      </span>
     </a>
 
-    <div class="pt-2 text-[11px] font-bold text-muted-foreground uppercase tracking-wider px-2">
+    <a
+      href="/calculators"
+      data-astro-prefetch="hover"
+      data-sound="click"
+      data-close-mobile
+      class="shine-sweep flex items-center gap-2.5 rounded-xl bg-gradient-to-r from-primary/15 via-primary/10 to-violet-500/10 p-2.5 text-xs font-bold text-primary ring-1 ring-primary/25 card-specular"
+    >
+      <span class="grid h-6 w-6 place-items-center rounded-lg bg-primary/15">
+        <Icon name="calculator" class="w-4 h-4" />
+      </span>
+      <span>⚡️ 2026 Financial Calculators Suite</span>
+      <span class="ml-auto font-mono text-[10px] uppercase">Hub →</span>
+    </a>
+
+    <div class="flex items-center gap-2 px-2 pt-2 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+      <span class="h-1.5 w-1.5 rounded-full bg-amber-400 shadow-[0_0_6px_rgba(251,191,36,0.9)]"></span>
       Next-Gen Calculators
     </div>
     {CALCS.map(c => (
@@ -407,14 +478,18 @@ const isModulesActive = path !== '/' && path !== '/profile' && !path.startsWith(
         data-astro-prefetch="hover"
         data-sound="click"
         data-close-mobile
-        class="flex items-center gap-2.5 p-2 rounded-xl text-xs text-foreground hover:bg-muted hover:translate-x-1 hover:text-primary transition-all duration-200"
+        class="group flex items-center gap-2.5 rounded-xl border border-transparent p-2 text-xs text-foreground transition-all duration-200 hover:border-border/70 hover:bg-muted hover:translate-x-1 hover:text-primary"
       >
-        <span class="text-base" aria-hidden="true">{c.emoji}</span>
+        <span
+          class="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-primary/15 to-violet-500/15 text-base ring-1 ring-border/60 transition-transform duration-200 group-hover:scale-110 group-hover:-rotate-3"
+          aria-hidden="true">{c.emoji}</span>
         <span>{c.title}</span>
+        <span class="ml-auto text-primary opacity-0 transition-opacity group-hover:opacity-100" aria-hidden="true">→</span>
       </a>
     ))}
 
-    <div class="pt-2 text-[11px] font-bold text-muted-foreground uppercase tracking-wider px-2">
+    <div class="flex items-center gap-2 px-2 pt-2 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+      <span class="h-1.5 w-1.5 rounded-full bg-violet-500 shadow-[0_0_6px_oklch(0.55_0.2_293/0.8)]"></span>
       11 Real-World Learning Modules
     </div>
     {NAV_MODULES.map(m => (
@@ -423,9 +498,11 @@ const isModulesActive = path !== '/' && path !== '/profile' && !path.startsWith(
         data-astro-prefetch="hover"
         data-sound="click"
         data-close-mobile
-        class="flex items-center gap-2.5 p-2 rounded-xl text-xs text-foreground hover:bg-muted hover:translate-x-1 hover:text-primary transition-all duration-200"
+        class="group flex items-center gap-2.5 rounded-xl border border-transparent p-2 text-xs text-foreground transition-all duration-200 hover:border-border/70 hover:bg-muted hover:translate-x-1 hover:text-primary"
       >
-        <span class="text-base" aria-hidden="true">{m.emoji}</span>
+        <span
+          class="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-violet-500/15 to-primary/10 text-base ring-1 ring-border/60 transition-transform duration-200 group-hover:scale-110 group-hover:rotate-3"
+          aria-hidden="true">{m.emoji}</span>
         <span>{m.title}</span>
       </a>
     ))}
@@ -467,8 +544,8 @@ const isModulesActive = path !== '/' && path !== '/profile' && !path.startsWith(
   const liveRoot = (): NavRoot | null => document.querySelector<NavRoot>('[data-navbar]');
 
   const ACTIVE_INDICATOR =
-    'text-primary font-bold bg-primary/10 after:absolute after:inset-x-3 after:bottom-1 after:h-[2px] after:rounded-full after:bg-gradient-to-r after:from-primary after:to-success';
-  const INACTIVE_INDICATOR = 'text-muted-foreground hover:text-foreground hover:bg-muted/60';
+    'text-primary font-bold bg-primary/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.45),0_6px_16px_-8px_oklch(var(--accent-l)_var(--accent-c)_var(--accent-h)/0.55)] ring-1 ring-primary/25 after:absolute after:inset-x-3 after:bottom-1 after:h-[2.5px] after:rounded-full after:bg-gradient-to-r after:from-primary after:via-violet-400 after:to-emerald-400 after:shadow-[0_0_8px_rgba(16,185,129,0.5)] after:content-[""]';
+  const INACTIVE_INDICATOR = 'text-muted-foreground hover:text-foreground hover:bg-muted/60 hover:-translate-y-0.5';
 
   /** classList.toggle throws on space-separated names, so apply each token. */
   const toggleClasses = (el: Element, classes: string, on: boolean) => {
@@ -674,9 +751,18 @@ const isModulesActive = path !== '/' && path !== '/profile' && !path.startsWith(
 
     const paintSoundButton = () => {
       const synth = getSound();
-      // Before the synth is fetched there is no persisted mute state to read, so present the
-      // button as muted; the first interaction loads it and repaints with the truth.
-      const muted = synth ? synth.getIsMuted() : true;
+      let muted = true;
+      if (synth) {
+        muted = synth.getIsMuted();
+      } else {
+        try {
+          const saved = localStorage.getItem('au_sound_muted');
+          const hasUrlSound = new URLSearchParams(window.location.search).get('sound') === '1';
+          muted = saved !== 'false' && !hasUrlSound;
+        } catch {
+          muted = true;
+        }
+      }
       const label = muted ? 'Unmute sound effects' : 'Mute sound effects';
       soundButton?.setAttribute('aria-label', label);
       soundButton?.setAttribute('title', label);

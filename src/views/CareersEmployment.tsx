@@ -91,7 +91,7 @@ export function CareersEmployment() {
           </div>
         </div>
 
-        {/* 7 Sub-Tabs Navigation Bar — CSS pill, no layout-animation runtime */}
+        {/* 8 Sub-Tabs Navigation Bar — CSS pill, no layout-animation runtime */}
         <div className="mt-6 pt-4 border-t border-blue-500/20 flex flex-wrap gap-2 sticky top-16 z-20 backdrop-blur-xl bg-card/85 p-2 rounded-2xl shadow-sm border border-border/60" role="tablist" aria-label="Careers & Employment sections">
           {TABS.map(tab => {
             const Icon = tab.icon;

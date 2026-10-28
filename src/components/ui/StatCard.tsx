@@ -123,7 +123,7 @@ export const StatCard = React.memo(function StatCard({
   className,
 }: StatCardProps) {
   const [copied, setCopied] = useState(false);
-  const accent = ACCENTS[color];
+  const accent = ACCENTS[color ?? 'blue'] ?? ACCENTS.blue;
   const TrendIcon = trend ? TREND_ICON[trend] : null;
   const trendClass =
     trend === 'up'

@@ -13,15 +13,23 @@ import {
   X,
   Gauge,
   Layers,
+  TrendingUp,
+  Clock,
+  PhoneCall,
+  FileCheck,
 } from 'lucide-react';
 import { toast } from '@/lib/toast';
 
 const SCENARIO_PRESETS = [
   { id: 'none', label: 'No shocks', rateRisePct: 0, jobLossMonths: 0, expenseShockPct: 0 },
   { id: 'rate2', label: 'Rate +2%', rateRisePct: 2, jobLossMonths: 0, expenseShockPct: 0 },
+  { id: 'rate3', label: 'Rate +3% (APRA Buffer)', rateRisePct: 3, jobLossMonths: 0, expenseShockPct: 0 },
+  { id: 'rate4', label: 'Rate +4% (Severe Shock)', rateRisePct: 4, jobLossMonths: 0, expenseShockPct: 0 },
   { id: 'job3', label: 'Job loss 3mo', rateRisePct: 0, jobLossMonths: 3, expenseShockPct: 0 },
   { id: 'expense10', label: 'Expenses +10%', rateRisePct: 0, jobLossMonths: 0, expenseShockPct: 10 },
+  { id: 'expense15', label: 'Cost of Living +15%', rateRisePct: 0, jobLossMonths: 0, expenseShockPct: 15 },
   { id: 'triple', label: 'Triple whammy', rateRisePct: 2, jobLossMonths: 3, expenseShockPct: 10 },
+  { id: 'stagflation', label: 'Stagflation (+3% Rate & +15% CoL)', rateRisePct: 3, jobLossMonths: 0, expenseShockPct: 15 },
 ] as const;
 
 function formatMoney(n: number): string {
@@ -127,12 +135,25 @@ export function FinancialStressTestCalc() {
       `Monthly Net Income: $${monthlyNetIncome.toLocaleString()}/mo | Expenses: $${(essentialExpenses + discretionaryExpenses).toLocaleString()}/mo ($${essentialExpenses.toLocaleString()} essential)`,
       `Liquid Reserves: $${(cashSavings + offsetBalance).toLocaleString()} ($${cashSavings.toLocaleString()} cash + $${offsetBalance.toLocaleString()} offset)`,
       `Mortgage Debt: $${mortgageDebt.toLocaleString()} at ${mortgageRate}%`,
-      `Emergency Runway: ${result.emergencyRunwayMonths} months (Bare-bones: ${result.bareBonesRunwayMonths} months)`,
+      `Emergency Runway: ${result.emergencyRunwayMonths} months (Bare-bones: ${result.bareBonesRunwayMonths} months) [${result.runwayBenchmark.label}]`,
+      `Rate Shock Spectrum: +2% (+$${result.rateShocks.plus200bps.extraMonthlyInterest}/mo) | +3% APRA (+$${result.rateShocks.plus300bps.extraMonthlyInterest}/mo) | +4% Severe (+$${result.rateShocks.plus400bps.extraMonthlyInterest}/mo)`,
       `Max Survivable Rate: ${reverse.maxRate}% (Surplus at Max: $${reverse.surplusAtMax.toLocaleString()}/mo)`,
+      `CCR 5-Year Default Risk: ${result.ccrCreditRisk.isAtRisk ? 'CRITICAL RISK - Under 1-2 Month Runway' : 'Low'}`,
       `Cumulative Shock Status: ${cumulative.isFatal ? 'FATAL SHOCK RISK' : 'SURVIVES'} (Runway: ${cumulative.survivingMonths === 99 ? 'Sustainable' : cumulative.survivingMonths + ' mo'})`,
       `Calculated via AusFinTools Stress Test Engine`,
     ].join('\n');
-  }, [monthlyNetIncome, essentialExpenses, discretionaryExpenses, cashSavings, offsetBalance, mortgageDebt, mortgageRate, result, reverse, cumulative]);
+  }, [
+    monthlyNetIncome,
+    essentialExpenses,
+    discretionaryExpenses,
+    cashSavings,
+    offsetBalance,
+    mortgageDebt,
+    mortgageRate,
+    result,
+    reverse,
+    cumulative,
+  ]);
 
   const handleExportCSV = () => {
     sound.playClick();
@@ -143,11 +164,16 @@ export function FinancialStressTestCalc() {
       ['Total Liquid Reserves (Cash + Offset)', `$${cashSavings + offsetBalance}`],
       ['Emergency Runway (Months)', `${result.emergencyRunwayMonths}`],
       ['Bare-Bones Survival Runway (Months)', `${result.bareBonesRunwayMonths}`],
+      ['Runway Benchmark Tier', `${result.runwayBenchmark.label}`],
+      ['Rate Shock +2% (8.2%) Extra Interest', `+$${result.rateShocks.plus200bps.extraMonthlyInterest}/mo`],
+      ['Rate Shock +3% APRA (9.2%) Extra Interest', `+$${result.rateShocks.plus300bps.extraMonthlyInterest}/mo`],
+      ['Rate Shock +4% Severe (10.2%) Extra Interest', `+$${result.rateShocks.plus400bps.extraMonthlyInterest}/mo`],
       ['Pre-Tax Equivalent Offset Yield', `${result.preTaxEquivalentOffsetYield}%`],
       ['HISA Net Return After Tax', `${result.hisaNetReturnAfterTax}%`],
       ['Offset Arbitrage Advantage (Annual)', `$${result.offsetArbitrageAdvantagePerYear}`],
       ['JobSeeker LAWP Waiting Period (Weeks)', `${result.jobSeekerLAWPWeeks}`],
       ['Financial Health Score', `${result.healthScore.totalScore} / 100 (${result.healthScore.rating})`],
+      ['CCR 5-Year Default Risk', `${result.ccrCreditRisk.isAtRisk ? 'CRITICAL' : 'Low'}`],
     ];
     exportToCSV('Financial_Stress_Test_Report.csv', headers, rows);
     toast.success('Stress test report exported to CSV!');
@@ -172,6 +198,8 @@ export function FinancialStressTestCalc() {
     toast.success('Shareable link copied to clipboard!');
   };
 
+  const totalLiquid = cashSavings + offsetBalance;
+
   return (
     <div className="space-y-6 max-w-5xl mx-auto">
       {/* Header Banner */}
@@ -186,7 +214,7 @@ export function FinancialStressTestCalc() {
               Emergency Fund Runway & Stress Tester
             </h2>
             <p className="text-xs sm:text-sm text-muted-foreground">
-              Simulate job loss, inflation spikes, APRA interest rate shocks, and HISA vs Mortgage Offset pre-tax yield arbitrage.
+              Simulate job loss, inflation spikes, interest rate shocks (+2% to +4%), cost of living buffers, 1-3-6 month runway tiers, and CCR 5-year credit default risks.
             </p>
           </div>
 
@@ -198,14 +226,14 @@ export function FinancialStressTestCalc() {
             />
             <button
               onClick={handleExportCSV}
-              className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-muted text-foreground text-xs font-bold hover:bg-muted/80 transition-all"
+              className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-muted text-foreground text-xs font-bold hover:bg-muted/80 transition-all cursor-pointer"
             >
               <Download className="w-3.5 h-3.5" />
               Export CSV
             </button>
             <button
               onClick={handleSharePlan}
-              className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-primary text-white text-xs font-bold hover:bg-primary/90 transition-all shadow-sm"
+              className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-primary text-white text-xs font-bold hover:bg-primary/90 transition-all shadow-sm cursor-pointer"
             >
               <Share2 className="w-3.5 h-3.5" />
               Share Plan
@@ -263,6 +291,313 @@ export function FinancialStressTestCalc() {
         </div>
       </div>
 
+      {/* Emergency Runway Tiers (1, 3, 6 Months) Benchmarks Card */}
+      <div className="p-5 rounded-2xl bg-card border border-border space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <Clock className="w-4 h-4 text-primary" />
+            <h3 className="text-xs font-bold text-foreground uppercase tracking-wider">
+              Emergency Runway Benchmarks (1, 3, 6 Months)
+            </h3>
+          </div>
+          <span
+            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold border ${
+              result.runwayBenchmark.badgeVariant === 'danger'
+                ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/30'
+                : result.runwayBenchmark.badgeVariant === 'warning'
+                  ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30'
+                  : 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30'
+            }`}
+          >
+            {result.runwayBenchmark.label}
+          </span>
+        </div>
+
+        <p className="text-xs text-muted-foreground">
+          {result.runwayBenchmark.description}
+        </p>
+
+        {/* 1, 3, 6 Month Visual Progress Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          {/* 1 Month: Danger / CCR Default Risk */}
+          <div
+            className={`p-3.5 rounded-xl border space-y-1.5 ${
+              totalLiquid >= result.runwayBenchmark.target1MonthSavings
+                ? 'bg-muted/40 border-border'
+                : 'bg-rose-500/10 border-rose-500/30'
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                1 Month (Minimum Floor)
+              </span>
+              {totalLiquid >= result.runwayBenchmark.target1MonthSavings ? (
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+              ) : (
+                <AlertTriangle className="w-3.5 h-3.5 text-rose-500" />
+              )}
+            </div>
+            <div className="text-lg font-bold font-mono text-foreground">
+              {formatMoney(result.runwayBenchmark.target1MonthSavings)}
+            </div>
+            <span className="text-[10px] text-muted-foreground block">
+              {totalLiquid >= result.runwayBenchmark.target1MonthSavings
+                ? 'Protected from immediate 30-day arrears.'
+                : 'CRITICAL: High risk of 60-day mortgage default notice!'}
+            </span>
+          </div>
+
+          {/* 3 Months: Safe Baseline / Covers LAWP */}
+          <div
+            className={`p-3.5 rounded-xl border space-y-1.5 ${
+              totalLiquid >= result.runwayBenchmark.target3MonthSavings
+                ? 'bg-emerald-500/5 border-emerald-500/20'
+                : 'bg-amber-500/10 border-amber-500/30'
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                3 Months (LAWP Buffer)
+              </span>
+              {totalLiquid >= result.runwayBenchmark.target3MonthSavings ? (
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+              ) : (
+                <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
+              )}
+            </div>
+            <div className="text-lg font-bold font-mono text-foreground">
+              {formatMoney(result.runwayBenchmark.target3MonthSavings)}
+            </div>
+            <span className="text-[10px] text-muted-foreground block">
+              {result.runwayBenchmark.gapTo3Months === 0
+                ? 'Covers Centrelink 13-week LAWP waiting period.'
+                : `Gap to 3 months: ${formatMoney(result.runwayBenchmark.gapTo3Months)} needed`}
+            </span>
+          </div>
+
+          {/* 6 Months: Resilient Gold Standard */}
+          <div
+            className={`p-3.5 rounded-xl border space-y-1.5 ${
+              totalLiquid >= result.runwayBenchmark.target6MonthSavings
+                ? 'bg-emerald-500/10 border-emerald-500/30'
+                : 'bg-muted/40 border-border'
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                6 Months (Gold Standard)
+              </span>
+              {totalLiquid >= result.runwayBenchmark.target6MonthSavings ? (
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+              ) : (
+                <span className="text-[10px] font-semibold text-muted-foreground">Target</span>
+              )}
+            </div>
+            <div className="text-lg font-bold font-mono text-foreground">
+              {formatMoney(result.runwayBenchmark.target6MonthSavings)}
+            </div>
+            <span className="text-[10px] text-muted-foreground block">
+              {result.runwayBenchmark.gapTo6Months === 0
+                ? 'Full macro resilience against stagflation & recession.'
+                : `Gap to 6 months: ${formatMoney(result.runwayBenchmark.gapTo6Months)} needed`}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Comprehensive Credit Reporting (CCR) 5-Year Default Risk & Statutory Relief Banner */}
+      <div
+        className={`p-5 rounded-2xl border space-y-3 ${
+          result.ccrCreditRisk.isAtRisk
+            ? 'bg-rose-500/10 border-rose-500/30'
+            : 'bg-card border-border'
+        }`}
+      >
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <ShieldAlert className={`w-5 h-5 ${result.ccrCreditRisk.isAtRisk ? 'text-rose-500' : 'text-emerald-500'}`} />
+            <h3 className="text-xs font-bold uppercase tracking-wider text-foreground">
+              {result.ccrCreditRisk.warningTitle}
+            </h3>
+          </div>
+          <span
+            className={`text-xs font-bold uppercase px-2 py-0.5 rounded-full border ${
+              result.ccrCreditRisk.riskLevel === 'critical'
+                ? 'bg-rose-500/20 text-rose-500 border-rose-500/30'
+                : result.ccrCreditRisk.riskLevel === 'high'
+                  ? 'bg-amber-500/20 text-amber-500 border-amber-500/30'
+                  : 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border-emerald-500/30'
+            }`}
+          >
+            {result.ccrCreditRisk.riskLevel.toUpperCase()} RISK
+          </span>
+        </div>
+
+        <p className="text-xs text-foreground leading-relaxed">
+          {result.ccrCreditRisk.warningDetails}
+        </p>
+
+        {/* Actionable Statutory Relief Steps */}
+        <div className="space-y-1.5 pt-1">
+          <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider block">
+            Statutory Relief & Hardship Steps (Banking Code of Practice & NCCP)
+          </span>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
+            {result.ccrCreditRisk.reliefSteps.map((step, idx) => (
+              <div key={idx} className="p-2.5 rounded-xl bg-card/80 border border-border/80 flex items-start gap-2">
+                {idx === 0 && <FileCheck className="w-4 h-4 text-primary shrink-0 mt-0.5" />}
+                {idx === 1 && <TrendingUp className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />}
+                {idx === 2 && <ShieldAlert className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />}
+                {idx === 3 && <PhoneCall className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />}
+                <span className="text-[11px] text-muted-foreground leading-relaxed">{step}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Interest Rate Shock Spectrum (+2% to +4%) */}
+      <div className="space-y-3">
+        <h3 className="text-xs font-bold text-foreground uppercase tracking-wider flex items-center gap-1.5">
+          <TrendingUp className="w-4 h-4 text-primary" />
+          Interest Rate Shock Spectrum (+2%, +3%, +4%)
+        </h3>
+        <p className="text-xs text-muted-foreground">
+          Simulate how variable mortgage rate increases erode your monthly cash surplus on an unhedged ${Math.max(0, mortgageDebt - offsetBalance).toLocaleString()} net mortgage loan.
+        </p>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          {/* +2% Shock */}
+          <div
+            className={`p-4 rounded-2xl border space-y-2 ${
+              result.rateShocks.plus200bps.isFatal
+                ? 'bg-rose-500/10 border-rose-500/30'
+                : 'bg-card border-border'
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-foreground">+2.0% (8.2% Rate)</span>
+              {result.rateShocks.plus200bps.isFatal ? (
+                <AlertTriangle className="w-4 h-4 text-rose-500" />
+              ) : (
+                <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+              )}
+            </div>
+            <div className="text-sm font-bold font-mono text-muted-foreground">
+              Extra: +${result.rateShocks.plus200bps.extraMonthlyInterest}/mo
+            </div>
+            <div className="text-lg font-bold font-mono">
+              {result.rateShocks.plus200bps.monthlySurplus >= 0 ? (
+                <span className="text-emerald-600 dark:text-emerald-400">
+                  +${result.rateShocks.plus200bps.monthlySurplus}/mo surplus
+                </span>
+              ) : (
+                <span className="text-danger">
+                  -${Math.abs(result.rateShocks.plus200bps.monthlySurplus)}/mo deficit
+                </span>
+              )}
+            </div>
+            <p className="text-[11px] text-muted-foreground leading-relaxed">
+              {result.rateShocks.plus200bps.notes}
+            </p>
+          </div>
+
+          {/* +3% APRA Buffer Shock */}
+          <div
+            className={`p-4 rounded-2xl border space-y-2 ${
+              result.rateShocks.plus300bps.isFatal
+                ? 'bg-rose-500/10 border-rose-500/30'
+                : 'bg-card border-border'
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-foreground">+3.0% APRA Buffer (9.2%)</span>
+              {result.rateShocks.plus300bps.isFatal ? (
+                <AlertTriangle className="w-4 h-4 text-rose-500" />
+              ) : (
+                <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+              )}
+            </div>
+            <div className="text-sm font-bold font-mono text-muted-foreground">
+              Extra: +${result.rateShocks.plus300bps.extraMonthlyInterest}/mo
+            </div>
+            <div className="text-lg font-bold font-mono">
+              {result.rateShocks.plus300bps.monthlySurplus >= 0 ? (
+                <span className="text-emerald-600 dark:text-emerald-400">
+                  +${result.rateShocks.plus300bps.monthlySurplus}/mo surplus
+                </span>
+              ) : (
+                <span className="text-danger">
+                  -${Math.abs(result.rateShocks.plus300bps.monthlySurplus)}/mo deficit
+                </span>
+              )}
+            </div>
+            <p className="text-[11px] text-muted-foreground leading-relaxed">
+              {result.rateShocks.plus300bps.notes}
+            </p>
+          </div>
+
+          {/* +4% Severe Shock */}
+          <div
+            className={`p-4 rounded-2xl border space-y-2 ${
+              result.rateShocks.plus400bps.isFatal
+                ? 'bg-rose-500/10 border-rose-500/30'
+                : 'bg-card border-border'
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-foreground">+4.0% Severe Hike (10.2%)</span>
+              {result.rateShocks.plus400bps.isFatal ? (
+                <AlertTriangle className="w-4 h-4 text-rose-500" />
+              ) : (
+                <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+              )}
+            </div>
+            <div className="text-sm font-bold font-mono text-muted-foreground">
+              Extra: +${result.rateShocks.plus400bps.extraMonthlyInterest}/mo
+            </div>
+            <div className="text-lg font-bold font-mono">
+              {result.rateShocks.plus400bps.monthlySurplus >= 0 ? (
+                <span className="text-emerald-600 dark:text-emerald-400">
+                  +${result.rateShocks.plus400bps.monthlySurplus}/mo surplus
+                </span>
+              ) : (
+                <span className="text-danger">
+                  -${Math.abs(result.rateShocks.plus400bps.monthlySurplus)}/mo deficit
+                </span>
+              )}
+            </div>
+            <p className="text-[11px] text-muted-foreground leading-relaxed">
+              {result.rateShocks.plus400bps.notes}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Cost of Living Inflation Buffers */}
+      <div className="p-4 rounded-2xl bg-card border border-border space-y-3">
+        <h3 className="text-xs font-bold text-foreground uppercase tracking-wider flex items-center gap-1.5">
+          <Flame className="w-4 h-4 text-amber-500" />
+          Cost of Living Inflation Buffers (+5%, +10%, +15%)
+        </h3>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          {result.costOfLivingBuffers.map(b => (
+            <div key={b.inflationPct} className="p-3 rounded-xl bg-muted/40 border border-border space-y-1">
+              <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider block">
+                +{b.inflationPct}% Living Cost Rise
+              </span>
+              <div className="text-sm font-bold font-mono text-foreground">
+                +${b.extraMonthlyCost}/mo outgoings
+              </div>
+              <div className={`text-xs font-bold font-mono ${b.monthlySurplus >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-danger'}`}>
+                {b.monthlySurplus >= 0 ? `+$${b.monthlySurplus}/mo surplus` : `-$${Math.abs(b.monthlySurplus)}/mo deficit`}
+              </div>
+              <span className="text-[10px] text-muted-foreground block">{b.notes}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* Stress Test Crisis Scenarios Grid */}
       <div className="space-y-3">
         <h3 className="text-xs font-bold text-foreground uppercase tracking-wider flex items-center gap-1.5">
@@ -315,7 +650,7 @@ export function FinancialStressTestCalc() {
         </div>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           <div className="p-3 rounded-xl bg-muted/50 border border-border">
-            <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider block">Max Surviv</span>
+            <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider block">Max Survivable Rate</span>
             <div className="text-xl font-extrabold font-mono text-foreground mt-0.5">
               {reverse.maxRate.toFixed(1)}%
             </div>
@@ -377,7 +712,7 @@ export function FinancialStressTestCalc() {
             <button
               key={p.id}
               onClick={() => { sound.playClick(); setPresetId(p.id); }}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-xl border transition-all ${presetId === p.id ? 'bg-primary text-white border-primary' : 'bg-muted text-muted-foreground border-border hover:border-primary/50'}`}
+              className={`px-3 py-1.5 text-xs font-semibold rounded-xl border transition-all cursor-pointer ${presetId === p.id ? 'bg-primary text-white border-primary' : 'bg-muted text-muted-foreground border-border hover:border-primary/50'}`}
             >
               {p.label}
             </button>
@@ -565,7 +900,7 @@ export function FinancialStressTestCalc() {
               <h3 className="text-sm font-bold text-foreground">Share Stress Test Plan</h3>
               <button
                 onClick={() => setShowShareModal(false)}
-                className="p-1 rounded-lg text-muted-foreground hover:text-foreground"
+                className="p-1 rounded-lg text-muted-foreground hover:text-foreground cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -586,7 +921,7 @@ export function FinancialStressTestCalc() {
                 toast.success('Copied URL to clipboard!');
                 setShowShareModal(false);
               }}
-              className="w-full py-2.5 rounded-xl bg-primary text-white text-xs font-bold hover:bg-primary/90"
+              className="w-full py-2.5 rounded-xl bg-primary text-white text-xs font-bold hover:bg-primary/90 cursor-pointer"
             >
               Copy Link & Close
             </button>

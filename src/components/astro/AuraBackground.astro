@@ -4,6 +4,20 @@ interface Props {
 }
 
 const { class: className = '' } = Astro.props;
+
+/* Fixed star positions rather than random: the composition is identical on every
+   page, which keeps the art director in charge of where the eye lands and avoids
+   hydration-style drift between visits. */
+const SPARKLES = [
+  { x: '12%', y: '14%', size: '5px', tone: 'bg-amber-400', delay: '0s' },
+  { x: '26%', y: '34%', size: '3px', tone: 'bg-primary', delay: '0.8s' },
+  { x: '43%', y: '8%', size: '4px', tone: 'bg-violet-400', delay: '1.6s' },
+  { x: '67%', y: '22%', size: '6px', tone: 'bg-amber-300', delay: '0.4s' },
+  { x: '81%', y: '12%', size: '3px', tone: 'bg-cyan-400', delay: '2.1s' },
+  { x: '92%', y: '44%', size: '4px', tone: 'bg-primary', delay: '1.1s' },
+  { x: '18%', y: '68%', size: '4px', tone: 'bg-violet-400', delay: '2.6s' },
+  { x: '74%', y: '76%', size: '5px', tone: 'bg-amber-400', delay: '0.2s' },
+];
 ---
 
 <div
@@ -16,28 +30,53 @@ const { class: className = '' } = Astro.props;
       the background instead of ending on a hard edge. */}
   <div class="hero-grid absolute inset-0"></div>
 
-  {/* Layer 2 — the original drifting aura orbs (accent + green), kept for
+  {/* Layer 2 — a large conic colour wheel. This is the "new" headline graphic:
+      one blurred element supplies the full accent → violet → cyan → amber
+      spectrum instead of four independently drifting blobs. */}
+  <div
+    class="conic-aurora hidden md:block -top-[26rem] -right-[16rem] h-[46rem] w-[46rem] lg:h-[58rem] lg:w-[58rem]"
+  ></div>
+
+  {/* Layer 3 — the original drifting aura orbs (accent + green), kept for
       continuity with the existing palette */}
   <div
-    class="aura-orb-1 will-change-transform opacity-70 dark:opacity-60 blur-3xl transition-opacity duration-700"
+    class="aura-orb-1 will-change-transform opacity-80 dark:opacity-70 blur-3xl transition-opacity duration-700"
     style="transform: translate3d(0, 0, 0);"
   ></div>
   <div
-    class="aura-orb-2 will-change-transform opacity-60 dark:opacity-50 blur-3xl transition-opacity duration-700"
+    class="aura-orb-2 will-change-transform opacity-70 dark:opacity-60 blur-3xl transition-opacity duration-700"
     style="transform: translate3d(0, 0, 0);"
   ></div>
 
-  {/* Layer 3 — secondary chromatic mesh glows (violet + cyan) so the ambience
+  {/* Layer 4 — secondary chromatic mesh glows (violet + cyan) so the ambience
       is a full triad rather than two flat blobs. Desktop/tablet only: four
       blurred elements is the sensible paint budget on phones. */}
-  <div class="mesh-glow-lg hidden md:block top-[35%] -right-[8%]"></div>
-  <div class="mesh-glow-sm hidden lg:block bottom-[28%] left-[22%]"></div>
+  <div class="mesh-glow-lg hidden md:block top-[35%] -right-[8%] opacity-60"></div>
+  <div class="mesh-glow-md hidden lg:block bottom-[25%] left-[18%] opacity-50"></div>
+  <div class="mesh-glow-sm hidden xl:block top-[15%] left-[45%] opacity-40"></div>
 
-  {/* Layer 4 — a slow, heavily blurred diagonal sheet of accent light for a
+  {/* Layer 5 — orbital linework. Two dashed rings with travelling light beads
+      imply a solar system / compounding orbit without a single raster asset. */}
+  <div class="orbit-ring hidden lg:block top-[10%] right-[4%] h-[26rem] w-[26rem] opacity-35"></div>
+  <div class="orbit-ring orbit-ring-reverse hidden xl:block bottom-[12%] left-[2%] h-[19rem] w-[19rem] opacity-25"></div>
+
+  {/* Layer 6 — a soft dot field anchors the rings in a graphic plane. */}
+  <div class="dot-field hidden md:block top-0 right-0 h-[34rem] w-[34rem] opacity-40"></div>
+
+  {/* Layer 7 — sparkle cluster. Tiny, cheap, and it makes the background feel
+      alive on otherwise static content pages. */}
+  {SPARKLES.map((s) => (
+    <span
+      class={`absolute rounded-full ${s.tone} animate-twinkle shadow-[0_0_10px_currentColor]`}
+      style={`left:${s.x};top:${s.y};width:${s.size};height:${s.size};animation-delay:${s.delay};`}
+    ></span>
+  ))}
+
+  {/* Layer 8 — a slow, heavily blurred diagonal sheet of accent light for a
       "studio lamp" sweep across the whole canvas */}
   <div class="light-sheet"></div>
 
-  {/* Layer 5 — film grain: kills gradient banding in the layers above and adds
+  {/* Layer 9 — film grain: kills gradient banding in the layers above and adds
       a tactile paper-like finish at a near-invisible 4% opacity */}
   <div class="noise-grain"></div>
 </div>

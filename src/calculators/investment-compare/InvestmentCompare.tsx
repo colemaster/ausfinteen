@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { SliderControl } from '../../components/ui/SliderControl';
 import { NumberInput } from '../../components/ui/NumberInput';
 import { PortfolioField } from '../../components/ui/PortfolioField';
@@ -6,6 +6,7 @@ import { StatCard } from '../../components/ui/StatCard';
 import { Assumptions } from '../../components/shared/Assumptions';
 import { Disclaimer } from '../../components/shared/Disclaimer';
 import { AboutCalc } from '../../components/shared/AboutCalc';
+import { QuickPresetBar, type ScenarioPreset } from '../../components/ui/QuickPresetBar';
 import { runAllScenarios, SCENARIO_COLORS, applyCrashToSeries, feeDrag, cgtAdjustedFinalValue, type ScenarioParams, type TaxTreatment } from './engine';
 import { formatCurrency, formatCompact, formatPct } from '../../utils/formatters';
 import {
@@ -19,6 +20,56 @@ const DEFAULT_SCENARIOS: ScenarioParams[] = [
   { label: 'ETF (Taxable)', initial: 50000, monthlyContribution: 1000, annualReturn: 8, mer: 0.07, taxTreatment: 'marginal', marginalRate: 0.32 },
   { label: 'Super', initial: 50000, monthlyContribution: 1000, annualReturn: 7.5, mer: 0.35, taxTreatment: 'super', marginalRate: 0.32 },
   { label: 'Savings Account', initial: 50000, monthlyContribution: 1000, annualReturn: 4.5, mer: 0, taxTreatment: 'marginal', marginalRate: 0.32 },
+];
+
+interface PresetScenarioBundle {
+  scenarios: ScenarioParams[];
+  years: number;
+}
+
+const COMPARE_PRESETS: ScenarioPreset<PresetScenarioBundle>[] = [
+  {
+    id: 'classic-vehicles',
+    label: 'Classic Vehicles (ETF vs Super vs Cash)',
+    badge: 'Standard $50k',
+    description: 'Compare taxable ETF, superannuation (15% tax), and bank savings with $1,000/mo additions',
+    values: {
+      scenarios: [
+        { label: 'ETF (Taxable)', initial: 50000, monthlyContribution: 1000, annualReturn: 8, mer: 0.07, taxTreatment: 'marginal', marginalRate: 0.32 },
+        { label: 'Super', initial: 50000, monthlyContribution: 1000, annualReturn: 7.5, mer: 0.35, taxTreatment: 'super', marginalRate: 0.32 },
+        { label: 'Savings Account', initial: 50000, monthlyContribution: 1000, annualReturn: 4.5, mer: 0, taxTreatment: 'marginal', marginalRate: 0.32 },
+      ],
+      years: 20,
+    },
+  },
+  {
+    id: 'benchmarks-trio',
+    label: 'Growth Benchmarks ($10k: Cash vs Balanced vs High-Growth ETF)',
+    badge: '4.5% vs 6.5% vs 9.0%',
+    description: '$10,000 lump sum over 30 years comparing cash savings (4.5%), balanced fund (6.5%), and high-growth equity ETF (9.0%)',
+    values: {
+      scenarios: [
+        { label: 'High-Growth ETF (9%)', initial: 10000, monthlyContribution: 0, annualReturn: 9.0, mer: 0.15, taxTreatment: 'tax-free', marginalRate: 0 },
+        { label: 'Balanced Fund (6.5%)', initial: 10000, monthlyContribution: 0, annualReturn: 6.5, mer: 0.35, taxTreatment: 'tax-free', marginalRate: 0 },
+        { label: 'Cash Savings (4.5%)', initial: 10000, monthlyContribution: 0, annualReturn: 4.5, mer: 0.0, taxTreatment: 'tax-free', marginalRate: 0 },
+      ],
+      years: 30,
+    },
+  },
+  {
+    id: 'starter-portfolios',
+    label: '3 Starter Portfolios ($10k Seed + $250/mo)',
+    badge: 'DHHF / Core / Tech',
+    description: 'All-in-One Diversified (DHHF) vs Aussie Core + Global (VAS+VGS) vs Tech & Growth Tilt (VGS+NDQ+QUAL)',
+    values: {
+      scenarios: [
+        { label: 'All-in-One (DHHF 100%)', initial: 10000, monthlyContribution: 250, annualReturn: 8.8, mer: 0.19, taxTreatment: 'marginal', marginalRate: 0.32 },
+        { label: 'Aussie Core + Global (VAS/VGS)', initial: 10000, monthlyContribution: 250, annualReturn: 8.5, mer: 0.14, taxTreatment: 'marginal', marginalRate: 0.32 },
+        { label: 'Tech & Growth Tilt (NDQ/QUAL)', initial: 10000, monthlyContribution: 250, annualReturn: 10.5, mer: 0.31, taxTreatment: 'marginal', marginalRate: 0.32 },
+      ],
+      years: 20,
+    },
+  },
 ];
 
 const TAX_LABELS: Record<TaxTreatment, string> = {
@@ -44,6 +95,18 @@ export function InvestmentCompare() {
   const [crashYear, setCrashYear] = useState(10);
   const [crashPct, setCrashPct] = useState(30);
   const [applyCgtOnDisposal, setApplyCgtOnDisposal] = useState(false);
+  const [activePreset, setActivePreset] = useState<string | undefined>('classic-vehicles');
+
+  const handleApplyPreset = useCallback((preset: ScenarioPreset<PresetScenarioBundle>) => {
+    setActivePreset(preset.id);
+    if (!preset.values) return;
+    if (preset.values.scenarios) {
+      setScenarios(preset.values.scenarios.map(s => ({ ...s })));
+    }
+    if (preset.values.years) {
+      setYears(preset.values.years);
+    }
+  }, []);
 
   const sharedMarginalRate = portfolio.margTax > 0 ? portfolio.margTax : margTaxOverride;
 
@@ -159,6 +222,13 @@ export function InvestmentCompare() {
           linkLabel: 'ATO: Tax on super',
         },
       ]} />
+
+      <QuickPresetBar
+        presets={COMPARE_PRESETS}
+        activePresetId={activePreset}
+        onSelect={handleApplyPreset}
+        title="Comparison Scenarios"
+      />
 
       {/* Shared settings */}
       <div className="grid grid-cols-2 gap-4 bg-[var(--background)] border border-[var(--border)] rounded-xl p-4">

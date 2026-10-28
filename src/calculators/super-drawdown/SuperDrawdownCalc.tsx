@@ -561,6 +561,51 @@ export function SuperDrawdownCalc() {
         </div>
       </div>
 
+      {/* 2026-27 Retirement Phase Regulatory Framework */}
+      <div className="rounded-2xl border border-border bg-card/60 p-5 space-y-4">
+        <div className="flex items-center gap-2">
+          <Coins className="w-5 h-5 text-amber-500" />
+          <h3 className="text-sm font-bold text-foreground">2026-27 Retirement Phase Regulatory Architecture</h3>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+          <div className="p-3 rounded-xl border border-border bg-card space-y-1.5">
+            <div className="font-bold text-foreground">
+              Schedule 7 SISR Drawdowns
+            </div>
+            <p className="text-[11px] text-muted-foreground leading-relaxed">
+              Mandatory minimum annual withdrawals from Account-Based Pensions: <strong>4%</strong> (&lt;65), <strong>5%</strong> (65–74), <strong>6%</strong> (75–79), <strong>7%</strong> (80–84), <strong>9%</strong> (85–89), <strong>11%</strong> (90–94), and <strong>14%</strong> (95+). Calculated on 1 July balance.
+            </p>
+          </div>
+
+          <div className="p-3 rounded-xl border border-border bg-card space-y-1.5">
+            <div className="font-bold text-foreground">
+              0% Tax on Earnings (ECPI)
+            </div>
+            <p className="text-[11px] text-muted-foreground leading-relaxed">
+              Under ITAA 1997 s 295-385 (Exempt Current Pension Income), investment returns and capital gains in retirement-phase pensions are taxed at <strong>0%</strong>, saving 15% compared to accumulation accounts.
+            </p>
+          </div>
+
+          <div className="p-3 rounded-xl border border-border bg-card space-y-1.5">
+            <div className="font-bold text-foreground">
+              Transfer Balance Cap ($2.1M)
+            </div>
+            <p className="text-[11px] text-muted-foreground leading-relaxed">
+              Statutory general cap indexed to <strong>$2,100,000</strong> from 1 July 2026. Balances exceeding $2.1M cannot enter retirement phase and must remain in accumulation (15% tax) or be withdrawn.
+            </p>
+          </div>
+
+          <div className="p-3 rounded-xl border border-border bg-card space-y-1.5">
+            <div className="font-bold text-foreground">
+              Sequencing Risk & Safety Net
+            </div>
+            <p className="text-[11px] text-muted-foreground leading-relaxed">
+              Early market crashes force selling units at discounted prices. The Centrelink Age Pension provides an automatic shock absorber: lower super assets increase pension pay at <strong>$3.00/fn per $1,000</strong>.
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* Action buttons */}
       <CalculatorActions
         onReset={handleReset}

@@ -24,7 +24,7 @@ export interface Hero15yoProps {
   children?: ReactNode;
 }
 
-const PERSONA_AGES: readonly number[] = [15, 16, 17, 18];
+const PERSONA_AGES: readonly number[] = [14, 15, 16, 17, 18, 19];
 
 const GRADIENT_TEXT =
   'bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-500 bg-clip-text text-transparent';

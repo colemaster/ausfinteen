@@ -36,7 +36,7 @@ interface ToolEntry {
 
 export const ALL_TOOLS: ToolEntry[] = [
   // 5 High-Demand Next-Gen Australian Calculators
-  { name: 'HECS-HELP Payoff vs Investing Simulator', description: '2025-2027 marginal HELP system ($67k threshold), min(CPI, WPI) indexation cap, offset & ASX ETF wealth arbitrage, APRA borrowing capacity impact.', route: '/hecs-payoff' },
+  { name: 'HECS-HELP Payoff vs Investing Simulator', description: '2026-2027 marginal HELP system ($69.5k threshold), min(CPI, WPI) indexation cap, offset & ASX ETF wealth arbitrage, APRA borrowing capacity impact.', route: '/hecs-payoff' },
   { name: 'Super Drawdown & Age Pension Optimizer', description: 'Schedule 7 SISR minimum drawdowns, 0% ECPI tax rate, deeming rates (1.25%/3.25%), and Centrelink Age Pension Means Test.', route: '/super-drawdown' },
   { name: 'EV Novated Lease vs Cash vs Car Loan', description: 'FBTAA s 8A 100% FBT exemption, Fuel-Efficient LCT cap ($91,387), $6,334 max GST credit, ATO PCG 2024/2 home charging, 5-year TCO.', route: '/ev-novated-lease' },
   { name: 'Capital Gains Tax & 6-Year Rule Engine', description: 'Division 115 50% discount, Section 102-5 loss ordering, Section 118-145 6-year main residence exemption, and Division 43 clawback.', route: '/cgt-engine' },
@@ -62,6 +62,7 @@ export const ALL_TOOLS: ToolEntry[] = [
 
 function topicToDoc(topic: TopicGuide): SearchDoc {
   const module = MANDY_MODULES.find(m => m.id === topic.moduleId);
+  const baseRoute = module?.route ?? '/';
   return {
     type: 'topic',
     id: topic.id,
@@ -74,7 +75,7 @@ function topicToDoc(topic: TopicGuide): SearchDoc {
       topic.webLink?.description ?? '',
     ].join(' '),
     emoji: module?.emoji,
-    route: module?.route ?? '/',
+    route: `${baseRoute}?topic=${topic.id}`,
     topicId: topic.id,
   };
 }

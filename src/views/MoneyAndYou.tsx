@@ -27,7 +27,7 @@ export function MoneyAndYou() {
               {moduleData.title}
             </h1>
             <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
-              Build a healthy money mindset, protect your mental health with an emergency Mojo buffer, set up your myGov digital identity, and know your ACCC consumer rights.
+              Master your money mindset, defeat Gen Z doom spending, evaluate finfluencers under ASIC INFO 269, crush peer pressure with proven scripts, and protect your mental health with an emergency Mojo buffer.
             </p>
           </div>
           <div className="md:col-span-4 hidden md:flex justify-center">

@@ -693,6 +693,12 @@
   contain: paint;
   transition: background-color var(--motion-base) var(--ease-out);
 }
+/* The nav dropdowns are absolutely positioned children of the sticky shell.
+   Paint containment would clip them to the 68px bar, so drop the paint layer
+   only while a panel is open and keep the cheaper containment otherwise. */
+.glass-nav:has([data-dropdown-panel]:not([hidden])) {
+  contain: layout style;
+}
 @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .glass-nav {
     background: color-mix(in oklab, var(--background) 72%, transparent);
@@ -1711,6 +1717,398 @@ dialog[open] {
   -webkit-mask-composite: destination-out;
   mask-composite: exclude;
   pointer-events: none;
+}
+
+/* ============================================================================
+   v7.6.0 — "PLAYFUL DEPTH" UPLIFT
+   -----------------------------------------------------------------------------
+   A second shading/graphics/motion pass on top of the 2030 layer above:
+     · four-plane shadows with a tinted ambient drop (not flat grey)
+     · glossy top-light + inner lip for tactile, toy-like surfaces
+     · orbital rings, sparkle clusters, conic aurora and dotted fields
+     · compositor-only motion (transform/opacity) that all collapses under the
+       shared prefers-reduced-motion / data-motion='reduce' switch
+   Scope is deliberately shared primitives only — page-specific art lives inline
+   in the Astro component that owns it, so React views stay untouched.
+   ============================================================================ */
+
+@layer base {
+  :root {
+    /* Ambient, hue-aware shadow stack. The coloured pass is what gives surfaces
+       a soft "lit by a screen" feel in light mode instead of a flat grey halo. */
+    --shade-ambient: oklch(0.3 0.07 var(--accent-h) / 0.16);
+    --shade-contact: oklch(0.2 0.04 var(--accent-h) / 0.22);
+    --shade-lip: color-mix(in oklab, white 38%, transparent);
+    --shade-cavity: color-mix(in oklab, var(--foreground) 10%, transparent);
+    --elevation-4:
+      0 1px 0 0 var(--shade-lip) inset,
+      0 -1px 0 0 var(--shade-cavity) inset,
+      0 1px 2px -1px var(--shade-contact),
+      0 10px 22px -10px var(--shade-ambient),
+      0 28px 56px -28px var(--shade-ambient);
+    --elevation-play:
+      0 1px 0 0 var(--shade-lip) inset,
+      0 -1px 0 0 var(--shade-cavity) inset,
+      0 2px 0 -1px color-mix(in oklab, var(--foreground) 7%, transparent),
+      0 8px 18px -8px var(--shade-ambient),
+      0 22px 40px -22px var(--shade-ambient);
+  }
+
+  .dark {
+    --shade-ambient: oklch(0.12 0.06 var(--accent-h) / 0.55);
+    --shade-contact: oklch(0.05 0 0 / 0.65);
+    --shade-lip: color-mix(in oklab, white 16%, transparent);
+    --shade-cavity: color-mix(in oklab, black 34%, transparent);
+    --elevation-4:
+      0 1px 0 0 var(--shade-lip) inset,
+      0 -1px 0 0 var(--shade-cavity) inset,
+      0 1px 2px -1px var(--shade-contact),
+      0 12px 26px -12px var(--shade-ambient),
+      0 32px 64px -30px var(--shade-ambient);
+    --elevation-play:
+      0 1px 0 0 var(--shade-lip) inset,
+      0 -1px 0 0 var(--shade-cavity) inset,
+      0 2px 0 -1px oklch(0 0 0 / 0.4),
+      0 10px 22px -10px var(--shade-ambient),
+      0 28px 52px -26px var(--shade-ambient);
+  }
+}
+
+/* --- Depth & gloss ------------------------------------------------------- */
+@utility shade-four {
+  box-shadow: var(--elevation-4);
+}
+@utility shade-play {
+  box-shadow: var(--elevation-play);
+}
+@utility shade-press {
+  box-shadow:
+    0 1px 0 0 var(--shade-lip) inset,
+    0 -1px 0 0 var(--shade-cavity) inset,
+    0 1px 1px -1px var(--shade-contact),
+    0 3px 8px -4px var(--shade-ambient);
+}
+
+/* A rounded, lit-from-above surface: gradient fill + specular edge + ambient
+   drop. Used for the nav shell, drawer feature card and footer CTA.
+   Lives in the components layer so utilities such as `absolute` and
+   `bg-*` can still override it (dropdowns/popovers depend on this). */
+@layer components {
+  .play-surface {
+    position: relative;
+    background:
+      linear-gradient(180deg,
+        color-mix(in oklab, var(--card) 96%, white 4%) 0%,
+        var(--card) 46%,
+        color-mix(in oklab, var(--muted) 42%, var(--card)) 100%);
+    border: 1px solid color-mix(in oklab, var(--border) 82%, var(--primary) 18%);
+    box-shadow: var(--elevation-play);
+  }
+  .dark .play-surface {
+    background:
+      linear-gradient(180deg,
+        color-mix(in oklab, var(--card) 88%, white 6%) 0%,
+        var(--card) 55%,
+        color-mix(in oklab, var(--card) 82%, black) 100%);
+    border-color: color-mix(in oklab, var(--border) 72%, var(--primary) 28%);
+  }
+}
+
+/* Gloss sweep across the top third of a surface. Sits above the background,
+   below content (z-index 0 with content at z-10). */
+.play-gloss::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 58%;
+  border-radius: inherit;
+  background: linear-gradient(180deg,
+    color-mix(in oklab, white 26%, transparent) 0%,
+    color-mix(in oklab, white 7%, transparent) 38%,
+    transparent 100%);
+  opacity: 0.55;
+  pointer-events: none;
+  z-index: 0;
+}
+.dark .play-gloss::before {
+  background: linear-gradient(180deg,
+    color-mix(in oklab, white 10%, transparent) 0%,
+    transparent 62%);
+  opacity: 0.7;
+}
+
+/* Slow moving specular stripe used on hero badges/CTA chips. Transform-only. */
+@keyframes shine-sweep {
+  0% { transform: translateX(-160%) skewX(-18deg); }
+  55%, 100% { transform: translateX(260%) skewX(-18deg); }
+}
+.shine-sweep {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.shine-sweep::after {
+  content: '';
+  position: absolute;
+  top: -40%;
+  bottom: -40%;
+  width: 38%;
+  background: linear-gradient(90deg,
+    transparent,
+    color-mix(in oklab, white 48%, transparent),
+    transparent);
+  opacity: 0.7;
+  pointer-events: none;
+  animation: shine-sweep 5.5s var(--ease-in-out) infinite;
+}
+.dark .shine-sweep::after {
+  background: linear-gradient(90deg,
+    transparent,
+    color-mix(in oklab, white 22%, transparent),
+    transparent);
+}
+
+/* Sticker: a badge with a playful off-axis rest pose that straightens on hover. */
+.sticker-badge {
+  transform: rotate(var(--sticker-rotate, -2deg));
+  transition:
+    transform var(--motion-base) var(--ease-out),
+    box-shadow var(--motion-base) var(--ease-out);
+  box-shadow:
+    0 1px 0 0 var(--shade-lip) inset,
+    0 2px 0 -1px oklch(var(--accent-l) var(--accent-c) var(--accent-h) / 0.25),
+    0 6px 14px -6px var(--shade-ambient);
+}
+.sticker-badge:hover {
+  transform: rotate(0deg) translateY(-1px);
+}
+
+/* --- Graphics ------------------------------------------------------------ */
+
+/* Conic aurora: one large, heavily blurred colour wheel. Rendered once per page. */
+.conic-aurora {
+  position: absolute;
+  pointer-events: none;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 210deg,
+    oklch(var(--accent-l) var(--accent-c) var(--accent-h) / 0.32),
+    oklch(0.7 0.18 293 / 0.26),
+    oklch(0.75 0.15 195 / 0.22),
+    oklch(0.8 0.16 70 / 0.2),
+    oklch(var(--accent-l) var(--accent-c) var(--accent-h) / 0.32)
+  );
+  filter: blur(72px);
+  opacity: 0.34;
+  z-index: 0;
+  animation: aurora-spin 42s linear infinite;
+}
+.dark .conic-aurora {
+  opacity: 0.24;
+}
+@keyframes aurora-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Orbital ring with a travelling light bead. Drop it behind hero art. */
+.orbit-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px dashed color-mix(in oklab, var(--primary) 38%, transparent);
+  pointer-events: none;
+  animation: orbit-spin 26s linear infinite;
+  z-index: 0;
+}
+.orbit-ring::before {
+  content: '';
+  position: absolute;
+  top: -3.5px;
+  left: 50%;
+  width: 7px;
+  height: 7px;
+  margin-left: -3.5px;
+  border-radius: 50%;
+  background: var(--accent-pop);
+  box-shadow:
+    0 0 0 3px oklch(var(--accent-l) var(--accent-c) var(--accent-h) / 0.18),
+    0 0 16px 2px oklch(var(--accent-l) var(--accent-c) var(--accent-h) / 0.7);
+}
+.orbit-ring-reverse {
+  animation-direction: reverse;
+  animation-duration: 34s;
+}
+@keyframes orbit-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Fine dot field that fades at the edges — used behind header art. */
+.dot-field {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: radial-gradient(circle at 1px 1px,
+    color-mix(in oklab, var(--primary) 36%, transparent) 1px,
+    transparent 0);
+  background-size: 22px 22px;
+  mask-image: radial-gradient(ellipse at center, black 0%, transparent 72%);
+  -webkit-mask-image: radial-gradient(ellipse at center, black 0%, transparent 72%);
+  opacity: 0.5;
+  z-index: 0;
+}
+
+/* Faint oversized wordmark for the footer. Text is decorative only. */
+.watermark-wordmark {
+  font-weight: 900;
+  letter-spacing: -0.055em;
+  line-height: 0.8;
+  color: transparent;
+  background: linear-gradient(180deg,
+    color-mix(in oklab, var(--primary) 22%, transparent),
+    transparent 78%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  opacity: 0.5;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* --- Motion -------------------------------------------------------------- */
+@keyframes float-play {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(-1.2deg); }
+  50% { transform: translate3d(0, -13px, 0) rotate(1.2deg); }
+}
+@keyframes float-play-alt {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(1.5deg); }
+  50% { transform: translate3d(0, -8px, 0) rotate(-1.5deg); }
+}
+.animate-float-art {
+  animation: float-play 7.5s ease-in-out infinite;
+  will-change: transform;
+}
+.animate-float-art-alt {
+  animation: float-play-alt 9s ease-in-out infinite;
+  will-change: transform;
+}
+
+@keyframes twinkle-dot {
+  0%, 100% { opacity: 0.25; transform: scale(0.7); }
+  45% { opacity: 0.95; transform: scale(1.1); }
+  60% { opacity: 0.5; transform: scale(0.9); }
+}
+.animate-twinkle {
+  animation: twinkle-dot 3.6s ease-in-out infinite;
+}
+.animate-twinkle-delayed {
+  animation: twinkle-dot 4.4s ease-in-out 1.2s infinite;
+}
+
+@keyframes gradient-pan {
+  to { background-position: 200% center; }
+}
+.animate-gradient-pan {
+  background-size: 200% auto;
+  animation: gradient-pan 7s linear infinite;
+}
+
+@keyframes spin-slow {
+  to { transform: rotate(360deg); }
+}
+.animate-spin-slow {
+  animation: spin-slow 18s linear infinite;
+}
+
+@keyframes glow-breathe {
+  0%, 100% { opacity: 0.45; transform: scale(1); }
+  50% { opacity: 0.85; transform: scale(1.08); }
+}
+.animate-glow-breathe {
+  animation: glow-breathe 5.5s ease-in-out infinite;
+}
+
+/* Page-level ambient wash: sits behind the whole shell, never intercepts input. */
+.page-ambient {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  contain: layout paint;
+  background:
+    radial-gradient(58rem 30rem at 12% -8%,
+      oklch(var(--accent-l) var(--accent-c) var(--accent-h) / 0.11),
+      transparent 62%),
+    radial-gradient(48rem 28rem at 96% 8%,
+      oklch(0.72 0.16 293 / 0.09),
+      transparent 64%),
+    radial-gradient(52rem 30rem at 50% 108%,
+      oklch(0.74 0.15 195 / 0.08),
+      transparent 66%);
+}
+.dark .page-ambient {
+  background:
+    radial-gradient(58rem 30rem at 12% -8%,
+      oklch(var(--accent-l) var(--accent-c) var(--accent-h) / 0.14),
+      transparent 62%),
+    radial-gradient(48rem 28rem at 96% 8%,
+      oklch(0.62 0.17 293 / 0.13),
+      transparent 64%),
+    radial-gradient(52rem 30rem at 50% 108%,
+      oklch(0.62 0.14 195 / 0.11),
+      transparent 66%);
+}
+
+/* Reduced-motion: every new loop stops, and transforms return to base pose. */
+@media (prefers-reduced-motion: reduce) {
+  .shine-sweep::after,
+  .conic-aurora,
+  .orbit-ring,
+  .animate-float-art,
+  .animate-float-art-alt,
+  .animate-twinkle,
+  .animate-twinkle-delayed,
+  .animate-gradient-pan,
+  .animate-spin-slow,
+  .animate-glow-breathe {
+    animation: none !important;
+  }
+  .animate-float-art,
+  .animate-float-art-alt,
+  .orbit-ring,
+  .sticker-badge {
+    transform: none !important;
+  }
+  .conic-aurora { opacity: 0.22; }
+}
+:root[data-motion='reduce'] .shine-sweep::after,
+:root[data-motion='reduce'] .conic-aurora,
+:root[data-motion='reduce'] .orbit-ring,
+:root[data-motion='reduce'] .animate-float-art,
+:root[data-motion='reduce'] .animate-float-art-alt,
+:root[data-motion='reduce'] .animate-twinkle,
+:root[data-motion='reduce'] .animate-twinkle-delayed,
+:root[data-motion='reduce'] .animate-gradient-pan,
+:root[data-motion='reduce'] .animate-spin-slow,
+:root[data-motion='reduce'] .animate-glow-breathe {
+  animation: none !important;
+}
+:root[data-motion='reduce'] .animate-float-art,
+:root[data-motion='reduce'] .animate-float-art-alt,
+:root[data-motion='reduce'] .orbit-ring,
+:root[data-motion='reduce'] .sticker-badge {
+  transform: none !important;
+}
+
+/* Print: all new decoration must disappear with the rest. */
+@media print {
+  .page-ambient,
+  .conic-aurora,
+  .orbit-ring,
+  .dot-field,
+  .watermark-wordmark,
+  .play-gloss::before,
+  .shine-sweep::after {
+    display: none !important;
+  }
 }
 
 /* Print & PDF Export Stylesheet */

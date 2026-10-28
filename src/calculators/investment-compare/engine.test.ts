@@ -142,3 +142,44 @@ describe('cgtAdjustedFinalValue', () => {
     expect(after).toBe(92000);
   });
 });
+
+describe('Growth Benchmarks (Cash 4.5% vs Balanced 6.5% vs High-Growth ETF 9.0%)', () => {
+  it('correctly models 30-year compounding with monthly calculations', () => {
+    const cash = runScenario({
+      label: 'Cash Savings',
+      initial: 10000,
+      monthlyContribution: 0,
+      annualReturn: 4.5,
+      mer: 0,
+      taxTreatment: 'tax-free',
+      marginalRate: 0,
+    }, 30);
+
+    const balanced = runScenario({
+      label: 'Balanced Fund',
+      initial: 10000,
+      monthlyContribution: 0,
+      annualReturn: 6.5,
+      mer: 0,
+      taxTreatment: 'tax-free',
+      marginalRate: 0,
+    }, 30);
+
+    const highGrowth = runScenario({
+      label: 'High-Growth ETF',
+      initial: 10000,
+      monthlyContribution: 0,
+      annualReturn: 9.0,
+      mer: 0,
+      taxTreatment: 'tax-free',
+      marginalRate: 0,
+    }, 30);
+
+    // Monthly compounding results in even higher terminal balances:
+    // Cash > $38k, Balanced > $69k, High-Growth > $147k
+    expect(highGrowth.finalBalance).toBeGreaterThan(balanced.finalBalance);
+    expect(balanced.finalBalance).toBeGreaterThan(cash.finalBalance);
+    expect(highGrowth.finalBalance).toBeGreaterThan(140000);
+    expect(cash.finalBalance).toBeGreaterThan(38000);
+  });
+});

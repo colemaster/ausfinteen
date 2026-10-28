@@ -32,7 +32,7 @@ const QUICK_LINKS = {
 };
 ---
 
-<footer class="relative bg-card/60 backdrop-blur-md border-t border-border/70 mt-auto transition-colors duration-300 overflow-hidden">
+<footer class="relative bg-card/70 backdrop-blur-lg border-t border-border/80 mt-auto transition-colors duration-300 overflow-hidden">
   {/* Subtle chromatic top border gradient with a slow shimmer flow */}
   <div
     class="h-[2px] w-full bg-gradient-to-r from-primary/60 via-violet-500/60 to-amber-500/60 bg-[length:200%_100%] animate-text-shimmer"
@@ -45,11 +45,80 @@ const QUICK_LINKS = {
 
   {/* Ambient mesh glow + film grain to finish the shading pass */}
   <div class="mesh-glow-sm bottom-0 left-[12%]" aria-hidden="true"></div>
+  <div class="conic-aurora -bottom-72 -right-40 hidden h-[34rem] w-[34rem] opacity-25 md:block" aria-hidden="true"></div>
+  <div class="orbit-ring right-[8%] top-[16%] hidden h-48 w-48 opacity-20 xl:block" aria-hidden="true"></div>
+  <div class="dot-field bottom-0 right-0 hidden h-72 w-96 opacity-20 md:block" aria-hidden="true"></div>
   <div aria-hidden="true" class="noise-grain"></div>
 
+  {/* Oversized, low-contrast wordmark — pure graphic texture for wide screens. */}
+  <div
+    aria-hidden="true"
+    class="watermark-wordmark pointer-events-none absolute -right-8 top-8 hidden select-none text-[9rem] leading-none lg:block xl:text-[12rem]"
+  >
+    AUSFINANCE
+  </div>
+
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    {/* Closing CTA / stats banner — gives the footer a headline graphic moment
+        rather than dropping straight into legal copy. */}
+    <div class="play-surface play-gloss relative mb-8 overflow-hidden rounded-3xl p-5 sm:p-6 card-depth">
+      <div aria-hidden="true" class="conic-aurora -right-24 -top-32 h-72 w-72 opacity-30"></div>
+      <div aria-hidden="true" class="orbit-ring -right-6 -top-10 hidden h-40 w-40 opacity-25 sm:block"></div>
+      <div aria-hidden="true" class="dot-field inset-y-0 right-0 hidden w-1/2 opacity-25 sm:block"></div>
+
+      <div class="relative z-10 flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+        <div class="max-w-xl">
+          <span class="sticker-badge inline-flex items-center gap-1.5 rounded-full bg-amber-400/15 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-amber-700 ring-1 ring-amber-500/30 dark:text-amber-300">
+            <span class="h-1.5 w-1.5 rounded-full bg-amber-500 shadow-[0_0_6px_rgba(245,158,11,0.9)]" aria-hidden="true"></span>
+            Free forever · no accounts · no tracking
+          </span>
+          <h2 class="mt-2 text-xl font-extrabold tracking-tight text-foreground sm:text-2xl">
+            Your money, <span class="text-transparent bg-gradient-to-r from-primary via-violet-600 to-amber-600 bg-clip-text animate-gradient-pan dark:via-violet-300 dark:to-amber-300">decoded</span>.
+          </h2>
+          <p class="mt-1.5 text-xs leading-relaxed text-muted-foreground">
+            Run the numbers, learn the rules, and make your first (or next) financial move with confidence.
+          </p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2">
+          <a
+            href="/calculators"
+            data-astro-prefetch="hover"
+            class="shine-sweep group inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-br from-primary via-primary to-violet-500 px-3.5 py-2 text-xs font-bold text-primary-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_4px_0_-1px_oklch(var(--accent-l)_var(--accent-c)_var(--accent-h)/0.35),0_10px_20px_-8px_oklch(var(--accent-l)_var(--accent-c)_var(--accent-h)/0.65)] transition-all hover:-translate-y-0.5 hover:brightness-110"
+          >
+            <Icon name="calculator" class="h-4 w-4" />
+            Explore calculators
+            <span class="transition-transform group-hover:translate-x-0.5" aria-hidden="true">→</span>
+          </a>
+          <a
+            href="/profile"
+            data-astro-prefetch="hover"
+            class="group inline-flex items-center gap-1.5 rounded-xl border border-border bg-card/80 px-3.5 py-2 text-xs font-bold text-foreground shadow-[0_1px_0_rgba(255,255,255,0.4)_inset,0_4px_12px_-8px_rgba(0,0,0,0.35)] transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:text-primary"
+          >
+            <Icon name="user" class="h-4 w-4 text-primary" />
+            Set my profile
+          </a>
+        </div>
+      </div>
+
+      {/* Stat strip doubles as the footer's graphic "data" motif. */}
+      <div class="relative z-10 mt-5 grid grid-cols-2 gap-2 border-t border-border/60 pt-4 sm:grid-cols-4">
+        {[
+          { value: '30+', label: 'Calculators', tone: 'text-primary' },
+          { value: '11', label: 'Learning modules', tone: 'text-violet-500' },
+          { value: '500+', label: 'Official sources', tone: 'text-amber-500' },
+          { value: '0', label: 'Cookies / trackers', tone: 'text-emerald-500' },
+        ].map((s) => (
+          <div class="flex items-baseline gap-1.5">
+            <span class={`font-mono text-base font-black tracking-tight ${s.tone}`}>{s.value}</span>
+            <span class="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">{s.label}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+
     {/* Top Disclaimer & Compliance Badges Banner */}
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-8 border-b border-border/60">
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-8 border-b border-border/60">
       <div class="max-w-2xl text-xs sm:text-sm text-muted-foreground leading-relaxed">
         <strong class="text-foreground font-semibold">Not financial advice.</strong> AusTeen Money and
         AusFinance Suite are free, open-source educational resources designed for young Aussies. All
@@ -59,14 +128,16 @@ const QUICK_LINKS = {
 
       <div class="flex flex-wrap items-center gap-2.5 shrink-0">
         {/* 2026-27 Compliant Status Badge */}
-        <span class="card-specular inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold border border-emerald-500/30 text-xs">
-          <Icon name="check" class="w-3.5 h-3.5" />
+        <span class="play-surface play-gloss card-specular inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold text-emerald-600 ring-1 ring-emerald-500/25 dark:text-emerald-400">
+          <span class="grid h-4 w-4 place-items-center rounded-full bg-emerald-500/15">
+            <Icon name="check" class="w-3 h-3" />
+          </span>
           <span>2026-27 Compliant</span>
         </span>
 
         {/* Privacy First Badge */}
-        <span class="card-specular inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 text-primary font-bold border border-primary/30 text-xs">
-          <Icon name="sparkles" class="w-3.5 h-3.5" />
+        <span class="play-surface play-gloss card-specular inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold text-primary ring-1 ring-primary/25">
+          <Icon name="sparkles" class="w-3.5 h-3.5 animate-pulse-soft" />
           <span>100% Client-Side Privacy</span>
         </span>
 
@@ -75,16 +146,18 @@ const QUICK_LINKS = {
           type="button"
           data-back-to-top
           aria-label="Scroll back to top of page"
-          class="lift-card card-glow-hover tactile-press inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-border bg-card hover:bg-muted text-foreground text-xs font-semibold shadow-xs hover:border-primary/50 transition-all duration-200"
+          class="group play-surface lift-card card-glow-hover tactile-press inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-semibold text-foreground shadow-xs transition-all duration-200 hover:border-primary/50"
         >
-          <Icon name="chevron-down" class="w-3.5 h-3.5 text-primary rotate-180 group-hover:-translate-y-0.5 transition-transform" />
+          <span class="grid h-4 w-4 place-items-center rounded-full bg-primary/10 text-primary transition-transform duration-300 group-hover:-translate-y-0.5">
+            <Icon name="chevron-down" class="w-3.5 h-3.5 rotate-180" />
+          </span>
           <span>Back to Top</span>
         </button>
       </div>
     </div>
 
     {/* Quick Links Grouped by Category */}
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-8 py-10 text-xs">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-8 py-10 text-xs">
       {/* Calculators Hub */}
       <div class="space-y-3">
         <div class="text-[11px] font-bold uppercase tracking-wider text-foreground flex items-center gap-1.5 card-specular">
@@ -97,7 +170,7 @@ const QUICK_LINKS = {
               <a
                 href={link.to}
                 data-astro-prefetch="hover"
-                class="link-underline w-fit text-muted-foreground hover:text-primary transition-colors block py-0.5"
+                class="link-underline w-fit text-muted-foreground hover:text-primary hover:translate-x-0.5 transition-all block py-0.5"
               >
                 {link.label}
               </a>
@@ -118,7 +191,7 @@ const QUICK_LINKS = {
               <a
                 href={link.to}
                 data-astro-prefetch="hover"
-                class="link-underline w-fit text-muted-foreground hover:text-primary transition-colors block py-0.5"
+                class="link-underline w-fit text-muted-foreground hover:text-primary hover:translate-x-0.5 transition-all block py-0.5"
               >
                 {link.label}
               </a>
@@ -139,7 +212,7 @@ const QUICK_LINKS = {
               <a
                 href={link.to}
                 data-astro-prefetch="hover"
-                class="link-underline w-fit text-muted-foreground hover:text-primary transition-colors block py-0.5"
+                class="link-underline w-fit text-muted-foreground hover:text-primary hover:translate-x-0.5 transition-all block py-0.5"
               >
                 {link.label}
               </a>
@@ -148,8 +221,8 @@ const QUICK_LINKS = {
         </ul>
       </div>
 
-      {/* A11y & Telemetry */}
-      <div class="space-y-3">
+      {/* A11y & Telemetry — full width on phones so the controls never cramp. */}
+      <div class="col-span-2 space-y-3 sm:col-span-1">
         <div class="text-[11px] font-bold uppercase tracking-wider text-foreground flex items-center gap-1.5">
           <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_oklch(0.7_0.17_152/0.6)]"></span>
           <span>A11y &amp; Telemetry</span>
@@ -158,13 +231,15 @@ const QUICK_LINKS = {
           <button
             type="button"
             data-open-shortcuts
-            class="w-full flex items-center justify-between px-3 py-2 rounded-xl border border-border/80 bg-muted/40 hover:bg-muted text-muted-foreground hover:text-foreground transition-all"
+            class="play-surface group flex w-full items-center justify-between rounded-xl px-3 py-2 text-muted-foreground transition-all hover:border-primary/40 hover:text-foreground hover:shadow-[0_6px_16px_-10px_oklch(var(--accent-l)_var(--accent-c)_var(--accent-h)/0.5)]"
           >
             <span class="flex items-center gap-1.5">
-              <Icon name="keyboard" class="w-3.5 h-3.5 text-primary" />
+              <span class="grid h-5 w-5 place-items-center rounded-md bg-primary/10">
+                <Icon name="keyboard" class="w-3.5 h-3.5 text-primary" />
+              </span>
               <span>Keyboard Shortcuts</span>
             </span>
-            <kbd class="px-1.5 py-0.5 rounded-md border border-border bg-card text-[10px] font-mono font-bold">
+            <kbd class="px-1.5 py-0.5 rounded-md border border-border bg-card text-[10px] font-mono font-bold shadow-[0_1px_0_rgba(255,255,255,0.4)_inset]">
               ?
             </kbd>
           </button>
@@ -172,22 +247,27 @@ const QUICK_LINKS = {
           <button
             type="button"
             data-open-performance
-            class="w-full flex items-center justify-between px-3 py-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 transition-all font-semibold"
+            class="group flex w-full items-center justify-between rounded-xl border border-emerald-500/30 bg-gradient-to-r from-emerald-500/15 to-emerald-500/5 px-3 py-2 font-semibold text-emerald-700 transition-all hover:-translate-y-0.5 hover:border-emerald-500/50 hover:shadow-[0_8px_20px_-12px_rgba(16,185,129,0.6)] dark:text-emerald-300"
           >
             <span class="flex items-center gap-1.5">
-              <Icon name="zap" class="w-3.5 h-3.5 text-emerald-500" />
+              <span class="grid h-5 w-5 place-items-center rounded-md bg-emerald-500/15">
+                <Icon name="zap" class="w-3.5 h-3.5 text-emerald-500" />
+              </span>
               <span>100% Instant Mode</span>
             </span>
-            <span class="text-[10px] uppercase font-mono">Specs →</span>
+            <span class="font-mono text-[10px] uppercase transition-transform group-hover:translate-x-0.5">Specs →</span>
           </button>
 
           <div class="pt-1">
             <span
               data-web-vitals-badge
-              class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-mono font-bold border border-emerald-500/30 text-[11px]"
+              class="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1 font-mono text-[11px] font-bold text-emerald-600 shadow-[inset_0_1px_0_rgba(255,255,255,0.25)] dark:text-emerald-400"
               title="Client-Side Telemetry: 100% Privacy-Preserved"
             >
-              <Icon name="zap" class="w-3 h-3" />
+              <span class="relative flex h-1.5 w-1.5" aria-hidden="true">
+                <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-75 motion-reduce:animate-none"></span>
+                <span class="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+              </span>
               <span data-web-vitals-text>CLS 0.00 • TTFB &lt;10ms</span>
             </span>
           </div>
@@ -196,26 +276,39 @@ const QUICK_LINKS = {
     </div>
 
     {/* Bottom Bar: Copyright, GitHub, Version */}
-    <div class="pt-8 border-t border-border/60 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-muted-foreground">
-      <div class="flex items-center gap-2">
-        <span>© {new Date().getFullYear()} AusFinance Suite</span>
-        <span>·</span>
-        <span>MIT Licence</span>
-        <span>·</span>
-        <span>Made for young Aussies</span>
+    <div class="pt-8 pb-16 sm:pb-20 border-t border-border/60 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-muted-foreground">
+      <div class="flex flex-col items-center gap-1.5 sm:items-start">
+        <div class="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-center sm:justify-start sm:text-left">
+          <span>© {new Date().getFullYear()} AusFinance Suite</span>
+          <span>·</span>
+          <span>MIT Licence</span>
+          <span>·</span>
+          <span>Made for young Aussies <span class="emoji-mark" aria-hidden="true">🦘</span></span>
+        </div>
+        <div class="flex flex-wrap items-center justify-center gap-1.5 text-[10px] text-muted-foreground/70 sm:justify-start">
+          <span class="inline-flex items-center gap-1 rounded-full border border-border/70 bg-muted/40 px-1.5 py-0.5 font-mono">
+            <span class="h-1 w-1 rounded-full bg-primary"></span> Astro 7
+          </span>
+          <span class="inline-flex items-center gap-1 rounded-full border border-border/70 bg-muted/40 px-1.5 py-0.5 font-mono">
+            <span class="h-1 w-1 rounded-full bg-violet-500"></span> React 19
+          </span>
+          <span class="inline-flex items-center gap-1 rounded-full border border-border/70 bg-muted/40 px-1.5 py-0.5 font-mono">
+            <span class="h-1 w-1 rounded-full bg-amber-500"></span> Tailwind 4
+          </span>
+        </div>
       </div>
 
-      <div class="flex items-center gap-4">
+      <div class="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 sm:justify-end">
         <a
           href={GITHUB_URL}
           target="_blank"
           rel="noopener noreferrer"
-          class="inline-flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors font-medium"
+          class="group inline-flex items-center gap-1.5 font-medium text-muted-foreground transition-colors hover:text-foreground"
         >
           <svg
             viewBox="0 0 24 24"
             fill="currentColor"
-            class="w-3.5 h-3.5"
+            class="w-3.5 h-3.5 transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6"
             aria-hidden="true"
           >
             <path
@@ -224,8 +317,9 @@ const QUICK_LINKS = {
           </svg>
           <span>View source on GitHub</span>
         </a>
-        <span>·</span>
-        <span class="text-[11px] font-mono font-bold text-muted-foreground/80">
+        <span class="text-border">·</span>
+        <span class="inline-flex items-center gap-1 rounded-full border border-border/70 bg-muted/40 px-2 py-0.5 text-[11px] font-mono font-bold text-muted-foreground/80">
+          <span class="h-1.5 w-1.5 rounded-full bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.9)]" aria-hidden="true"></span>
           v{APP_VERSION} ({LAST_UPDATED})
         </span>
       </div>

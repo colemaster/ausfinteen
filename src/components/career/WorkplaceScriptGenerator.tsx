@@ -50,6 +50,24 @@ export function WorkplaceScriptGenerator() {
       context: 'Use when equipment is broken or workplace conditions pose an injury hazard.',
       script: `Hi [Supervisor Name], I wanted to flag a health and safety issue I noticed near [Location/Machine]. The [equipment/floor] is currently [broken/slippery] and poses an injury risk to staff and customers. What is the best way for us to address this safety issue right away?`,
     },
+    {
+      title: '8. Pushing Back Against an Unlawful Multi-Hour Unpaid Trial',
+      author: 'Fair Work Ombudsman Compliance',
+      context: 'Use when a business asks you to work an unpaid trial longer than 1 hour or during commercial service.',
+      script: `Hi [Manager Name], thank you so much for considering my application! I would love to demonstrate my skills. Under Fair Work Ombudsman guidelines, unpaid skills demonstrations are strictly limited to a brief 1-hour evaluation under direct supervision. For any trial longer than 1 hour or during commercial service, I am eager to work under the Modern Award at the legal junior casual rate of $[X]/hr. Please let me know if we can schedule this as a paid trial shift!`,
+    },
+    {
+      title: '9. Refusing Cash-in-Hand Off-the-Books Payment',
+      author: 'Fair Work & Safe Work Protections',
+      context: 'Use when an employer offers cash in an envelope without a payslip, TFN declaration, or superannuation.',
+      script: `Hi [Manager Name], thank you for the job offer! To make sure I am covered under statutory WorkCover insurance and building my superannuation, I only work on the books with an official Tax File Number (TFN) declaration and itemised payslips under the Modern Award. I have my TFN and Super Choice forms ready to hand in today so everything is 100% compliant!`,
+    },
+    {
+      title: '10. Reporting Workplace Bullying or Customer Harassment',
+      author: 'Safe Work Australia & Fair Work Rights',
+      context: 'Use when experiencing repeated belittling, yelling, humiliation, or inappropriate conduct from a coworker, supervisor, or customer.',
+      script: `Hi [Manager / HSR Name], thank you for taking a moment to speak privately. I need to flag an ongoing workplace safety issue. Over the past [weeks/days], [Name or Customer] has repeatedly [describe specific conduct e.g. yelled at me in front of customers / made inappropriate comments / manipulated my rosters unfairly]. This is creating an unsafe working environment. I have documented the dates, times, and witnesses, and I would appreciate your support in addressing this under our workplace health, safety, and anti-bullying policies.`,
+    },
   ];
 
   const handleCopy = (text: string, index: number) => {

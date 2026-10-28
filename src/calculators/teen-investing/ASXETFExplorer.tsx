@@ -2,7 +2,7 @@ import { useMemo, useState, useCallback } from 'react';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import {
-  TOP_10_ASX_ETFS,
+  ALL_POPULAR_ASX_ETFS,
   ASX_ETF_DATA_AS_AT,
   buildGrowthSeries,
   type ASXETF,
@@ -18,6 +18,22 @@ import { cn } from '@/lib/utils';
 const YEAR_START = 2016;
 const YEAR_END = 2025;
 
+const ETF_PALETTE: Record<string, string> = {
+  VAS: '#10b981',   // Emerald
+  VGS: '#3b82f6',   // Blue
+  IVV: '#8b5cf6',   // Violet
+  A200: '#06b6d4',  // Cyan
+  QUAL: '#f59e0b',  // Amber
+  IOZ: '#6366f1',   // Indigo
+  NDQ: '#ec4899',   // Pink
+  DACE: '#14b8a6',  // Teal
+  V1AC: '#f97316',  // Orange
+  VTS: '#84cc16',   // Lime
+  DHHF: '#a855f7',  // Purple
+  VDHG: '#0ea5e9',  // Sky
+  BGBL: '#22c55e',  // Green
+};
+
 interface EtfComboPreset {
   codes: string[];
 }
@@ -31,6 +47,13 @@ const ETF_PRESETS: ScenarioPreset<EtfComboPreset>[] = [
     values: { codes: ['VAS', 'IVV', 'VGS'] },
   },
   {
+    id: 'all-in-one-vs-core',
+    label: 'All-in-One vs Two-Fund',
+    badge: 'DHHF / VAS / VGS',
+    description: 'Compare the single-ticket all-growth ETF (DHHF) against the traditional VAS + VGS core',
+    values: { codes: ['DHHF', 'VAS', 'VGS'] },
+  },
+  {
     id: 'tech-growth',
     label: 'Tech & Quality Tilt',
     badge: 'NDQ / QUAL / IVV',
@@ -40,9 +63,9 @@ const ETF_PRESETS: ScenarioPreset<EtfComboPreset>[] = [
   {
     id: 'low-cost-index',
     label: 'Ultra Low-Fee Index',
-    badge: 'A200 / IVV / IOZ',
-    description: 'Lowest MER fee structure across ASX 200 and S&P 500',
-    values: { codes: ['A200', 'IVV', 'IOZ'] },
+    badge: 'A200 / BGBL / IVV',
+    description: 'Lowest MER fee structure across ASX 200, global shares, and S&P 500',
+    values: { codes: ['A200', 'BGBL', 'IVV'] },
   },
 ];
 
@@ -59,13 +82,13 @@ function formatDollar(v: number): string {
 
 export function ASXETFExplorer() {
   const [selectedCodes, setSelectedCodes] = useState<string[]>(['VAS', 'NDQ', 'IVV']);
-  const [selectedEtf, setSelectedEtf] = useState<ASXETF>(TOP_10_ASX_ETFS[0]);
+  const [selectedEtf, setSelectedEtf] = useState<ASXETF>(ALL_POPULAR_ASX_ETFS[0]);
   const [view, setView] = useState<'growth' | 'annual'>('growth');
   const [activePreset, setActivePreset] = useState<string | undefined>();
   const reduced = useReducedMotion();
 
   const selected = useMemo(
-    () => TOP_10_ASX_ETFS.filter(etf => selectedCodes.includes(etf.code)),
+    () => ALL_POPULAR_ASX_ETFS.filter(etf => selectedCodes.includes(etf.code)),
     [selectedCodes]
   );
 
@@ -86,7 +109,7 @@ export function ASXETFExplorer() {
   const handleReset = useCallback(() => {
     setActivePreset(undefined);
     setSelectedCodes(['VAS', 'NDQ', 'IVV']);
-    setSelectedEtf(TOP_10_ASX_ETFS[0]);
+    setSelectedEtf(ALL_POPULAR_ASX_ETFS[0]);
     setView('growth');
   }, []);
 
@@ -115,14 +138,14 @@ export function ASXETFExplorer() {
       `Comparing: ${selectedCodes.join(', ')}`,
       `Selected Detail: ${selectedEtf.code} - ${selectedEtf.name} (${selectedEtf.issuer})`,
       `MER: ${selectedEtf.mer}% | AUM: $${selectedEtf.fum.toFixed(1)}B | Yield: ${selectedEtf.dividendYield}%`,
-      `Trailing Returns: 1Y ${selectedEtf.trailing['1Y'] ?? '—'}% | 3Y ${selectedEtf.trailing['3Y'] ?? '—'}% | 5Y ${selectedEtf.trailing['5Y'] ?? '—'}%`,
+      `Trailing Returns: 1Y ${selectedEtf.trailing['1Y'] ?? '—'}% | 3Y ${selectedEtf.trailing['3Y'] ?? '—'}% | 5Y ${selectedEtf.trailing['5Y'] ?? '—'}% | 10Y ${selectedEtf.trailing['10Y'] ?? '—'}%`,
       `Data: ASX Investment Products reference. AusFinTools`,
     ].join('\n');
   }, [selectedCodes, selectedEtf]);
 
   const yieldData = useMemo(
     () =>
-      TOP_10_ASX_ETFS.map(etf => ({
+      ALL_POPULAR_ASX_ETFS.map(etf => ({
         code: etf.code,
         dividendYield: etf.dividendYield,
       })),
@@ -131,8 +154,11 @@ export function ASXETFExplorer() {
 
   const config = useMemo(() => {
     const c: Record<string, { label: string; color: string }> = {};
-    selectedCodes.forEach(code => {
-      c[code] = { label: code, color: `var(--color-${code.toLowerCase()})` };
+    selectedCodes.forEach((code, idx) => {
+      c[code] = {
+        label: code,
+        color: ETF_PALETTE[code] ?? `var(--chart-${(idx % 7) + 1})`,
+      };
     });
     return c;
   }, [selectedCodes]);
@@ -143,10 +169,10 @@ export function ASXETFExplorer() {
         <div>
           <div className="flex items-center gap-2 mb-1">
             <TrendingUp className="w-5 h-5 text-emerald-500" />
-            <h2 className="text-xl font-bold text-foreground">Top 10 ASX ETFs — Performance Explorer</h2>
+            <h2 className="text-xl font-bold text-foreground">ASX ETF Explorer — Historical Benchmarks</h2>
           </div>
           <p className="text-xs text-muted-foreground">
-            Tap ticker chips to compare. See how $10,000 grows (total return, distributions reinvested) or compare annual returns.
+            Tap ticker chips to compare core ASX & starter ETFs. See how $10,000 grows (total return, distributions reinvested) or compare annual returns.
           </p>
         </div>
         <Badge variant="outline" className="shrink-0">As at {ASX_ETF_DATA_AS_AT}</Badge>
@@ -162,18 +188,22 @@ export function ASXETFExplorer() {
 
       {/* Ticker chips */}
       <div className="flex flex-wrap gap-2">
-        {TOP_10_ASX_ETFS.map(etf => (
+        {ALL_POPULAR_ASX_ETFS.map(etf => (
           <button
             key={etf.code}
             type="button"
             onClick={() => toggleCode(etf.code)}
             className={cn(
-              'px-3 py-1.5 rounded-full text-xs font-bold border transition-all',
+              'px-3 py-1.5 rounded-full text-xs font-bold border transition-all flex items-center gap-1.5',
               selectedCodes.includes(etf.code)
-                ? 'bg-primary/10 border-primary/40 text-primary'
+                ? 'bg-primary/10 border-primary/40 text-primary shadow-xs'
                 : 'bg-card border-border text-muted-foreground hover:border-primary/40'
             )}
           >
+            <span
+              className="w-2 h-2 rounded-full"
+              style={{ backgroundColor: ETF_PALETTE[etf.code] ?? 'var(--chart-1)' }}
+            />
             {etf.code}
           </button>
         ))}
@@ -240,7 +270,7 @@ export function ASXETFExplorer() {
                   key={code}
                   type="monotone"
                   dataKey={code}
-                  stroke={`var(--color-${code})`}
+                  stroke={ETF_PALETTE[code] ?? `var(--color-${code})`}
                   strokeWidth={2.5}
                   dot={false}
                   isAnimationActive={!reduced}
@@ -259,7 +289,7 @@ export function ASXETFExplorer() {
                   key={code}
                   type="monotone"
                   dataKey={code}
-                  stroke={`var(--color-${code})`}
+                  stroke={ETF_PALETTE[code] ?? `var(--color-${code})`}
                   strokeWidth={2.5}
                   dot={false}
                   isAnimationActive={!reduced}
@@ -276,7 +306,7 @@ export function ASXETFExplorer() {
         {/* Detail card */}
         <div className="space-y-3">
           <div className="flex flex-wrap gap-1.5">
-            {TOP_10_ASX_ETFS.map(etf => (
+            {ALL_POPULAR_ASX_ETFS.map(etf => (
               <button
                 key={etf.code}
                 type="button"
@@ -352,7 +382,7 @@ export function ASXETFExplorer() {
                 <div className="text-center">
                   <div className="text-[10px] text-muted-foreground font-semibold">10Y</div>
                   <div className={cn('text-sm font-bold font-mono', (selectedEtf.trailing['10Y'] ?? 0) >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500')}>
-                    {selectedEtf.trailing['10Y'] === null ? '—' : `+${selectedEtf.trailing['10Y'].toFixed(1)}%`}
+                    {selectedEtf.trailing['10Y'] === null ? '—' : `${selectedEtf.trailing['10Y'] > 0 ? '+' : ''}${selectedEtf.trailing['10Y'].toFixed(1)}%`}
                   </div>
                 </div>
               </div>
@@ -366,7 +396,7 @@ export function ASXETFExplorer() {
             <PiggyBank className="w-4 h-4 text-amber-500" />
             <h3 className="text-sm font-bold text-foreground">Distribution Yield by ETF</h3>
           </div>
-          <p className="text-[11px] text-muted-foreground mb-3">Trailing 12-month distribution yield (%). AU-share ETFs typically pay more income than US-tech ETFs.</p>
+          <p className="text-[11px] text-muted-foreground mb-3">Trailing 12-month distribution yield (%). AU-share ETFs typically pay more franked income than US-tech ETFs.</p>
           <ChartContainer config={asxEtfYieldConfig} className="h-[260px] w-full">
             <BarChart data={yieldData} margin={{ top: 4, right: 8, left: 8, bottom: 4 }}>
               <CartesianGrid vertical={false} strokeDasharray="3 3" />

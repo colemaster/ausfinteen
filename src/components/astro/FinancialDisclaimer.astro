@@ -1,4 +1,6 @@
 ---
+import Icon from '@/components/astro/Icon.astro';
+
 interface Props {
   sourceYear?: string;
   class?: string;
@@ -10,24 +12,38 @@ const {
 } = Astro.props;
 ---
 
-<div class={`card-depth card-specular rounded-2xl border border-amber-500/25 bg-amber-500/5 p-4 sm:p-5 text-xs text-muted-foreground leading-relaxed my-8 shadow-soft ${className}`}>
+<div
+  class={`card-depth card-specular shade-play relative isolate overflow-hidden rounded-2xl border border-amber-500/25 bg-gradient-to-br from-amber-500/[0.08] via-card/85 to-amber-500/[0.03] p-4 sm:p-5 text-xs text-muted-foreground leading-relaxed my-8 ${className}`}
+>
   {/* Luminous amber edge that reads as a lit warning strip */}
-  <div aria-hidden="true" class="absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-amber-400 via-amber-500/70 to-transparent rounded-full"></div>
+  <div aria-hidden="true" class="absolute inset-y-0 left-0 w-1 rounded-full bg-gradient-to-b from-amber-300 via-amber-500/80 to-transparent shadow-[0_0_12px_rgba(245,158,11,0.6)]"></div>
   {/* Warm ink blot diffusing behind the advisory panel */}
   <div aria-hidden="true" class="ink-blot ink-blot-sm ink-blot-amber -top-6 -right-8 dark:opacity-40"></div>
+  {/* Oversized shield watermark — graphic depth without stealing contrast. */}
+  <div aria-hidden="true" class="animate-float-art-alt pointer-events-none absolute -bottom-10 -right-6 text-amber-500/[0.07] dark:text-amber-300/[0.06]">
+    <Icon name="shield-check" class="h-48 w-48" strokeWidth={1.2} />
+  </div>
+  {/* Fine amber dot field anchors the watermark in a graphic plane. */}
+  <div aria-hidden="true" class="dot-field inset-y-0 right-0 hidden w-56 opacity-20 sm:block"></div>
+
+  {/* Top light-catching gradient rule */}
+  <div
+    aria-hidden="true"
+    class="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-amber-400/70 to-transparent bg-[length:200%_100%] animate-text-shimmer"
+  ></div>
 
   <div class="relative z-10 flex items-start gap-3">
-    <div class="p-1.5 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5 card-specular">
-      <svg class="w-4 h-4 animate-pulse-soft" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <circle cx="12" cy="12" r="10"></circle>
-        <line x1="12" y1="8" x2="12" y2="12"></line>
-        <line x1="12" y1="16" x2="12.01" y2="16"></line>
-      </svg>
+    <div class="relative shrink-0 mt-0.5">
+      <div class="absolute -inset-1 rounded-xl bg-amber-500/30 blur-md" aria-hidden="true"></div>
+      <div class="relative grid h-9 w-9 place-items-center rounded-xl border border-white/35 bg-gradient-to-br from-amber-300 via-amber-400 to-amber-600 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.55),0_4px_0_-1px_rgba(180,83,9,0.45),0_8px_16px_-6px_rgba(245,158,11,0.7)]">
+        <Icon name="shield-check" class="h-4 w-4" />
+      </div>
     </div>
     <div class="space-y-2 flex-1">
       <div class="font-bold text-foreground flex flex-wrap items-center gap-2">
-        <span>General Information Only — Not Personal Advice</span>
-        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/20">
+        <span class="text-sm">General Information Only — Not Personal Advice</span>
+        <span class="sticker-badge inline-flex items-center gap-1 rounded-full border border-amber-500/25 bg-amber-500/15 px-2 py-0.5 text-[10px] font-semibold text-amber-700 shadow-none dark:text-amber-300">
+          <span class="h-1 w-1 rounded-full bg-amber-500" aria-hidden="true"></span>
           ATO {sourceYear} Rates Verified
         </span>
       </div>
@@ -37,23 +53,24 @@ const {
       <p>
         This is not financial, legal, or tax advice. You should always seek independent advice from a licensed Australian Financial Services (AFS) licence holder or registered tax agent before making financial decisions.
       </p>
-      <div class="flex flex-wrap items-center gap-2 pt-1">
+      <div class="flex flex-wrap items-center gap-2 pt-1.5">
         <span class="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/80">Official Portals:</span>
-        <a href="https://www.ato.gov.au" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-[11px] text-primary hover:underline font-medium">
-          ATO.gov.au ↗
-        </a>
-        <span class="text-muted-foreground/30">•</span>
-        <a href="https://moneysmart.gov.au" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-[11px] text-primary hover:underline font-medium">
-          ASIC Moneysmart ↗
-        </a>
-        <span class="text-muted-foreground/30">•</span>
-        <a href="https://www.fairwork.gov.au" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-[11px] text-primary hover:underline font-medium">
-          Fair Work ↗
-        </a>
-        <span class="text-muted-foreground/30">•</span>
-        <a href="https://www.ndh.org.au" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-[11px] text-primary hover:underline font-medium">
-          National Debt Helpline (1800 007 007) ↗
-        </a>
+        {[
+          { href: 'https://www.ato.gov.au', label: 'ATO.gov.au' },
+          { href: 'https://moneysmart.gov.au', label: 'ASIC Moneysmart' },
+          { href: 'https://www.fairwork.gov.au', label: 'Fair Work' },
+          { href: 'https://www.ndh.org.au', label: 'National Debt Helpline (1800 007 007)' },
+        ].map((link) => (
+          <a
+            href={link.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="group inline-flex items-center gap-1 rounded-full border border-amber-500/20 bg-card/60 px-2 py-0.5 text-[11px] font-medium text-primary transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-[0_4px_10px_-6px_oklch(var(--accent-l)_var(--accent-c)_var(--accent-h)/0.6)]"
+          >
+            <span>{link.label}</span>
+            <span class="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" aria-hidden="true">↗</span>
+          </a>
+        ))}
       </div>
     </div>
   </div>

@@ -4,7 +4,7 @@ import { TeenTaxCalculator } from '@/calculators/teen-tax/TeenTaxCalculator';
 import { FirstTaxReturnGuide } from '@/components/teen/FirstTaxReturnGuide';
 import { ModulePrevNext } from '@/components/shared/ModulePrevNext';
 import { PrintShareFAB } from '@/components/shared/PrintShareFAB';
-import { DollarSign, ShieldCheck, FileCheck } from 'lucide-react';
+import { DollarSign, ShieldCheck, FileCheck, HeartPulse } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { SmartImage } from '@/components/ui/SmartImage';
@@ -55,14 +55,14 @@ export function TaxGuide() {
       <FirstTaxReturnGuide />
 
       {/* Highlights Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card variant="glass" className="p-5 space-y-2 hover:border-primary/40 hover:shadow-md">
           <div className="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 w-fit">
             <ShieldCheck className="w-5 h-5" />
           </div>
           <h3 className="font-bold text-foreground">$18,200 Tax-Free</h3>
           <p className="text-xs text-muted-foreground leading-relaxed">
-            The first $18,200 you earn each financial year is completely tax-free for Australian residents.
+            The first $18,200 is 100% tax-free. With LITO, you pay $0 net income tax on earnings up to $22,866!
           </p>
         </Card>
 
@@ -72,7 +72,17 @@ export function TaxGuide() {
           </div>
           <h3 className="font-bold text-foreground">Stage 3 Brackets</h3>
           <p className="text-xs text-muted-foreground leading-relaxed">
-            Australia uses progressive tax steps—you only pay higher tax rates on dollars inside that tier.
+            15% from $18,201 to $45k, 30% to $135k, 37% to $190k, and 45% above. You only pay the higher rate on dollars inside each tier.
+          </p>
+        </Card>
+
+        <Card variant="glass" className="p-5 space-y-2 hover:border-primary/40 hover:shadow-md">
+          <div className="p-2.5 rounded-xl bg-rose-500/10 text-rose-600 dark:text-rose-400 w-fit">
+            <HeartPulse className="w-5 h-5" />
+          </div>
+          <h3 className="font-bold text-foreground">Medicare & Surcharge</h3>
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            2.0% standard levy with full exemption up to $28,011. Earners over $105k without hospital cover pay 1.0%–1.5% MLS.
           </p>
         </Card>
 
@@ -80,9 +90,9 @@ export function TaxGuide() {
           <div className="p-2.5 rounded-xl bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 w-fit">
             <FileCheck className="w-5 h-5" />
           </div>
-          <h3 className="font-bold text-foreground">myTax Returns</h3>
+          <h3 className="font-bold text-foreground">myTax Lodgement</h3>
           <p className="text-xs text-muted-foreground leading-relaxed">
-            Lodge online between July 1 and October 31 via myGov to claim work deductions & tax refunds!
+            Lodge free online between July 1 and October 31 via myGov to claim work deductions & get your tax refund!
           </p>
         </Card>
       </div>

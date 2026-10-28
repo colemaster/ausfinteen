@@ -1,7 +1,8 @@
 /**
  * Emergency Fund Runway, HISA vs Offset Arbitrage, & Stress Testing Engine
  * Implements pre-tax yield arbitrage, JobSeeker LAWP waiting period, APRA +300 bps shocks,
- * and 100-point 5-pillar Financial Health & Fragility Score.
+ * interest rate shocks (+2% to +4%), cost of living buffers, 1-3-6 month runway tiers,
+ * Comprehensive Credit Reporting (CCR) 5-year default risk, and 100-point 5-pillar Financial Health Score.
  */
 
 import { getCombinedMarginalRate } from '../../data/tax-brackets';
@@ -41,6 +42,50 @@ export interface FinancialHealthScoreBreakdown {
   rating: 'Invincible' | 'Resilient' | 'Moderate' | 'Vulnerable' | 'Critical';
 }
 
+export type RunwayTier = 'critical_under_1m' | 'vulnerable_1_to_3m' | 'moderate_3_to_6m' | 'resilient_6m_plus';
+
+export interface RunwayTierInfo {
+  tier: RunwayTier;
+  label: string;
+  badgeVariant: 'danger' | 'warning' | 'info' | 'success';
+  description: string;
+  isSafe: boolean;
+  target1MonthSavings: number;
+  target3MonthSavings: number;
+  target6MonthSavings: number;
+  gapTo3Months: number;
+  gapTo6Months: number;
+}
+
+export interface RateShockSpectrumItem {
+  rateRisePct: number; // 2, 3, 4
+  rateRiseBps: number; // 200, 300, 400
+  effectiveRatePct: number;
+  extraMonthlyInterest: number;
+  monthlySurplus: number;
+  survivingMonths: number;
+  isFatal: boolean;
+  notes: string;
+}
+
+export interface CostOfLivingBufferItem {
+  inflationPct: number; // 5, 10, 15
+  extraMonthlyCost: number;
+  monthlySurplus: number;
+  survivingMonths: number;
+  notes: string;
+}
+
+export interface CcrDefaultRiskInfo {
+  isAtRisk: boolean;
+  riskLevel: 'critical' | 'high' | 'moderate' | 'low';
+  rhiMonths: number;           // 24 months
+  defaultListingYears: number; // 5 years
+  warningTitle: string;
+  warningDetails: string;
+  reliefSteps: string[];
+}
+
 export interface StressTestResult {
   emergencyRunwayMonths: number;
   bareBonesRunwayMonths: number; // If discretionary spending cut to $0
@@ -55,6 +100,14 @@ export interface StressTestResult {
     largeEmergencyExpenseScenario: StressScenarioImpact;
   };
   healthScore: FinancialHealthScoreBreakdown;
+  runwayBenchmark: RunwayTierInfo;
+  rateShocks: {
+    plus200bps: RateShockSpectrumItem;
+    plus300bps: RateShockSpectrumItem;
+    plus400bps: RateShockSpectrumItem;
+  };
+  costOfLivingBuffers: CostOfLivingBufferItem[];
+  ccrCreditRisk: CcrDefaultRiskInfo;
 }
 
 /**
@@ -86,19 +139,6 @@ export interface ReverseStressResult {
  * Reverse stress test: find the maximum interest rate rise the borrower can
  * survive, given monthly income and expenses (excluding the mortgage
  * repayment, which is computed for each candidate rate).
- *
- * @param monthlyIncome - Monthly after-tax income (AUD)
- * @param monthlyExpenses - Monthly expenses excluding mortgage repayment (AUD)
- * @param loan - Outstanding mortgage balance (AUD)
- * @param currentRate - Current annual rate as a percentage (e.g. 6.2)
- * @param loanTermYears - Remaining loan term in years (default 30)
- * @param bufferPct - Additional buffer on the repayment (e.g. 3 for +3%)
- * @param ceilingPct - Search ceiling above currentRate in percentage points (default 20)
- *
- * Assumptions:
- * - P&I repayments, monthly compounding, rate held at each candidate level.
- * - Borrower survives a rate if income ≥ expenses + repayment × (1 + buffer).
- * - Binary search over [currentRate, currentRate + ceilingPct].
  */
 export function maxSurvivableRate(
   monthlyIncome: number,
@@ -169,7 +209,7 @@ export interface CumulativeScenarioInput {
   mortgageOffsetBalance: number;
   currentMortgageInterestRate: number;  // decimal (e.g. 0.062)
   liquidCashSavings: number;
-  /** Interest rate rise in percentage points (e.g. 2 for +2%). */
+  /** Interest rate rise in percentage points (e.g. 2 for +2%, 4 for +4%). */
   rateRisePct: number;
   /** Months of total job loss applied to the scenario (0 = no job loss). */
   jobLossMonths: number;
@@ -193,14 +233,6 @@ export interface CumulativeScenarioResult {
 /**
  * Apply cumulative scenario presets (rate rise + job loss + expense shock +
  * repayment buffer) to a borrower's monthly cashflow.
- *
- * Assumptions:
- * - `monthlyEssentialExpenses` already includes the current mortgage
- *   repayment (consistent with runFinancialStressTest), so a rate rise only
- *   adds the incremental interest on the rate rise and the optional buffer —
- *   it does not re-price the full repayment.
- * - During job-loss months income is $0; runway = liquid funds ÷ monthly burn.
- * - Offset balance fully offsets interest for the incremental calculation.
  */
 export function applyCumulativeScenarios(input: CumulativeScenarioInput): CumulativeScenarioResult {
   const effectiveRate = input.currentMortgageInterestRate + input.rateRisePct / 100;
@@ -257,7 +289,8 @@ export function applyCumulativeScenarios(input: CumulativeScenarioInput): Cumula
 }
 
 /**
- * Run full emergency fund stress test and financial fragility evaluation.
+ * Run full emergency fund stress test, interest rate shock spectrum (+2% to +4%),
+ * cost of living buffers, 1-3-6 month runway benchmarks, and CCR default risk evaluation.
  */
 export function runFinancialStressTest(params: StressTestParams): StressTestResult {
   const {
@@ -277,6 +310,7 @@ export function runFinancialStressTest(params: StressTestParams): StressTestResu
   } = params;
 
   const totalLiquid = liquidCashSavings + mortgageOffsetBalance;
+  const netDebt = Math.max(0, mortgageDebtBalance - mortgageOffsetBalance);
   const totalMonthlyExpenses = monthlyEssentialExpenses + monthlyDiscretionaryExpenses;
   const monthlySavings = Math.max(0, monthlyNetIncome - totalMonthlyExpenses);
   const savingsRate = monthlyNetIncome > 0 ? monthlySavings / monthlyNetIncome : 0;
@@ -289,22 +323,152 @@ export function runFinancialStressTest(params: StressTestParams): StressTestResu
     ? totalLiquid / monthlyEssentialExpenses
     : 99;
 
-  // 2. HISA vs Offset Pre-tax Yield Arbitrage
+  // 2. 1-3-6 Month Runway Benchmarks
+  const target1MonthSavings = Math.round(totalMonthlyExpenses);
+  const target3MonthSavings = Math.round(totalMonthlyExpenses * 3);
+  const target6MonthSavings = Math.round(totalMonthlyExpenses * 6);
+  const gapTo3Months = Math.max(0, target3MonthSavings - totalLiquid);
+  const gapTo6Months = Math.max(0, target6MonthSavings - totalLiquid);
+
+  let runwayTier: RunwayTier = 'moderate_3_to_6m';
+  let runwayLabel = 'MODERATE: 3-6 Months Emergency Buffer';
+  let runwayBadgeVariant: 'danger' | 'warning' | 'info' | 'success' = 'info';
+  let runwayDesc = 'Sufficient to cover typical job search and JobSeeker LAWP waiting period.';
+  let isRunwaySafe = true;
+
+  if (emergencyRunwayMonths < 1.0) {
+    runwayTier = 'critical_under_1m';
+    runwayLabel = 'CRITICAL: Sub-1 Month Runway (Imminent Default Hazard)';
+    runwayBadgeVariant = 'danger';
+    runwayDesc = 'High risk of 30-day and 60-day arrears. Single missed paycheck risks formal CCR default notice.';
+    isRunwaySafe = false;
+  } else if (emergencyRunwayMonths < 3.0) {
+    runwayTier = 'vulnerable_1_to_3m';
+    runwayLabel = 'VULNERABLE: 1-3 Months Runway (Sub-LAWP Buffer)';
+    runwayBadgeVariant = 'warning';
+    runwayDesc = 'Below Centrelink LAWP 13-week threshold. Any sustained income shock depletes cash reserves.';
+    isRunwaySafe = false;
+  } else if (emergencyRunwayMonths >= 6.0) {
+    runwayTier = 'resilient_6m_plus';
+    runwayLabel = 'RESILIENT: 6+ Months Gold Standard Buffer';
+    runwayBadgeVariant = 'success';
+    runwayDesc = 'Excellent resilience. Easily absorbs prolonged unemployment, medical leave, or severe rate hikes.';
+    isRunwaySafe = true;
+  }
+
+  const runwayBenchmark: RunwayTierInfo = {
+    tier: runwayTier,
+    label: runwayLabel,
+    badgeVariant: runwayBadgeVariant,
+    description: runwayDesc,
+    isSafe: isRunwaySafe,
+    target1MonthSavings,
+    target3MonthSavings,
+    target6MonthSavings,
+    gapTo3Months,
+    gapTo6Months,
+  };
+
+  // 3. HISA vs Offset Pre-tax Yield Arbitrage
   const combinedMTR = getCombinedMarginalRate(grossAnnualIncome);
   const preTaxEquivalentOffsetYield = currentMortgageInterestRate / Math.max(0.01, 1 - combinedMTR);
   const hisaNetReturnAfterTax = hisaInterestRate * (1 - combinedMTR);
   const netRateDifference = currentMortgageInterestRate - hisaNetReturnAfterTax;
   const offsetArbitrageAdvantagePerYear = Math.round(liquidCashSavings * netRateDifference);
 
-  // 3. Centrelink JobSeeker LAWP
+  // 4. Centrelink JobSeeker LAWP
   const jobSeekerLAWPWeeks = calcJobSeekerLAWP(
     totalLiquid,
     relationshipStatus === 'single',
     dependentsCount > 0
   );
 
-  // 4. Stress Scenarios
-  // A. Job Loss (0% income, living on essential expenses only)
+  // 5. Interest Rate Shock Spectrum (+2% to +4%)
+  const calcRateShock = (rateRisePct: number): RateShockSpectrumItem => {
+    const extraMonthly = Math.max(0, (netDebt * (rateRisePct / 100)) / 12);
+    const surplus = monthlyNetIncome - totalMonthlyExpenses - extraMonthly;
+    const surviving = surplus >= 0 ? 99 : Math.round((totalLiquid / Math.abs(surplus)) * 10) / 10;
+    const isFatal = surplus < 0 && totalLiquid < Math.abs(surplus) * 6;
+    const effectiveRate = (currentMortgageInterestRate * 100) + rateRisePct;
+
+    return {
+      rateRisePct,
+      rateRiseBps: rateRisePct * 100,
+      effectiveRatePct: Math.round(effectiveRate * 10) / 10,
+      extraMonthlyInterest: Math.round(extraMonthly),
+      monthlySurplus: Math.round(surplus),
+      survivingMonths: surviving,
+      isFatal,
+      notes: surplus >= 0
+        ? `Survives +${rateRisePct}% hike with +$${Math.round(surplus)}/mo positive cashflow remaining.`
+        : `Deficit of -$${Math.round(Math.abs(surplus))}/mo at ${effectiveRate.toFixed(1)}%. Liquid reserves last ${surviving} months.`,
+    };
+  };
+
+  const rateShocks = {
+    plus200bps: calcRateShock(2),
+    plus300bps: calcRateShock(3),
+    plus400bps: calcRateShock(4),
+  };
+
+  // 6. Cost of Living Buffers (+5%, +10%, +15%)
+  const costOfLivingBuffers: CostOfLivingBufferItem[] = [5, 10, 15].map(pct => {
+    const extraMonthlyCost = Math.round(monthlyEssentialExpenses * (pct / 100));
+    const surplus = monthlyNetIncome - (totalMonthlyExpenses + extraMonthlyCost);
+    const surviving = surplus >= 0 ? 99 : Math.round((totalLiquid / Math.abs(surplus)) * 10) / 10;
+
+    return {
+      inflationPct: pct,
+      extraMonthlyCost,
+      monthlySurplus: Math.round(surplus),
+      survivingMonths: surviving,
+      notes: surplus >= 0
+        ? `Budget absorbs +${pct}% ($+${extraMonthlyCost}/mo) living cost inflation while staying in surplus.`
+        : `Causes -$${Math.round(Math.abs(surplus))}/mo deficit. Bare-bones discretionary trimming required.`,
+    };
+  });
+
+  // 7. Comprehensive Credit Reporting (CCR) 5-Year Default Risk
+  let ccrAtRisk = false;
+  let ccrRiskLevel: 'critical' | 'high' | 'moderate' | 'low' = 'low';
+  let ccrWarningTitle = 'Low Credit Default Risk';
+  let ccrWarningDetails = 'Emergency reserves exceed 3 months, insulating your mortgage from 60-day default notices and protecting your 5-year credit file.';
+
+  if (emergencyRunwayMonths < 1.0 || (bareBonesRunwayMonths < 2.0 && monthlyNetIncome < totalMonthlyExpenses)) {
+    ccrAtRisk = true;
+    ccrRiskLevel = 'critical';
+    ccrWarningTitle = 'CRITICAL 5-YEAR CCR MORTGAGE DEFAULT RISK';
+    ccrWarningDetails =
+      'Cash runway is under 1-2 months. Under the National Credit Code, missing loan repayments for 60+ days allows the lender to issue a Section 88 Default Notice. Unremedied defaults are lodged with Equifax, Experian & illion for 5 FULL YEARS, destroying borrowing capacity and risking forced mortgagee repossession.';
+  } else if (emergencyRunwayMonths < 3.0) {
+    ccrAtRisk = true;
+    ccrRiskLevel = 'high';
+    ccrWarningTitle = 'HIGH VULNERABILITY: 24-MONTH RHI CREDIT SCORE RISK';
+    ccrWarningDetails =
+      'Reserves last under 3 months. Any sudden medical, car, or job shock risks missed payments, which are permanently logged on your credit report as Repayment History Information (RHI) for 24 months.';
+  } else if (rateShocks.plus300bps.isFatal) {
+    ccrRiskLevel = 'moderate';
+    ccrWarningTitle = 'MODERATE VULNERABILITY UNDER APRA +300 BPS HIKE';
+    ccrWarningDetails =
+      'Current cashflow is safe, but an APRA +300 bps interest rate hike would plunge your mortgage into a cash deficit that exhausts liquid reserves within 6 months.';
+  }
+
+  const ccrCreditRisk: CcrDefaultRiskInfo = {
+    isAtRisk: ccrAtRisk,
+    riskLevel: ccrRiskLevel,
+    rhiMonths: 24,
+    defaultListingYears: 5,
+    warningTitle: ccrWarningTitle,
+    warningDetails: ccrWarningDetails,
+    reliefSteps: [
+      'Contact Bank Hardship Team (Banking Code of Practice / NCCP s72): Request temporary 3-6 month repayment moratorium, interest-only switch, or loan term extension to 30 years.',
+      '100% Mortgage Offset Arbitrage: Shift liquid cash into your mortgage offset account to instantly eliminate non-deductible interest tax-free.',
+      'Emergency Discretionary Expense Freeze: Immediately cut dining out and non-essential subscriptions to extend runway to bare-bones survival timeline.',
+      'National Debt Helpline (1800 007 007): Consult free, confidential financial counsellors to negotiate with lenders before any default notice is served.',
+    ],
+  };
+
+  // 8. Legacy Stress Scenarios (Maintained for full backward compatibility)
   const jobLossSurplus = -monthlyEssentialExpenses;
   const jobLossMonths = monthlyEssentialExpenses > 0 ? totalLiquid / monthlyEssentialExpenses : 99;
   const jobLossScenario: StressScenarioImpact = {
@@ -317,21 +481,14 @@ export function runFinancialStressTest(params: StressTestParams): StressTestResu
       : `Liquid funds last ${Math.round(jobLossMonths)} months under bare-bones spending.`,
   };
 
-  // B. APRA +300 bps (+3.0%) Interest Rate Shock
-  const extraAnnualInterest = (mortgageDebtBalance - mortgageOffsetBalance) * 0.03;
-  const extraMonthlyInterest = Math.max(0, extraAnnualInterest / 12);
-  const rateShockNetCashflow = monthlyNetIncome - totalMonthlyExpenses - extraMonthlyInterest;
-  const rateShockScenario: StressScenarioImpact = {
+  const apraRateShockPlus300bps: StressScenarioImpact = {
     scenarioName: 'APRA +300 bps Interest Rate Hike',
-    monthlyDeficitOrSurplus: Math.round(rateShockNetCashflow),
-    survivingMonths: rateShockNetCashflow >= 0 ? 99 : Math.round(totalLiquid / Math.abs(rateShockNetCashflow)),
-    isFatal: rateShockNetCashflow < 0 && totalLiquid < Math.abs(rateShockNetCashflow) * 6,
-    notes: rateShockNetCashflow >= 0
-      ? 'Monthly cashflow remains positive despite +$300bps rate hike.'
-      : `Deficit of $${Math.round(Math.abs(rateShockNetCashflow))}/mo caused by rate rise.`,
+    monthlyDeficitOrSurplus: rateShocks.plus300bps.monthlySurplus,
+    survivingMonths: rateShocks.plus300bps.survivingMonths,
+    isFatal: rateShocks.plus300bps.isFatal,
+    notes: rateShocks.plus300bps.notes,
   };
 
-  // C. Inflation Shock (+10% on essential living expenses)
   const extraMonthlyInflation = monthlyEssentialExpenses * 0.10;
   const inflationSurplus = monthlyNetIncome - (totalMonthlyExpenses + extraMonthlyInflation);
   const inflationSurvivingMonths = inflationSurplus >= 0 ? 99 : Math.round(totalLiquid / Math.abs(inflationSurplus));
@@ -345,7 +502,6 @@ export function runFinancialStressTest(params: StressTestParams): StressTestResu
       : 'Requires trimming discretionary spending to maintain savings.',
   };
 
-  // D. Large Unplanned Emergency Expense ($10,000 car/medical shock)
   const emergencyAmount = 10000;
   const remainingAfterShock = totalLiquid - emergencyAmount;
   const largeEmergencyExpenseScenario: StressScenarioImpact = {
@@ -358,7 +514,7 @@ export function runFinancialStressTest(params: StressTestParams): StressTestResu
       : 'Insufficient cash reserves to fund a $10,000 emergency expense without debt!',
   };
 
-  // 5. 100-Point 5-Pillar Score
+  // 9. 100-Point 5-Pillar Score
   let runwayScore = 0;
   if (bareBonesRunwayMonths >= 12) runwayScore = 25;
   else if (bareBonesRunwayMonths >= 6) runwayScore = 20;
@@ -380,7 +536,7 @@ export function runFinancialStressTest(params: StressTestParams): StressTestResu
   else if (savingsRate >= 0.10) savingsRateScore = 10;
   else if (savingsRate > 0) savingsRateScore = 5;
 
-  let rateShockScore = rateShockNetCashflow >= 0 ? 15 : (totalLiquid >= Math.abs(rateShockNetCashflow) * 12 ? 10 : 2);
+  let rateShockScore = rateShocks.plus300bps.monthlySurplus >= 0 ? 15 : (totalLiquid >= Math.abs(rateShocks.plus300bps.monthlySurplus) * 12 ? 10 : 2);
 
   let safetyNetScore = 0;
   if (hasPrivateHospitalCover) safetyNetScore += 7;
@@ -404,7 +560,7 @@ export function runFinancialStressTest(params: StressTestParams): StressTestResu
     jobSeekerLAWPWeeks,
     scenarios: {
       jobLossScenario,
-      apraRateShockPlus300bps: rateShockScenario,
+      apraRateShockPlus300bps,
       inflationSurgeScenario,
       largeEmergencyExpenseScenario,
     },
@@ -417,5 +573,9 @@ export function runFinancialStressTest(params: StressTestParams): StressTestResu
       totalScore,
       rating,
     },
+    runwayBenchmark,
+    rateShocks,
+    costOfLivingBuffers,
+    ccrCreditRisk,
   };
 }

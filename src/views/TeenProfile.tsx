@@ -7,9 +7,10 @@ import { FinancialHealthScore } from '@/components/ui/FinancialHealthScore';
 import { PaycheckSplitterWidget } from '@/components/teen-profile/PaycheckSplitterWidget';
 import { ProfileSummaryCard } from '@/components/teen-profile/ProfileSummaryCard';
 import { FifteenYearOldRoadmap } from '@/components/teen/FifteenYearOldRoadmap';
+import { AgeBlueprintSection } from '@/components/teen/AgeBlueprintSection';
 import { PrintShareFAB } from '@/components/shared/PrintShareFAB';
 import { SpotlightCard } from '@/components/ui/SpotlightCard';
-import { AGE_PRESETS } from '@/data/teen-finance-data';
+import { AGE_PRESETS, SUPPORTED_PRESET_AGES } from '@/data/teen-age-presets';
 import { usePageTitle } from '@/hooks/usePageTitle';
 import { User, Briefcase, Target, RefreshCw, Zap, MapPin, ArrowRight, Compass } from 'lucide-react';
 import { Link } from '@/lib/router';
@@ -67,8 +68,8 @@ export function TeenProfile() {
             <Zap className="w-4 h-4 text-amber-500" />
             Quick Age Presets (One-Click Setup):
           </span>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-            {[15, 16, 17, 18].map(age => {
+          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2.5">
+            {SUPPORTED_PRESET_AGES.map(age => {
               const preset = AGE_PRESETS[age];
               const isSelected = profile.age === age;
               return (
@@ -162,8 +163,8 @@ export function TeenProfile() {
 
             <div>
               <label className="text-xs font-semibold text-muted-foreground block mb-2">Select Your Age</label>
-              <div className="grid grid-cols-4 gap-2">
-                {[15, 16, 17, 18].map(a => (
+              <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-7 gap-2">
+                {SUPPORTED_PRESET_AGES.map(a => (
                   <button
                     key={a}
                     type="button"
@@ -292,8 +293,11 @@ export function TeenProfile() {
         />
       </div>
 
+      {/* Age-Tailored Financial Blueprint (Ages 14–20) */}
+      <AgeBlueprintSection age={profile.age} />
+
       {/* 15-Year-Old Australian Independence Roadmap */}
-      <FifteenYearOldRoadmap />
+      {profile.age === 15 && <FifteenYearOldRoadmap />}
 
       {/* Personalised Next Steps — guides the teen to their next module */}
       <section className="p-6 sm:p-8 rounded-3xl bg-card border border-border space-y-5" aria-labelledby="next-steps-heading">
@@ -344,7 +348,10 @@ export function TeenProfile() {
 
 function getRecommendedModules(age: number) {
   const byId = (id: string) => NAV_MODULES.find(m => m.id === id)!;
-  if (age < 16) {
+  if (age <= 14) {
+    return [byId('money-and-you'), byId('teen-budgeting'), byId('spending-saving'), byId('careers-employment')];
+  }
+  if (age <= 15) {
     return [byId('money-and-you'), byId('careers-employment'), byId('teen-budgeting'), byId('brisbane-qld')];
   }
   if (age < 18) {

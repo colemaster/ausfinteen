@@ -118,6 +118,7 @@ export interface HouseParams {
   state: AustralianState;
   firstHomeBuyer: boolean;
   isNewHome: boolean;
+  firstHomeGuarantee?: boolean;  // Federal Home Guarantee Scheme (FHBG): 5% deposit with no LMI
   rate: number;       // annual rate %
   loanTerm: number;   // years
 }
@@ -147,6 +148,7 @@ export interface AffordabilityResult {
   affordableWithDeposit: boolean;
   stampDuty: StampDutyResult;
   lmi: number;
+  lmiSavedByFHBG?: number;
   totalUpfrontCost: number;
   monthlyRepayment: number;
   affordabilityRatio: number;   // annual P&I / combined income
@@ -167,6 +169,7 @@ export function calculateAffordability(params: HouseParams): AffordabilityResult
     state,
     firstHomeBuyer,
     isNewHome,
+    firstHomeGuarantee = false,
     rate,
     loanTerm,
   } = params;
@@ -186,8 +189,10 @@ export function calculateAffordability(params: HouseParams): AffordabilityResult
   // Stamp duty + FHOG
   const stampDuty = calculateStampDuty(propertyPrice, state, firstHomeBuyer, isNewHome);
 
-  // LMI
-  const lmi = estimateLMI(loanAmount, propertyPrice);
+  // LMI (waived under Federal First Home Guarantee Scheme)
+  const rawLmi = estimateLMI(loanAmount, propertyPrice);
+  const lmiSavedByFHBG = firstHomeBuyer && firstHomeGuarantee && lvr > 80 ? Math.round(rawLmi) : 0;
+  const lmi = lmiSavedByFHBG > 0 ? 0 : rawLmi;
 
   const totalUpfrontCost = deposit + stampDuty.dutyPayable + lmi;
 
@@ -235,6 +240,7 @@ export function calculateAffordability(params: HouseParams): AffordabilityResult
     affordableWithDeposit: loanAmount <= borrowingCapacity,
     stampDuty,
     lmi: Math.round(lmi),
+    lmiSavedByFHBG,
     totalUpfrontCost: Math.round(totalUpfrontCost),
     monthlyRepayment: Math.round(mPmt),
     affordabilityRatio,

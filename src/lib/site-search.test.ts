@@ -13,7 +13,23 @@ describe('searchSite', () => {
     const topicHits = groups.find(g => g.type === 'topic')?.hits ?? [];
     expect(topicHits.length).toBeGreaterThan(0);
     expect(topicHits[0].route).toMatch(/^\//);
+    expect(topicHits[0].route).toContain('?topic=');
     expect(topicHits[0].topicId).toBeTruthy();
+  });
+
+  it('indexes all 11 modules and topics with deep-link query params', () => {
+    // Check that searching a generic financial term finds modules and topics
+    const { groups } = searchSite('super');
+    const moduleGroup = groups.find(g => g.type === 'module');
+    const topicGroup = groups.find(g => g.type === 'topic');
+    expect(moduleGroup).toBeDefined();
+    expect(topicGroup).toBeDefined();
+
+    for (const hit of topicGroup?.hits ?? []) {
+      expect(hit.route).toContain('?topic=');
+      expect(hit.topicId).toBeDefined();
+      expect(hit.route).toBe(`${hit.route.split('?')[0]}?topic=${hit.topicId}`);
+    }
   });
 
   it('is typo-tolerant (fuzzy match)', () => {

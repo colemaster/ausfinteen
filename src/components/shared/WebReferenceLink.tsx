@@ -1,5 +1,5 @@
 import { ExternalLink, ShieldCheck } from 'lucide-react';
-import type { WebLink } from '@/data/teen-finance-data';
+import type { WebLink } from '@/data/statutory-links';
 import { cn } from '@/lib/utils';
 
 export function WebReferenceLink({ link, className = '' }: { link?: WebLink; className?: string }) {

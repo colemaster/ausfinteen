@@ -4,7 +4,7 @@ import { FirstPaycheckSplitter } from '@/calculators/teen-budget/FirstPaycheckSp
 import { SavingsGoalsPlanner } from '@/components/teen/SavingsGoalsPlanner';
 import { ModulePrevNext } from '@/components/shared/ModulePrevNext';
 import { PrintShareFAB } from '@/components/shared/PrintShareFAB';
-import { Wallet, PieChart, Layers } from 'lucide-react';
+import { Wallet, PieChart, Layers, ShieldCheck } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { SmartImage } from '@/components/ui/SmartImage';
@@ -55,14 +55,14 @@ export function TeenBudgeting() {
       <SavingsGoalsPlanner />
 
       {/* Highlights Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card variant="glass" className="p-5 space-y-2 hover:border-primary/40 hover:shadow-md">
           <div className="p-2.5 rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400 w-fit">
             <PieChart className="w-5 h-5" />
           </div>
-          <h3 className="font-bold text-foreground">Teen 50/30/20 Rule</h3>
+          <h3 className="font-bold text-foreground">Inverted 50/30/20</h3>
           <p className="text-xs text-muted-foreground leading-relaxed">
-            50% Future/Save, 30% Fun/Wants, 20% Needs/Admin. High savings rates at home build wealth fast!
+            50% Future/Save, 30% Fun/Wants, 20% Needs/Admin. Zero rent at home is your superpower!
           </p>
         </Card>
 
@@ -70,9 +70,9 @@ export function TeenBudgeting() {
           <div className="p-2.5 rounded-xl bg-pink-500/10 text-pink-600 dark:text-pink-400 w-fit">
             <Layers className="w-5 h-5" />
           </div>
-          <h3 className="font-bold text-foreground">4-Bucket System</h3>
+          <h3 className="font-bold text-foreground">Barefoot 3 Buckets</h3>
           <p className="text-xs text-muted-foreground leading-relaxed">
-            Every dollar has a job! Spend Account, Save Account, Emergency Account, and Big Goal Account.
+            Blow (60%), Mojo ($500 safety cushion), and Grow (20% for first car or index ETFs at 18).
           </p>
         </Card>
 
@@ -82,7 +82,17 @@ export function TeenBudgeting() {
           </div>
           <h3 className="font-bold text-foreground">Pay Yourself First</h3>
           <p className="text-xs text-muted-foreground leading-relaxed">
-            Automate your savings transfers so money moves to your savings account the minute pay lands!
+            Automate transfers the second pay deposits. Defeat Parkinson&apos;s Law without willpower!
+          </p>
+        </Card>
+
+        <Card variant="glass" className="p-5 space-y-2 hover:border-primary/40 hover:shadow-md">
+          <div className="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 w-fit">
+            <ShieldCheck className="w-5 h-5" />
+          </div>
+          <h3 className="font-bold text-foreground">Sinking Funds & Formals</h3>
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            Smooth out $800–$1,000 milestones (formals, car rego, tech) at $20/wk with zero stress.
           </p>
         </Card>
       </div>

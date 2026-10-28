@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
-import { OFFICIAL_WEB_LINKS } from '@/data/teen-finance-data';
+import { OFFICIAL_WEB_LINKS } from '@/data/statutory-links';
 import { WebReferenceLink } from '@/components/shared/WebReferenceLink';
 import { useUrlParams } from '@/hooks/useUrlParams';
 import { CheckCircle2, ClipboardCheck, ListTodo } from 'lucide-react';
@@ -20,10 +20,11 @@ const FIRST_JOB_CHECKLIST: FirstJobChecklistItem[] = [
   { id: 'medicare', title: 'Claim your own green Medicare card (Age 15+)', detail: 'Submit Services Australia Form MS011 / MS004 for independent doctor visits, confidential medical care, and bulk billing.' },
   { id: 'super', title: 'Choose your super fund & complete NAT 13080', detail: 'Staple your super fund so 12.0% SG lands in one account (compulsory when working >30h/wk under 18; 3% fee cap on <$6k).' },
   { id: 'threshold', title: 'Claim the $22,575 effective tax-free threshold (NAT 3092)', detail: 'Select YES to Question 8 on Form NAT 3092 on day one. Combined with the $700 LITO, you pay $0 tax up to $22,575/year.' },
+  { id: 'fwis', title: 'Receive FWIS & Casual Statements (s 125 & s 125B)', detail: 'Your employer MUST give you the Fair Work Information Statement (+ Casual Employment Information Statement if casual) before or on Day 1.' },
   { id: 'trial', title: 'Know the 1-hour unpaid trial shift limit', detail: 'Unpaid trials are ONLY legal for a brief skills check (1 hour max). Full shifts, customer service, or commercial work MUST be paid.' },
   { id: 'award', title: 'Verify your junior award rate on Fair Work PACT', detail: 'At 15 you earn 40% of adult base ($11.12/hr) + 25% casual loading = $13.90/hr in Fast Food, or 45% ($15.64/hr) in Retail.' },
-  { id: 'min_shift', title: 'Enforce the 3-hour minimum shift rule', detail: 'Under Fast Food and Retail Awards, employers MUST pay at least 3 hours per casual shift even if sent home early.' },
-  { id: 'breaks', title: 'Take your mandatory paid 10-min rest breaks', detail: 'Shifts 4–5 hrs get 1 paid 10-min pause; shifts 5+ hrs get paid pause + 30-min meal break.' },
+  { id: 'min_shift', title: 'Enforce the 3-hour minimum shift rule', detail: 'Fast Food enforces a strict 3-hour minimum with no student concession; Retail allows 1.5h strictly 3:00pm–6:30pm on school days with parent consent.' },
+  { id: 'breaks', title: 'Take your mandatory paid 10-min rest breaks', detail: 'Shifts 4–5 hrs get 1 paid 10-min rest pause; shifts 5+ hrs get paid pause + 30-min unpaid meal break (QLD under-16: 1h after 4h).' },
   { id: 'shifts', title: 'Learn your weekend & public holiday penalty rates', detail: 'Saturday (+25% to +50%), Sunday (+50% to +75%), and public holidays (250%–275% casual) pay higher rates.' },
   { id: 'hours', title: 'Check your rosters & school hours limits', detail: 'Max 12 hours per week during school terms in QLD and VIC; work during school hours is illegal.' },
   { id: 'payslip', title: 'Check your first payslip within 1 working day', detail: 'Gross pay, tax withheld, super and award rate must all appear as legal line items on every payslip.' },

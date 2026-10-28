@@ -150,8 +150,8 @@ export function PayslipAnalyzer() {
       {/* Preset Selector */}
       <div className="space-y-2">
         <label className="text-xs font-semibold text-muted-foreground block">Select Age Persona (One-Click Preset)</label>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-          {[15, 16, 17, 18].map(a => (
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
+          {[14, 15, 16, 17, 18, 19].map(a => (
             <button
               key={a}
               type="button"
@@ -179,7 +179,17 @@ export function PayslipAnalyzer() {
             <label className="text-xs font-semibold text-muted-foreground block mb-1">Modern Award</label>
             <select
               value={selectedAward}
-              onChange={e => setSelectedAward(e.target.value as any)}
+              onChange={e => {
+                const newAward = e.target.value as AwardName;
+                setSelectedAward(newAward);
+                const awardBase = JUNIOR_AWARD_RATES[newAward]?.adultBaseRate;
+                if (awardBase) {
+                  setHourlyRate(awardBase);
+                  const juniorPct = getJuniorRatePct(age, newAward).pct;
+                  const effective = Math.round(awardBase * juniorPct * 100) / 100;
+                  updateProfile({ hourlyRate: effective });
+                }
+              }}
               className="w-full px-3.5 py-2 rounded-xl bg-card border border-border text-xs font-bold text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
             >
               {Object.entries(JUNIOR_AWARD_RATES).map(([key, award]) => (
@@ -188,6 +198,12 @@ export function PayslipAnalyzer() {
                 </option>
               ))}
             </select>
+            {JUNIOR_AWARD_RATES[selectedAward]?.note && (
+              <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground bg-muted/40 p-2.5 rounded-xl border border-border/60">
+                <span className="font-semibold text-foreground">Award Rules: </span>
+                {JUNIOR_AWARD_RATES[selectedAward].note}
+              </p>
+            )}
           </div>
 
           <NumberInput

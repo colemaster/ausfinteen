@@ -49,6 +49,32 @@ describe('Superannuation Drawdown & Age Pension Engine', () => {
     expect(res.fortnightlyAgePension).toBeGreaterThan(700);
   });
 
+  it('exempts younger spouse accumulation super from Centrelink means test', () => {
+    // Couple homeowner with $800k financial assets
+    const withExemptSpouse = calculateAgePension({
+      age: 68,
+      relationshipStatus: 'couple',
+      isHomeowner: true,
+      financialAssets: 800000,
+      otherAssessableAssets: 0,
+      otherFortnightlyIncome: 0,
+      hasYoungerExemptSpouse: true,
+      youngerSpouseSuperBalance: 400000, // $400k in younger spouse accumulation phase
+    });
+
+    const withoutExemptSpouse = calculateAgePension({
+      age: 68,
+      relationshipStatus: 'couple',
+      isHomeowner: true,
+      financialAssets: 800000,
+      otherAssessableAssets: 0,
+      otherFortnightlyIncome: 0,
+      hasYoungerExemptSpouse: false,
+    });
+
+    expect(withExemptSpouse.annualAgePension).toBeGreaterThan(withoutExemptSpouse.annualAgePension);
+  });
+
   it('simulates 30-year retirement drawdown schedule with sustainability checks', () => {
     const sim = simulateRetirementPlan({
       currentAge: 60,
@@ -103,6 +129,73 @@ describe('Superannuation Drawdown & Age Pension Engine', () => {
     expect(sim.lumpSumWithdrawn).toBe(0);
     expect(sim.schedule[0].startingBalance).toBe(800000);
   });
+
+  it('enforces Schedule 7 SISR statutory minimum drawdown percentages across age brackets', () => {
+    // When desired income is $0, actual drawdown equals minimum required drawdown
+    const sim = simulateRetirementPlan({
+      currentAge: 60,
+      retirementAge: 60,
+      superBalanceAtRetirement: 1000000,
+      desiredAnnualIncome: 0,
+      expectedAnnualReturn: 0,
+      inflationRate: 0,
+      relationshipStatus: 'single',
+      isHomeowner: true,
+      otherAssessableAssets: 0,
+      projectionYears: 40, // age 60 to 99
+    });
+
+    const findRow = (age: number) => sim.schedule.find(r => r.age === age)!;
+
+    // Under 65: 4%
+    const row60 = findRow(60);
+    expect(row60.minimumRequiredDrawdown).toBe(Math.round(row60.startingBalance * 0.04));
+
+    // 65 to 74: 5%
+    const row65 = findRow(65);
+    expect(row65.minimumRequiredDrawdown).toBe(Math.round(row65.startingBalance * 0.05));
+
+    // 75 to 79: 6%
+    const row75 = findRow(75);
+    expect(row75.minimumRequiredDrawdown).toBe(Math.round(row75.startingBalance * 0.06));
+
+    // 80 to 84: 7%
+    const row80 = findRow(80);
+    expect(row80.minimumRequiredDrawdown).toBe(Math.round(row80.startingBalance * 0.07));
+
+    // 85 to 89: 9%
+    const row85 = findRow(85);
+    expect(row85.minimumRequiredDrawdown).toBe(Math.round(row85.startingBalance * 0.09));
+
+    // 90 to 94: 11%
+    const row90 = findRow(90);
+    expect(row90.minimumRequiredDrawdown).toBe(Math.round(row90.startingBalance * 0.11));
+
+    // 95+: 14%
+    const row95 = findRow(95);
+    expect(row95.minimumRequiredDrawdown).toBe(Math.round(row95.startingBalance * 0.14));
+  });
+
+  it('applies 0% tax on pension investment earnings (ITAA 1997 s 295-385 ECPI)', () => {
+    const sim = simulateRetirementPlan({
+      currentAge: 60,
+      retirementAge: 65,
+      superBalanceAtRetirement: 1000000,
+      desiredAnnualIncome: 50000,
+      expectedAnnualReturn: 0.10, // 10% gross return
+      inflationRate: 0,
+      relationshipStatus: 'single',
+      isHomeowner: true,
+      otherAssessableAssets: 0,
+      projectionYears: 1,
+    });
+
+    const row = sim.schedule[0];
+    const postDrawdown = row.startingBalance - row.drawdownAmount; // $1,000,000 - $50,000 = $950,000
+    // At 0% tax, investment earnings must equal exactly 10% of post-drawdown balance with 0 tax drag
+    expect(row.investmentEarnings).toBe(Math.round(postDrawdown * 0.10));
+    expect(row.endingBalance).toBe(postDrawdown + row.investmentEarnings);
+  });
 });
 
 describe('transferBalanceCapCheck', () => {
@@ -111,6 +204,19 @@ describe('transferBalanceCapCheck', () => {
     expect(check.overCap).toBe(true);
     expect(check.excess).toBe(400000);
     expect(check.cap).toBe(2100000);
+  });
+
+  it('matches the indexed 2026-27 Transfer Balance Cap ($2.1M) exact threshold', () => {
+    expect(transferBalanceCapCheck(2100000, 65)).toEqual({
+      cap: 2100000,
+      overCap: false,
+      excess: 0,
+    });
+    expect(transferBalanceCapCheck(2100001, 65)).toEqual({
+      cap: 2100000,
+      overCap: true,
+      excess: 1,
+    });
   });
 
   it('returns no excess at or below the cap', () => {
@@ -180,6 +286,19 @@ describe('simulateDrawdownSequence', () => {
     const badReturns = [-0.30, -0.25, -0.20, ...Array(7).fill(0.05)];
     const balances = simulateDrawdownSequence(params, badReturns);
     expect(balances[9]).toBeLessThan(500000);
+  });
+
+  it('demonstrates sequence of returns risk: identical average returns produce different final balances', () => {
+    // Both sequences contain the identical annual return values, hence have the exact same arithmetic average
+    const earlyCrash = [-0.20, -0.15, 0.05, 0.25, 0.30];
+    const lateCrash = [0.30, 0.25, 0.05, -0.15, -0.20];
+
+    const p = { ...params, projectionYears: 5 };
+    const balanceEarlyCrash = simulateDrawdownSequence(p, earlyCrash);
+    const balanceLateCrash = simulateDrawdownSequence(p, lateCrash);
+
+    // Suffering crash early while drawing down living expenses causes severe capital depletion
+    expect(balanceEarlyCrash[4]).toBeLessThan(balanceLateCrash[4]);
   });
 
   it('floor balances at zero after exhaustion', () => {

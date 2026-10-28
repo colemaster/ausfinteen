@@ -5,19 +5,45 @@ interface Props {
 }
 
 const {
-  height = 'h-[3px]',
+  height = 'h-[3.5px]',
   gradient = 'from-primary via-violet-500 to-amber-400',
 } = Astro.props;
 ---
 
+<!-- Quiet rail so the page has a finished top edge even before scrolling. -->
+<div
+  class="fixed top-0 left-0 right-0 z-[59] h-[3.5px] bg-border/20 pointer-events-none"
+  aria-hidden="true"
+></div>
+
 <div
   id="scroll-progress-bar"
-  class={`fixed top-0 left-0 z-50 ${height} bg-gradient-to-r ${gradient} bg-[length:200%_100%] animate-text-shimmer rounded-r-full pointer-events-none shadow-[0_0_12px_oklch(var(--accent-l)_var(--accent-c)_var(--accent-h)/0.6)]`}
+  class={`fixed top-0 left-0 z-[60] ${height} bg-gradient-to-r ${gradient} bg-[length:200%_100%] animate-text-shimmer rounded-r-full pointer-events-none shadow-[0_0_16px_oklch(var(--accent-l)_var(--accent-c)_var(--accent-h)/0.7)]`}
   style="width: 0%"
   aria-hidden="true"
 ></div>
 
 <style>
+  #scroll-progress-bar {
+    will-change: transform, width;
+  }
+
+  /* Comet head: a bright bead that rides the leading edge of the bar. */
+  #scroll-progress-bar::after {
+    content: '';
+    position: absolute;
+    right: -1px;
+    top: 50%;
+    width: 9px;
+    height: 9px;
+    transform: translateY(-50%);
+    border-radius: 999px;
+    background: var(--accent-pop);
+    box-shadow:
+      0 0 0 3px oklch(var(--accent-l) var(--accent-c) var(--accent-h) / 0.18),
+      0 0 14px 2px oklch(var(--accent-l) var(--accent-c) var(--accent-h) / 0.8);
+  }
+
   /* CSS scroll-driven animation (Chrome 115+, Edge 115+, Firefox 135+) */
   @supports (animation-timeline: scroll()) {
     #scroll-progress-bar {

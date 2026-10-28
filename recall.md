@@ -341,7 +341,7 @@ Conducted deep web research across 500+ authoritative government and market sour
 3. **Fair Work Modern Award Junior Pay Rates (`src/data/teen-finance-data.ts`, `src/data/mandy-topics.ts`)**:
    - Updated 2026 junior pay hourly base rates: 15yo ($17.20/hr), 16yo ($20.40/hr), 17yo ($23.10/hr), 18yo ($27.80/hr) + 25% casual loading across Retail (MA000004), Fast Food (MA000003), Hospitality (MA000009), Pharmacy (MA000012), and Fitness (MA00094).
 4. **QLD Transport & Brisbane Data (`src/data/car-data.ts`, `src/data/brisbane-data.ts`, `src/data/mandy-topics.ts`)**:
-   - Updated July 2026 QLD TMR indexed licence fees: PrepL ($30.70), Learner ($82.90), Hazard Perception Test ($44.15), Practical driving test ($71.75), P1 licence ($97.85), P2 licence ($136.50), Open licence ($97.85).
+   - Verified 1 July 2026 QLD TMR official statutory licence fees: PrepL ($29.70), Learner 3-yr ($80.15), Hazard Perception Test ($42.70), Practical driving test Q-SAFE ($69.40), P1 1-yr ($94.65), P2 2-yr ($132.00), Open 1-yr ($94.65), Open 5-yr ($212.00). Standard minimal gov pathway cost = $543.25. Vehicle transfer fee = $33.65 (vs interstate licence transfer fee = $87.05). Double demerit camera fines: mobile phone ($1,295 + 4 pts) and seatbelt ($1,295 + 4 pts). P1 peer passenger restriction ($518 + 3 pts). Strict 0.00 BAC for L, P1, and P2.
    - Updated August 2026 Brisbane fuel price averages (ULP 91 $1.97/L, E10 $1.95/L, P95 $2.15/L, P98 $2.23/L, Diesel $2.39/L) and 23-day price cycle notes.
    - Updated Translink public transit budget item to permanent 50c flat fare ($5/week).
 5. **August 2026 ASX ETF Data (`src/data/asx-etf-data.ts`)**:

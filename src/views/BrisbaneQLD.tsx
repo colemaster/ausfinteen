@@ -15,14 +15,15 @@ import {
   QLD_FIRST_HOME_HELP,
   QLD_TEEN_RULES,
 } from '@/data/brisbane-data';
-import { OFFICIAL_WEB_LINKS } from '@/data/teen-finance-data';
+import { OFFICIAL_WEB_LINKS } from '@/data/statutory-links';
 import { useTeenProfile } from '@/context/TeenProfileContext';
 import { SmartImage } from '@/components/ui/SmartImage';
 import { ModulePrevNext } from '@/components/shared/ModulePrevNext';
 import { PrintShareFAB } from '@/components/shared/PrintShareFAB';
 import { usePageTitle } from '@/hooks/usePageTitle';
+import { Bus, CreditCard, Sparkles, AlertTriangle, ShieldCheck, Coins } from 'lucide-react';
 
-const BNE_TABS = ['unis', 'schools', 'realestate', 'help'] as const;
+const BNE_TABS = ['unis', 'schools', 'transit', 'realestate', 'help'] as const;
 type BneTab = (typeof BNE_TABS)[number];
 
 function readBneTab(searchParams: URLSearchParams): BneTab {
@@ -32,6 +33,7 @@ function readBneTab(searchParams: URLSearchParams): BneTab {
 
 const BRISBANE_WEB_SOURCES = [
   OFFICIAL_WEB_LINKS.translink_50c_fares,
+  OFFICIAL_WEB_LINKS.translink_smart_ticketing,
   OFFICIAL_WEB_LINKS.translink_gocard,
   OFFICIAL_WEB_LINKS.qld_school_based,
   OFFICIAL_WEB_LINKS.uq_study,
@@ -129,6 +131,7 @@ export function BrisbaneQLD() {
           tabs={[
             { id: 'unis', label: '🎓 Brisbane Unis & HECS' },
             { id: 'schools', label: '🏫 Year 12 & Schools' },
+            { id: 'transit', label: '🚌 50¢ TransLink Transit' },
             { id: 'realestate', label: '🏠 Real Estate & Renting' },
             { id: 'help', label: '💰 First-Home Help' },
           ]}
@@ -178,6 +181,169 @@ export function BrisbaneQLD() {
           <QldSchoolsYear12 />
         )}
 
+        {tab === 'transit' && (
+          <Card variant="glass" className="p-6 space-y-6">
+            <div className="flex items-center justify-between border-b border-border pb-3 flex-wrap gap-2">
+              <div className="flex items-center gap-2">
+                <Bus className="w-5 h-5 text-emerald-500" />
+                <h2 className="text-lg font-bold text-foreground">TransLink 50¢ Transit Revolution & Network Guide</h2>
+              </div>
+              <Badge variant="success" className="font-mono text-xs">
+                Permanent Statutory 50¢ Flat Fares
+              </Badge>
+            </div>
+
+            {/* Quick Metrics Bar */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div className="rounded-xl border border-border bg-card p-3.5 text-center">
+                <div className="text-[10px] uppercase tracking-wide text-muted-foreground font-semibold">Flat Fare / Journey</div>
+                <div className="text-2xl font-bold font-mono text-emerald-600 dark:text-emerald-400">$0.50</div>
+                <div className="text-[10px] text-muted-foreground mt-0.5">All 8 SEQ Zones</div>
+              </div>
+              <div className="rounded-xl border border-border bg-card p-3.5 text-center">
+                <div className="text-[10px] uppercase tracking-wide text-muted-foreground font-semibold">Daily Round-Trip</div>
+                <div className="text-2xl font-bold font-mono text-foreground">$1.00</div>
+                <div className="text-[10px] text-muted-foreground mt-0.5">~$240/yr (48 commuter wks)</div>
+              </div>
+              <div className="rounded-xl border border-border bg-card p-3.5 text-center">
+                <div className="text-[10px] uppercase tracking-wide text-muted-foreground font-semibold">Primary Kids Weekends</div>
+                <div className="text-2xl font-bold font-mono text-sky-600 dark:text-sky-400">100% Free</div>
+                <div className="text-[10px] text-muted-foreground mt-0.5">Child Go Card (Sat & Sun)</div>
+              </div>
+              <div className="rounded-xl border border-border bg-card p-3.5 text-center">
+                <div className="text-[10px] uppercase tracking-wide text-muted-foreground font-semibold">Net Annual Savings vs Car</div>
+                <div className="text-2xl font-bold font-mono text-emerald-600 dark:text-emerald-400">$4,000+</div>
+                <div className="text-[10px] text-muted-foreground mt-0.5">~$85–$115/wk cash back</div>
+              </div>
+            </div>
+
+            {/* Core Pillars: Grid of 4 cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Pillar 1: Network Scope */}
+              <div className="rounded-2xl border border-border bg-card/60 p-4 space-y-2.5">
+                <div className="flex items-center gap-2 text-foreground font-bold text-sm">
+                  <ShieldCheck className="w-4 h-4 text-emerald-500" />
+                  <span>1. Permanent Statutory Law & Statewide Scope</span>
+                </div>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Enacted under Queensland transport legislation and state budget frameworks, the <strong>50¢ flat fare</strong> is a permanent statutory policy. A single trip costs 50 cents whether you travel 1 stop in South Bank or 100+ km from Gympie North or Varsity Lakes into Brisbane Central.
+                </p>
+                <div className="text-[11px] bg-background/80 rounded-xl p-2.5 border border-border space-y-1">
+                  <div className="font-semibold text-foreground">Modes & Regions Covered:</div>
+                  <ul className="text-muted-foreground list-disc list-inside space-y-0.5">
+                    <li><strong>South East Queensland:</strong> All buses, QR Citytrain lines, Gold Coast G:link tram, Brisbane CityCats & cross-river ferries, Southern Moreton Bay Islands.</li>
+                    <li><strong>9 Regional City Bus Networks:</strong> Cairns, Townsville, Toowoomba, Mackay, Rockhampton, Bundaberg, Gladstone, and Hervey Bay / Maryborough.</li>
+                    <li><strong>Exclusions:</strong> Privately operated Brisbane Airtrain and QR long-distance Traveltrains.</li>
+                  </ul>
+                </div>
+              </div>
+
+              {/* Pillar 2: Smart Ticketing */}
+              <div className="rounded-2xl border border-border bg-card/60 p-4 space-y-2.5">
+                <div className="flex items-center gap-2 text-foreground font-bold text-sm">
+                  <CreditCard className="w-4 h-4 text-primary" />
+                  <span>2. Smart Ticketing & Contactless Rules</span>
+                </div>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Tap on and tap off at pink validator gates with contactless physical <strong>Visa or Mastercard</strong> debit/credit cards, digital wallets (<strong>Apple Pay, Google Pay, Samsung Pay</strong>), or traditional Go Cards.
+                </p>
+                <div className="text-[11px] bg-background/80 rounded-xl p-2.5 border border-border space-y-1">
+                  <div className="flex items-center gap-1.5 font-semibold text-amber-600 dark:text-amber-400">
+                    <AlertTriangle className="w-3.5 h-3.5" />
+                    <span>Important Smart Ticketing Caveats:</span>
+                  </div>
+                  <ul className="text-muted-foreground list-disc list-inside space-y-0.5">
+                    <li><strong>Amex Discontinued:</strong> American Express was officially discontinued from <strong>15 December 2025</strong> across all TransLink card readers.</li>
+                    <li><strong>Avoid Card Clash:</strong> Separate your card from your phone case/wallet before tapping.</li>
+                    <li><strong>Device Token Matching:</strong> A phone and physical card have different tokens. You must tap ON and tap OFF with the <em>exact same device</em> to prevent two default unfinalised fares.</li>
+                    <li><strong>60-Min Transfer Window:</strong> Free transfers between bus, train, tram, and ferry if initiated within 60 minutes of touching off.</li>
+                  </ul>
+                </div>
+              </div>
+
+              {/* Pillar 3: Concessions & Student Travel */}
+              <div className="rounded-2xl border border-border bg-card/60 p-4 space-y-2.5">
+                <div className="flex items-center gap-2 text-foreground font-bold text-sm">
+                  <Sparkles className="w-4 h-4 text-amber-500" />
+                  <span>3. Concessions & Student Travel Rules</span>
+                </div>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Queensland offers structured travel concessions for children, school students, and university attendees:
+                </p>
+                <div className="text-[11px] bg-background/80 rounded-xl p-2.5 border border-border space-y-1">
+                  <ul className="text-muted-foreground list-disc list-inside space-y-0.5">
+                    <li><strong>Under 5s:</strong> Travel 100% free at all times with an adult (no card needed).</li>
+                    <li><strong>Primary School (5–14):</strong> Travel <strong>100% FREE on weekends</strong> (Sat & Sun year-round) using an orange Child Go Card. <em>Must maintain a positive card balance</em> to open gates. Weekday travel (including school holidays) is standard 50¢.</li>
+                    <li><strong>Secondary Students (15–18):</strong> Pay 50¢ on weekdays and travel free on weekends with approved Child Go Card & student ID.</li>
+                    <li><strong>Tertiary & Uni Students:</strong> Standard flat 50¢ fare across all zones. Simply tap contactless Visa/Mastercard without needing concession paperwork.</li>
+                  </ul>
+                </div>
+              </div>
+
+              {/* Pillar 4: Transit vs Car Economic Comparison */}
+              <div className="rounded-2xl border border-border bg-card/60 p-4 space-y-2.5">
+                <div className="flex items-center gap-2 text-foreground font-bold text-sm">
+                  <Coins className="w-4 h-4 text-emerald-500" />
+                  <span>4. Economic Showdown: 50¢ Transit vs Private Car</span>
+                </div>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Operating a car in South East Queensland consumes a massive portion of a young worker's or student's income:
+                </p>
+                <div className="text-[11px] bg-background/80 rounded-xl p-2.5 border border-border space-y-1">
+                  <div className="grid grid-cols-2 gap-2 text-[11px]">
+                    <div className="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+                      <div className="font-bold text-emerald-600 dark:text-emerald-400">TransLink Commuter</div>
+                      <div className="font-mono text-foreground font-semibold">$1.00 / day</div>
+                      <div className="text-muted-foreground">$5/wk • $240/yr (48 wks)</div>
+                    </div>
+                    <div className="p-2 rounded-lg bg-amber-500/10 border border-amber-500/20">
+                      <div className="font-bold text-amber-600 dark:text-amber-400">Private Car Running</div>
+                      <div className="font-mono text-foreground font-semibold">~$4,880 – $6,380 / yr</div>
+                      <div className="text-muted-foreground">Fuel, Rego+CTP, Ins., Maint. + Parking</div>
+                    </div>
+                  </div>
+                  <div className="font-bold text-foreground text-xs pt-1">
+                    Net Cash Savings: <span className="text-emerald-600 dark:text-emerald-400 font-mono">+$4,640 to $6,140/yr</span> (~$90/wk surplus)!
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Next Gen Corridors & Airport Hack */}
+            <div className="rounded-2xl border border-border bg-background/60 p-4 space-y-3">
+              <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+                <span>🚀 SEQ High-Capacity Corridors & The $1.00 Airport Hack</span>
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+                <div className="p-3 rounded-xl border border-border bg-card space-y-1">
+                  <div className="font-bold text-foreground">Brisbane Metro (M1 & M2)</div>
+                  <p className="text-muted-foreground text-[11px]">
+                    Bi-articulated 100% electric transit arriving every 3–5 min. M1 links Eight Mile Plains to Roma St; M2 links RBWH to UQ Lakes (St Lucia) via Eleanor Schonell Bridge.
+                  </p>
+                </div>
+                <div className="p-3 rounded-xl border border-border bg-card space-y-1">
+                  <div className="font-bold text-foreground">Cross River Rail Under River</div>
+                  <p className="text-muted-foreground text-[11px]">
+                    10.2km rail line with 5.9km twin tunnels and 4 underground stations: Boggo Rd (PA Hospital), Woolloongabba, Albert St (CBD heart), and Roma St interchange.
+                  </p>
+                </div>
+                <div className="p-3 rounded-xl border border-border bg-card space-y-1">
+                  <div className="font-bold text-foreground">The $1.00 Airport Workaround</div>
+                  <p className="text-muted-foreground text-[11px]">
+                    Airtrain is private and costs $20+. Take a 50¢ train or bus to Toombul/Chermside, transfer to TransLink Bus 590 to Skygate (DFO) for 50¢, and hop on the free terminal shuttle ($1.00 total!).
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap gap-2.5">
+              <WebReferenceLink link={OFFICIAL_WEB_LINKS.translink_50c_fares} />
+              <WebReferenceLink link={OFFICIAL_WEB_LINKS.translink_smart_ticketing} />
+              <WebReferenceLink link={OFFICIAL_WEB_LINKS.translink_gocard} />
+            </div>
+          </Card>
+        )}
+
         {tab === 'realestate' && (
           <Card variant="glass" className="p-6 space-y-5">
             <div className="flex items-center gap-2 border-b border-border pb-3">
@@ -186,18 +352,22 @@ export function BrisbaneQLD() {
               <ExternalLink className="w-4 h-4 text-muted-foreground" />
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
               <div className="rounded-xl border border-border bg-card p-4 text-center">
                 <div className="text-[10px] uppercase tracking-wide text-muted-foreground font-semibold">Median House Rent</div>
-                <div className="text-2xl font-bold font-mono text-foreground">$650/wk</div>
+                <div className="text-2xl font-bold font-mono text-foreground">$700/wk</div>
               </div>
               <div className="rounded-xl border border-border bg-card p-4 text-center">
                 <div className="text-[10px] uppercase tracking-wide text-muted-foreground font-semibold">Median Unit Rent</div>
-                <div className="text-2xl font-bold font-mono text-foreground">$570/wk</div>
+                <div className="text-2xl font-bold font-mono text-foreground">$600/wk</div>
               </div>
               <div className="rounded-xl border border-border bg-card p-4 text-center">
                 <div className="text-[10px] uppercase tracking-wide text-muted-foreground font-semibold">Shared Room (5km CBD)</div>
                 <div className="text-2xl font-bold font-mono text-foreground">$286/wk</div>
+              </div>
+              <div className="rounded-xl border border-border bg-card p-4 text-center">
+                <div className="text-[10px] uppercase tracking-wide text-muted-foreground font-semibold">Vacancy Rate (SQM)</div>
+                <div className="text-2xl font-bold font-mono text-amber-600 dark:text-amber-400">0.8%</div>
               </div>
             </div>
 
@@ -206,6 +376,7 @@ export function BrisbaneQLD() {
                 <thead>
                   <tr className="border-b border-border">
                     <th className="py-2 pr-3 font-bold text-foreground">Suburb</th>
+                    <th className="py-2 pr-3 font-bold text-foreground">Ring</th>
                     <th className="py-2 pr-3 font-bold text-foreground">Sharehouse Room</th>
                     <th className="py-2 pr-3 font-bold text-foreground">Unit Median</th>
                     <th className="py-2 pr-3 font-bold text-foreground">Commute</th>
@@ -216,6 +387,7 @@ export function BrisbaneQLD() {
                   {BRISBANE_SUBURBS.map(s => (
                     <tr key={s.suburb} className="border-b border-border/60 last:border-0">
                       <td className="py-2.5 pr-3 font-bold text-foreground whitespace-nowrap">{s.suburb}</td>
+                      <td className="py-2.5 pr-3 text-[11px] text-muted-foreground whitespace-nowrap">{s.ring ?? 'Middle'}</td>
                       <td className="py-2.5 pr-3 font-mono text-muted-foreground whitespace-nowrap">{s.sharedWeekly}</td>
                       <td className="py-2.5 pr-3 font-mono text-muted-foreground whitespace-nowrap">{s.unitWeekly}</td>
                       <td className="py-2.5 pr-3 text-muted-foreground whitespace-nowrap">{s.commute}</td>
@@ -227,9 +399,9 @@ export function BrisbaneQLD() {
             </div>
 
             <p className="text-[11px] text-muted-foreground leading-relaxed">
-              Figures are 2026 medians from CoreLogic, SQM Research and the Student Accommodation Council. Bond is
-              capped at 4 weeks rent and must be lodged with the Residential Tenancies Authority (RTA) within 10 days.
-              Always check real-time listings before applying.
+              Figures are 2026-27 medians from CoreLogic, SQM Research (0.7%–0.9% vacancy rate), and the Student Accommodation Council ($286/wk within 5km).
+              Under Queensland tenancy legislation, rental bonds are strictly capped at a maximum of 4 weeks rent across all properties (lodged with the RTA within 10 days using Form 2),
+              rent increases are limited to once every 12 months attached to the property with mandatory 2 months written notice, and rent bidding is strictly prohibited.
             </p>
 
             <div className="flex flex-wrap gap-2.5">
@@ -291,6 +463,8 @@ export function BrisbaneQLD() {
           </div>
           <div className="flex flex-wrap gap-2.5">
             <WebReferenceLink link={OFFICIAL_WEB_LINKS.qld_rego} />
+            <WebReferenceLink link={OFFICIAL_WEB_LINKS.translink_50c_fares} />
+            <WebReferenceLink link={OFFICIAL_WEB_LINKS.translink_smart_ticketing} />
             <WebReferenceLink link={OFFICIAL_WEB_LINKS.translink_gocard} />
           </div>
         </Card>

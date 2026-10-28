@@ -12,7 +12,11 @@ const {
 
 <a
   href={`#${targetId}`}
-  class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[60] focus:px-4 focus:py-2 focus:rounded-xl focus:bg-primary focus:text-primary-foreground focus:font-bold focus:text-xs focus:animate-pop-in shadow-lg card-specular ring-2 ring-primary/40 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary transition-all duration-150"
+  class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[60] focus:inline-flex focus:items-center focus:gap-2 focus:px-4 focus:py-2.5 focus:rounded-xl focus:bg-gradient-to-br focus:from-primary focus:via-primary focus:to-violet-500 focus:text-primary-foreground focus:font-bold focus:text-xs focus:animate-pop-in focus:shadow-[inset_0_1px_0_rgba(255,255,255,0.4),0_6px_0_-1px_oklch(var(--accent-l)_var(--accent-c)_var(--accent-h)/0.35),0_14px_28px_-10px_oklch(var(--accent-l)_var(--accent-c)_var(--accent-h)/0.7)] card-specular ring-2 ring-primary/40 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary transition-all duration-150"
 >
+  <span
+    class="grid h-4 w-4 place-items-center rounded-full bg-white/20"
+    aria-hidden="true"
+  >↓</span>
   {label}
 </a>

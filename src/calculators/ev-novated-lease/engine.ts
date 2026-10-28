@@ -1,7 +1,9 @@
 /**
- * Electric Vehicle (EV) Novated Lease vs Cash vs Loan Engine
- * Implements FBTAA s 8A 100% FBT exemption, Fuel-Efficient LCT cap ($91,387),
- * $6,334 max GST credit, ATO PCG 2024/2 electricity rate (4.2c/km), RFBA, and 3-way TCO comparison.
+ * Electric Vehicle (EV) Novated Lease vs Cash vs Loan Engine (FY2026-27 parameters)
+ * Implements FBTAA s 8A 100% FBT exemption for zero-emission vehicles under the
+ * Fuel-Efficient Luxury Car Tax (LCT) limit ($91,387 FY2026-27),
+ * $6,334 max GST credit (1/11th of $69,674 car cost limit),
+ * ATO PCG 2024/2 EV home charging safe harbour rate (4.2c/km), RFBA, and 3-way TCO comparison.
  */
 
 import { getCombinedMarginalRate } from '../../data/tax-brackets';
@@ -14,12 +16,19 @@ export interface EVNovatedLeaseParams {
   leaseInterestRate: number;      // e.g. 0.0825 (8.25%)
   carLoanInterestRate: number;    // e.g. 0.075 (7.5%)
   opportunityCostRate: number;    // e.g. 0.055 (5.5% HISA/Offset return on cash)
-  isElectricVehicle: boolean;     // BEV or eligible PHEV
+  isElectricVehicle: boolean;     // BEV or eligible zero-emission vehicle
   includeHomeChargingSafeHarbour?: boolean;
+  safeHarbourRatePerKm?: number;  // Optional custom rate (e.g. 0.0547 commencing 1 April 2026)
+  customLctLimit?: number;        // Optional LCT limit override (e.g. 91661 for FY27)
+  isPHEV?: boolean;               // Plug-in hybrid electric vehicle
+  phevContractDateBeforeSunset?: boolean; // Whether PHEV was ordered before 1 April 2025 sunset
 }
 
 export interface EVNovatedLeaseResult {
   isFBTExempt: boolean;
+  lctLimit: number;
+  fbtSavedVsNonExempt: number;
+  postTaxContributionECM: number;
   gstSavingOnPurchase: number;
   netFinancedAmount: number;
   residualBalloonAmount: number;
@@ -45,15 +54,20 @@ export interface EVNovatedLeaseResult {
   totalSavingsVsLoan: number;
 }
 
-// ─── Statutory Constants ───────────────────────────────────────────────────────
+// ─── Statutory Constants (FY2026-27) ───────────────────────────────────────────
 export const EV_LEASE_CONSTANTS = {
   fuelEfficientLCTLimit2025: 91387,
-  fuelEfficientLCTLimit2026: 91661,
+  fuelEfficientLCTLimit2026: 91387,
+  fuelEfficientLCTLimit2027: 91661,    // FY2026-27 ATO indexed threshold
+  fuelEfficientLCTLimit: 91387,        // FY2025-26 baseline ($91,387) / FY2026-27 ($91,661)
+  standardVehicleLCTLimit2027: 80809,  // Non-fuel-efficient luxury car threshold
   maxGSTCredit: 6334,                  // 1/11th of $69,674 car cost depreciation cap
-  carCostLimit: 69674,
-  atoSafeHarbourElectricityPerKm: 0.0420, // ATO PCG 2024/2 (4.2 cents / km)
-  fbtStatutoryFormulaRate: 0.20,      // 20% statutory fraction
-  rfbaGrossUpRateType2: 1.8868,        // Type 2 gross-up factor
+  carCostLimit: 69674,                 // Income tax car cost depreciation limit
+  atoSafeHarbourElectricityPerKm: 0.0420, // ATO PCG 2024/2 (4.20 cents / km for FBT years up to 31 March 2026)
+  atoSafeHarbourElectricityPerKm2026: 0.0547, // ATO PCG 2024/2 updated rate (5.47 cents / km commencing 1 April 2026)
+  fbtStatutoryFormulaRate: 0.20,      // 20% statutory fraction (FBTAA s 9)
+  rfbaGrossUpRateType2: 1.8868,        // Type 2 gross-up factor (FBTAA s 135R)
+  phevSunsetDate: '2025-04-01',        // Electric Car Discount Act 2022 PHEV sunset cutoff
   statutoryResiduals: {
     1: 0.6563, // 65.63%
     2: 0.5625, // 56.25%
@@ -89,11 +103,17 @@ export function calculateEVNovatedLease(params: EVNovatedLeaseParams): EVNovated
     opportunityCostRate,
     isElectricVehicle,
     includeHomeChargingSafeHarbour = true,
+    safeHarbourRatePerKm,
+    customLctLimit,
+    isPHEV = false,
+    phevContractDateBeforeSunset = true,
   } = params;
 
-  // 1. Check FBT exemption under FBTAA s 8A
-  const lctLimit = EV_LEASE_CONSTANTS.fuelEfficientLCTLimit2026;
-  const isFBTExempt = isElectricVehicle && vehiclePurchasePrice <= lctLimit;
+  // 1. Check FBT exemption under FBTAA s 8A (FY2026-27 LCT limit: $91,387 or indexed $91,661)
+  // Plug-in hybrid (PHEV) vehicles ceased to be exempt if ordered/committed on or after 1 April 2025.
+  const lctLimit = customLctLimit ?? EV_LEASE_CONSTANTS.fuelEfficientLCTLimit;
+  const phevQualifies = !isPHEV || phevContractDateBeforeSunset;
+  const isFBTExempt = isElectricVehicle && phevQualifies && vehiclePurchasePrice <= lctLimit;
 
   // 2. GST Savings on Purchase Price (capped at $6,334)
   const uncappedGST = vehiclePurchasePrice / 11;
@@ -113,9 +133,10 @@ export function calculateEVNovatedLease(params: EVNovatedLeaseParams): EVNovated
   );
 
   // 5. Annual Running Costs (Electricity/Fuel, Tyres, Insurance, Rego)
+  const safeHarbourRate = safeHarbourRatePerKm ?? EV_LEASE_CONSTANTS.atoSafeHarbourElectricityPerKm;
   const chargingCost = includeHomeChargingSafeHarbour
-    ? annualKilometres * EV_LEASE_CONSTANTS.atoSafeHarbourElectricityPerKm
-    : (annualKilometres / 100) * 16 * 0.28; // ~16 kWh/100km at $0.28/kWh
+    ? annualKilometres * safeHarbourRate
+    : (annualKilometres / 100) * 15 * 0.28; // 15 kWh/100km at $0.28/kWh
 
   const comprehensiveInsurance = 1650;
   const tyresAndMaintenance = 900;
@@ -126,25 +147,39 @@ export function calculateEVNovatedLease(params: EVNovatedLeaseParams): EVNovated
   const totalPreTaxRunningCost = totalGrossRunningCosts - runningCostsGSTSavings;
 
   // 6. Salary Sacrifice & Tax Savings
-  const annualLeaseFinancePreTax = monthlyFinancePayment * 12;
-  const totalAnnualPreTaxSacrifice = annualLeaseFinancePreTax + totalPreTaxRunningCost;
-  const monthlyPreTaxDeduction = totalAnnualPreTaxSacrifice / 12;
-
+  const annualLeaseFinance = monthlyFinancePayment * 12;
+  const totalAnnualPackageCost = annualLeaseFinance + totalPreTaxRunningCost;
   const marginalRate = getCombinedMarginalRate(annualSalary);
-  const annualTaxSavings = totalAnnualPreTaxSacrifice * marginalRate;
-  const netAnnualTakeHomePayReduction = totalAnnualPreTaxSacrifice - annualTaxSavings;
+
+  // Statutory fringe benefit value (20% statutory fraction)
+  const taxableFringeBenefit = vehiclePurchasePrice * EV_LEASE_CONSTANTS.fbtStatutoryFormulaRate;
+
+  let postTaxContributionECM = 0;
+  let preTaxSacrifice = totalAnnualPackageCost;
+
+  if (!isFBTExempt) {
+    // If vehicle exceeds LCT threshold ($91,387) or is not an EV, Employee Contribution Method (ECM)
+    // requires after-tax salary to offset the taxable fringe benefit to $0 FBT.
+    postTaxContributionECM = Math.min(totalAnnualPackageCost, taxableFringeBenefit);
+    preTaxSacrifice = Math.max(0, totalAnnualPackageCost - postTaxContributionECM);
+  }
+
+  const monthlyPreTaxDeduction = preTaxSacrifice / 12;
+  const annualTaxSavings = preTaxSacrifice * marginalRate;
+  const netAnnualTakeHomePayReduction = (preTaxSacrifice - annualTaxSavings) + postTaxContributionECM;
+
+  // Annual tax savings specifically attributable to FBTAA s 8A exemption
+  const fbtSavedVsNonExempt = isFBTExempt ? Math.round(taxableFringeBenefit * marginalRate) : 0;
 
   // 7. RFBA (Reportable Fringe Benefits Amount)
-  // Base value (purchase price) * 20% statutory fraction * 1.8868
-  const baseValue = vehiclePurchasePrice;
-  const taxableFringeBenefit = baseValue * EV_LEASE_CONSTANTS.fbtStatutoryFormulaRate;
+  // Base value (purchase price) * 20% statutory fraction * 1.8868 type 2 gross-up factor
   const reportableFringeBenefitAmount = Math.round(taxableFringeBenefit * EV_LEASE_CONSTANTS.rfbaGrossUpRateType2);
 
   // 8. 5-Year Total Cost of Ownership (TCO) Comparison
   // Novated Lease: Net out-of-pocket cost over term + balloon
   const totalLeaseCost = (netAnnualTakeHomePayReduction * leaseTermYears) + residualBalloonAmount;
 
-  // Outright Cash Purchase: Purchase Price + Gross Running Costs - Foregone investment return
+  // Outright Cash Purchase: Purchase Price + Gross Running Costs + Foregone investment return
   const grossRunningCostsOverTerm = totalGrossRunningCosts * leaseTermYears;
   const cashOpportunityCost = (vehiclePurchasePrice * Math.pow(1 + opportunityCostRate, leaseTermYears)) - vehiclePurchasePrice;
   const totalCashCost = vehiclePurchasePrice + grossRunningCostsOverTerm + cashOpportunityCost;
@@ -156,6 +191,9 @@ export function calculateEVNovatedLease(params: EVNovatedLeaseParams): EVNovated
 
   return {
     isFBTExempt,
+    lctLimit,
+    fbtSavedVsNonExempt,
+    postTaxContributionECM: Math.round(postTaxContributionECM),
     gstSavingOnPurchase: Math.round(gstSavingOnPurchase),
     netFinancedAmount: Math.round(netFinancedAmount),
     residualBalloonAmount,

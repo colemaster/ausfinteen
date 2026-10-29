@@ -2127,3 +2127,31 @@ Conducted a comprehensive primary-source investigation using 20 parallel researc
 - `npm test`: 33 test suites passed, 474 tests passed (100% pass)
 
 
+
+---
+
+## v7.9.0 — SDK, DEPS & CODEBASE REFRESH (29 Oct 2026)
+
+### Summary
+Refreshed all SDKs, libraries, and dependencies to their latest stable releases and bumped the codebase version. Verified clean typecheck, full test suite, and production build.
+
+### Dependency updates
+- `astro` ^7.4.2 → ^7.4.4
+- `@astrojs/react` ^7.1.1 → ^7.1.2
+- `lucide-react` ^1.61.0 → ^1.63.0
+- `react-router-dom` ^7.18.4 → ^7.18.5
+- `oxc-transform-react` ^0.152.0 → ^0.156.0
+- All other dependencies already at latest stable (React 19.3.1, Vite 8.3.5, Tailwind 4.3.3, TypeScript 7.0.2, Vitest 5.0.5, etc.).
+
+### Validation
+- `npm run typecheck`: 0 errors
+- `npm test`: 57 test files, 1010 tests passed
+- `npm run build`: 21 static pages built successfully
+- `npm audit`: 0 vulnerabilities
+
+### Enhancement options identified (not yet implemented)
+- Adopt TypeScript 7.1 beta features once stable (decorators/erasable syntax improvements).
+- Migrate remaining `as any` casts in teen Brisbane views to typed enums.
+- Evaluate React 19.3 `useEffectEvent` for event-handler-heavy calculator components.
+- Consider removing `legacy-peer-deps=true` once upstream peer conflicts resolve.
+- Add a `check` script (typecheck + test + build) for CI parity.

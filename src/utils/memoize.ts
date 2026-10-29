@@ -2,7 +2,7 @@
  * High-performance LRU Memoization utility for client-side financial calculations.
  * Prevents redundant computations when parameters remain identical across re-renders.
  */
-function makeKey(args: any[]): string {
+function makeKey(args: readonly unknown[]): string {
   const len = args.length;
   if (len === 1) {
     const a = args[0];
@@ -17,13 +17,16 @@ function makeKey(args: any[]): string {
   return args.join(';');
 }
 
-export function memoize<T extends (...args: any[]) => any>(fn: T, maxCacheSize = 200): T {
-  const cache = new Map<string, ReturnType<T>>();
+export function memoize<TArgs extends readonly unknown[], TResult>(
+  fn: (...args: TArgs) => TResult,
+  maxCacheSize = 200,
+): (...args: TArgs) => TResult {
+  const cache = new Map<string, TResult>();
 
-  return ((...args: Parameters<T>): ReturnType<T> => {
+  return (...args: TArgs): TResult => {
     const key = makeKey(args);
     if (cache.has(key)) {
-      return cache.get(key)!;
+      return cache.get(key) as TResult;
     }
 
     const result = fn(...args);
@@ -37,5 +40,5 @@ export function memoize<T extends (...args: any[]) => any>(fn: T, maxCacheSize =
 
     cache.set(key, result);
     return result;
-  }) as T;
+  };
 }

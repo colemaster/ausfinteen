@@ -114,7 +114,7 @@ export function BrisbaneBudgetCalculator() {
                       <button
                         key={yr}
                         type="button"
-                        onClick={() => setStudentYear(yr as any)}
+                        onClick={() => setStudentYear(yr as 2026 | 2027)}
                         className={cn(
                           'px-2.5 py-1 rounded-lg font-mono text-[11px] font-bold transition-colors',
                           studentYear === yr ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'

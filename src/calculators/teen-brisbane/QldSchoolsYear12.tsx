@@ -694,7 +694,7 @@ export function QldSchoolsYear12() {
                         <td className="py-2 px-3">
                           <select
                             value={sub.type}
-                            onChange={e => updateSubjectType(sub.id, e.target.value as any)}
+                            onChange={e => updateSubjectType(sub.id, e.target.value as 'General' | 'Applied' | 'VET-Cert-III' | 'Short-Course')}
                             className="px-2 py-1 rounded-lg border border-border bg-background text-[11px] font-semibold text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
                           >
                             <option value="General">General (ATAR scaled)</option>
@@ -719,7 +719,7 @@ export function QldSchoolsYear12() {
                         <td className="py-2 px-3">
                           <select
                             value={sub.grade}
-                            onChange={e => updateSubjectGrade(sub.id, e.target.value as any)}
+                            onChange={e => updateSubjectGrade(sub.id, e.target.value as 'A' | 'B' | 'C' | 'D')}
                             className={cn(
                               'px-2 py-1 rounded-lg border text-[11px] font-bold focus:outline-none',
                               sub.grade === 'A' ? 'border-emerald-500 text-emerald-600 bg-emerald-500/10' :

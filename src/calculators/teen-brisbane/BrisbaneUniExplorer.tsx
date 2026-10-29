@@ -984,7 +984,7 @@ export function BrisbaneUniExplorer() {
                   <label className="text-xs font-semibold text-muted-foreground">Target Queensland Institution:</label>
                   <select
                     value={targetUni}
-                    onChange={e => setTargetUni(e.target.value as any)}
+                    onChange={e => setTargetUni(e.target.value as QldUniversityCode)}
                     className="w-full px-3 py-2 rounded-xl border border-border bg-card text-xs font-bold text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                   >
                     <option value="UQ">University of Queensland (UQ) — Max +5 points</option>

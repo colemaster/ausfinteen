@@ -26,9 +26,11 @@ function isPreference(value: unknown): value is MotionPreference {
 }
 
 export function readStoredPreference(): MotionPreference {
-  if (typeof localStorage === 'undefined') return 'system';
+  // Guard on `window`: on Node 25+ even `typeof localStorage` invokes a global
+  // accessor that emits an ExperimentalWarning during SSR/prerender.
+  if (typeof window === 'undefined') return 'system';
   try {
-    const raw = localStorage.getItem(KEY);
+    const raw = window.localStorage.getItem(KEY);
     return isPreference(raw) ? raw : 'system';
   } catch {
     return 'system';
@@ -65,10 +67,10 @@ export function applyMotionPreference(preference: MotionPreference): boolean {
 }
 
 export function setMotionPreference(preference: MotionPreference): boolean {
-  if (typeof localStorage !== 'undefined') {
+  if (typeof window !== 'undefined') {
     try {
-      if (preference === 'system') localStorage.removeItem(KEY);
-      else localStorage.setItem(KEY, preference);
+      if (preference === 'system') window.localStorage.removeItem(KEY);
+      else window.localStorage.setItem(KEY, preference);
     } catch {
       // Private-mode / storage-denied: the choice simply will not persist.
     }

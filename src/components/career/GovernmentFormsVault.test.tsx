@@ -106,7 +106,7 @@ describe('FifteenYearOldRoadmap Component', () => {
     expect(screen.getByText('Open a Zero-Fee 5.0%+ Youth Bank Account')).toBeDefined();
     expect(screen.getByText('Claim Your Own Green Medicare Card')).toBeDefined();
     expect(screen.getByText('Land Your First Casual Job & Master Junior Pay')).toBeDefined();
-    expect(screen.getByText('Claim the $22,575 Effective Tax-Free Threshold')).toBeDefined();
+    expect(screen.getByText('Claim the $22,866 Effective Tax-Free Threshold')).toBeDefined();
     expect(screen.getByText('Automate Barefoot 3-Buckets ($500 Mojo Buffer)')).toBeDefined();
     expect(screen.getByText('Study PrepL / DKT for Your Ls at 16')).toBeDefined();
     expect(screen.getByText('Unlock Student Concessions & Scam Protection')).toBeDefined();

@@ -70,7 +70,7 @@ npm run build
 npm run preview
 ```
 
-**Requirements:** Node 20+
+**Requirements:** Node 26+ (LTS, see `.nvmrc`)
 
 ---
 

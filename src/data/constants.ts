@@ -1,6 +1,6 @@
 /**
- * Australian financial constants for 2026-27.
- * Sources: ATO, ASIC MoneySmart, StudyAssist, Fair Work, QCAA, QTAC.
+ * Australian financial constants for 2026-27 (verified as at 6 November 2026).
+ * Sources: ATO, ASIC MoneySmart, StudyAssist, Fair Work, QCAA, QTAC, RBA, OIR QLD.
  */
 
 // ─── HELP / HECS Repayment Thresholds 2026-27 ────────────────────────────────
@@ -331,10 +331,10 @@ export const YOUTH_ALLOWANCE_CONSTANTS_2026_27 = {
 // ─── Macroeconomic & Investment Benchmarks ────────────────────────────────────
 // Sources: Reserve Bank of Australia (RBA), ASX Long-Term Investing Report, Treasury
 
-/** Current RBA cash rate target: 4.35% p.a. (held at Aug/Sept 2026 board meetings) */
+/** Current RBA cash rate target: 4.35% p.a. (held at Aug/Sept/3 Nov 2026 Melbourne Cup Day board meetings) */
 export const RBA_CASH_RATE_TARGET = 0.0435;
 
-/** RBA cash rate target, 4.35% p.a. (raised Feb/Mar/May 2026 after 3.60% low in Aug 2025) */
+/** RBA cash rate target, 4.35% p.a. (verified 6 November 2026; alias preserved for backward compatibility) */
 export const RBA_CASH_RATE_SEPT_2026 = 0.0435;
 
 /** RBA monetary policy parameters and cash rate expectations */

@@ -101,7 +101,7 @@ export const STATUTORY_LINKS: Record<string, WebLink> = {
     "title": "ATO: Low Income Tax Offset (LITO Up to $700)",
     "url": "https://www.ato.gov.au/individuals-and-families/income-deductions-offsets-and-records/tax-offsets/low-and-middle-income-earner-tax-offsets",
     "source": "ATO",
-    "description": "Full $700 LITO offset for incomes up to $37,500, lifting the effective tax-free threshold to $22,575."
+    "description": "Full $700 LITO offset for incomes up to $37,500, lifting the effective tax-free threshold to $22,866 under the 15% 2026-27 bracket."
   },
   "ato_lost_super": {
     "title": "ATO: Find & Consolidate Lost Super",

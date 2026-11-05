@@ -24,8 +24,8 @@ export const NAV_MODULES: NavModule[] = [
     emoji: '💼',
     route: '/careers-employment',
     graphicUrl: '/assets/graphics/popmart_job.jpg',
-    description: 'Master Australian Modern Awards, 2026-27 junior pay scales, weekend & public holiday penalty rates (225%/250%/275%), the 3-hour minimum shift rule, 1.5-hr retail student exceptions, QLD Form CE1 compliance, and payslip underpayment audits.',
-    topicsCount: 22,
+    description: 'Master Australian Modern Awards, 2026-27 junior pay scales, 1 Dec 2026 [2026] FWCFB 75 junior rate reforms, weekend & public holiday penalty rates (225%/250%/275%), the 3-hour minimum shift rule, 1.5-hr retail student exceptions, QLD Form CE1 compliance, and payslip underpayment audits.',
+    topicsCount: 24,
   },
   {
     id: 'super-retirement',
@@ -104,7 +104,7 @@ export const NAV_MODULES: NavModule[] = [
     emoji: '🏙️',
     route: '/brisbane-qld',
     graphicUrl: '/assets/graphics/popmart_bne.jpg',
-    description: 'Budgeting for young Aussies in Brisbane: Translink 50c flat fares, QCE & ATAR, 9 SEQ universities, suburb rent, top high schools, and Brisbane 2032 Olympic career opportunities.',
-    topicsCount: 17,
+    description: 'Budgeting for young Aussies in Brisbane: 15yo high school first-job deep analysis (Form CE1, 8-award pay matrix, 30-hr holiday super hack), Translink 50c flat fares, QCE & ATAR, 9 SEQ universities, suburb rent, top high schools, and Brisbane 2032 Olympic career opportunities.',
+    topicsCount: 20,
   },
 ];

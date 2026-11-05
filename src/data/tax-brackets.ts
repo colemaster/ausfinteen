@@ -11,7 +11,7 @@
  * $20,000 instant asset write-off now permanent for businesses with turnover < $10M (from 1 July 2026).
  * Payday Super: employers must pay super with each pay run from 1 July 2026 (within 7 business days).
  * Division 6AA minor (unearned income) rates: $416 nil, 66% to $1,307, 45% flat above $1,307.
- * Verified against ATO rates pages, 22 Oct 2026.
+ * Verified against ATO rates pages, 6 November 2026.
  */
 
 export interface TaxBracket {

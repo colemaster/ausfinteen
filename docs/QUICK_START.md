@@ -8,7 +8,7 @@ This repo contains everything a Claude Code agent needs to build the full AusFin
 
 ## Prerequisites
 
-- Node.js 20+ installed
+- Node.js 26+ (LTS) installed — see `.nvmrc`
 - GitHub account
 - Claude Code agent access (via GitHub Copilot or Claude Code CLI)
 

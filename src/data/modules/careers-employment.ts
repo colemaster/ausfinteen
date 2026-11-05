@@ -60,7 +60,7 @@ export const careersEmploymentModule: MandyModule = {
       moduleTitle: 'Careers & Employment 💼',
       question: '5. How Do I Complete ATO Form NAT 3092 (TFN Declaration)?',
       answer:
-        'When starting any new job, your employer must provide ATO Tax File Number Declaration Form (NAT 3092). Critical steps: 1) Fill in your legal name, date of birth, address, and 9-digit TFN. 2) At Question 8 ("Do you want to claim the tax-free threshold from this payer?"), tick YES if this is your primary or only job. The statutory tax-free threshold is $18,200/year. When combined with the $700 Low Income Tax Offset (LITO), you pay $0 income tax on annual earnings up to $22,575. Ticking YES stops your boss from withholding 16% to 30% PAYG tax from your pay. If you fail to provide a TFN within 28 days, your employer must legally withhold the top marginal tax rate of 47% from every dollar!',
+        'When starting any new job, your employer must provide ATO Tax File Number Declaration Form (NAT 3092). Critical steps: 1) Fill in your legal name, date of birth, address, and 9-digit TFN. 2) At Question 8 ("Do you want to claim the tax-free threshold from this payer?"), tick YES if this is your primary or only job. The statutory tax-free threshold is $18,200/year. When combined with the $700 Low Income Tax Offset (LITO) and the 15% lowest marginal bracket from 1 July 2026, you pay $0 income tax on annual earnings up to $22,866 (up from $22,575 under the former 16% rate). Ticking YES stops your boss from withholding 15% to 30% PAYG tax from your pay. If you fail to provide a TFN within 28 days, your employer must legally withhold the top marginal tax rate of 47% from every dollar!',
       actionStep:
         'Download Form NAT 3092 from our Government Forms Vault and tick YES to Question 8 before handing it to your manager.',
       webLink: OFFICIAL_WEB_LINKS.ato_tfn_form,
@@ -251,6 +251,28 @@ export const careersEmploymentModule: MandyModule = {
       actionStep:
         'If you have worked regular weekly shifts for 6 months (or 12 months at a small business), submit a formal Section 66AAB Employee Choice notice to your employer to transition to permanent status.',
       webLink: OFFICIAL_WEB_LINKS.fairwork_ceis,
+    },
+    {
+      id: 'ce-23',
+      moduleId: 'careers-employment',
+      moduleTitle: 'Careers & Employment 💼',
+      question: '23. 1 December 2026 Junior Rate Reforms ([2026] FWCFB 75) & Your 16th Birthday +25.1% Pay Jump',
+      answer:
+        'Young workers in late 2026 benefit from two major pay milestones: 1) **Landmark FWC Junior Rate Decision ([2026] FWCFB 75, effective 1 December 2026)**: Following the SDA application to reform junior wages across the General Retail [MA000004], Fast Food [MA000003], and Community Pharmacy [MA000012] awards, the Fair Work Commission Full Bench issued decision `[2026] FWCFB 75` taking effect on **1 December 2026**. Under the reforms, under-16 and 16-year-old junior rate reductions are abolished in the Community Pharmacy Award (lifting 15–17yo pharmacy assistants to the unified higher junior/adult scale, with 18+ earning higher adult percentages), alongside progressive classification and junior rate step-ups across Retail and Fast Food. If you work at Chemist Warehouse, Priceline, or TerryWhite Chemmart, check your first December 2026 payslip to ensure your rate updates automatically! 2) **The 16th Birthday Statutory Pay Jump (+11.1% to +25.1%)**: Under Modern Awards, your employer must legally increase your pay rate on the **exact day of your birthday** (not the next financial year). When you turn 16: in **Fast Food [MA000003]**, your junior percentage jumps from 40% to 50%—a massive **+25.1% overnight raise** taking your weekday casual rate from $13.90/hr to **$17.39/hr** and weekend rate from $16.68/hr to **$20.86/hr**! In **General Retail [MA000004]**, your rate steps from 45% ($15.64/hr casual) to 50% (**$17.39/hr** weekday, **$20.86/hr** Sat/evening, and **$24.34/hr** Sunday—an **+11.1% raise**). Always email payroll one week before your birthday to confirm your updated classification rate.',
+      actionStep:
+        'Set a calendar reminder 7 days before your birthday (and on 1 December 2026 if in Pharmacy/Retail) to audit your payslip for your mandatory rate increase.',
+      webLink: OFFICIAL_WEB_LINKS.fairwork_awards,
+    },
+    {
+      id: 'ce-24',
+      moduleId: 'careers-employment',
+      moduleTitle: 'Careers & Employment 💼',
+      question: '24. School Work Experience (30-Day Cap) vs Paid Trial Shifts & The 52-Week Teen Holiday Super Strategy',
+      answer:
+        'High school students aged 15 often confuse lawful school Work Experience with unlawful unpaid trial shifts, and miss out on hundreds of dollars in holiday Superannuation: 1) **Formal School Work Experience vs Illegal Unpaid Trials**: Under Section 12 of the Fair Work Act 2009 and state acts such as the *Education (Work Experience) Act 1996 (Qld)*, a formal high school Work Experience placement is legally unpaid (capped at **30 days per calendar year** in QLD, with statutory WorkCover insurance covered by the Education Department and a signed three-way school/parent/host contract). By contrast, if you apply for a casual after-school or weekend job at a cafe, fast food outlet, or retail shop, an unpaid trial is ONLY lawful for a brief skills check (e.g. 30–60 minutes under direct 1-on-1 supervision). Asking a 15-year-old to work an unpaid 3-hour "trial shift" serving customers on a Saturday is **illegal wage theft**—every commercial shift must be paid at your full award casual rate; 2) **The 52-Week Teen Cash-Flow & 30-Hour Holiday Super Strategy**: Under *Superannuation Guarantee (Administration) Act 1992* s 27(1)(a), workers under 18 only receive the **12.0% Superannuation Guarantee** in weeks where they work **more than 30 hours**. During 40 school term weeks (when state laws like QLD cap under-16s at 12 hrs/week), working 9 hrs/week (e.g. 4h Thursday night + 5h Sunday in Retail = $179.84/wk) generates $7,193.60/yr with $0 super. However, during school holidays (when QLD allows up to **38 hours/week**), clustering **32 hours into a single Monday–Sunday Christmas holiday week** pushes you past the 30-hour threshold—legally forcing your employer to pay **12.0% Super on ALL 32 hours** (~$65–$75 paid directly into your stapled fund within 7 days under Payday Super!), while your ~$10,008.80 annual income remains **100% tax-free** under the $22,866 effective threshold.',
+      actionStep:
+        'During December or Easter school holidays, ask your manager to roster 31–35 hours in a single Monday–Sunday pay week to trigger 12.0% Super on every hour worked that week.',
+      webLink: OFFICIAL_WEB_LINKS.fairwork_unpaid_trials,
     },
   ],
 };

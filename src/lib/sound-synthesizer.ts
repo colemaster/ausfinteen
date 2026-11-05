@@ -28,14 +28,16 @@ class SoundSynthesizer {
 
   constructor() {
     // Load persisted mute preference if available
+    // Guard on `window`, not `localStorage`: Node 25+ exposes a global
+    // `localStorage` accessor that emits an ExperimentalWarning when touched
+    // during SSR/prerender (this singleton is constructed at module load).
+    if (typeof window === 'undefined') return;
     try {
-      if (typeof window !== 'undefined') {
-        const params = new URLSearchParams(window.location.search);
-        if (params.get(SOUND_URL_PARAM) === '1') {
-          this.enabled = true;
-        }
+      const params = new URLSearchParams(window.location.search);
+      if (params.get(SOUND_URL_PARAM) === '1') {
+        this.enabled = true;
       }
-      const savedMute = localStorage.getItem('au_sound_muted');
+      const savedMute = window.localStorage.getItem('au_sound_muted');
       if (savedMute !== null) {
         this.isMuted = savedMute === 'true';
         if (!this.isMuted) {
@@ -92,7 +94,7 @@ class SoundSynthesizer {
   public setMuted(muted: boolean): void {
     this.isMuted = muted;
     try {
-      localStorage.setItem('au_sound_muted', String(muted));
+      if (typeof window !== 'undefined') window.localStorage.setItem('au_sound_muted', String(muted));
     } catch {}
   }
 

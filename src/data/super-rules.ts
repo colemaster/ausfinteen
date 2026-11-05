@@ -1,6 +1,6 @@
 /**
  * Australian superannuation rules for the 2026-27 and 2027-28 financial years.
- * Verified October 2026 against official ATO "Key super rates and thresholds"
+ * Verified 6 November 2026 against official ATO "Key super rates and thresholds"
  * (ato.gov.au/tax-rates-and-codes/key-superannuation-rates-and-thresholds),
  * Treasury Division 296 guidance, APRA "Protecting Your Super" regulations,
  * and the Payday Super legislation (effective 1 July 2026).

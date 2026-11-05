@@ -61,6 +61,9 @@
 | v7.6.0  | Oct 2026 Verified Content Refresh (20 subagents) | Full content/data refresh against primary official sources as at 18 Oct 2026: RBA 4.60%, QLD Licence fees (1 Jul 2026 schedule), HELP 2026-27 marginal bands + 2.8% indexation, Super caps $32.5k/$130k/$390k + TBC $2.1M, Medicare $28,011/$35,013 + MLS $105k/$123k/$164k, tax 15% second bracket, State transfer duty/FHOG, first-car running costs + Brisbane fuel, HISA Oct 2026, ASX ETF metrics, QLD school/uni/ATAR/QTAC 2027, landing + module Q&A + search index | Local |
 | v7.7.0  | Latest SDK/Deps & 5-Subagent Frontend Polish | Full SDK/deps update (Astro 7.4.1, Motion 14.5.0, Lucide React 1.61.0, Vite 8.3.5, React 19.3.1, oxc-transform-react 0.152.0). 5 parallel subagents: (1) Core UI & design system (StatCard copy/accent, SliderControl steppers, CurrencyInput quick-bump, React Compiler cleanups), (2) Navigation, shell & search (glassmorphic Navbar, glowing route pills, category search chips, footer status), (3) Landing & cyber-finance visuals (CompoundRocket milestones, ScamShield threat badges, HisaShowdown/PenaltyPayBooster live sliders), (4) Youth tools & module views (TeenResumeBuilder 3 templates + preview, PenaltyShiftCalculatorWidget 6 multipliers, FifteenYearOldRoadmap, SavingsGoalsPlanner, ProfileSummaryCard, PrintShareFAB), (5) 28 calculators & charts (CalculatorActions reset/copy summary, DeferredChart zero-reflow, sticky breakdown tables, quick presets, pure engine 100% test pass) | Local |
 | v7.8.0  | 20-Subagent Content & Statutory Update (ATO, Unis, QLD) | 20-Subagent audit & content update across ATO (tax, super, HECS/HELP, deductions, youth/minors), Universities (CSP bands, SSAF, QTAC 2026-27, QILT GOS 2025, TAFE pathways), and QLD/Brisbane (TransLink permanent 50c fares, TMR driver licence 1 July 2026 schedule, property transfer duty & $30k FHOG, RTA median rents, child labor laws, 2032 Olympics) | Local |
+| v7.9.0  | SDK, Deps & Codebase Refresh (29 Oct 2026) | Refreshed all SDKs, libraries, and dependencies to latest stable releases | Pushed |
+| v7.10.0 | SDK, Deps & Codebase Refresh (4 Nov 2026) | Node.js 26.13.0 LTS ("Lithium"), Astro 7.4.5, Vitest 5.1.0, Tailwind 4.3.4, Lucide 1.68.0 | Pushed |
+| v7.11.0 | 6 Nov 2026 Content Update & 15yo QLD Brisbane High School Student First Job Deep Analysis | Full statutory & market update as of 6 Nov 2026 + deep analysis for a 15-year-old Brisbane (QLD) female high school student with her first casual job: QLD Child Employment Act 2006 (Form CE1, 12h term / 38h holiday rules, 10pm-6am curfew, 6pm safe escort), 8-industry Modern Awards pay & shift matrix (including 1.5h Retail student shift rule & upcoming 1 Dec 2026 FWC [2026] FWCFB 75 step-ups), 52-week term + holiday cash-flow & super model, Brisbane shopping center hiring hubs & 50c TransLink commuting, Year 10 SET Plan / QCAA QCE / Work Experience / SATs, healthcare privacy (Form MS004/MS011 own Medicare card, My Health Record at 14+, 7 Brisbane headspace hubs), TFN/LITO ($22,866 effective threshold reconciliation), and 5.0%–5.80%+ Youth HISA comparison | Pushed |
 
 
 ---
@@ -2155,3 +2158,71 @@ Refreshed all SDKs, libraries, and dependencies to their latest stable releases 
 - Evaluate React 19.3 `useEffectEvent` for event-handler-heavy calculator components.
 - Consider removing `legacy-peer-deps=true` once upstream peer conflicts resolve.
 - Add a `check` script (typecheck + test + build) for CI parity.
+
+## v7.10.0 — SDK, DEPS & CODEBASE REFRESH (4 Nov 2026)
+
+### Summary
+Moved the runtime SDK to the new Node.js 26 LTS ("Lithium") and updated every npm dependency to its latest release. Also fixed a Node 25+ prerender warning in the codebase. Typecheck, the full test suite, and the production build all pass on Node 26.13.0 and on Node 24.
+
+### Runtime / SDK
+- Node.js 24.22.1 → **26.13.0 LTS** (`.nvmrc`, `.node-version`, `engines.node >=26.13.0`; CI reads `.nvmrc`)
+- README / docs/QUICK_START.md: changed the "Node 20+" requirement to "Node 26+"
+- GitHub Actions: `actions/checkout@v7`, `actions/setup-node@v7`, `peaceiris/actions-gh-pages@v4` already float to the latest releases (v7.0.1 / v7.1.0 / v4.1.0), so no change needed
+
+### Dependency updates
+- `astro` ^7.4.4 → ^7.4.5
+- `lucide-react` ^1.63.0 → ^1.68.0
+- `@tailwindcss/vite` / `tailwindcss` ^4.3.3 → ^4.3.4
+- `@vitejs/plugin-react` ^6.1.2 → ^6.2.1
+- `vitest` / `@vitest/ui` ^5.0.5 → ^5.1.0
+- `oxc-transform-react` ^0.156.0 → ^0.157.0 (the `overrides` `$oxc-transform-react` alias still dedupes it to one copy)
+- Everything else was already on the latest release (React 19.3.1, Vite 8.3.5, TypeScript 7.0.2, React Router 7.18.5, Recharts 3.10.1, jsdom 30.1.3, etc.)
+
+### Codebase fix (Node 26 compatibility)
+- Node 25+ defines a global `localStorage` accessor. When `--localstorage-file` isn't set, it emits `ExperimentalWarning` on access, including `typeof localStorage`. `SoundSynthesizer` is constructed at module load, so it triggered this warning during prerender.
+- `src/lib/sound-synthesizer.ts` and `src/lib/motion-core.ts` now check `typeof window` and use `window.localStorage`
+
+### Validation
+- `npm ci` (Node 26.13.0 / npm 11.20.0): clean
+- `npm run typecheck`: 0 errors
+- `npm test`: 57 test files, 1010 tests passed
+- `npm run build`: 21 static pages, no runtime warnings
+- `npm audit`: 0 vulnerabilities; `npm outdated`: nothing outdated
+
+---
+
+## v7.11.0 — 6 NOV 2026 CONTENT REFRESH & 15YO QLD BRISBANE HIGH SCHOOL STUDENT FIRST JOB DEEP ANALYSIS (6 Nov 2026)
+
+### User Request (Verbatim)
+> `"update all the content to the latest versions as of today - look for more information for 15yr QLD - brisbane high school student with her first job - deep analsysis"`
+
+### Execution Plan & Scope
+1. **6 November 2026 Regulatory & Market Refresh**:
+   - Update all verification dates and temporal context across `src/data/` and `src/data/modules/` to **6 November 2026** (post-31 Oct 2026 self-lodger tax return deadline, post-3 Nov 2026 Melbourne Cup Day RBA board meeting, during Oct–Nov 2026 QCAA Year 12 External Assessment window, and <4 weeks before the **1 December 2026** FWC `[2026] FWCFB 75` junior rate reforms take effect).
+   - Reconcile stale effective tax-free threshold references (`$22,575` from the old 16% rate → `$22,866` under the 15% 2026-27 second bracket with $700 LITO) and stale HECS threshold references (`$67,000` / `$54,435` → `$69,528` marginal 2026-27 threshold) across `teen-age-presets.ts`, `teen-finance-data.ts`, `careers-employment.ts`, `teen-budgeting.ts`, `spending-saving.ts`, and `interest-products.ts`.
+2. **Deep Analysis for a 15-Year-Old QLD (Brisbane) Female High School Student with Her First Job**:
+   - **Statutory & Legal Protections (*Child Employment Act 2006 (Qld)* & *Child Employment Regulation 2016 (Qld)*)**:
+     - School-aged child definition in QLD (under 16 and has not completed Year 10).
+     - Mandatory signed **Parent's Consent Form (Form CE1)** before first shift (employer must retain on file for 2 years; industrial inspector enforcement via OIR QLD on 1300 362 128).
+     - Hour caps: Max **12 hours/week** during a school week, max **4 hours** on a weekday when required to attend school, max **8 hours** on a weekend/non-school day; max **38 hours/week** and **8 hours/day** during official QLD school holidays.
+     - Curfew & Safety: Strict **10:00pm to 6:00am** night curfew, mandatory **12-hour rest gap** between shifts, mandatory **1-hour rest break** after 4 continuous hours (and forbidden from working >4 hours on a school day), plus employer duty to ensure safe transport/escort home after **6:00pm** if not collected by a parent.
+   - **Brisbane 15yo First Job Pay, Penalty & Minimum Shift Deep Matrix (2026-27)**:
+     - Detailed side-by-side comparison across Fast Food (`MA000003`: $11.12 base / $13.90 casual, $16.68 Sat/Sun, $27.80 PH, 3h min), General Retail (`MA000004`: $12.51 base / $15.64 casual, $18.77 Sat & Mon–Fri >6pm, $21.89 Sun, $31.28 PH, 1.5h Clause 11.3/15.7 student shift rule & 6:30pm hard void trap), Pharmacy (`MA000012`: $15.64 casual, $18.77 Sat, $21.89 Sun, $31.28 PH), Restaurant/Cafe (`MA000119`: $16.53 casual, $19.83 Sat/Sun, $33.05 PH, 2h min / 4h PH), Cinema (`MA000091`: $15.64 casual), Swim/Aquatics (`MA000094`: $19.13 casual), OSHCare (`MA000120`: $24.34 casual), Cleaning (`MA000022`: 100% adult $34.76 casual), and Brisbane Netball/Basketball/Touch Football refereeing ($30–$55/game tax-free hobby).
+     - Brisbane-specific public holidays (Ekka People's Day Wednesday in August for Brisbane City Council LGA, Labour Day first Monday in May, King's Birthday first Monday in October, Christmas/Boxing Day/New Year) and how a single 6-hour Sunday or Public Holiday shift outperforms multiple weekday shifts.
+   - **52-Week Annual Earnings, Super Guarantee & Tax Model**:
+     - Realistic 52-week cash-flow blueprint for a 15yo Brisbane student combining 40 school-term weeks (~7.5 hrs/wk = 1 weekday after-school shift + 1 Sunday shift) + 6 school-holiday boost weeks (working 25–32 hrs/wk in Dec/Jan summer & Easter/Sept holidays), demonstrating how exceeding **30 hours in a single holiday week** triggers compulsory **12.0% Super Guarantee** on ALL hours that week under `SGAA 1992 s 27(1)(a)` (paid within 7 business days under Payday Super) and how PAYG tax withheld on big holiday weeks is 100% refunded via myTax in July (under the $22,866 effective threshold).
+   - **Brisbane Hiring Precincts, 50c TransLink Commuting & School-Life Balance**:
+     - Major Brisbane shopping & casual hiring hubs accessible on 50c TransLink fares (Westfield Chermside, Westfield Carindale, Indooroopilly Shopping Centre, Westfield Mt Gravatt / Garden City, Queen Street Mall / Wintergarden / QueensPlaza, Brookside, Hyperdome, Orion Springfield, Westfield North Lakes, DFO Brisbane).
+     - TransLink 50c flat fare math ($1.00 return shift commute = ~6.4% of a single retail hour's pay), Brisbane Metro (M1 Eight Mile Plains–Roma St & M2 UQ Lakes–RBWH), Student Go Card vs contactless Visa/Mastercard/Apple Pay at 15, and evening station/busway safety.
+     - Balancing Year 9/10 high school in Queensland: Year 10 **SET Plan (Senior Education and Training Plan)**, QCAA **Academic Integrity course** on myQCE, unpaid School Work Experience (up to 30 days/yr under *Education (Work Experience) Act 1996 (Qld)* covered by Education QLD insurance vs paid trial shifts), and **School-Based Apprenticeships & Traineeships (SATs)** (earning up to 8 QCE credits + paid day per week).
+   - **Healthcare Privacy, ID, Banking & PrepL Readiness at 15**:
+     - Getting her own green Medicare card at 15 via Services Australia **Form MS004 / MS011** ("Copy" vs "Transfer" so she stays on the family Medicare Safety Net while gaining 100% confidential GP/headspace billing), My Health Record control from age 14, Brisbane headspace centres (Brisbane City, Woolloongabba, Indooroopilly, Nundah, Meadowbrook, Redcliffe, Strathpine, Capalaba, Inala), 100-point ID with QLD school photo ID, Youth HISA setup (BOQ Future Saver 5.80%, Newcastle Permanent 5.75%, Great Southern Bank 5.50%), and enrolling in **PrepL ($29.70)** at 15 years 11 months.
+3. **UI Integration & Verification**:
+   - Export structured TypeScript datasets in `src/data/brisbane-data.ts` and `src/data/teen-finance-data.ts`, surface interactive deep-analysis sections in `src/views/BrisbaneQLD.tsx` and `src/components/teen/FifteenYearOldRoadmap.tsx`, add new Q&A topics across modules, update unit tests, and run `npm run typecheck`, `npm test`, and `npm run build`.
+
+### Validation (6 Nov 2026)
+- `npm run typecheck`: 0 errors
+- `npm test`: 57 test files, 1,014 tests passed (100% pass rate)
+- `npm run build`: 21 static pages built cleanly
+
+

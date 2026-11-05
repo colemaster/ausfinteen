@@ -330,7 +330,7 @@ export function FifteenYearOldRoadmap() {
             <h2 className="text-xl font-bold text-foreground">The 15-Year-Old Australian Independence Roadmap</h2>
           </div>
           <p className="text-xs text-muted-foreground">
-            Your 8 essential financial independence milestones: TFN, High-Interest Banking, Medicare, First Casual Job, Effective Tax-Free Threshold ($22,575), Paycheck Automation (60% Blow / 20% Mojo / 20% Grow), Ls Prep, and Student Perks.
+            Your 8 essential financial independence milestones: TFN, High-Interest Banking, Medicare, First Casual Job, Effective Tax-Free Threshold ($22,866), Paycheck Automation (60% Blow / 20% Mojo / 20% Grow), Ls Prep, and Student Perks.
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -401,6 +401,13 @@ export function FifteenYearOldRoadmap() {
             </p>
           </div>
         </div>
+
+        {selectedState === 'QLD' && (
+          <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-[11px] text-muted-foreground leading-relaxed">
+            <strong className="text-foreground font-bold">Brisbane 15yo Year 9/10 First-Job Deep Analysis (2026-27):</strong>{' '}
+            Retail casuals earn <strong>$15.64/hr</strong> Mon–Fri, <strong>$18.77/hr</strong> Thu night (&gt;6pm) &amp; Sat, <strong>$21.89/hr</strong> Sun, and <strong>$31.28/hr</strong> on Public Holidays (with a 1.5h student shift option between 3:00pm–6:30pm under Clause 11.3, void if kept past 6:30pm); Fast Food pays <strong>$13.90/hr</strong> wkday / <strong>$16.68/hr</strong> wknd (3h min shift, +25.1% jump at 16); Pharmacy abolishes under-16/16yo low rates from <strong>1 Dec 2026</strong> ([2026] FWCFB 75). Working 9 hrs/wk in term + 6 holiday weeks yields <strong>~$10,008.80/yr ($0 tax)</strong>, and stacking <strong>32 hrs in one Christmas holiday week</strong> (under the 38h holiday cap) unlocks <strong>12.0% Super</strong> on all 32 hours!
+          </div>
+        )}
       </div>
 
       {/* Interactive Progress Bar & Quick Actions Toolbar */}

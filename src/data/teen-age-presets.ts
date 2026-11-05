@@ -89,7 +89,7 @@ export const AGE_PRESETS: Record<number, AgePreset> = {
     stageDescription: 'At 14 in Australia, you can start doing light casual work (babysitting, sports refereeing, lawn care, paper rounds, or retail/fast food subject to state child employment limits such as QLD Form CE1 parent consent). This is the best age to open your first fee-free bank account independently in your own name with Apple Pay / Google Wallet and get your free lifetime Tax File Number (TFN) from the ATO.',
     legalRightsSummary: 'Maximum 12 hours/week during school terms in QLD and VIC. Form CE1 parent consent in QLD; Victorian child employment permits apply under 15. Curfew between 9pm/10pm and 6am. Employers must pay at least the junior award rate ($13.90/hr casual under 16). Unpaid trials longer than 1 hour are illegal wage theft.',
     superRuleExplanation: 'Under-18 workers are not entitled to compulsory 12% super unless they work more than 30 hours in a single week. At 5 hrs/wk, no super is legally required unless specified by an employer enterprise agreement.',
-    taxExplanation: 'Earned personal income (wages) has an effective tax-free threshold of $22,575 ($18,200 base + $700 LITO). You pay $0 tax on wages. However, passive unearned income (bank interest, dividends, family trust distributions) over $416 is hit with punitive Division 6AA minor penalty tax rates (up to 47%-66%)!',
+    taxExplanation: 'Earned personal income (wages) has an effective tax-free threshold of $22,866 in 2026-27 ($18,200 base + $700 LITO at 15% second bracket, up from $22,575). You pay $0 tax on wages. However, passive unearned income (bank interest, dividends, family trust distributions) over $416 is hit with punitive Division 6AA minor penalty tax rates (up to 47%-66%)!',
     typicalBudget: {
       grossIncome: 69.50,
       estimatedTax: 0,
@@ -180,10 +180,10 @@ export const AGE_PRESETS: Record<number, AgePreset> = {
     savingsGoalTarget: 800,
     currentSavings: 250,
     tagline: 'First real job roster, your own green Medicare card, and the $500 Mojo safety buffer.',
-    stageDescription: 'At 15, you can legally work in retail and fast food nationwide without special employer permits (e.g. Victorian child employment permits end at 15). You also unlock healthcare independence: Services Australia allows you to order your own separate green Medicare card (via Form MS004, MS011, or myGov) for 100% confidential doctor visits without parental notification. It is time to lock down your first paycheck budget.',
-    legalRightsSummary: 'You must receive at least the Fast Food / General Retail Level 1 junior award rate ($13.90/hr casual). Entitled to a paid 10-minute rest pause for shifts over 4 hours, and 3-hour minimum pay per shift (or 1.5h on school days in Retail with consent).',
-    superRuleExplanation: 'Under Section 11 of the Superannuation Guarantee (Administration) Act 1992, workers under 18 only receive 12.0% employer superannuation if they work more than 30 hours in a given week. Casuals working 8 hrs/wk do not receive compulsory super unless an EBA mandates it.',
-    taxExplanation: 'Claim the Tax-Free Threshold on Question 8 of your ATO TFN Declaration (NAT 3092). Because you earn $5,782/year (8 hrs @ $13.90), your annual income is well below the $22,575 effective tax-free threshold. Estimated PAYG withholding is $0.',
+    stageDescription: 'At 15, you can legally work in retail and fast food nationwide (with signed Parent Consent Form CE1 in Queensland under the Child Employment Act 2006, where school-term shifts are capped at 12 hrs/wk and 4 hrs on school days, expanding to 38 hrs/wk in school holidays; in Victoria, child employment permits end at 15). You also unlock healthcare independence: Services Australia allows you to order your own separate green Medicare card (via Form MS004, MS011, or myGov) for 100% confidential doctor and headspace visits without parental notification. In Year 10, you also map out your Senior Education and Training (SET) Plan, QCE Academic Integrity course, and optional School-Based Apprenticeships & Traineeships (SATs).',
+    legalRightsSummary: 'You must receive at least the Fast Food ($13.90/hr casual, 40%) or General Retail / Pharmacy ($15.64/hr casual, 45%) Level 1 junior award rate, rising to $16.68–$21.89/hr on weekends and $27.80–$31.28/hr on public holidays. Entitled to a paid 10-minute rest pause for shifts of 4+ hours, a 3-hour minimum shift (or 1.5-hour student shift on school days between 3:00pm and 6:30pm in Retail under Clause 11.3/15.7), and safe transport home after 6:00pm (10:00pm curfew in QLD).',
+    superRuleExplanation: 'Under Section 27(1)(a) of the Superannuation Guarantee (Administration) Act 1992, workers under 18 only receive compulsory 12.0% employer superannuation if they work MORE than 30 hours in a single calendar week for one employer. Casuals working 8–12 hrs/wk during school term receive $0 statutory super unless an EBA mandates it—but if you work 31–38 hours in a single school holiday week, your employer MUST pay 12.0% super on ALL hours that week within 7 business days (Payday Super)!',
+    taxExplanation: 'Claim the Tax-Free Threshold on Question 8 of your ATO TFN Declaration (NAT 3092). Because you earn ~$5,782/year during term (8 hrs @ $13.90, or ~$8,500–$10,500/yr including school holiday boost weeks), your annual income is well below the $22,866 effective tax-free threshold ($18,200 + $700 LITO at 15%, up from $22,575). Any PAYG tax withheld during a big Christmas holiday week is 100% refunded via myTax in July!',
     typicalBudget: {
       grossIncome: 111.20,
       estimatedTax: 0,
@@ -283,7 +283,7 @@ export const AGE_PRESETS: Record<number, AgePreset> = {
     stageDescription: 'Turning 16 brings an immediate +25% automatic pay rise under modern awards (rate jumps from 40% to 50% of the adult base). It is also the legal milestone to pass your road rules test, get your yellow L-plates, and start the 100-hour (QLD) or 120-hour (NSW/VIC) logbook journey. Balancing school and 12 hours of shifts teaches real-world budgeting.',
     legalRightsSummary: 'Your minimum award rate automatically increases on your 16th birthday to 50% of adult base ($17.39/hr casual). Entitled to meal break (30-60 min unpaid) if working shift longer than 5 hours. School attendance is compulsory, so shifts cannot conflict with school hours.',
     superRuleExplanation: 'Under Section 11 SGAA 1992, workers under 18 still require >30 hours in a week to qualify for statutory 12.0% Super Guarantee. However, during school holidays, if you pick up extra shifts totaling 31+ hours in a Monday-Sunday week, your employer MUST pay 12% super on your entire pay that week!',
-    taxExplanation: 'At 12 hrs/wk x $17.39/hr = $208.68/wk ($10,851/year), you are well within the $22,575 effective tax-free threshold. Estimated PAYG withholding remains $0 as long as you claimed the threshold on Form NAT 3092.',
+    taxExplanation: 'At 12 hrs/wk x $17.39/hr = $208.68/wk ($10,851/year), you are well within the $22,866 effective tax-free threshold ($18,200 + $700 LITO, up from $22,575). Estimated PAYG withholding remains $0 as long as you claimed the threshold on Form NAT 3092.',
     typicalBudget: {
       grossIncome: 208.68,
       estimatedTax: 0,
@@ -383,7 +383,7 @@ export const AGE_PRESETS: Record<number, AgePreset> = {
     stageDescription: 'At 17, your award pay jumps to 60% ($20.86/hr casual). You reach the provisional driving milestone: completing 100 logbook hours, passing the practical driving test (e.g. QLD Q-SAFE, NSW Driving Test), and driving solo on your Red Ps. It is also the pivotal Year 12 senior schooling year with ATAR, QTAC/UAC applications, evaluating Centrelink Youth Allowance / ABSTUDY eligibility for independent students, and planning for uni, TAFE, or trade apprenticeships.',
     legalRightsSummary: 'Junior casual rate is 60% of adult base ($20.86/hr). Penalty rates apply: 150% on Sundays ($29.21/hr) and 225%-250% on public holidays ($43.81/hr). Pre-enrolment for federal voting opens at 17 on the AEC website. Under-18 super rule still applies (<30h/wk = no compulsory super).',
     superRuleExplanation: 'Under 18 workers are exempt from statutory super unless working >30 hrs/wk. However, as you approach your 18th birthday, prepare your stapled super fund details because 12.0% super will become compulsory on EVERY single hour worked the day you turn 18.',
-    taxExplanation: 'At 15 hrs/wk x $20.86/hr = $312.90/wk ($16,270/year). Since $16,270 is below the $18,200 standard threshold ($22,575 effective threshold with LITO), you pay $0 tax. Weekly PAYG withholding should be $0.',
+    taxExplanation: 'At 15 hrs/wk x $20.86/hr = $312.90/wk ($16,270/year). Since $16,270 is below the $18,200 standard threshold ($22,866 effective threshold with $700 LITO), you pay $0 tax. Weekly PAYG withholding should be $0.',
     typicalBudget: {
       grossIncome: 312.90,
       estimatedTax: 0,
@@ -497,7 +497,7 @@ export const AGE_PRESETS: Record<number, AgePreset> = {
     stageDescription: 'Turning 18 is the legal threshold to full adulthood in Australia. The 30-hour superannuation exemption vanishes: your employer must pay 12.0% super into your stapled fund on EVERY single dollar earned. You gain the legal right to sign contracts, open micro-investing accounts (ETFs), lodge your own full tax return, and vote in Australian elections.',
     legalRightsSummary: 'Full legal contract capacity: can sign leases, loans, and phone contracts. Voting in federal, state, and local elections is compulsory by law. Junior award rate is 70% ($24.34/hr casual), but under FWC [2026] FWCFB 75, workers with >6 months service step up towards 100% adult rate ($34.76/hr casual). Can legally hold RSA/RSG for hospitality work.',
     superRuleExplanation: 'CRITICAL 18YO LAW: The under-18 30-hour rule EXPIRES immediately on your 18th birthday! Section 11 of the SG Act requires employers to pay statutory 12.0% Super Guarantee on all Ordinary Time Earnings (OTE) regardless of whether you work 2 hours or 38 hours a week. At 20 hrs/wk, you get $58.42/week ($3,037/year) invested into compounding super!',
-    taxExplanation: 'At 20 hrs/wk x $24.34/hr = $486.80/wk ($25,313/year). Since your income exceeds the $18,200 threshold, you now pay tax! After the $700 LITO offset, tax begins above $22,575. Estimated tax withheld is approx $21/week. You must lodge an annual tax return via myGov by 31 October.',
+    taxExplanation: 'At 20 hrs/wk x $24.34/hr = $486.80/wk ($25,313/year). Since your income exceeds the $18,200 threshold, you now pay tax! After the $700 LITO offset, tax begins above $22,866 (up from $22,575). Estimated tax withheld is approx $21/week. You must lodge an annual tax return via myGov by 31 October.',
     typicalBudget: {
       grossIncome: 486.80,
       estimatedTax: 21.00,
@@ -603,7 +603,7 @@ export const AGE_PRESETS: Record<number, AgePreset> = {
     stageDescription: 'At 19, you are navigating higher education (Uni/TAFE), a skilled trade apprenticeship, or progressing in your career. Your award rate rises to 80% ($27.81/hr casual). Key financial milestones include managing Commonwealth Supported Places (HECS-HELP student debt), understanding compulsory repayment thresholds, moving into a sharehouse, and mastering independent adult cash flow.',
     legalRightsSummary: 'Junior award rate is 80% of adult base ($27.81/hr casual). Entitled to full penalty rates (125% Saturdays, 150% Sundays, 225% public holidays). Apprentices are protected by modern award apprentice training conditions and eligible for interest-free Australian Apprenticeship Support Loans. Tenancy rights protected under state Residential Tenancies Acts.',
     superRuleExplanation: '12.0% statutory Super Guarantee applies to every dollar of Ordinary Time Earnings. On 22 hrs/wk at $27.81/hr ($611.82 gross/wk), your employer pays $73.42/week ($3,818/year) directly into your super fund. At age 19, ensure your super is invested in a high-growth or indexed share option to maximize 45-year compound growth.',
-    taxExplanation: 'At 22 hrs/wk x $27.81/hr = $611.82/wk ($31,815/year). PAYG tax withheld is approximately $48/week (~$2,500/yr). Because income is below the HECS-HELP compulsory repayment threshold ($67,000+ in 2026-27), ZERO student loan repayments are withheld from your pay! You can claim course-related deductions only if directly related to your current employment.',
+    taxExplanation: 'At 22 hrs/wk x $27.81/hr = $611.82/wk ($31,815/year). PAYG tax withheld is approximately $48/week (~$2,500/yr). Because income is below the HECS-HELP compulsory repayment threshold ($69,528+ in 2026-27), ZERO student loan repayments are withheld from your pay! You can claim course-related deductions only if directly related to your current employment.',
     typicalBudget: {
       grossIncome: 611.82,
       estimatedTax: 48.00,
@@ -670,8 +670,8 @@ export const AGE_PRESETS: Record<number, AgePreset> = {
       {
         title: 'Voluntary HECS Repayment Misconception',
         severity: 'medium',
-        warning: 'Many students make voluntary repayments on HECS debt when earning under $67,000, losing valuable liquidity.',
-        solution: 'HECS has 0% real commercial interest (only inflation indexation). Prioritize emergency cash and high-interest savings before paying down HECS.',
+        warning: 'Many students make voluntary repayments on HECS debt when earning under $69,528, losing valuable liquidity.',
+        solution: 'HECS has 0% real commercial interest (only inflation indexation capped at lower of CPI or WPI). Prioritize emergency cash and high-interest savings before paying down HECS.',
       },
       {
         title: 'Joint and Several Tenancy Liability Trap',

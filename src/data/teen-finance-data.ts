@@ -1,7 +1,7 @@
 /**
  * Official Australian Teen Financial Reference Data (2026-27)
- * Sources: ATO, Fair Work Ombudsman, Moneysmart, Services Australia, APRA, ACCC, PPSR, SafeWork Australia, RTBA, RBO, RTA, RACQ
- * Figures re-verified against official sources as at 18 October 2026 (2026-27 rates from 1 July 2026 AWRE).
+ * Sources: ATO, Fair Work Ombudsman, Moneysmart, Services Australia, APRA, ACCC, PPSR, SafeWork Australia, RTBA, RBO, RTA, RACQ, OIR QLD, QCAA
+ * Figures re-verified against official sources as at 6 November 2026 (2026-27 rates from 1 July 2026 AWRE; FWC [2026] FWCFB 75 junior rate step-ups from 1 December 2026).
  */
 
 export { type WebLink, STATUTORY_LINKS as OFFICIAL_WEB_LINKS, STATUTORY_LINKS } from "./statutory-links";
@@ -16,6 +16,12 @@ export {
   AGE_PRESETS,
   getAgePreset,
 } from "./teen-age-presets";
+export {
+  type Brisbane15yoAwardComparison,
+  type BrisbaneHiringPrecinct,
+  type BrisbaneHeadspaceCentre,
+  QLD_15YO_BRISBANE_FIRST_JOB_DEEP_ANALYSIS,
+} from "./brisbane-data";
 
 /**
  * ATO Division 6AA Minor Unearned Income Tax Rates (FY 2024–27).
@@ -29,9 +35,9 @@ export const MINOR_UNEARNED_TAX_RATES = {
 } as const;
 
 /**
- * Centrelink Youth Allowance & Student Assistance Rates (Jan 2026 indexation = Sept 2026 current; source: Services Australia).
+ * Centrelink Youth Allowance & Student Assistance Rates (2026-27 current; source: Services Australia).
  * Student personal income test: $539/fn free, then 50c per $ ($539–$646) and 60c above $646.
- * Verified 27 Sept 2026.
+ * Verified 6 November 2026.
  */
 export const CENTRELINK_YOUTH_ALLOWANCE_RATES = {
   singleUnder18AtHome: 418.90,
@@ -519,15 +525,15 @@ export const AU_STATE_WORKING_HOURS_RULES: StateWorkingHoursRule[] = [
     minAgeGeneral: '13 years (retail, fast food, hospitality)',
     minAgeLightOrDelivery: '11 years (supervised delivery of newspapers & pamphlets between 6:00am and 6:00pm)',
     parentConsentMandatory: true,
-    parentConsentDetails: 'Mandatory signed Parent Consent Form CE1 (chief-executive approved form under Child Employment Act 2006 s 10(3); formerly Form 1) required before starting work; must state school hours and be updated if school hours change.',
-    schoolTermMaxHours: 'Max 12 hours per week during school terms',
-    schoolDayMaxHours: 'Max 4 hours on a school day',
-    nonSchoolDayMaxHours: 'Max 8 hours on a non-school day (weekend)',
-    holidayMaxHours: 'Max 38 hours per week in school holidays (max 8 hrs/day)',
-    nightWorkRestrictions: 'Strict curfew: No work between 10:00pm and 6:00am (6:00pm to 6:00am for 11–12yo deliveries); if finishing after 6:00pm, employer must ensure child is accompanied or safe transport is provided',
+    parentConsentDetails: 'Mandatory signed Parent Consent Form CE1 (chief-executive approved form under Child Employment Act 2006 s 10(3); formerly Form 1) required BEFORE first shift; must state student DOB and official school hours, be updated within 14 days if school hours change, and be retained on file by the employer for 2 years.',
+    schoolTermMaxHours: 'Max 12 hours per week during school terms (combined across all employers)',
+    schoolDayMaxHours: 'Max 4 hours on a school day (zero work permitted during school hours)',
+    nonSchoolDayMaxHours: 'Max 8 hours on a non-school day (weekend / student-free day)',
+    holidayMaxHours: 'Max 38 hours per week in school holidays (max 8 hrs/day; working >30 hrs/wk for one employer triggers compulsory 12.0% Super Guarantee under SGAA 1992 s 27(1)(a))',
+    nightWorkRestrictions: 'Strict curfew: No work between 10:00pm and 6:00am (6:00pm to 6:00am for 11–12yo deliveries); if finishing after 6:00pm, employer must ensure child is accompanied or safe transport home is arranged',
     mandatoryRestBreaks: '1-hour rest pause after 4 continuous hours; minimum 12-hour break between shifts',
-    rulesFor15YearOlds: 'Under QLD law, 15-year-olds who have not completed Year 10 are classified as "school-aged children" and subject to the 12 hr/week term cap, 4 hr school-day limit, approved parent consent form, and 10pm curfew.',
-    keyRule: 'School attendance is compulsory; employers cannot roster students during school hours. Form CE1 is legally mandatory for all workers under 16.',
+    rulesFor15YearOlds: 'Under QLD law, 15-year-olds (Year 9/10) who have not completed Year 10 are classified as "school-aged children" and protected by the 12 hr/week term cap, 4 hr school-day limit, 38 hr/week holiday cap, mandatory signed Form CE1, 10pm curfew, and safe transport rules after 6pm (enforced by OIR Child Employment Inspectorate on 1300 362 128).',
+    keyRule: 'School attendance is compulsory; employers cannot roster students during school hours. Form CE1 is legally mandatory for all workers under 16 (unless Year 10 is completed).',
   },
   {
     state: 'Victoria (VIC)',
@@ -950,21 +956,21 @@ export const FIFTEEN_YO_ROADMAP_MILESTONES: RoadmapMilestone[] = [
   },
   {
     step: 5,
-    title: 'Claim the $22,575 Effective Tax-Free Threshold',
+    title: 'Claim the $22,866 Effective Tax-Free Threshold',
     badge: 'Step 5 • Zero Tax & Super',
-    summary: 'Select YES to Question 8 on ATO Form NAT 3092. Combined with the $700 Low Income Tax Offset (LITO), you pay $0 tax up to $22,575. Fill out NAT 13080 to staple your super (12.0% SG over 30h/wk).',
+    summary: 'Select YES to Question 8 on ATO Form NAT 3092. Combined with the $700 Low Income Tax Offset (LITO) and the 15% 2026-27 second bracket, you pay $0 tax up to $22,866 (up from $22,575). Fill out NAT 13080 to staple your super (12.0% SG over 30h/wk).',
     action: 'Submit Form NAT 3092 (TFN Declaration) and Form NAT 13080 (Super Choice) to your new employer.',
     linkKey: 'ato_tfn_form',
     formCode: 'NAT 3092 & NAT 13080',
-    statutoryRef: 'ITAA 1997 s 6-1 & SGAA 1992 s 28',
+    statutoryRef: 'ITAA 1997 s 6-1 & SGAA 1992 s 27(1)(a)',
     checkpoints: [
       'Complete ATO Form NAT 3092 Question 8 by selecting "YES" to claim the tax-free threshold',
-      'Confirm $0 tax is withheld on annual earnings up to $22,575 (with $700 LITO offset)',
+      'Confirm $0 net tax is payable on annual earnings up to $22,866 (with $700 LITO offset at 15% bracket)',
       'Fill out Section B of ATO Form NAT 13080 with your stapled super fund USI & Member ID',
-      'Verify 12.0% Superannuation Guarantee is paid on any week you work >30 hours (SGAA s 28)',
+      'Verify 12.0% Superannuation Guarantee is paid on any week you work >30 hours (SGAA s 27(1)(a)) within 7 business days (Payday Super)',
       'Receive mandatory Fair Work Information Statement (FWIS) and Casual Statement (CEIS)',
     ],
-    proTip: 'Starting a job mid-year does NOT pro-rate your $18,200 threshold as an Australian tax resident. Even if you start in April, you have the full threshold available for the financial year.',
+    proTip: 'Starting a job mid-year does NOT pro-rate your $18,200 threshold as an Australian tax resident. Even if you start in November, you have the full $22,866 effective threshold available for the financial year.',
   },
   {
     step: 6,

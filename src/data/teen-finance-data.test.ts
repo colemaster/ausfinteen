@@ -161,12 +161,12 @@ describe('Teen Finance Reference Data & 500+ Web Sources', () => {
       });
     });
 
-    it('specifically references the $22,575 effective tax-free threshold and Form NAT 3092 Question 8', () => {
+    it('specifically references the $22,866 effective tax-free threshold and Form NAT 3092 Question 8', () => {
       const step5 = FIFTEEN_YO_ROADMAP_MILESTONES.find(m => m.step === 5);
       expect(step5).toBeDefined();
-      expect(step5?.title).toContain('$22,575');
+      expect(step5?.title).toContain('$22,866');
       expect(step5?.summary).toContain('Question 8');
-      expect(step5?.summary).toContain('$22,575');
+      expect(step5?.summary).toContain('$22,866');
     });
 
     it('verifies 15yo roadmap milestones cover 100-point ID, Medicare privacy, and shift rules', () => {

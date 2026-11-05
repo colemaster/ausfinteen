@@ -11,12 +11,12 @@ describe('Careers & Employment Module (careers-employment.ts)', () => {
     expect(careersEmploymentModule.description).toContain('Modern Awards');
   });
 
-  it('contains at least 22 comprehensive topics', () => {
-    expect(careersEmploymentModule.topics.length).toBeGreaterThanOrEqual(22);
+  it('contains at least 24 comprehensive topics', () => {
+    expect(careersEmploymentModule.topics.length).toBeGreaterThanOrEqual(24);
   });
 
-  it('preserves existing topic IDs ce-1 through ce-14 and sequences new topics', () => {
-    for (let i = 1; i <= 22; i++) {
+  it('preserves existing topic IDs ce-1 through ce-14 and sequences new topics through ce-24', () => {
+    for (let i = 1; i <= 24; i++) {
       const topic = careersEmploymentModule.topics.find(t => t.id === `ce-${i}`);
       expect(topic, `Topic ce-${i} must exist`).toBeDefined();
       expect(topic?.moduleId).toBe('careers-employment');
@@ -92,5 +92,15 @@ describe('Careers & Employment Module (careers-employment.ts)', () => {
     const topic22 = careersEmploymentModule.topics.find(t => t.id === 'ce-22');
     expect(topic22?.answer).toContain('Casual Conversion');
     expect(topic22?.answer).toContain('Right to Disconnect');
+
+    const topic23 = careersEmploymentModule.topics.find(t => t.id === 'ce-23');
+    expect(topic23?.answer).toContain('[2026] FWCFB 75');
+    expect(topic23?.answer).toContain('1 December 2026');
+    expect(topic23?.answer).toContain('+25.1%');
+
+    const topic24 = careersEmploymentModule.topics.find(t => t.id === 'ce-24');
+    expect(topic24?.answer).toContain('Education (Work Experience) Act 1996');
+    expect(topic24?.answer).toContain('30 hours');
+    expect(topic24?.answer).toContain('$22,866');
   });
 });

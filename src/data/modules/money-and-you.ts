@@ -158,7 +158,7 @@ export const moneyAndYouModule: MandyModule = {
         moduleId: 'money-and-you',
         moduleTitle: 'Money & You 🤠',
         question: '17. RBA Cash Rate 4.35% — Why Savers Are Winning Right Now',
-        answer: 'The Reserve Bank cash rate sits at 4.35% (Sept 2026) after hikes in Feb, Mar and May 2026 unwound the 2025 cuts. For savers this is great news: youth savings bonuses pay 5.0%–5.8% and 1-year term deposits ~4.5%–5.0%. For borrowers it hurts: variable mortgages run ~9% and each 0.25% hike adds ~$104/month per $500k borrowed. Rates have likely peaked — banks are already trimming acquisition offers — so lock in bonus conditions rather than chasing headlines.',
+        answer: 'The Reserve Bank cash rate sits at 4.35% (Nov 2026, held at the 3 November 2026 Melbourne Cup Day RBA board meeting) after hikes in Feb, Mar and May 2026 unwound the 2025 cuts. For savers this is great news: youth savings bonuses pay 5.0%–5.8% and 1-year term deposits ~4.5%–5.0%. For borrowers it hurts: variable mortgages run ~9% and each 0.25% hike adds ~$104/month per $500k borrowed. Rates have likely peaked — banks are already trimming acquisition offers — so lock in bonus conditions rather than chasing headlines.',
         actionStep: 'Check your HISA bonus conditions today and set up the monthly deposit + card purchases to earn the top rate.',
         webLink: OFFICIAL_WEB_LINKS.rba_cash_rate,
       },

@@ -1,7 +1,7 @@
 /**
  * Cars & Driving — Brisbane, QLD reference data (2026-2027 parameters).
  *
- * Verified October 2026 against official statutory & market benchmarks:
+ * Verified 6 November 2026 against official statutory & market benchmarks:
  *  - Australian Financial Security Authority (ppsr.gov.au): official $2.00 PPSR search fee;
  *    warning against commercial copycat websites charging $25-$35+ markups.
  *  - Queensland Government / TMR (qld.gov.au): driver licence fees (1 July 2026 schedule),
@@ -18,7 +18,7 @@
  *    Mazda 3, Kia Cerato) vs modern battery electric vehicles (EVs).
  *  - Brisbane City Council (brisbane.qld.gov.au): on-street parking zones, meter terms, free parking.
  *
- * All figures are historical reference data as at October 2026 for education only,
+ * All figures are historical reference data as at 6 November 2026 for education only,
  * NOT live quotes and NOT financial advice. Verify against official sources before purchasing.
  */
 

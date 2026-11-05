@@ -14,6 +14,7 @@ import {
   BRISBANE_SUBURBS,
   QLD_FIRST_HOME_HELP,
   QLD_TEEN_RULES,
+  QLD_15YO_BRISBANE_FIRST_JOB_DEEP_ANALYSIS,
 } from '@/data/brisbane-data';
 import { OFFICIAL_WEB_LINKS } from '@/data/statutory-links';
 import { useTeenProfile } from '@/context/TeenProfileContext';
@@ -21,9 +22,9 @@ import { SmartImage } from '@/components/ui/SmartImage';
 import { ModulePrevNext } from '@/components/shared/ModulePrevNext';
 import { PrintShareFAB } from '@/components/shared/PrintShareFAB';
 import { usePageTitle } from '@/hooks/usePageTitle';
-import { Bus, CreditCard, Sparkles, AlertTriangle, ShieldCheck, Coins } from 'lucide-react';
+import { Bus, CreditCard, Sparkles, AlertTriangle, ShieldCheck, Coins, Briefcase, HeartPulse, GraduationCap } from 'lucide-react';
 
-const BNE_TABS = ['unis', 'schools', 'transit', 'realestate', 'help'] as const;
+const BNE_TABS = ['unis', 'schools', 'firstjob', 'transit', 'realestate', 'help'] as const;
 type BneTab = (typeof BNE_TABS)[number];
 
 function readBneTab(searchParams: URLSearchParams): BneTab {
@@ -131,6 +132,7 @@ export function BrisbaneQLD() {
           tabs={[
             { id: 'unis', label: '🎓 Brisbane Unis & HECS' },
             { id: 'schools', label: '🏫 Year 12 & Schools' },
+            { id: 'firstjob', label: '💼 15yo First Job Deep Analysis' },
             { id: 'transit', label: '🚌 50¢ TransLink Transit' },
             { id: 'realestate', label: '🏠 Real Estate & Renting' },
             { id: 'help', label: '💰 First-Home Help' },
@@ -157,7 +159,7 @@ export function BrisbaneQLD() {
                 </div>
                 <p className="text-[11px] text-muted-foreground mt-2.5">
                   You never pay upfront — HECS-HELP loans the amount, and you only start repaying once your income passes
-                  the HELP repayment threshold (~$60k+ in 2026). Apply via QTAC in Queensland.
+                  the marginal HELP repayment threshold ($69,528 in 2026-27). Apply via QTAC in Queensland.
                 </p>
               </div>
 
@@ -179,6 +181,235 @@ export function BrisbaneQLD() {
 
         {tab === 'schools' && (
           <QldSchoolsYear12 />
+        )}
+
+        {tab === 'firstjob' && (
+          <Card variant="glass" className="p-6 space-y-6">
+            <div className="flex items-center justify-between border-b border-border pb-3 flex-wrap gap-2">
+              <div className="flex items-center gap-2">
+                <Briefcase className="w-5 h-5 text-primary" />
+                <div>
+                  <h2 className="text-lg font-bold text-foreground">
+                    {QLD_15YO_BRISBANE_FIRST_JOB_DEEP_ANALYSIS.persona.title}
+                  </h2>
+                  <p className="text-xs text-muted-foreground">
+                    Verified {QLD_15YO_BRISBANE_FIRST_JOB_DEEP_ANALYSIS.lastVerified} • {QLD_15YO_BRISBANE_FIRST_JOB_DEEP_ANALYSIS.qldChildEmploymentLaw.legislation} &amp; Modern Awards 2026-27
+                  </p>
+                </div>
+              </div>
+              <Badge variant="success" className="font-mono text-xs">
+                Form CE1 • 12h Term / 38h Holiday • $22,866 Tax-Free
+              </Badge>
+            </div>
+
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              {QLD_15YO_BRISBANE_FIRST_JOB_DEEP_ANALYSIS.persona.schoolYearLevel} in {QLD_15YO_BRISBANE_FIRST_JOB_DEEP_ANALYSIS.persona.location} ({QLD_15YO_BRISBANE_FIRST_JOB_DEEP_ANALYSIS.persona.legalClassificationQLD}).
+            </p>
+
+            {/* Quick Metrics Bar */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div className="rounded-xl border border-border bg-card p-3.5 text-center">
+                <div className="text-[10px] uppercase tracking-wide text-muted-foreground font-semibold">Term / Holiday Cap</div>
+                <div className="text-xl font-bold font-mono text-primary">12h / 38h wk</div>
+                <div className="text-[10px] text-muted-foreground mt-0.5">Max 4h school day • 8h wknd</div>
+              </div>
+              <div className="rounded-xl border border-border bg-card p-3.5 text-center">
+                <div className="text-[10px] uppercase tracking-wide text-muted-foreground font-semibold">15yo Retail Casual</div>
+                <div className="text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400">$15.64–$21.89</div>
+                <div className="text-[10px] text-muted-foreground mt-0.5">$18.77 Thu &gt;6pm/Sat • $31.28 PH</div>
+              </div>
+              <div className="rounded-xl border border-border bg-card p-3.5 text-center">
+                <div className="text-[10px] uppercase tracking-wide text-muted-foreground font-semibold">52-Wk Cash Model</div>
+                <div className="text-xl font-bold font-mono text-foreground">$10,008.80</div>
+                <div className="text-[10px] text-muted-foreground mt-0.5">100% Tax-Free (&lt;$22,866 LITO)</div>
+              </div>
+              <div className="rounded-xl border border-border bg-card p-3.5 text-center">
+                <div className="text-[10px] uppercase tracking-wide text-muted-foreground font-semibold">Holiday Super Hack</div>
+                <div className="text-xl font-bold font-mono text-amber-600 dark:text-amber-400">&gt;30 hrs / wk</div>
+                <div className="text-[10px] text-muted-foreground mt-0.5">Unlocks 12% SG on ALL hours</div>
+              </div>
+            </div>
+
+            {/* 1. QLD Child Employment Act 2006 & Form CE1 */}
+            <div className="rounded-2xl border border-border bg-card/60 p-4 space-y-3">
+              <div className="flex items-center justify-between flex-wrap gap-2">
+                <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 text-emerald-500" />
+                  <span>1. QLD Child Employment Act 2006, Mandatory Form CE1 &amp; After-6pm Safety</span>
+                </h3>
+                <span className="text-[11px] font-mono text-muted-foreground">
+                  Inspectorate: {QLD_15YO_BRISBANE_FIRST_JOB_DEEP_ANALYSIS.qldChildEmploymentLaw.regulator} ({QLD_15YO_BRISBANE_FIRST_JOB_DEEP_ANALYSIS.qldChildEmploymentLaw.inspectoratePhone})
+                </span>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                <div className="p-3 rounded-xl border border-border bg-background/80 space-y-1.5">
+                  <div className="font-bold text-foreground">
+                    {QLD_15YO_BRISBANE_FIRST_JOB_DEEP_ANALYSIS.qldChildEmploymentLaw.mandatoryConsentForm.code}: {QLD_15YO_BRISBANE_FIRST_JOB_DEEP_ANALYSIS.qldChildEmploymentLaw.mandatoryConsentForm.officialName} ({QLD_15YO_BRISBANE_FIRST_JOB_DEEP_ANALYSIS.qldChildEmploymentLaw.mandatoryConsentForm.statutorySection})
+                  </div>
+                  <ul className="text-[11px] text-muted-foreground list-disc list-inside space-y-0.5 leading-relaxed">
+                    {QLD_15YO_BRISBANE_FIRST_JOB_DEEP_ANALYSIS.qldChildEmploymentLaw.mandatoryConsentForm.rules.map(rule => (
+                      <li key={rule}>{rule}</li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="p-3 rounded-xl border border-border bg-background/80 space-y-1">
+                  <div className="font-bold text-foreground">Statutory Hour Caps, Curfew &amp; Safe Escort</div>
+                  <ul className="text-[11px] text-muted-foreground list-disc list-inside space-y-0.5">
+                    <li><strong>School Term:</strong> Max <strong>{QLD_15YO_BRISBANE_FIRST_JOB_DEEP_ANALYSIS.qldChildEmploymentLaw.workingHoursLimits.schoolTermMaxWeeklyHours} hrs/week</strong> (max {QLD_15YO_BRISBANE_FIRST_JOB_DEEP_ANALYSIS.qldChildEmploymentLaw.workingHoursLimits.schoolDayMaxDailyHours} hrs on a school day; max {QLD_15YO_BRISBANE_FIRST_JOB_DEEP_ANALYSIS.qldChildEmploymentLaw.workingHoursLimits.nonSchoolDayTermMaxDailyHours} hrs on Sat/Sun).</li>
+                    <li><strong>QLD School Holidays:</strong> Max <strong>{QLD_15YO_BRISBANE_FIRST_JOB_DEEP_ANALYSIS.qldChildEmploymentLaw.workingHoursLimits.schoolHolidaysMaxWeeklyHours} hrs/week</strong> (max {QLD_15YO_BRISBANE_FIRST_JOB_DEEP_ANALYSIS.qldChildEmploymentLaw.workingHoursLimits.schoolHolidaysMaxDailyHours} hrs/day).</li>
+                    <li><strong>Night Curfew:</strong> Strict prohibition between <strong>{QLD_15YO_BRISBANE_FIRST_JOB_DEEP_ANALYSIS.qldChildEmploymentLaw.workingHoursLimits.curfewStart} and {QLD_15YO_BRISBANE_FIRST_JOB_DEEP_ANALYSIS.qldChildEmploymentLaw.workingHoursLimits.curfewEnd}</strong>.</li>
+                    <li><strong>Breaks &amp; Shift Gap:</strong> Mandatory {QLD_15YO_BRISBANE_FIRST_JOB_DEEP_ANALYSIS.qldChildEmploymentLaw.workingHoursLimits.mandatoryBreakDurationMinutes}-min rest break after {QLD_15YO_BRISBANE_FIRST_JOB_DEEP_ANALYSIS.qldChildEmploymentLaw.workingHoursLimits.mandatoryBreakAfterContinuousHours} continuous hours; minimum {QLD_15YO_BRISBANE_FIRST_JOB_DEEP_ANALYSIS.qldChildEmploymentLaw.workingHoursLimits.minRestGapBetweenShiftsHours}-hour gap between shifts.</li>
+                    <li><strong>Safe Travel Home After 6:00pm:</strong> {QLD_15YO_BRISBANE_FIRST_JOB_DEEP_ANALYSIS.qldChildEmploymentLaw.safetyAndDutyOfCare.after6pmSafeTransport}</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* 2. 8-Award Pay & Shift Matrix */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between flex-wrap gap-2">
+                <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+                  <Coins className="w-4 h-4 text-amber-500" />
+                  <span>2. Brisbane 15-Year-Old Casual Award Pay &amp; Shift Matrix (2026-27)</span>
+                </h3>
+                <Badge variant="outline" className="text-[10px] font-mono">
+                  Includes 25% Casual Loading • 1 Dec 2026 [2026] FWCFB 75 Ready
+                </Badge>
+              </div>
+
+              <div className="overflow-x-auto rounded-2xl border border-border">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="border-b border-border bg-muted/40">
+                      <th className="py-2.5 px-3 font-bold text-foreground">Industry &amp; Award</th>
+                      <th className="py-2.5 px-3 font-bold text-foreground">15yo %</th>
+                      <th className="py-2.5 px-3 font-bold text-foreground">Weekday Casual</th>
+                      <th className="py-2.5 px-3 font-bold text-foreground">Thu &gt;6pm / Sat</th>
+                      <th className="py-2.5 px-3 font-bold text-foreground">Sunday</th>
+                      <th className="py-2.5 px-3 font-bold text-foreground">Public Holiday</th>
+                      <th className="py-2.5 px-3 font-bold text-foreground">Min Shift &amp; Key Rule</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {QLD_15YO_BRISBANE_FIRST_JOB_DEEP_ANALYSIS.awardPayAndShiftMatrix.map(row => (
+                      <tr key={row.id} className="border-b border-border/60 last:border-0 hover:bg-muted/20">
+                        <td className="py-2.5 px-3">
+                          <div className="font-bold text-foreground">{row.awardName}</div>
+                          <div className="text-[10px] font-mono text-muted-foreground">{row.awardCode} • {row.typicalBrisbaneRoles}</div>
+                        </td>
+                        <td className="py-2.5 px-3 font-mono text-[11px] text-muted-foreground whitespace-nowrap">{Math.round(row.juniorPercentageAt15 * 100)}%</td>
+                        <td className="py-2.5 px-3 font-mono font-bold text-emerald-600 dark:text-emerald-400 whitespace-nowrap">${row.casualWeekdayAt15.toFixed(2)}/hr</td>
+                        <td className="py-2.5 px-3 font-mono text-foreground whitespace-nowrap">${row.saturdayCasualAt15.toFixed(2)}/hr</td>
+                        <td className="py-2.5 px-3 font-mono font-semibold text-sky-600 dark:text-sky-400 whitespace-nowrap">${row.sundayCasualAt15.toFixed(2)}/hr</td>
+                        <td className="py-2.5 px-3 font-mono text-amber-600 dark:text-amber-400 whitespace-nowrap">${row.publicHolidayCasualAt15.toFixed(2)}/hr</td>
+                        <td className="py-2.5 px-3 text-[11px] text-muted-foreground">
+                          <span className="font-semibold text-foreground">{row.minShiftHours}:</span> {row.studentShiftException}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* 3. 52-Week Cash-Flow & Holiday Super Model */}
+            <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/5 p-4 space-y-3">
+              <div className="flex items-center justify-between flex-wrap gap-2">
+                <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-emerald-500" />
+                  <span>3. 52-Week Brisbane Year 9/10 Cash-Flow &amp; The 30-Hour Holiday Super Hack</span>
+                </h3>
+                <Badge variant="success" className="text-[10px] font-mono">
+                  SGAA 1992 s 27(1)(a) • Payday Super
+                </Badge>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+                <div className="p-3 rounded-xl border border-border bg-card space-y-1">
+                  <div className="font-bold text-foreground">40 School Term Weeks (9 hrs/wk)</div>
+                  <div className="text-base font-bold font-mono text-emerald-600 dark:text-emerald-400">
+                    ${QLD_15YO_BRISBANE_FIRST_JOB_DEEP_ANALYSIS.annualCashflowAndHolidaySuperModel.schoolTermRoster.weeklyGrossPay.toFixed(2)}/wk • ${QLD_15YO_BRISBANE_FIRST_JOB_DEEP_ANALYSIS.annualCashflowAndHolidaySuperModel.schoolTermRoster.total40TermWeeksGross.toFixed(2)}/yr
+                  </div>
+                  <p className="text-[11px] text-muted-foreground">
+                    {QLD_15YO_BRISBANE_FIRST_JOB_DEEP_ANALYSIS.annualCashflowAndHolidaySuperModel.schoolTermRoster.shift1} + {QLD_15YO_BRISBANE_FIRST_JOB_DEEP_ANALYSIS.annualCashflowAndHolidaySuperModel.schoolTermRoster.shift2}.
+                  </p>
+                </div>
+                <div className="p-3 rounded-xl border border-border bg-card space-y-1">
+                  <div className="font-bold text-foreground">6 Holiday Weeks + 30-Hr Super Unlock</div>
+                  <div className="text-base font-bold font-mono text-sky-600 dark:text-sky-400">
+                    ${QLD_15YO_BRISBANE_FIRST_JOB_DEEP_ANALYSIS.annualCashflowAndHolidaySuperModel.schoolHolidaySurge.totalHolidayAndPHGross.toFixed(2)} Pay + ${QLD_15YO_BRISBANE_FIRST_JOB_DEEP_ANALYSIS.annualCashflowAndHolidaySuperModel.annualSummary.superGuaranteeEarned.toFixed(2)} Super
+                  </div>
+                  <p className="text-[11px] text-muted-foreground">
+                    Working <strong>{QLD_15YO_BRISBANE_FIRST_JOB_DEEP_ANALYSIS.annualCashflowAndHolidaySuperModel.schoolHolidaySurge.hoursPerSuperBoostWeek} hrs/wk</strong> in 2 December holiday weeks crosses the <strong>30-hr/wk threshold</strong> under <em>SGAA 1992</em> s 27(1)(a), forcing 12.0% Super on ALL 32 hours!
+                  </p>
+                </div>
+                <div className="p-3 rounded-xl border border-border bg-card space-y-1">
+                  <div className="font-bold text-foreground">Annual Total &amp; 16th Birthday Jump</div>
+                  <div className="text-base font-bold font-mono text-amber-600 dark:text-amber-400">
+                    ${QLD_15YO_BRISBANE_FIRST_JOB_DEEP_ANALYSIS.annualCashflowAndHolidaySuperModel.annualSummary.totalAnnualGrossIncome.toFixed(2)}/yr ($0 Tax)
+                  </div>
+                  <p className="text-[11px] text-muted-foreground">
+                    100% tax-free (under ${QLD_15YO_BRISBANE_FIRST_JOB_DEEP_ANALYSIS.annualCashflowAndHolidaySuperModel.annualSummary.effectiveTaxFreeThreshold2026_27.toLocaleString()} LITO threshold). Turning 16 boosts Fast Food pay by <strong>+25.1%</strong> ($13.90 → $17.39/hr) and Retail by <strong>+11.2%</strong> ($15.64 → $17.39/hr).
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* 4. 8 Brisbane Shopping Hubs on 50c TransLink */}
+            <div className="space-y-3">
+              <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+                <Bus className="w-4 h-4 text-sky-500" />
+                <span>4. Top 8 Brisbane Teen Hiring Precincts &amp; $1.00 Round-Trip 50¢ TransLink Access</span>
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+                {QLD_15YO_BRISBANE_FIRST_JOB_DEEP_ANALYSIS.brisbaneShoppingHubsAndTransit.map(h => (
+                  <div key={h.name} className="p-3 rounded-xl border border-border bg-card space-y-1.5">
+                    <div className="font-bold text-foreground leading-snug">{h.name}</div>
+                    <div className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400">{h.region} ({h.suburb}) • ${h.roundTripFare.toFixed(2)} round-trip</div>
+                    <p className="text-[11px] text-muted-foreground"><strong>Transit:</strong> {h.translinkAccess}</p>
+                    <p className="text-[11px] text-muted-foreground"><strong>Employers:</strong> {h.majorTeenEmployers.join(', ')}</p>
+                    <p className="text-[10px] text-muted-foreground italic">{h.safetyAndPickupNote}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* 5. Year 10 SET Plan, SATs & Healthcare Privacy at 15 */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+              <div className="rounded-2xl border border-border bg-card/60 p-4 space-y-2">
+                <div className="flex items-center gap-2 font-bold text-foreground text-sm">
+                  <GraduationCap className="w-4 h-4 text-primary" />
+                  <span>5. QLD Year 10 SET Plan, 30-Day Work Experience &amp; SATs</span>
+                </div>
+                <ul className="text-[11px] text-muted-foreground list-disc list-inside space-y-1 leading-relaxed">
+                  <li><strong>Year 10 SET Plan &amp; myQCE:</strong> {QLD_15YO_BRISBANE_FIRST_JOB_DEEP_ANALYSIS.qldSchoolAndCareerIntegration.year10SetPlan.summary}</li>
+                  <li><strong>30-Day School Work Experience vs Illegal Unpaid Trials:</strong> {QLD_15YO_BRISBANE_FIRST_JOB_DEEP_ANALYSIS.qldSchoolAndCareerIntegration.workExperienceVsPaidTrials.workExperienceAct}</li>
+                  <li><strong>School-Based Apprenticeships &amp; Traineeships (SATs):</strong> {QLD_15YO_BRISBANE_FIRST_JOB_DEEP_ANALYSIS.qldSchoolAndCareerIntegration.schoolBasedApprenticeshipsAndTraineeships.qceCreditsAwarded}</li>
+                </ul>
+              </div>
+
+              <div className="rounded-2xl border border-border bg-card/60 p-4 space-y-2">
+                <div className="flex items-center gap-2 font-bold text-foreground text-sm">
+                  <HeartPulse className="w-4 h-4 text-rose-500" />
+                  <span>6. Healthcare Privacy at 15 (Medicare MS011 &amp; 7 Brisbane headspace Hubs)</span>
+                </div>
+                <ul className="text-[11px] text-muted-foreground list-disc list-inside space-y-1 leading-relaxed">
+                  <li><strong>Own Green Medicare Card at 15 (Form MS011 &quot;Copy&quot; Hack):</strong> {QLD_15YO_BRISBANE_FIRST_JOB_DEEP_ANALYSIS.healthcarePrivacyAndIdAt15.medicareIndependence.copyVsTransferRule}</li>
+                  <li><strong>My Health Record (Age 14+):</strong> {QLD_15YO_BRISBANE_FIRST_JOB_DEEP_ANALYSIS.healthcarePrivacyAndIdAt15.myHealthRecordControl.rule}</li>
+                  <li><strong>7 Free Greater Brisbane headspace Centres (Ages 12–25):</strong> {QLD_15YO_BRISBANE_FIRST_JOB_DEEP_ANALYSIS.healthcarePrivacyAndIdAt15.brisbaneHeadspaceNetwork.map(c => c.centre.replace('headspace ', '')).join(', ')} (plus 24/7 Kids Helpline <strong>1800 55 1800</strong>).</li>
+                  <li><strong>135-Pt ID &amp; PrepL at 15y 11m:</strong> Birth Certificate (70) + QLD High School Photo ID (40) + Medicare Card (25) = {QLD_15YO_BRISBANE_FIRST_JOB_DEEP_ANALYSIS.healthcarePrivacyAndIdAt15.id100PointsCombo.totalPoints} pts. Enrol in <strong>PrepL ($29.70)</strong> at 15 years 11 months.</li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap gap-2.5">
+              <WebReferenceLink link={OFFICIAL_WEB_LINKS.qld_child_employment_ce1} />
+              <WebReferenceLink link={OFFICIAL_WEB_LINKS.fairwork_awards} />
+              <WebReferenceLink link={OFFICIAL_WEB_LINKS.fairwork_minimum_shifts} />
+              <WebReferenceLink link={OFFICIAL_WEB_LINKS.services_australia_medicare_15} />
+              <WebReferenceLink link={OFFICIAL_WEB_LINKS.qld_school_based} />
+              <WebReferenceLink link={OFFICIAL_WEB_LINKS.translink_50c_fares} />
+            </div>
+          </Card>
         )}
 
         {tab === 'transit' && (
@@ -496,7 +727,7 @@ export function BrisbaneQLD() {
             ))}
           </div>
           <p className="text-[11px] text-muted-foreground leading-relaxed">
-            Based on 2026 data. For education only — not financial advice. Verify rates and rules against official QLD
+            Based on 2026-27 data (verified 6 November 2026). For education only — not financial advice. Verify rates and rules against official QLD
             Government and university sources.
           </p>
         </Card>

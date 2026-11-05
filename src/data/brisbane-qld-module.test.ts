@@ -1,6 +1,11 @@
 import { describe, it, expect } from 'vitest';
 import { brisbaneQldModule } from './modules/brisbane-qld';
-import { BRISBANE_SUBURBS, QLD_TEEN_RULES, BRISBANE_WEEKLY_BUDGET } from './brisbane-data';
+import {
+  BRISBANE_SUBURBS,
+  QLD_TEEN_RULES,
+  BRISBANE_WEEKLY_BUDGET,
+  QLD_15YO_BRISBANE_FIRST_JOB_DEEP_ANALYSIS,
+} from './brisbane-data';
 
 describe('Brisbane QLD Location Module (2026-2027)', () => {
   it('should define the module metadata correctly', () => {
@@ -8,10 +13,10 @@ describe('Brisbane QLD Location Module (2026-2027)', () => {
     expect(brisbaneQldModule.title).toBe('Brisbane, QLD');
     expect(brisbaneQldModule.emoji).toBe('🏙️');
     expect(brisbaneQldModule.route).toBe('/brisbane-qld');
-    expect(brisbaneQldModule.topics.length).toBe(17);
+    expect(brisbaneQldModule.topics.length).toBe(20);
   });
 
-  it('should have valid topic IDs and required fields for all 17 topics', () => {
+  it('should have valid topic IDs and required fields for all 20 topics', () => {
     brisbaneQldModule.topics.forEach((t, i) => {
       expect(t.id).toBe(`bq-${i + 1}`);
       expect(t.moduleId).toBe('brisbane-qld');
@@ -106,6 +111,50 @@ describe('Brisbane QLD Location Module (2026-2027)', () => {
     expect(t.answer).toContain('Outer Ring');
     expect(t.answer).toContain('100-Point Tenant Application Pack');
     expect(t.answer).toContain('0.7%–0.9%');
+  });
+
+  it('should provide the 15yo Brisbane high school student first job playbook: Form CE1, 12h cap & safe travel (bq-18)', () => {
+    const t = brisbaneQldModule.topics.find(x => x.id === 'bq-18')!;
+    expect(t.answer).toContain('Child Employment Act 2006');
+    expect(t.answer).toContain('Form CE1');
+    expect(t.answer).toContain('12 hours per week');
+    expect(t.answer).toContain('38 hours per week');
+    expect(t.answer).toContain('10:00pm and 6:00am');
+    expect(t.answer).toContain('1300 362 128');
+  });
+
+  it('should detail the Brisbane 15yo casual pay matrix, shopping hubs, and 30-hour holiday super hack (bq-19)', () => {
+    const t = brisbaneQldModule.topics.find(x => x.id === 'bq-19')!;
+    expect(t.answer).toContain('$15.64/hr');
+    expect(t.answer).toContain('$21.89/hr');
+    expect(t.answer).toContain('$13.90/hr');
+    expect(t.answer).toContain('[2026] FWCFB 75');
+    expect(t.answer).toContain('Clause 11.3');
+    expect(t.answer).toContain('$22,866');
+    expect(t.answer).toContain('30-hour/week threshold');
+  });
+
+  it('should cover QLD Year 10 SET Plan, 30-day work experience, SATs, Medicare MS011 Copy & 7 Brisbane headspace hubs (bq-20)', () => {
+    const t = brisbaneQldModule.topics.find(x => x.id === 'bq-20')!;
+    expect(t.answer).toContain('SET');
+    expect(t.answer).toContain('Education (Work Experience) Act 1996');
+    expect(t.answer).toContain('30 days');
+    expect(t.answer).toContain('Form MS011');
+    expect(t.answer).toContain('Woolloongabba');
+    expect(t.answer).toContain('Indooroopilly');
+  });
+});
+
+describe('QLD 15-Year-Old Brisbane High School Student First Job Deep Analysis Dataset', () => {
+  it('should define the complete deep analysis object with 8 awards, 8 shopping hubs, and 7 headspace centres', () => {
+    expect(QLD_15YO_BRISBANE_FIRST_JOB_DEEP_ANALYSIS.lastVerified).toBe('6 November 2026');
+    expect(QLD_15YO_BRISBANE_FIRST_JOB_DEEP_ANALYSIS.qldChildEmploymentLaw.mandatoryConsentForm.code).toBe('Form CE1');
+    expect(QLD_15YO_BRISBANE_FIRST_JOB_DEEP_ANALYSIS.qldChildEmploymentLaw.workingHoursLimits.schoolTermMaxWeeklyHours).toBe(12);
+    expect(QLD_15YO_BRISBANE_FIRST_JOB_DEEP_ANALYSIS.qldChildEmploymentLaw.workingHoursLimits.schoolHolidaysMaxWeeklyHours).toBe(38);
+    expect(QLD_15YO_BRISBANE_FIRST_JOB_DEEP_ANALYSIS.awardPayAndShiftMatrix.length).toBe(8);
+    expect(QLD_15YO_BRISBANE_FIRST_JOB_DEEP_ANALYSIS.brisbaneShoppingHubsAndTransit.length).toBe(8);
+    expect(QLD_15YO_BRISBANE_FIRST_JOB_DEEP_ANALYSIS.healthcarePrivacyAndIdAt15.brisbaneHeadspaceNetwork.length).toBe(7);
+    expect(QLD_15YO_BRISBANE_FIRST_JOB_DEEP_ANALYSIS.annualCashflowAndHolidaySuperModel.annualSummary.effectiveTaxFreeThreshold2026_27).toBe(22866);
   });
 });
 

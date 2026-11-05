@@ -1,7 +1,7 @@
 /**
  * Landing page content for a 15-year-old-first experience.
  * All figures are derived from existing src/data modules (no duplicated constants).
- * Based on Sept 2026 ATO / Fair Work / RBA / QTAC / TAFE QLD reference data.
+ * Based on 6 November 2026 ATO / Fair Work / RBA / QTAC / TAFE QLD / OIR QLD reference data.
  */
 
 import { AGE_PRESETS, JUNIOR_AWARD_RATES, TEEN_SAVINGS_ACCOUNTS } from '@/data/teen-finance-data';
@@ -210,7 +210,7 @@ export const MYTH_FACTS: MythFact[] = [
 export const FAQ_ITEMS: FaqItem[] = [
   {
     question: 'What savings rate can a 15-year-old get right now?',
-    answer: `The top tracked youth rate is ${TOP_HISA_RATE.toFixed(2)}% p.a. with ${TOP_HISA_BANK}, well above the September cash rate of ${RBA_PCT}. Check the monthly bonus conditions so you actually earn the top rate.`,
+    answer: `The top tracked youth rate is ${TOP_HISA_RATE.toFixed(2)}% p.a. with ${TOP_HISA_BANK} (with monthly hurdles waived for ages 14–17), well above the November 2026 cash rate of ${RBA_PCT}. Check the monthly bonus conditions so you actually earn the top rate.`,
   },
   {
     question: 'Do I get super on my first casual job at 15?',

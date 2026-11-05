@@ -1,0 +1,18 @@
+# Gradle cache & local machine config
+.gradle/
+local.properties
+build/
+app/build/intermediates/
+app/build/tmp/
+app/build/generated/
+app/build/kotlin/
+app/build/outputs/logs/
+app/build/outputs/mapping/
+
+# Keep compiled APK outputs and synced web assets only where appropriate:
+# Ignore duplicate raw web asset copy in git (re-synced via `npm run android:sync`),
+# while keeping the ready-to-install APKs in android/!
+app/src/main/assets/public/
+!AusFinTools-v*.apk
+!app/build/outputs/apk/release/*.apk
+!app/build/outputs/apk/debug/*.apk

@@ -1,7 +1,7 @@
 {
   "name": "au-personal-finance-tools",
   "private": true,
-  "version": "7.11.0",
+  "version": "7.12.0",
   "description": "Free, open-source, privacy-first suite of Australian personal finance calculators",
   "homepage": "https://github.com/colemaster/ausfinteen",
   "type": "module",
@@ -23,7 +23,9 @@
     "perf:baseline": "npm run build && node scripts/perf-report.mjs --baseline docs/perf-baseline.json",
     "perf:compare": "npm run build && node scripts/perf-report.mjs --baseline docs/perf-baseline.json --json",
     "build:analyze": "ANALYZE=1 astro build",
-    "check": "npm run typecheck && npm test && npm run build"
+    "check": "npm run typecheck && npm test && npm run build",
+    "android:sync": "npm run build && node scripts/sync-android-assets.mjs",
+    "android:build": "npm run android:sync && cd android && ./gradlew assembleRelease assembleDebug && cp app/build/outputs/apk/release/app-release.apk AusFinTools-v7.12.0.apk"
   },
   "dependencies": {
     "@astrojs/react": "^7.1.2",

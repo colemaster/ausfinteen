@@ -64,6 +64,7 @@
 | v7.9.0  | SDK, Deps & Codebase Refresh (29 Oct 2026) | Refreshed all SDKs, libraries, and dependencies to latest stable releases | Pushed |
 | v7.10.0 | SDK, Deps & Codebase Refresh (4 Nov 2026) | Node.js 26.13.0 LTS ("Lithium"), Astro 7.4.5, Vitest 5.1.0, Tailwind 4.3.4, Lucide 1.68.0 | Pushed |
 | v7.11.0 | 6 Nov 2026 Content Update & 15yo QLD Brisbane High School Student First Job Deep Analysis | Full statutory & market update as of 6 Nov 2026 + deep analysis for a 15-year-old Brisbane (QLD) female high school student with her first casual job: QLD Child Employment Act 2006 (Form CE1, 12h term / 38h holiday rules, 10pm-6am curfew, 6pm safe escort), 8-industry Modern Awards pay & shift matrix (including 1.5h Retail student shift rule & upcoming 1 Dec 2026 FWC [2026] FWCFB 75 step-ups), 52-week term + holiday cash-flow & super model, Brisbane shopping center hiring hubs & 50c TransLink commuting, Year 10 SET Plan / QCAA QCE / Work Experience / SATs, healthcare privacy (Form MS004/MS011 own Medicare card, My Health Record at 14+, 7 Brisbane headspace hubs), TFN/LITO ($22,866 effective threshold reconciliation), and 5.0%–5.80%+ Youth HISA comparison | Pushed |
+| v7.12.0 | Full-Featured Android App & Installable APK (`android/`) | Complete Android app project under `android/` (native Chromium WebView + offline virtual HTTPS asset server bundling all 21 Astro static pages, React 19 calculators, adaptive launcher icons, home-screen app shortcuts, hardware/predictive back navigation, native PDF/Print export via `PrintManager`, native Share Sheet, external statutory link handling, and signed/installable release + debug APKs) | Pushed |
 
 
 ---
@@ -2224,5 +2225,30 @@ Moved the runtime SDK to the new Node.js 26 LTS ("Lithium") and updated every np
 - `npm run typecheck`: 0 errors
 - `npm test`: 57 test files, 1,014 tests passed (100% pass rate)
 - `npm run build`: 21 static pages built cleanly
+
+---
+
+## v7.12.0 — FULL-FEATURED ANDROID APP & READY-TO-INSTALL APK UNDER `android/` (6 Nov 2026)
+
+### User Request (Verbatim)
+> `"create a android app versions under android/ apk should bu fully featured ready to installk"`
+
+### Execution Plan & Scope
+1. Inspect local Java / JDK, Android SDK, and Gradle toolchain on the machine.
+2. Build a complete, self-contained, offline-capable Android project under `android/` (with Capacitor / AndroidX `WebViewAssetLoader` serving the full compiled Astro + React 19 `dist/` bundle over `https://appassets.androidplatform.net/` or Capacitor's local server so ES modules, Astro ClientRouter, `localStorage`, Canvas Confetti, Web Audio synthesizer, print/PDF export, and external statutory `https://` links work 100% natively).
+3. Include adaptive launcher icons (`ic_launcher`, `ic_launcher_round`), splash/theme styling matching AusTeen Money / AusFinTools (`#090d16` dark / `#10b981` emerald accent), hardware Back button / predictive back gesture handling, native share sheet / print bridge (`AndroidPrintManager`), and external link intent routing (`CustomTabsIntent` / browser).
+4. Compile and sign ready-to-install APK(s) (both `debug` and signed `release` APK, plus a convenient copy at `android/AusFinTools-v7.12.0.apk` / `android/app/build/outputs/apk/...`) and add npm scripts (`android:sync`, `android:build`) so future updates rebuild the APK in one command.
+
+### Validation (6 Nov 2026)
+- `node scripts/sync-android-assets.mjs`: 250 files (15.81 MB) synced from `dist/` to `android/app/src/main/assets/public/`
+- `./gradlew assembleRelease assembleDebug`: `BUILD SUCCESSFUL` (0 warnings, R8 minify + lintVitalRelease passed)
+- `apksigner verify --verbose --print-certs android/AusFinTools-v7.12.0.apk`: Verified (APK Signature Scheme v2 & v3, RSA-2048)
+- `aapt2 dump badging android/AusFinTools-v7.12.0.apk`: `package: name='com.ausfintools.app' versionCode='71200' versionName='7.12.0' minSdkVersion:'26' targetSdkVersion:'35'`
+- Output APKs:
+  - `android/AusFinTools-v7.12.0.apk` (8.4 MB signed release APK)
+  - `android/app/build/outputs/apk/release/app-release.apk` (8.4 MB signed release APK)
+  - `android/app/build/outputs/apk/debug/app-debug.apk` (8.6 MB debug APK)
+
+
 
 

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="brisbane_15yo"
+        android:enabled="true"
+        android:icon="@mipmap/ic_launcher_round"
+        android:shortcutShortLabel="@string/shortcut_brisbane_short"
+        android:shortcutLongLabel="@string/shortcut_brisbane_long">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.ausfintools.app"
+            android:targetClass="com.ausfintools.app.MainActivity"
+            android:data="ausfintools://open/brisbane-qld?tab=firstjob" />
+    </shortcut>
+
+    <shortcut
+        android:shortcutId="careers_awards"
+        android:enabled="true"
+        android:icon="@mipmap/ic_launcher_round"
+        android:shortcutShortLabel="@string/shortcut_careers_short"
+        android:shortcutLongLabel="@string/shortcut_careers_long">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.ausfintools.app"
+            android:targetClass="com.ausfintools.app.MainActivity"
+            android:data="ausfintools://open/careers-employment" />
+    </shortcut>
+
+    <shortcut
+        android:shortcutId="teen_budgeting"
+        android:enabled="true"
+        android:icon="@mipmap/ic_launcher_round"
+        android:shortcutShortLabel="@string/shortcut_budget_short"
+        android:shortcutLongLabel="@string/shortcut_budget_long">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.ausfintools.app"
+            android:targetClass="com.ausfintools.app.MainActivity"
+            android:data="ausfintools://open/teen-budgeting" />
+    </shortcut>
+
+    <shortcut
+        android:shortcutId="all_calculators"
+        android:enabled="true"
+        android:icon="@mipmap/ic_launcher_round"
+        android:shortcutShortLabel="@string/shortcut_calcs_short"
+        android:shortcutLongLabel="@string/shortcut_calcs_long">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.ausfintools.app"
+            android:targetClass="com.ausfintools.app.MainActivity"
+            android:data="ausfintools://open/calculators" />
+    </shortcut>
+</shortcuts>

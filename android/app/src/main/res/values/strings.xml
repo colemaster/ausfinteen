@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AusTeen Money</string>
+    <string name="shortcut_brisbane_short">Brisbane 15yo</string>
+    <string name="shortcut_brisbane_long">Brisbane QLD &amp; 15yo First Job Deep Analysis</string>
+    <string name="shortcut_careers_short">Careers &amp; Pay</string>
+    <string name="shortcut_careers_long">Careers, Modern Awards &amp; Junior Pay</string>
+    <string name="shortcut_budget_short">Paycheck Split</string>
+    <string name="shortcut_budget_long">Teen Budgeting &amp; 3-Bucket Paycheck Splitter</string>
+    <string name="shortcut_calcs_short">28 Calculators</string>
+    <string name="shortcut_calcs_long">All 28 Australian Financial Calculators</string>
+</resources>

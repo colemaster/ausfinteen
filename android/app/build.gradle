@@ -1,0 +1,63 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.ausfintools.app'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId "com.ausfintools.app"
+        minSdk 26
+        targetSdk 35
+        versionCode 71200
+        versionName "7.12.0"
+        resConfigs "en"
+    }
+
+    signingConfigs {
+        release {
+            storeFile file("keystore/ausfintools-release.jks")
+            storePassword "ausfintools2026"
+            keyAlias "ausfintools"
+            keyPassword "ausfintools2026"
+            enableV1Signing true
+            enableV2Signing true
+            enableV3Signing true
+        }
+    }
+
+    buildTypes {
+        debug {
+            applicationIdSuffix ".debug"
+            versionNameSuffix "-debug"
+            debuggable true
+        }
+        release {
+            minifyEnabled true
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    // Do not double-compress web font / media assets that are already compressed
+    androidResources {
+        noCompress 'woff2', 'webp', 'avif', 'jpg', 'png', 'mp3', 'ogg'
+    }
+
+    packaging {
+        resources {
+            excludes += ['/META-INF/{AL2.0,LGPL2.1}']
+        }
+    }
+}
+
+dependencies {
+    // Pure, zero-bloat Android SDK + Chromium WebView architecture
+}

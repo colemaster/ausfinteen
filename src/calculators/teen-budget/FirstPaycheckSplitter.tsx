@@ -165,7 +165,7 @@ export function FirstPaycheckSplitter() {
             tooltip={
               <InfoTooltip
                 title="Take-Home Pay"
-                content="Your net take-home pay deposited into your bank account. For casual employees under 18 earning under $350/wk ($18,200 statutory, $22,575 effective with $700 LITO) who claim the tax-free threshold, gross pay equals take-home pay ($0 tax withheld)!"
+                content="Your net take-home pay deposited into your bank account. For casual employees under 18 earning under $439/wk ($18,200 statutory, $22,866 effective with $700 LITO) who claim the tax-free threshold, gross pay equals take-home pay ($0 tax withheld)!"
               />
             }
           />

@@ -4,6 +4,7 @@ import { Disclaimer } from '@/components/shared/Disclaimer';
 import { PrintResultButton } from '@/components/shared/PrintResultButton';
 import { ArrowLeft } from 'lucide-react';
 import { Link } from '@/lib/router';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 const STRESS_TEST_TOPICS = [
   {
@@ -42,13 +43,14 @@ const STRESS_TEST_TOPICS = [
     id: 'st-5',
     moduleId: 'financial-stress-test',
     moduleTitle: 'Financial Runway & Crisis Planning 🛡️',
-    question: 'How does the RBA 4.60% Cash Rate transmit into household mortgage repayments?',
-    answer: 'The Reserve Bank of Australia cash rate target sits at 4.60% (as established in September/October 2026). Commercial banks pass cash rate changes directly to variable mortgages. As a benchmark, each 0.25% (25 bps) rate hike increases monthly repayments by roughly $80 to $105 per $500,000 borrowed on a 30-year loan term.',
+    question: 'How does the RBA 4.35% Cash Rate transmit into household mortgage repayments?',
+    answer: 'The Reserve Bank of Australia cash rate target sits at 4.35% (November 2026). Commercial banks pass cash rate changes directly to variable mortgages. As a benchmark, each 0.25% (25 bps) rate hike increases monthly repayments by roughly $80 to $105 per $500,000 borrowed on a 30-year loan term.',
     actionStep: 'Use the Reverse Stress Test card above to find your household\'s maximum survivable borrowing rate.',
   },
 ];
 
 export function FinancialStressTest() {
+  usePageTitle('Emergency Runway & Financial Stress Tester');
   return (
     <div className="space-y-8 pb-16">
       <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">

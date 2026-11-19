@@ -284,7 +284,7 @@ export function PayslipAnalyzer() {
           {/* Tax Free Threshold Toggle */}
           <div className="p-3.5 rounded-xl bg-muted/60 border border-border space-y-2">
             <div className="flex items-center justify-between text-xs">
-              <span className="font-semibold text-foreground">Claim Tax-Free Threshold ($22,575 Effective)?</span>
+              <span className="font-semibold text-foreground">Claim Tax-Free Threshold ($22,866 Effective)?</span>
               <button
                 type="button"
                 onClick={() => setClaimsThreshold(!claimsThreshold)}
@@ -297,7 +297,7 @@ export function PayslipAnalyzer() {
             </div>
             <p className="text-[11px] text-muted-foreground">
               {claimsThreshold
-                ? 'Under $350/wk ($18,200 statutory, $22,575 effective with $700 LITO), $0 tax is withheld from your paycheck!'
+                ? 'Under $439/wk ($18,200 statutory, $22,866 effective with $700 LITO), $0 tax is withheld from your paycheck!'
                 : 'Warning: 15% tax will be withheld from your first dollar earned.'}
             </p>
           </div>

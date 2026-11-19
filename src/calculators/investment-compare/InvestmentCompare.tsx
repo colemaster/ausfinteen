@@ -111,8 +111,14 @@ export function InvestmentCompare() {
   const sharedMarginalRate = portfolio.margTax > 0 ? portfolio.margTax : margTaxOverride;
 
   // Portfolio-locked values for scenarios 0–2 (ETF, Super, Savings)
-  const portfolioInitials = [portfolio.etfValue, portfolio.superBalance, portfolio.savingsBalance];
-  const portfolioMonthly = [portfolio.monthlyEtfContrib, portfolio.monthlySuperContrib, portfolio.monthlySavingsContrib];
+  const portfolioInitials = useMemo(
+    () => [portfolio.etfValue, portfolio.superBalance, portfolio.savingsBalance],
+    [portfolio.etfValue, portfolio.superBalance, portfolio.savingsBalance],
+  );
+  const portfolioMonthly = useMemo(
+    () => [portfolio.monthlyEtfContrib, portfolio.monthlySuperContrib, portfolio.monthlySavingsContrib],
+    [portfolio.monthlyEtfContrib, portfolio.monthlySuperContrib, portfolio.monthlySavingsContrib],
+  );
 
   const updateScenario = (i: number, updates: Partial<ScenarioParams>) => {
     setScenarios(prev => prev.map((s, idx) => idx === i ? { ...s, ...updates } : s));
@@ -322,11 +328,11 @@ export function InvestmentCompare() {
             <YAxis tickLine={false} axisLine={false} tickFormatter={v => formatCompact(typeof v === 'number' ? v : 0)} tick={{ fontSize: 10 }} />
             <ChartTooltip content={<ChartTooltipContent />} />
             <ChartLegend content={<ChartLegendContent />} />
-            {results.map(r => (
-              <Line key={r.label} type="monotone" dataKey={r.label} stroke={`var(--color-${r.label.replace(/\s+/g, '')})`} strokeWidth={2.5} dot={false} animationDuration={1200} animationEasing="ease-in-out" />
+            {results.map((r, idx) => (
+              <Line key={r.label} type="monotone" dataKey={r.label} stroke={`var(--color-scenario${idx})`} strokeWidth={2.5} dot={false} animationDuration={1200} animationEasing="ease-in-out" />
             ))}
-            {showStressTest && results.map(r => (
-              <Line key={`${r.label}-crash`} type="monotone" dataKey={`${r.label} (crash)`} stroke={`var(--color-${r.label.replace(/\s+/g, '')})`} strokeWidth={1.5} strokeDasharray="5 4" dot={false} opacity={0.7} animationDuration={1200} animationEasing="ease-in-out" />
+            {showStressTest && results.map((r, idx) => (
+              <Line key={`${r.label}-crash`} type="monotone" dataKey={`${r.label} (crash)`} stroke={`var(--color-scenario${idx})`} strokeWidth={1.5} strokeDasharray="5 4" dot={false} opacity={0.7} animationDuration={1200} animationEasing="ease-in-out" />
             ))}
           </LineChart>
         </ChartContainer>
@@ -430,7 +436,7 @@ export function InvestmentCompare() {
                   <td className="px-4 py-2 text-right font-mono text-[var(--danger)]">{formatCurrency(r.totalFeesPaid)}</td>
                   <td className="px-4 py-2 text-right font-mono text-[var(--muted-foreground)]">{formatCurrency(r.totalContributions)}</td>
                   <td className="px-4 py-2 text-right font-mono text-[var(--success)]">
-                    {formatPct(((r.finalBalance - r.totalContributions) / r.totalContributions) * 100)}
+                    {formatPct(r.totalContributions > 0 ? ((r.finalBalance - r.totalContributions) / r.totalContributions) * 100 : 0)}
                   </td>
                 </tr>
               );

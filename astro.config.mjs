@@ -9,13 +9,12 @@ export default defineConfig({
   site: 'https://ausfintools.com',
   base: process.env.VITE_BASE ?? '/',
   output: 'static',
-  compressHTML: true,
+  compressHTML: 'jsx',
   prerenderConflictBehavior: 'error',
   scopedStyleStrategy: 'where',
   prefetch: {
     defaultStrategy: 'hover',
     prefetchAll: true,
-    ignoreSlowConnection: true,
   },
   security: {
     checkOrigin: true,
@@ -24,18 +23,8 @@ export default defineConfig({
     clientPrerender: true,
     contentIntellisense: true,
     incrementalBuild: true,
+    parallelPrerender: true,
     svgOptimizer: svgoOptimizer(),
-  },
-  redirects: {
-    '/fire': '/super-drawdown',
-    '/house-affordability': '/car-driving',
-    '/investment-compare': '/investing-shares',
-    '/offset-vs-debt-recycling': '/careers-employment',
-    '/portfolio': '/profile',
-    '/property-research': '/car-driving',
-    '/savings-rate': '/teen-budgeting',
-    '/tax-savings': '/tax-guide',
-    '/wealth-property': '/car-driving',
   },
   image: {
     responsiveStyles: true,
@@ -81,6 +70,9 @@ export default defineConfig({
       // hook identity across the boundary.
       dedupe: ['react', 'react-dom'],
     },
+    css: {
+      transformer: 'lightningcss',
+    },
     build: {
       target: 'es2025',
       cssTarget: 'es2025',
@@ -91,15 +83,6 @@ export default defineConfig({
       sourcemap: false,
       reportCompressedSize: true,
       chunkSizeWarningLimit: 900,
-      rolldownOptions: {
-        output: {
-          // Icons are intentionally NOT hoisted into one shared chunk.
-          // With ~21 pages importing ~10 glyphs each, a global "icons" chunk
-          // made every page download every icon used anywhere on the site.
-          // Default per-module splitting keeps the shared React runtime
-          // common while letting each route carry only its own glyphs.
-        },
-      },
       // NOTE: broader `codeSplitting.groups` (charts / motion / vendor) were
       // measured and deliberately rejected. Hoisting them into shared chunks
       // *increased* the summed critical path by ~25% (e.g. /calculators/ went

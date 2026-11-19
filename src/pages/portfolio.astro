@@ -1,3 +1,16 @@
 ---
-return Astro.redirect('/profile', 301);
+import Layout from "@/layouts/Layout.astro";
+import Breadcrumbs from "@/components/astro/Breadcrumbs.astro";
+import FinancialDisclaimer from "@/components/astro/FinancialDisclaimer.astro";
+import { Portfolio } from "@/views/Portfolio";
 ---
+
+<Layout
+  title="My Financial Portfolio & Calculator Pre-Fill Hub | AusFinance Suite"
+  description="Enter your salary, savings, mortgage, ETFs, super balance, and living expenses locally in your browser to pre-fill every Australian financial calculator."
+  keywords="personal finance portfolio Australia, net worth tracker, financial calculator prefill, privacy first finance"
+>
+  <Breadcrumbs items={[{ label: "My Portfolio" }]} />
+  <Portfolio client:idle />
+  <FinancialDisclaimer sourceYear="2026-27" />
+</Layout>

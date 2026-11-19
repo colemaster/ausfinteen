@@ -34,9 +34,9 @@ const PRESETS: ScenarioPreset<SuperSacrificePreset>[] = [
   {
     id: 'max-cap',
     label: 'Max Concessional Cap',
-    badge: '$30k Total',
-    description: '$120k salary, maximizing full $30,000 concessional super contribution',
-    values: { salary: 120000, sacrifice: 15600, useCarry: false, carryAmount: 0 },
+    badge: '$32.5k Total',
+    description: '$120k salary, maximizing full $32,500 concessional super contribution',
+    values: { salary: 120000, sacrifice: 18100, useCarry: false, carryAmount: 0 },
   },
   {
     id: 'catchup',

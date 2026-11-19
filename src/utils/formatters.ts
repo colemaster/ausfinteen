@@ -18,11 +18,17 @@ export function formatCompact(value: number | null | undefined): string {
 
 /**
  * Format a number as full AUD currency with commas.
- * 925000 → "$925,000"
+ * 925000 → "$925,000", (2.5, 2) → "$2.50"
  */
-export function formatCurrency(value: number | null | undefined): string {
+export function formatCurrency(value: number | null | undefined, decimals = 0): string {
   if (value == null) return '—';
   const sign = value < 0 ? '-' : '';
+  if (decimals > 0) {
+    return `${sign}$${Math.abs(value).toLocaleString('en-AU', {
+      minimumFractionDigits: decimals,
+      maximumFractionDigits: decimals,
+    })}`;
+  }
   return `${sign}$${Math.abs(Math.round(value)).toLocaleString('en-AU')}`;
 }
 

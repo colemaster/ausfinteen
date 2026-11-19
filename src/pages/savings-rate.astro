@@ -1,3 +1,16 @@
 ---
-return Astro.redirect('/teen-budgeting', 301);
+import Layout from "@/layouts/Layout.astro";
+import Breadcrumbs from "@/components/astro/Breadcrumbs.astro";
+import FinancialDisclaimer from "@/components/astro/FinancialDisclaimer.astro";
+import { SavingsRate } from "@/calculators/savings-rate/SavingsRate";
 ---
+
+<Layout
+  title="Savings Rate to Financial Independence Calculator | AusFinance Suite"
+  description="Discover how your savings rate determines years to Financial Independence (FI), compare pay-rise strategies, and break down Australian take-home pay."
+  keywords="savings rate calculator, years to financial independence, Australian take-home pay breakdown, FIRE savings rate"
+>
+  <Breadcrumbs items={[{ label: "Calculators", href: "/calculators" }, { label: "Savings Rate & Years to FI" }]} />
+  <SavingsRate client:idle />
+  <FinancialDisclaimer sourceYear="2026-27" />
+</Layout>

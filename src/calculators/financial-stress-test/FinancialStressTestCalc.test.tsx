@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import { FinancialStressTestCalc } from './FinancialStressTestCalc';
 
 beforeEach(() => {
@@ -15,6 +15,10 @@ beforeEach(() => {
     removeEventListener: vi.fn(),
     dispatchEvent: vi.fn(),
   }));
+});
+
+afterEach(() => {
+  cleanup();
 });
 
 describe('FinancialStressTestCalc Component', () => {

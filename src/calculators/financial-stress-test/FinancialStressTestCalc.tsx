@@ -1,8 +1,8 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { runFinancialStressTest, maxSurvivableRate, applyCumulativeScenarios } from './engine';
 import { CalculatorActions } from '../../components/shared/CalculatorActions';
 import { sound } from '@/lib/sound-synthesizer';
-import { exportToCSV, encodePlanToHash, generateSimpleQRCodeSVG } from '@/lib/share-state';
+import { exportToCSV, encodePlanToHash, decodePlanFromHash, generateSimpleQRCodeSVG } from '@/lib/share-state';
 import {
   ShieldAlert,
   Flame,
@@ -53,6 +53,30 @@ export function FinancialStressTestCalc() {
   const [shareUrl, setShareUrl] = useState<string>('');
   const [bufferPct, setBufferPct] = useState<number>(3);
   const [presetId, setPresetId] = useState<string>('none');
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const hash = window.location.hash;
+    if (hash.startsWith('#plan=')) {
+      const encoded = hash.slice('#plan='.length);
+      decodePlanFromHash<{
+        monthlyNetIncome?: number;
+        essentialExpenses?: number;
+        discretionaryExpenses?: number;
+        cashSavings?: number;
+        offsetBalance?: number;
+        mortgageDebt?: number;
+      }>(encoded).then(plan => {
+        if (!plan) return;
+        if (typeof plan.monthlyNetIncome === 'number') setMonthlyNetIncome(plan.monthlyNetIncome);
+        if (typeof plan.essentialExpenses === 'number') setEssentialExpenses(plan.essentialExpenses);
+        if (typeof plan.discretionaryExpenses === 'number') setDiscretionaryExpenses(plan.discretionaryExpenses);
+        if (typeof plan.cashSavings === 'number') setCashSavings(plan.cashSavings);
+        if (typeof plan.offsetBalance === 'number') setOffsetBalance(plan.offsetBalance);
+        if (typeof plan.mortgageDebt === 'number') setMortgageDebt(plan.mortgageDebt);
+      });
+    }
+  }, []);
 
   const result = useMemo(() => {
     return runFinancialStressTest({

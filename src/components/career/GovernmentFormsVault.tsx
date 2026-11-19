@@ -145,7 +145,7 @@ const DAY1_READINESS_ITEMS: Day1ChecklistItem[] = [
     label: 'Tax File Number (TFN) Declaration',
     formCode: 'NAT 3092',
     authority: 'ATO',
-    tip: 'Quote 9-digit TFN and tick Question 8 "YES" to claim the $22,575 effective tax-free threshold ($18,200 base + $700 LITO).',
+    tip: 'Quote 9-digit TFN and tick Question 8 "YES" to claim the $22,866 effective tax-free threshold ($18,200 base + $700 LITO).',
     deadline: 'Day 1 of employment',
   },
   {
@@ -638,7 +638,11 @@ export function GovernmentFormsVault() {
             type="button"
             onClick={() => {
               sound.playClick();
-              setSelectedIdDocs(['birth_cert', 'student_id']);
+              const combo = ['birth_cert', 'student_id'];
+              setSelectedIdDocs(combo);
+              try {
+                localStorage.setItem(ID_CALC_STORAGE_KEY, JSON.stringify(combo));
+              } catch {}
             }}
             className="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-primary/10 hover:bg-primary/20 text-primary border border-primary/30 shrink-0 transition-all"
           >
@@ -815,7 +819,7 @@ export function GovernmentFormsVault() {
                     <div className="flex items-center gap-2 flex-wrap">
                       <h4 className="font-bold text-sm text-foreground">ATO Tax File Number (TFN) Declaration</h4>
                       <Badge variant="outline" className="text-[10px]">Form NAT 3092</Badge>
-                      <Badge variant="success" className="text-[10px]">$22,575 Tax-Free Threshold</Badge>
+                      <Badge variant="success" className="text-[10px]">$22,866 Tax-Free Threshold</Badge>
                     </div>
                     <p className="text-xs text-muted-foreground mt-0.5">
                       Submitted to your employer on Day 1. Ensures correct tax withholding and claims your full tax-free threshold.
@@ -855,7 +859,7 @@ export function GovernmentFormsVault() {
                       <li className="flex items-start gap-2">
                         <span className="font-bold text-emerald-500 shrink-0">Q8:</span>
                         <div>
-                          <strong className="text-foreground">Do you want to claim the tax-free threshold from this payer?</strong> Select <strong>"YES"</strong> for your primary or only job! This allows you to earn up to <strong>$18,200</strong> with $0 tax withheld. When combined with the $700 Low Income Tax Offset (LITO), you effectively pay $0 tax on earnings up to <strong>$22,575</strong>. Australian tax-free thresholds are NOT pro-rated for Australian residents starting mid-year!
+                          <strong className="text-foreground">Do you want to claim the tax-free threshold from this payer?</strong> Select <strong>"YES"</strong> for your primary or only job! This allows you to earn up to <strong>$18,200</strong> with $0 tax withheld. When combined with the $700 Low Income Tax Offset (LITO), you effectively pay $0 tax on earnings up to <strong>$22,866</strong>. Australian tax-free thresholds are NOT pro-rated for Australian residents starting mid-year!
                         </div>
                       </li>
                       <li className="flex items-start gap-2">
@@ -870,7 +874,7 @@ export function GovernmentFormsVault() {
                   <div className="p-3 rounded-xl bg-card border border-border space-y-1">
                     <span className="font-bold text-foreground block">What if you don't provide a TFN?</span>
                     <p className="text-muted-foreground">
-                      If you fail to provide a TFN within 28 days and earn over $350/week, your employer is legally required to withhold tax at the highest marginal rate (47% including Medicare levy). By providing your TFN and claiming the threshold, $0 tax is withheld if your pay is under $434/week ($22,575/year)!
+                      If you fail to provide a TFN within 28 days and earn over $350/week, your employer is legally required to withhold tax at the highest marginal rate (47% including Medicare levy). By providing your TFN and claiming the threshold, $0 tax is withheld if your pay is under $439/week ($22,866/year)!
                     </p>
                   </div>
 

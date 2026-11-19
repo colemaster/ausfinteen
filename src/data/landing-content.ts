@@ -142,7 +142,7 @@ export const JOURNEY_STEPS: JourneyStep[] = [
       `Earn $${AGE_PRESETS[15].hourlyRate.toFixed(2)}/hr as ${AGE_PRESETS[15].jobTitle} on the ${AGE_PRESETS[15].hoursPerWeek} hrs/week preset`,
       `Covered by ${JUNIOR_AWARD_RATES.fast_food.name} at ${(JUNIOR_AWARD_RATES.fast_food.rates[0].pct * 100).toFixed(0)}% of the $${JUNIOR_AWARD_RATES.fast_food.adultBaseRate.toFixed(2)} adult base`,
     ],
-    route: `${moduleRoute('careers-employment')}?tab=first-job&preset=15`,
+    route: `${moduleRoute('careers-employment')}?tab=calc&preset=15`,
   },
   {
     age: 16,
@@ -152,7 +152,7 @@ export const JOURNEY_STEPS: JourneyStep[] = [
       `Preset: ${AGE_PRESETS[16].jobTitle} at $${AGE_PRESETS[16].hourlyRate.toFixed(2)}/hr saving for “${AGE_PRESETS[16].savingsGoalName}”`,
       `Check ${JUNIOR_AWARD_RATES.retail.code} junior percentages against the $${NMW_HOURLY}/hr national minimum and $${ADULT_L1_BASE} retail adult base`,
     ],
-    route: `${moduleRoute('teen-budgeting')}?tab=budget-planner&preset=16`,
+    route: `${moduleRoute('teen-budgeting')}?preset=16`,
   },
   {
     age: 17,
@@ -162,7 +162,7 @@ export const JOURNEY_STEPS: JourneyStep[] = [
       `Preset: ${AGE_PRESETS[17].jobTitle} at $${AGE_PRESETS[17].hourlyRate.toFixed(2)}/hr over ${AGE_PRESETS[17].hoursPerWeek} hrs/week towards “${AGE_PRESETS[17].savingsGoalName}”`,
       `Park rego and insurance savings at up to ${TOP_HISA_RATE.toFixed(2)}% p.a. with ${TOP_HISA_BANK}`,
     ],
-    route: `${moduleRoute('car-driving')}?tab=car-costs&preset=17`,
+    route: `${moduleRoute('car-driving')}?tab=buying&preset=17`,
   },
   {
     age: 18,
@@ -172,7 +172,7 @@ export const JOURNEY_STEPS: JourneyStep[] = [
       `Preset: ${AGE_PRESETS[18].jobTitle} at $${AGE_PRESETS[18].hourlyRate.toFixed(2)}/hr — ${SG_PCT} super now applies to every hour worked`,
       `QTAC Year 12 applications from $${QTAC_FEES_2027.year12Early} with major offers ${QTAC_FEES_2027.majorOfferRound1} and ${QTAC_FEES_2027.majorOfferRound2}`,
     ],
-    route: `${moduleRoute('brisbane-qld')}?tab=uni-compare&preset=18`,
+    route: `${moduleRoute('brisbane-qld')}?tab=unis&preset=18`,
   },
 ];
 

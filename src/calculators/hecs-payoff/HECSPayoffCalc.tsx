@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import {
   simulateHECSPayoff,
   calcHECSRepayment,
@@ -20,7 +20,7 @@ import { OdometerCounter } from '@/components/shared/OdometerCounter';
 import { QuickPresetBar, type ScenarioPreset } from '@/components/ui/QuickPresetBar';
 import { CalculatorActions } from '@/components/shared/CalculatorActions';
 import { sound } from '@/lib/sound-synthesizer';
-import { exportToCSV, encodePlanToHash, generateSimpleQRCodeSVG } from '@/lib/share-state';
+import { exportToCSV, encodePlanToHash, decodePlanFromHash, generateSimpleQRCodeSVG } from '@/lib/share-state';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, LineChart, Line, Legend } from '@/components/charts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from '@/components/ui/chart';
 import { formatCurrency, formatCompact } from '../../utils/formatters';
@@ -108,8 +108,37 @@ export function HECSPayoffCalc() {
   const [shareUrl, setShareUrl] = useState<string>('');
   const [activePreset, setActivePreset] = useState<string | undefined>();
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const hash = window.location.hash;
+    if (hash.startsWith('#plan=')) {
+      const encoded = hash.slice('#plan='.length);
+      decodePlanFromHash<{
+        currentDebt?: number;
+        annualIncome?: number;
+        lumpSumAvailable?: number;
+        monthlyVoluntary?: number;
+        mortgageRate?: number;
+        etfReturn?: number;
+        hisaRate?: number;
+        indexationRate?: number;
+      }>(encoded).then(plan => {
+        if (!plan) return;
+        if (typeof plan.currentDebt === 'number') setCurrentDebt(plan.currentDebt);
+        if (typeof plan.annualIncome === 'number') setAnnualIncome(plan.annualIncome);
+        if (typeof plan.lumpSumAvailable === 'number') setLumpSumAvailable(plan.lumpSumAvailable);
+        if (typeof plan.monthlyVoluntary === 'number') setMonthlyVoluntary(plan.monthlyVoluntary);
+        if (typeof plan.mortgageRate === 'number') setMortgageRate(plan.mortgageRate);
+        if (typeof plan.etfReturn === 'number') setEtfReturn(plan.etfReturn);
+        if (typeof plan.hisaRate === 'number') setHisaRate(plan.hisaRate);
+        if (typeof plan.indexationRate === 'number') setIndexationRate(plan.indexationRate);
+      });
+    }
+  }, []);
+
   const handleApplyPreset = (preset: ScenarioPreset<HecsPreset>) => {
     setActivePreset(preset.id);
+    setAppliedDebtCut(false);
     if (preset.values.debt !== undefined) setCurrentDebt(preset.values.debt);
     if (preset.values.income !== undefined) setAnnualIncome(preset.values.income);
     if (preset.values.lumpSum !== undefined) setLumpSumAvailable(preset.values.lumpSum);

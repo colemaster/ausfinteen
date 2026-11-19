@@ -124,15 +124,12 @@ export function calculateSuperSacrifice(
 
   // Division 293 check
   const taxableIncome = grossSalary - actualSacrifice;
+  const totalDiv293Income = taxableIncome + employerSG + actualSacrifice;
   const div293Applies = isDivision293(taxableIncome, employerSG + actualSacrifice);
-  const div293Tax = div293Applies ? actualSacrifice * SUPER_RULES.division293Rate : 0;
-
-  // Tax saving = marginal rate on sacrifice minus 15% super tax
-  const marginalRate = getMarginalRate(grossSalary);
-  const taxSaving = Math.max(
-    0,
-    actualSacrifice * marginalRate - taxInSuper - div293Tax,
-  );
+  const div293Excess = Math.max(0, totalDiv293Income - SUPER_RULES.division293Threshold);
+  const div293Tax = div293Applies
+    ? Math.min(actualSacrifice, div293Excess) * SUPER_RULES.division293Rate
+    : 0;
 
   // Income tax comparison
   const includeHELP = params.includeHELP === true && (params.helpDebt ?? 0) > 0;
@@ -142,6 +139,15 @@ export function calculateSuperSacrifice(
     calcIncomeTax(grossSalary) + calcMedicareLevy(grossSalary);
   const helpWithSacrifice = includeHELP ? calcHELPRepayment(taxableIncome) : 0;
   const helpWithoutSacrifice = includeHELP ? calcHELPRepayment(grossSalary) : 0;
+
+  // Tax saving = actual reduction in income tax + Medicare + HELP minus super contributions tax & Div 293
+  const taxSaving = Math.max(
+    0,
+    (incomeTaxWithoutSacrifice + helpWithoutSacrifice) -
+      (incomeTaxWithSacrifice + helpWithSacrifice) -
+      taxInSuper -
+      div293Tax,
+  );
 
   // Projected super balance at retirement
   const yearsToRetirement = Math.max(0, retirementAge - age);

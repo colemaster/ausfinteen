@@ -38,6 +38,14 @@ import { TeenResumeBuilder } from '@/components/career/TeenResumeBuilder';
 import { PenaltyShiftCalculatorWidget } from '@/components/career/PenaltyShiftCalculatorWidget';
 import { SavingsGoalsPlanner } from '@/components/teen/SavingsGoalsPlanner';
 import { FifteenYearOldRoadmap } from '@/components/teen/FifteenYearOldRoadmap';
+import { FIREDashboard } from '@/calculators/fire/FIREDashboard';
+import { HouseAffordability } from '@/calculators/house-affordability/HouseAffordability';
+import { InvestmentCompare } from '@/calculators/investment-compare/InvestmentCompare';
+import { OffsetVsDR } from '@/calculators/offset-vs-dr/OffsetVsDR';
+import { PropertyResearch } from '@/calculators/property-research/PropertyResearch';
+import { SavingsRate } from '@/calculators/savings-rate/SavingsRate';
+import { TaxSavingsGuide } from '@/calculators/tax-savings/TaxSavingsGuide';
+import { Portfolio } from '@/views/Portfolio';
 
 describe('End-to-End Frontend Workflows', () => {
   it('HECS Payoff: mounts, applies presets and recalculates payoff schedule', () => {
@@ -190,5 +198,53 @@ describe('End-to-End Frontend Workflows', () => {
     const { container } = render(<FifteenYearOldRoadmap />);
     expect(container).toBeDefined();
     expect(screen.getAllByText(/15-Year-Old/i).length).toBeGreaterThan(0);
+  });
+
+  it('FIRE Dashboard: mounts and renders FIRE tabs', () => {
+    const { container } = render(<FIREDashboard />);
+    expect(container).toBeDefined();
+    expect(screen.getAllByText(/FIRE/i).length).toBeGreaterThan(0);
+  });
+
+  it('House Affordability: mounts and calculates stamp duty & repayments', () => {
+    const { container } = render(<HouseAffordability />);
+    expect(container).toBeDefined();
+    expect(screen.getAllByText(/Stamp Duty/i).length).toBeGreaterThan(0);
+  });
+
+  it('Investment Compare: mounts and renders multi-scenario comparison', () => {
+    const { container } = render(<InvestmentCompare />);
+    expect(container).toBeDefined();
+    expect(screen.getAllByText(/Investment/i).length).toBeGreaterThan(0);
+  });
+
+  it('Offset vs Debt Recycling: mounts and computes net wealth comparison', () => {
+    const { container } = render(<OffsetVsDR />);
+    expect(container).toBeDefined();
+    expect(screen.getAllByText(/Offset/i).length).toBeGreaterThan(0);
+  });
+
+  it('Property Research: mounts and scores due diligence checklist', () => {
+    const { container } = render(<PropertyResearch />);
+    expect(container).toBeDefined();
+    expect(screen.getAllByText(/Property/i).length).toBeGreaterThan(0);
+  });
+
+  it('Savings Rate: mounts and calculates years to FI', () => {
+    const { container } = render(<SavingsRate />);
+    expect(container).toBeDefined();
+    expect(screen.getAllByText(/Savings Rate/i).length).toBeGreaterThan(0);
+  });
+
+  it('Tax Savings Guide: mounts and renders tax reduction strategies', () => {
+    const { container } = render(<TaxSavingsGuide />);
+    expect(container).toBeDefined();
+    expect(screen.getAllByText(/Tax/i).length).toBeGreaterThan(0);
+  });
+
+  it('Portfolio Hub: mounts and renders financial summary', () => {
+    const { container } = render(<Portfolio />);
+    expect(container).toBeDefined();
+    expect(screen.getAllByText(/Portfolio/i).length).toBeGreaterThan(0);
   });
 });

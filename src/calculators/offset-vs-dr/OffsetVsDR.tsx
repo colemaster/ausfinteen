@@ -238,24 +238,27 @@ export function OffsetVsDR() {
 
   const yearlyComp = useMemo(() => {
     if (!sel) return [];
-    return sel.offset.yearly
-      .map((oy, i) => {
-        const dy = sel.dr.yearly[i];
-        if (!dy) return null;
-        return {
-          year: `Yr ${oy.year}`,
-          Offset: oy.netWealth,
-          'Debt Recycling': dy.netWealthAfterCGT,
-          'Extra Repayment': extraScenario.yearly[i]?.netWealth ?? 0,
-          _oNW: oy.netWealth,
-          _dNW: dy.netWealthAfterCGT,
-          _eNW: extraScenario.yearly[i]?.netWealth ?? 0,
-          _dPortfolio: dy.portfolioValue,
-          _dTax: dy.taxDeductions,
-          _yr: oy.year,
-        };
-      })
-      .filter((r): r is NonNullable<typeof r> => r !== null);
+    return sel.dr.yearly.map((dy, i) => {
+      const oy = sel.offset.yearly[i] ?? sel.offset.yearly[sel.offset.yearly.length - 1] ?? {
+        year: dy.year,
+        balance: 0,
+        totalInterest: sel.offset.totalInterest,
+        netWealth: sel.offset.offsetValue,
+      };
+      const ey = extraScenario.yearly[i] ?? extraScenario.yearly[extraScenario.yearly.length - 1];
+      return {
+        year: `Yr ${dy.year}`,
+        Offset: oy.netWealth,
+        'Debt Recycling': dy.netWealthAfterCGT,
+        'Extra Repayment': ey?.netWealth ?? 0,
+        _oNW: oy.netWealth,
+        _dNW: dy.netWealthAfterCGT,
+        _eNW: ey?.netWealth ?? 0,
+        _dPortfolio: dy.portfolioValue,
+        _dTax: dy.taxDeductions,
+        _yr: dy.year,
+      };
+    });
   }, [sel, extraScenario]);
 
   const deferredYearlyComp = useDeferredValue(yearlyComp);

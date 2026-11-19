@@ -193,6 +193,7 @@ export function calculateSuperBridge(
   let ns = nonSuperBalance;
   let sup = superBalance;
   let ageNonSuperRunsOut: number | null = null;
+  let bridgeShortfall = 0;
 
   for (let age = currentAge; age <= 90; age++) {
     let phase: SuperBridgeYearRow['phase'];
@@ -207,8 +208,11 @@ export function calculateSuperBridge(
       phase = 'bridge';
       ns = ns * (1 + nonSuperR) - annualExpenses;
       sup = sup * (1 + superR);
-      if (ns < 0 && ageNonSuperRunsOut === null) {
-        ageNonSuperRunsOut = age;
+      if (ns < 0) {
+        if (ageNonSuperRunsOut === null) {
+          ageNonSuperRunsOut = age;
+        }
+        bridgeShortfall += Math.abs(ns);
       }
       ns = Math.max(0, ns);
     } else {
@@ -236,13 +240,9 @@ export function calculateSuperBridge(
     });
   }
 
-  // Check non-super at preservation age
-  const atPreservation = yearly.find(r => r.age === preservationAge);
-  const nonSuperAtPreservation = atPreservation?.nonSuperBalance ?? 0;
-
   return {
     nonSuperSufficientToBridge: ageNonSuperRunsOut === null || ageNonSuperRunsOut >= preservationAge,
-    shortfallAtPreservation: Math.max(0, -nonSuperAtPreservation),
+    shortfallAtPreservation: Math.round(bridgeShortfall),
     yearly,
     ageNonSuperRunsOut,
   };

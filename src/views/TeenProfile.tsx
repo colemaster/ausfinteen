@@ -273,7 +273,7 @@ export function TeenProfile() {
           numericValue={estimatedTaxWithheldWeekly}
           format="currency"
           color={estimatedTaxWithheldWeekly === 0 ? 'green' : 'amber'}
-          subtext={estimatedTaxWithheldWeekly === 0 ? '$22,575 Effective Tax-Free claimed' : 'PAYG tax sent to ATO'}
+          subtext={estimatedTaxWithheldWeekly === 0 ? '$22,866 Effective Tax-Free claimed' : 'PAYG tax sent to ATO'}
         />
         <StatCard
           label="Take-Home Pay (Bank)"

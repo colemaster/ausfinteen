@@ -263,7 +263,7 @@ if (asJson) {
   }
   console.log('  ' + '-'.repeat(90));
   console.log(
-    '  ' + 'SUM (all 21 pages)'.padEnd(30) +
+    '  ' + `SUM (all ${results.length} pages)`.padEnd(30) +
       kb(totals.html).padStart(8) +
       kb(totals.css).padStart(8) +
       kb(totals.blockingJs).padStart(10) +

@@ -65,7 +65,7 @@ export function FrankingAndDrpVisualizer() {
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
                 {[
                   { rate: 0, label: '0% (≤$18.2k)', desc: 'Student / Low Earner' },
-                  { rate: 16, label: '16% ($18k-$45k)', desc: 'Part-Time' },
+                  { rate: 15, label: '15% ($18k-$45k)', desc: 'Part-Time' },
                   { rate: 30, label: '30% ($45k-$135k)', desc: 'Median AU' },
                   { rate: 47, label: '47% (>$190k)', desc: 'Top Tier' },
                 ].map(b => (

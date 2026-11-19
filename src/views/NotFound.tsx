@@ -1,14 +1,11 @@
 import { Link } from '@/lib/router';
 import { NAV_MODULES } from '@/data/nav-modules';
 import { usePageTitle } from '@/hooks/usePageTitle';
+import { openCommandPalette } from '@/lib/overlay-loader';
 import { Compass, Home, Search, Calculator } from 'lucide-react';
 
 export function NotFound() {
   usePageTitle('Page Not Found');
-
-  const openCommandPalette = () => {
-    document.dispatchEvent(new CustomEvent('open-command-palette'));
-  };
 
   return (
     <div className="space-y-8 py-12 max-w-3xl mx-auto text-center">

@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
 
 export interface PortfolioData {
   // Income & Tax
@@ -51,6 +51,40 @@ export const PORTFOLIO_EMPTY: PortfolioData = {
   expTravel: 0, expGym: 0, expHomeMaint: 0, expPets: 0, expMisc: 0,
 };
 
+const PORTFOLIO_STORAGE_KEY = 'aus_portfolio_data';
+const PORTFOLIO_CHANGE_EVENT = 'aus:portfolio-change';
+
+let memoryPortfolio: PortfolioData = PORTFOLIO_EMPTY;
+const subscribers = new Set<() => void>();
+
+export function getStoredPortfolio(): PortfolioData {
+  if (typeof window === 'undefined') return PORTFOLIO_EMPTY;
+  try {
+    const raw = window.localStorage.getItem(PORTFOLIO_STORAGE_KEY);
+    if (!raw) return PORTFOLIO_EMPTY;
+    const parsed = JSON.parse(raw) as Partial<PortfolioData>;
+    return { ...PORTFOLIO_EMPTY, ...parsed };
+  } catch {
+    return PORTFOLIO_EMPTY;
+  }
+}
+
+export function updateStoredPortfolio(updates: Partial<PortfolioData>): PortfolioData {
+  const current = typeof window !== 'undefined' ? getStoredPortfolio() : memoryPortfolio;
+  const next: PortfolioData = { ...current, ...updates };
+  memoryPortfolio = next;
+  if (typeof window !== 'undefined') {
+    try {
+      window.localStorage.setItem(PORTFOLIO_STORAGE_KEY, JSON.stringify(next));
+      window.dispatchEvent(new CustomEvent(PORTFOLIO_CHANGE_EVENT, { detail: next }));
+    } catch {
+      // Ignore storage quota errors
+    }
+  }
+  subscribers.forEach(cb => cb());
+  return next;
+}
+
 export function totalAnnualExpenses(p: PortfolioData): number {
   // Fields store monthly amounts; multiply by 12 for annual total
   return (
@@ -66,15 +100,27 @@ interface PortfolioContextType {
   setPortfolio: (updates: Partial<PortfolioData>) => void;
 }
 
-const PortfolioContext = createContext<PortfolioContextType>({
-  portfolio: PORTFOLIO_EMPTY,
-  setPortfolio: () => {},
-});
+const PortfolioContext = createContext<PortfolioContextType | null>(null);
 
 export function PortfolioProvider({ children }: { children: ReactNode }) {
   const [portfolio, setPortfolioState] = useState<PortfolioData>(PORTFOLIO_EMPTY);
-  const setPortfolio = (updates: Partial<PortfolioData>) =>
-    setPortfolioState(prev => ({ ...prev, ...updates }));
+
+  useEffect(() => {
+    setPortfolioState(getStoredPortfolio());
+    const sync = () => setPortfolioState(getStoredPortfolio());
+    subscribers.add(sync);
+    window.addEventListener('storage', sync);
+    return () => {
+      subscribers.delete(sync);
+      window.removeEventListener('storage', sync);
+    };
+  }, []);
+
+  const setPortfolio = useCallback((updates: Partial<PortfolioData>) => {
+    const next = updateStoredPortfolio(updates);
+    setPortfolioState(next);
+  }, []);
+
   return (
     <PortfolioContext.Provider value={{ portfolio, setPortfolio }}>
       {children}
@@ -82,6 +128,27 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
   );
 }
 
-export function usePortfolio() {
-  return useContext(PortfolioContext);
+export function usePortfolio(): PortfolioContextType {
+  const ctx = useContext(PortfolioContext);
+  const [localPortfolio, setLocalPortfolio] = useState<PortfolioData>(PORTFOLIO_EMPTY);
+
+  useEffect(() => {
+    if (ctx) return;
+    setLocalPortfolio(getStoredPortfolio());
+    const sync = () => setLocalPortfolio(getStoredPortfolio());
+    subscribers.add(sync);
+    window.addEventListener('storage', sync);
+    return () => {
+      subscribers.delete(sync);
+      window.removeEventListener('storage', sync);
+    };
+  }, [ctx]);
+
+  const setPortfolio = useCallback((updates: Partial<PortfolioData>) => {
+    const next = updateStoredPortfolio(updates);
+    setLocalPortfolio(next);
+  }, []);
+
+  if (ctx) return ctx;
+  return { portfolio: localPortfolio, setPortfolio };
 }

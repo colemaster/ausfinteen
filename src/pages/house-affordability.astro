@@ -1,3 +1,16 @@
 ---
-return Astro.redirect('/car-driving', 301);
+import Layout from "@/layouts/Layout.astro";
+import Breadcrumbs from "@/components/astro/Breadcrumbs.astro";
+import FinancialDisclaimer from "@/components/astro/FinancialDisclaimer.astro";
+import { HouseAffordability } from "@/calculators/house-affordability/HouseAffordability";
 ---
+
+<Layout
+  title="House Affordability & Stamp Duty Calculator (All 8 States) | AusFinance Suite"
+  description="Calculate Australian home buying affordability, APRA 3% serviceability buffer, state stamp duty & First Home Owner Grants (VIC, NSW, QLD, WA, SA, TAS, ACT, NT), and LMI."
+  keywords="house affordability calculator Australia, stamp duty calculator QLD NSW VIC, First Home Owner Grant, borrowing power calculator, LMI calculator"
+>
+  <Breadcrumbs items={[{ label: "Calculators", href: "/calculators" }, { label: "House Affordability & Stamp Duty" }]} />
+  <HouseAffordability client:idle />
+  <FinancialDisclaimer sourceYear="2026-27" />
+</Layout>

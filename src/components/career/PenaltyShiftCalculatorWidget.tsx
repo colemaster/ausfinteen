@@ -89,10 +89,10 @@ const SHIFT_TYPES: Record<ShiftType, ShiftConfig> = {
 
 const AWARD_AGE_PRESETS = [
   { label: '15yo Casual', rate: 13.90, desc: '$11.12 base + 25%' },
-  { label: '16yo Casual', rate: 16.68, desc: '$13.34 base + 25%' },
-  { label: '17yo Casual', rate: 19.46, desc: '$15.56 base + 25%' },
-  { label: '18yo Casual', rate: 22.23, desc: '$17.78 base + 25%' },
-  { label: '21+ Adult Casual', rate: 31.21, desc: '$24.97 base + 25%' },
+  { label: '16yo Casual', rate: 17.39, desc: '$13.91 base + 25%' },
+  { label: '17yo Casual', rate: 20.86, desc: '$16.69 base + 25%' },
+  { label: '18yo Casual', rate: 24.33, desc: '$19.46 base + 25%' },
+  { label: '21+ Adult Casual', rate: 34.76, desc: '$27.81 base + 25%' },
 ];
 
 const QUICK_DURATION_PRESETS = [
@@ -104,7 +104,7 @@ const QUICK_DURATION_PRESETS = [
 ];
 
 export function PenaltyShiftCalculatorWidget() {
-  const [baseRate, setBaseRate] = useState<number>(19.46);
+  const [baseRate, setBaseRate] = useState<number>(20.86);
   const [hours, setHours] = useState<number>(6);
   const [shiftType, setShiftType] = useState<ShiftType>('saturday');
 

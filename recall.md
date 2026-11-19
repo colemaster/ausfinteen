@@ -2252,3 +2252,40 @@ Moved the runtime SDK to the new Node.js 26 LTS ("Lithium") and updated every np
 
 
 
+## v7.13.0 — SDK, LIBS, DEPS, CODEBASE REFRESH, OPTIMISATIONS, BUGFIXES & E2E WORKFLOW VERIFICATION (11 Nov 2026)
+
+### User Request (Verbatim)
+> `"update all the sdk + libs + deps + codebase to the latest versions - optimise with new features - enhancements + bugfixes - check e2e all the options - check all the workflows"`
+
+### 1. Pre-Change Audit Summary (3 Parallel Research Subagents + Direct Inspection)
+Before modifying any code, conducted a full-codebase audit across build/config infrastructure, all 28+ calculator components and engines, all 21+ page views, shared components, contexts, service worker, server, Android project, and GitHub workflows:
+
+1. **SDK, Runtime & Dependencies**:
+   - Outdated npm packages identified: `astro` (`7.4.5` → `7.4.10`), `@astrojs/react` (`7.1.2` → `7.1.7`), `vite` (`8.3.5` → `8.3.7`), `@vitejs/plugin-react` (`6.2.1` → `6.3.0`), `tailwindcss` & `@tailwindcss/vite` (`4.3.4` → `4.3.5`), `lucide-react` (`1.68.0` → `1.71.0`), `jsdom` (`30.1.3` → `31.0.0`), `oxc-transform-react` (`0.157.0` → `0.158.0`), `rollup-plugin-visualizer` (`7.1.1` → `7.1.3`).
+   - Android project (`android/`): target `v7.13.0` (`versionCode 71300`) with persistent JDK 21 & Android SDK 36 (`compileSdk 36`, `targetSdk 36`, `build-tools 36.1.0`) toolchain under `~/.local/android-toolchain` instead of volatile `/tmp`.
+   - Node.js 26.13.0 LTS ("Lithium") installed persistently in `~/.local/node-v26.13.0` to match `.nvmrc` / `.node-version`.
+
+2. **Critical & High-Priority Bugs Identified**:
+   - **Chart CSS Variable Key Mismatches (6 Calculators)**: `InvestmentCompare.tsx` (`var(--color-${label})` with spaces/parentheses/% vs `scenario0..3`), `SavingsRate.tsx` (`currentSavings`, `otherSavings`, `fireTarget`, `higherSavings`), `ClassicFIRE.tsx` (`balance`, `fireTarget`), `SuperBridge.tsx` (`nonSuper`, `super`, `total`), `OffsetVsDR.tsx` (`offsetNW`, `drNW`, `advantage`), and `DirectVsDR.tsx` (`dr`) referenced CSS custom properties missing from `src/lib/chart-configs.ts`.
+   - **`CGTEngineCalc.tsx` & `cgt-engine/engine.ts`**: Hardcoded `isMainResidence = true` and `wasRentedOut = true` caused initial load, the `"Investment Property ($920k)"` preset, and the `"Vacant Land Holding ($480k)"` preset to calculate `$0` capital gain; `cgtOnDisposal` falsely exempted non-residence assets when `incomeProducedWhileRented === 0`.
+   - **`OffsetVsDR.tsx` & `offset-vs-dr/engine.ts`**: `runOffset` terminated the loop as soon as `balance <= 0` (Year 19), truncating the 30-year comparison chart/table and crashing with `TypeError` when `offset >= loan`; `runDebtRecycling` omitted `homeLoanBal` from `netWealthPostCGT`.
+   - **`NaN` Division-by-Zero Edge Cases**: `TeenCompoundGrowthCalc.tsx` produced `$NaN` when `showRealTerms` was enabled and `inflationRate` equalled the bank or ETF return rate (e.g. `4.5%`); `InvestmentCompare.tsx` produced `NaN%` when both initial and monthly contributions were `0`.
+   - **`SuperBridge.tsx` & `fire/engine.ts`**: `shortfallAtPreservation` was always `$0` because `ns` was clamped to `Math.max(0, ns)` before reading the preservation-age deficit.
+   - **`SuperDrawdownCalc.tsx` & `super-drawdown/engine.ts`**: Couple Age Pension used single-partner half-rate instead of combined couple rate; `pensionAt67` hardcoded `superBalance * 0.9` instead of simulated age-67 balance; `lumpSum` was not reset on preset switch.
+   - **`SuperSalarySacrifice.tsx` & `tax-savings/engine.ts`**: `taxSaving` ignored the 2% Medicare levy, bracket boundaries, and HELP reductions, disagreeing with the comparison table directly below it; `div293Tax` taxed the full sacrifice even when only partially above `$250k`.
+   - **One-Way `#plan=` Share Links**: `CGTEngineCalc`, `EVNovatedLeaseCalc`, `FinancialStressTestCalc`, `HECSPayoffCalc`, and `SuperDrawdownCalc` encoded `#plan=` URLs via `encodePlanToHash`, but never called `decodePlanFromHash` on mount.
+   - **Orphaned Standalone Calculator Routes**: 8 complete calculator suites (`fire`, `house-affordability`, `investment-compare`, `offset-vs-debt-recycling`, `property-research`, `savings-rate`, `tax-savings`, `portfolio`) were replaced by 301 redirects even though `CalculatorsHub.tsx`, `Landing.tsx`, `PortfolioField.tsx`, `manifest.webmanifest`, and `prefetch.ts` still linked to them.
+   - **`CalculatorsHub.tsx` Filter Bug**: `category: 'debt_budget'` was used on 3 cards (`car-driving`, `teen-budgeting`, `spending-saving`), but the `'debt_budget'` filter button was missing from the category filter bar; `/direct-vs-debt-recycling` was also missing from `CALCULATORS_LIST`, `Navbar.astro`, `site-search.ts`, and `prefetch.ts`.
+   - **Module View `?topic=` & `?tab=` Deep-Link Bugs**: `TeenBudgeting`, `DealingWithDebt`, `InvestingShares`, `SuperRetirement`, and `TaxGuide` ignored `?topic=` when initializing `activeTab`; `BrisbaneQLD`, `CarDriving`, and `CareersEmployment` failed to clear `topic: ''` when switching tabs, locking the user on the `topics`/`guide` tab; `JOURNEY_STEPS` in `landing-content.ts` used invalid `?tab=` IDs.
+   - **Appearance & Motion Options (`theme-core.ts`, `motion-core.ts`, `src/index.css`, `Navbar.astro`, `SEOHead.astro`)**: `accent`, `scale`, and `contrast` were not persisted to `localStorage` and reset on every route change; `history.replaceState(null, ...)` clobbered Astro `ClientRouter` state; `toggleTheme()` omitted `data-theme-wipe`; 15 raw `@media (prefers-reduced-motion: reduce)` blocks in `src/index.css` overrode the user's explicit `"Full"` motion selection; `Navbar.astro` had an SSR trailing-slash bug and highlighted both `Calculators` and `11 Learning Modules` simultaneously on calculator pages.
+   - **Stale Statutory & UI Figures**: `Navbar.astro` and `Footer.astro` still displayed `v7.5.0 (Oct 2026)`; `PenaltyShiftCalculatorWidget.tsx` had 2024-25 Fast Food rates (`$16.68`/`$19.46`/`$22.23`/`$31.21`) instead of 2026-27 rates (`$17.39`/`$20.86`/`$24.33`/`$34.76`); several components still referenced `$22,575` LITO / `16%` bracket / `$67,000` HECS / `$30,000` super cap; `landing-stats.ts` had stale `5.50%` HISA and `$67,000` HELP threshold.
+   - **`server.mjs` & `public/sw.js`**: Missing `.avif` and `.txt` MIME types in `server.mjs` (breaking `.avif` images with `nosniff`), HTTP 200 returned on 404 pages, unguarded `decodeURIComponent`, and missing `.avif` in `public/sw.js`.
+   - **GitHub Actions (`.github/workflows/deploy.yml`)**: Missing `pull_request` trigger and post-build `npm run perf` check.
+
+### 2. Execution Plan
+1. Install Node 26.13.0 LTS and JDK 21 + Android SDK 36 in `~/.local/`, and update all npm packages to their latest versions (`v7.13.0`).
+2. Optimize `astro.config.mjs` (`parallelPrerender: true`, `compressHTML: 'jsx'`, LightningCSS transformer), `src/index.css` (`@custom-variant motion-reduce`, `:root[data-motion-reduce]`), and `src/lib/share-state.ts` (ES2025 `Uint8Array.toBase64` / `fromBase64` + `#plan=` hash restoration).
+3. Restore the 8 standalone calculator pages in `src/pages/*.astro` and fix all calculator engine, chart config, preset, and UI bugs.
+4. Fix all view deep-linking (`?topic=`, `?tab=`, `?age=`, `?preset=`), `Navbar.astro`, `Footer.astro`, `theme-core.ts`, `motion-core.ts`, `PrintResultButton.tsx`, `GlobalKeyboardShortcuts.astro`, `TeenProfileContext.tsx`, `PortfolioContext.tsx`, `server.mjs`, `public/sw.js`, and `.github/workflows/deploy.yml`.
+5. Expand `src/workflows.test.tsx` and `src/views/views.test.tsx` to cover every calculator, view, option, preset, tab, and deep-link workflow end-to-end.
+6. Run `npm run check`, `npm run perf`, and `npm run android:build`, commit, and push to GitHub.

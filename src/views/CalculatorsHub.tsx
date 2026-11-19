@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Link } from '@/lib/router';
 import {
   GraduationCap,
@@ -13,10 +12,14 @@ import {
   Sparkles,
   ArrowRight,
   Search,
+  Home,
+  MapPin,
 } from 'lucide-react';
 import { sound } from '@/lib/sound-synthesizer';
 import { prefetchRoute } from '@/utils/prefetch';
 import { PrintShareFAB } from '@/components/shared/PrintShareFAB';
+import { usePageTitle } from '@/hooks/usePageTitle';
+import { useUrlParams } from '@/hooks/useUrlParams';
 
 interface CalcCard {
   id: string;
@@ -174,11 +177,124 @@ const CALCULATORS_LIST: CalcCard[] = [
     icon: Sparkles,
     stats: '$1,800+/yr average teen savings',
   },
+  {
+    id: 'direct-vs-dr',
+    title: 'Direct Investing vs Debt Recycling Simulator',
+    category: 'investing',
+    badge: 'Tax Arbitrage',
+    badgeColor: 'bg-violet-500/10 text-violet-600 dark:text-violet-400 border-violet-500/30',
+    description: 'Compare investing surplus cash directly into ETFs vs cycling equity through your home loan to generate tax-deductible investment interest.',
+    route: '/direct-vs-debt-recycling',
+    icon: TrendingUp,
+    stats: 'Post-CGT net wealth • 30-yr projection',
+  },
+  {
+    id: 'offset-vs-dr',
+    title: 'Mortgage Offset vs Debt Recycling Engine',
+    category: 'property',
+    badge: 'Offset vs DR',
+    badgeColor: 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/30',
+    description: 'Model 30-year net wealth, interest saved, franking credits, and tax deductions between parking cash in offset vs debt recycling into ASX ETFs.',
+    route: '/offset-vs-debt-recycling',
+    icon: Home,
+    stats: 'Franking + negative gearing • Post-CGT',
+  },
+  {
+    id: 'house-affordability',
+    title: 'House Affordability & Stamp Duty Calculator',
+    category: 'property',
+    badge: 'All 8 States & FHB',
+    badgeColor: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30',
+    description: 'Calculate stamp duty, First Home Buyer concessions, LMI tiers, APRA +3% serviceability stress test, and 30-year P&I vs IO repayments.',
+    route: '/house-affordability',
+    icon: Home,
+    stats: '8 State stamp duty • APRA +3% buffer',
+  },
+  {
+    id: 'property-research',
+    title: '120-Point Investment Property Checklist',
+    category: 'property',
+    badge: '3-Layer Scoring',
+    badgeColor: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30',
+    description: 'Score suburbs, intra-suburb location, and physical property attributes across 24 criteria with flood/bushfire deal-breaker checks and gross/net yield.',
+    route: '/property-research',
+    icon: Building,
+    stats: '120-pt matrix • Suburb yield calculator',
+  },
+  {
+    id: 'investment-compare',
+    title: 'Multi-Scenario Investment & Fee Drag Comparator',
+    category: 'investing',
+    badge: 'Up to 4 Portfolios',
+    badgeColor: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30',
+    description: 'Compare up to 4 investment scenarios side-by-side with inflation-adjusted real purchasing power and management fee (MER) drag analysis.',
+    route: '/investment-compare',
+    icon: TrendingUp,
+    stats: 'Real vs Nominal • MER fee drag',
+  },
+  {
+    id: 'savings-rate',
+    title: 'Savings Rate & Time-to-FIRE Optimizer',
+    category: 'debt_budget',
+    badge: '4% Rule Curve',
+    badgeColor: 'bg-primary/10 text-primary border-primary/30',
+    description: 'Discover how increasing your savings rate by +5% or +10% slashes years off your financial independence timeline.',
+    route: '/savings-rate',
+    icon: PiggyBank,
+    stats: 'Savings rate curve • Years saved',
+  },
+  {
+    id: 'tax-savings',
+    title: 'Australian Tax Savings & Deductions Suite',
+    category: 'tax_super',
+    badge: 'Super / DR / Neg Gearing',
+    badgeColor: 'bg-sky-500/10 text-sky-600 dark:text-sky-400 border-sky-500/30',
+    description: 'Model concessional super salary sacrifice ($32,500 cap & Div 293), debt recycling tax deductions, negative gearing, and Stage 3 tax brackets.',
+    route: '/tax-savings',
+    icon: Coins,
+    stats: '$32.5k super cap • Div 293 & HELP',
+  },
+  {
+    id: 'dealing-with-debt',
+    title: 'BNPL Debt Trap & Credit Score Visualizer',
+    category: 'debt_budget',
+    badge: '2026 BNPL Reforms',
+    badgeColor: 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/30',
+    description: 'Calculate the true effective APR of Buy Now Pay Later late fees compared to compounding ETFs and see APRA mortgage capacity reductions.',
+    route: '/dealing-with-debt',
+    icon: CreditCard,
+    stats: 'Effective APR • Credit score impact',
+  },
+  {
+    id: 'super-retirement',
+    title: 'Teen & Young Worker Super Compounding Simulator',
+    category: 'tax_super',
+    badge: '12% SG + FHSS',
+    badgeColor: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30',
+    description: 'Simulate 12% Super Guarantee compounding from your first job to age 60, Government Co-Contribution, and First Home Super Saver ($50k cap).',
+    route: '/super-retirement',
+    icon: Coins,
+    stats: '12% SG • $50k FHSS home deposit',
+  },
+  {
+    id: 'brisbane-qld',
+    title: 'Brisbane Living Budget & University HECS Explorer',
+    category: 'debt_budget',
+    badge: 'SEQ 50c Transit',
+    badgeColor: 'bg-sky-500/10 text-sky-600 dark:text-sky-400 border-sky-500/30',
+    description: 'Plan weekly sharehouse rent, 50c Translink commutes, SSAF fees, and compare UQ, QUT, Griffith, UniSC, UniSQ, ACU & Fee-Free TAFE.',
+    route: '/brisbane-qld',
+    icon: MapPin,
+    stats: '50c Translink • 7 SEQ Universities',
+  },
 ];
 
 export function CalculatorsHub() {
-  const [activeCategory, setActiveCategory] = useState<string>('all');
-  const [searchQuery, setSearchQuery] = useState<string>('');
+  usePageTitle('Financial Modeling & Calculator Suite');
+  const [{ category: activeCategory, q: searchQuery }, setParams] = useUrlParams<{ category: string; q: string }>({
+    category: 'all',
+    q: '',
+  });
 
   const filtered = CALCULATORS_LIST.filter(c => {
     const matchesCat = activeCategory === 'all' || c.category === activeCategory;
@@ -212,7 +328,7 @@ export function CalculatorsHub() {
               type="text"
               placeholder="Search calculators (e.g. HECS, FBT, CGT, Age Pension, Offset)..."
               value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
+              onChange={e => setParams({ q: e.target.value })}
               className="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-card border border-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
             />
           </div>
@@ -223,13 +339,14 @@ export function CalculatorsHub() {
               { id: 'tax_super', label: 'Tax & Super' },
               { id: 'property', label: 'Property & CGT' },
               { id: 'investing', label: 'Investing' },
+              { id: 'debt_budget', label: 'Budget, Cars & Debt' },
               { id: 'stress', label: 'Runway & Health' },
             ].map(tab => (
               <button
                 key={tab.id}
                 onClick={() => {
                   sound.playClick();
-                  setActiveCategory(tab.id);
+                  setParams({ category: tab.id });
                 }}
                 className={`px-3.5 py-2 rounded-xl text-xs font-bold shrink-0 transition-all ${
                   activeCategory === tab.id
@@ -245,6 +362,19 @@ export function CalculatorsHub() {
       </div>
 
       {/* Cards Grid */}
+      {filtered.length === 0 ? (
+        <div className="p-10 rounded-3xl bg-card border border-border text-center space-y-3">
+          <p className="text-sm font-bold text-foreground">No calculators match your search</p>
+          <p className="text-xs text-muted-foreground">Try a different keyword or reset the category filters.</p>
+          <button
+            type="button"
+            onClick={() => setParams({ category: 'all', q: '' })}
+            className="px-4 py-2 rounded-xl bg-primary text-white text-xs font-bold hover:bg-primary/90 transition-all"
+          >
+            Reset filters
+          </button>
+        </div>
+      ) : (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         {filtered.map(card => {
           const Icon = card.icon;
@@ -286,6 +416,7 @@ export function CalculatorsHub() {
           );
         })}
       </div>
+      )}
 
       <PrintShareFAB />
     </div>

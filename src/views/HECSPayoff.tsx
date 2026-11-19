@@ -4,6 +4,7 @@ import { Disclaimer } from '@/components/shared/Disclaimer';
 import { PrintResultButton } from '@/components/shared/PrintResultButton';
 import { ArrowLeft } from 'lucide-react';
 import { Link } from '@/lib/router';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 const HECS_TOPICS = [
   {
@@ -57,6 +58,7 @@ const HECS_TOPICS = [
 ];
 
 export function HECSPayoff() {
+  usePageTitle('HECS-HELP Payoff vs Investing Simulator');
   return (
     <div className="space-y-8 pb-16">
       <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">

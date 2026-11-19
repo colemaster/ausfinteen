@@ -47,7 +47,7 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * MainActivity for AusTeen Money / AusFinTools (v7.12.0).
+ * MainActivity for AusTeen Money / AusFinTools (v7.13.0).
  *
  * Hosts the complete offline Astro 7 + React 19 application bundle inside a
  * hardware-accelerated Chromium WebView served via a virtual HTTPS origin

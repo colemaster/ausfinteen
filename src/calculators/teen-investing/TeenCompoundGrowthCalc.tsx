@@ -159,8 +159,12 @@ export function TeenCompoundGrowthCalc() {
   const monthlyEtfRealRate = etfRealRate / 100 / 12;
   const bankRealRate = realReturn(4.5, inflationRate);
   const monthlyBankRealRate = bankRealRate / 100 / 12;
-  const fvEtfReal = (weeklyInvestment * 52 / 12) * ((Math.pow(1 + monthlyEtfRealRate, monthsTo30) - 1) / monthlyEtfRealRate);
-  const fvBankReal = (weeklyInvestment * 52 / 12) * ((Math.pow(1 + monthlyBankRealRate, monthsTo30) - 1) / monthlyBankRealRate);
+  const fvEtfReal = monthlyEtfRealRate === 0
+    ? (weeklyInvestment * 52 / 12) * monthsTo30
+    : (weeklyInvestment * 52 / 12) * ((Math.pow(1 + monthlyEtfRealRate, monthsTo30) - 1) / monthlyEtfRealRate);
+  const fvBankReal = monthlyBankRealRate === 0
+    ? (weeklyInvestment * 52 / 12) * monthsTo30
+    : (weeklyInvestment * 52 / 12) * ((Math.pow(1 + monthlyBankRealRate, monthsTo30) - 1) / monthlyBankRealRate);
 
   // Lump sum 5, 10, 20, 30 projection
   const lumpComparison = useMemo(() => {

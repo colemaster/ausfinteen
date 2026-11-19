@@ -5,24 +5,33 @@ export const offsetVsDRConfig = {
   offset: { label: "Offset Strategy", color: "var(--chart-1)" },
   debtRecycling: { label: "Debt Recycling", color: "var(--chart-2)" },
   difference: { label: "Difference", color: "var(--chart-4)" },
+  offsetNW: { label: "Offset Net Wealth", color: "var(--chart-1)" },
+  drNW: { label: "Debt Recycling Net Wealth", color: "var(--chart-2)" },
+  advantage: { label: "DR Advantage", color: "var(--chart-4)" },
 } satisfies ChartConfig;
 
 /** Direct Investing vs Debt Recycling chart colors */
 export const directVsDRConfig = {
   direct: { label: "Direct Investing", color: "var(--chart-1)" },
   debtRecycling: { label: "Debt Recycling", color: "var(--chart-2)" },
+  dr: { label: "Debt Recycling", color: "var(--chart-2)" },
 } satisfies ChartConfig;
 
 /** Classic FIRE trajectory chart colors */
 export const fireTrajectoryConfig = {
   portfolio: { label: "Portfolio Value", color: "var(--chart-2)" },
   target: { label: "FIRE Target", color: "var(--chart-5)" },
+  balance: { label: "Portfolio Balance", color: "var(--chart-2)" },
+  fireTarget: { label: "FIRE Target", color: "var(--chart-5)" },
 } satisfies ChartConfig;
 
 /** Super Bridge chart colors */
 export const superBridgeConfig = {
   bridgeCapital: { label: "Bridge Capital", color: "var(--chart-1)" },
   superBalance: { label: "Super Balance", color: "var(--chart-6)" },
+  nonSuper: { label: "Non-Super (Bridge)", color: "var(--chart-1)" },
+  super: { label: "Super Balance", color: "var(--chart-6)" },
+  total: { label: "Total Net Worth", color: "var(--chart-2)" },
 } satisfies ChartConfig;
 
 /** Investment Comparison — dynamic config builder */
@@ -40,6 +49,10 @@ export function buildInvestmentCompareConfig(
 /** Savings Rate chart colors */
 export const savingsRateConfig = {
   yearsToFI: { label: "Years to FI", color: "var(--chart-6)" },
+  currentSavings: { label: "Current Savings Rate", color: "var(--chart-2)" },
+  otherSavings: { label: "Other Savings Rate", color: "var(--chart-1)" },
+  fireTarget: { label: "FIRE Target", color: "var(--chart-5)" },
+  higherSavings: { label: "+10% Savings Rate", color: "var(--chart-4)" },
 } satisfies ChartConfig;
 
 /** Tax Bracket Visualizer chart colors */

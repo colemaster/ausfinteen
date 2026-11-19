@@ -379,7 +379,7 @@ export function cgtOnDisposal(
   // Section 118-145 6-year rule
   const rentedOut = incomeProducedWhileRented > 0;
   const sixYearExempt = rentedOut && monthsRented <= SIX_YEAR_RULE_MONTHS;
-  let isFullyExempt = !rentedOut || sixYearExempt;
+  let isFullyExempt = sixYearExempt;
   let apportionment = 1;
 
   if (rentedOut && monthsRented > SIX_YEAR_RULE_MONTHS) {

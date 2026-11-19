@@ -70,7 +70,7 @@ export function DebtRecyclingTax({
     setActivePreset(undefined);
     onInvestLoanBalChange(300000);
     onRateChange(6.0);
-    onMargTaxChange(34.5);
+    onMargTaxChange(32);
   }, [onInvestLoanBalChange, onRateChange, onMargTaxChange]);
 
   const rows = useMemo(

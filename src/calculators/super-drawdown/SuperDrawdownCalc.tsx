@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import {
   simulateRetirementPlan,
   calculateAgePension,
@@ -11,7 +11,7 @@ import { OdometerCounter } from '@/components/shared/OdometerCounter';
 import { QuickPresetBar, type ScenarioPreset } from '@/components/ui/QuickPresetBar';
 import { CalculatorActions } from '@/components/shared/CalculatorActions';
 import { sound } from '@/lib/sound-synthesizer';
-import { exportToCSV, encodePlanToHash, generateSimpleQRCodeSVG } from '@/lib/share-state';
+import { exportToCSV, encodePlanToHash, decodePlanFromHash, generateSimpleQRCodeSVG } from '@/lib/share-state';
 import { formatCurrency } from '@/utils/formatters';
 import {
   Coins,
@@ -73,8 +73,37 @@ export function SuperDrawdownCalc() {
   const [shareUrl, setShareUrl] = useState<string>('');
   const [activePreset, setActivePreset] = useState<string | undefined>();
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const hash = window.location.hash;
+    if (hash.startsWith('#plan=')) {
+      const encoded = hash.slice('#plan='.length);
+      decodePlanFromHash<{
+        retirementAge?: number;
+        superBalance?: number;
+        desiredIncome?: number;
+        expectedReturn?: number;
+        inflationRate?: number;
+        lumpSum?: number;
+        relationshipStatus?: 'single' | 'couple';
+        isHomeowner?: boolean;
+      }>(encoded).then(plan => {
+        if (!plan) return;
+        if (typeof plan.retirementAge === 'number') setRetirementAge(plan.retirementAge);
+        if (typeof plan.superBalance === 'number') setSuperBalance(plan.superBalance);
+        if (typeof plan.desiredIncome === 'number') setDesiredIncome(plan.desiredIncome);
+        if (typeof plan.expectedReturn === 'number') setExpectedReturn(plan.expectedReturn);
+        if (typeof plan.inflationRate === 'number') setInflationRate(plan.inflationRate);
+        if (typeof plan.lumpSum === 'number') setLumpSum(plan.lumpSum);
+        if (plan.relationshipStatus === 'single' || plan.relationshipStatus === 'couple') setRelationshipStatus(plan.relationshipStatus);
+        if (typeof plan.isHomeowner === 'boolean') setIsHomeowner(plan.isHomeowner);
+      });
+    }
+  }, []);
+
   const handleApplyPreset = (preset: ScenarioPreset<SuperDrawdownPreset>) => {
     setActivePreset(preset.id);
+    setLumpSum(0);
     if (preset.values.balance !== undefined) setSuperBalance(preset.values.balance);
     if (preset.values.income !== undefined) setDesiredIncome(preset.values.income);
     if (preset.values.age !== undefined) setRetirementAge(preset.values.age);
@@ -152,15 +181,17 @@ export function SuperDrawdownCalc() {
   );
 
   const pensionAt67 = useMemo(() => {
+    const age67Row = simResult.schedule.find(r => r.age === 67);
+    const finAssets = age67Row ? age67Row.startingBalance : Math.max(0, superBalance - lumpSum);
     return calculateAgePension({
       age: 67,
       relationshipStatus,
       isHomeowner,
-      financialAssets: superBalance * 0.9, // Estimated at age 67
+      financialAssets: finAssets,
       otherAssessableAssets: otherAssets,
       otherFortnightlyIncome: 0,
     });
-  }, [relationshipStatus, isHomeowner, superBalance, otherAssets]);
+  }, [simResult.schedule, relationshipStatus, isHomeowner, superBalance, lumpSum, otherAssets]);
 
   const summaryText = useMemo(() => {
     return [

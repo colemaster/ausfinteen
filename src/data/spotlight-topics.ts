@@ -89,14 +89,14 @@ export const RESOLVED_SPOTLIGHTS: readonly ResolvedSpotlight[] = [
       "id": "ss-14",
       "moduleId": "spending-saving",
       "moduleTitle": "Spending & Saving 🛍️",
-      "question": "14. Up Bank 5.35% Grow: The No-Withdrawal Rule That Trips Everyone Up",
-      "answer": "Up pays 5.35% on Savers up to $250k combined — but only if you make 5 settled card purchases a month AND make zero withdrawals or transfers out of that Saver all calendar month. Touch it once and the whole Saver drops to ~2.00% Flow for the month; miss the 5 purchases and you earn 0%. The hack: run up to 50 Savers — keep bills and spending in one Flow saver and your emergency fund locked in an untouched saver, with 5 tiny early-month top-ups to lock the purchase count.",
+      "question": "14. Up Bank 4.85% Grow: The No-Withdrawal Rule That Trips Everyone Up",
+      "answer": "Up pays 4.85% on Savers up to $250k combined — but only if you make 5 settled card purchases a month AND make zero withdrawals or transfers out of that Saver all calendar month. Touch it once and the whole Saver drops to ~2.00% Flow for the month; miss the 5 purchases and you earn 0%. The hack: run up to 50 Savers — keep bills and spending in one Flow saver and your emergency fund locked in an untouched saver, with 5 tiny early-month top-ups to lock the purchase count.",
       "actionStep": "Set five $1 early-month transfers and move your emergency fund to a Saver you never touch.",
       "webLink": {
-        "title": "Up Bank: Saver Account (5.00% p.a.)",
+        "title": "Up Bank: Saver Account (4.85% p.a.)",
         "url": "https://up.com.au/features/savers/",
         "source": "Bank",
-        "description": "Next-gen digital banking for ages 16+ paying 5.00% p.a. with automated roundups and 5 monthly debit purchases."
+        "description": "Next-gen digital banking for ages 16+ paying 4.85% p.a. with automated roundups and 5 monthly debit purchases."
       }
     },
     "route": "/spending-saving",

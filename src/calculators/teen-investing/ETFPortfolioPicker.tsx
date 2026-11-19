@@ -50,10 +50,10 @@ const PRESETS: ScenarioPreset<TaxBracketPreset>[] = [
   },
   {
     id: 'entry-bracket',
-    label: 'Casual Job (16% Bracket)',
-    badge: '16% Tax',
+    label: 'Casual Job (15% Bracket)',
+    badge: '15% Tax',
     description: 'Income between $18,201 and $45,000 paying low-tier tax',
-    values: { marginalRatePct: 16 },
+    values: { marginalRatePct: 15 },
   },
   {
     id: 'median-bracket',

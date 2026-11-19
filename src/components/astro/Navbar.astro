@@ -47,13 +47,27 @@ const CALC_ROUTES = [
   '/ev-novated-lease',
   '/cgt-engine',
   '/financial-stress-test',
+  '/fire',
+  '/house-affordability',
+  '/investment-compare',
+  '/offset-vs-debt-recycling',
+  '/direct-vs-debt-recycling',
+  '/property-research',
+  '/savings-rate',
+  '/tax-savings',
+  '/portfolio',
 ];
+
+const normalizePath = (p: string): string => {
+  const clean = p.replace(/\/index\.html$/, '').replace(/\/+$/, '');
+  return clean || '/';
+};
 
 // Server-rendered path so the first paint already shows the correct active item,
 // with no flash of an unstyled/inactive link before JS runs.
-const path = Astro.url.pathname.replace(/\/index\.html$/, '/') || '/';
+const path = normalizePath(Astro.url.pathname);
 const isCalcsActive = CALC_ROUTES.includes(path);
-const isModulesActive = path !== '/' && path !== '/profile' && !path.startsWith('/calculators');
+const isModulesActive = path !== '/' && path !== '/profile' && !isCalcsActive;
 ---
 
 <header class="sticky top-0 z-40 w-full backdrop-blur-xl bg-background/75 border-b border-border/60 glass-nav shadow-[0_1px_3px_rgba(0,0,0,0.02)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3)]" data-navbar>
@@ -561,7 +575,21 @@ const isModulesActive = path !== '/' && path !== '/profile' && !path.startsWith(
     '/ev-novated-lease',
     '/cgt-engine',
     '/financial-stress-test',
+    '/fire',
+    '/house-affordability',
+    '/investment-compare',
+    '/offset-vs-debt-recycling',
+    '/direct-vs-debt-recycling',
+    '/property-research',
+    '/savings-rate',
+    '/tax-savings',
+    '/portfolio',
   ];
+
+  const normalizeRoute = (p: string): string => {
+    const clean = p.replace(/\/index\.html$/, '').replace(/\/+$/, '');
+    return clean || '/';
+  };
 
   /**
    * Wire up the header currently in the document.
@@ -819,10 +847,9 @@ const isModulesActive = path !== '/' && path !== '/profile' && !path.startsWith(
     /* ---------------------------------------------------------- active link state */
 
     const paintActiveLinks = () => {
-      const current = window.location.pathname || '/';
+      const current = normalizeRoute(window.location.pathname || '/');
       const calcsActive = CALC_ROUTES.includes(current);
-      const modulesActive =
-        current !== '/' && current !== '/profile' && !current.startsWith('/calculators');
+      const modulesActive = current !== '/' && current !== '/profile' && !calcsActive;
 
       const paint = (el: Element | null | undefined, active: boolean) => {
         if (!el) return;

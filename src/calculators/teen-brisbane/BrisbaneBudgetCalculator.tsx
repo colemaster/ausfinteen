@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/Card';
 import { NumberInput } from '@/components/ui/NumberInput';
 import { SliderControl } from '@/components/ui/SliderControl';
@@ -8,6 +8,7 @@ import { MapPin, TramFront, GraduationCap, Sparkles } from 'lucide-react';
 import { BRISBANE_WEEKLY_BUDGET } from '@/data/brisbane-data';
 import { useTeenProfile } from '@/context/TeenProfileContext';
 import { cn } from '@/lib/utils';
+import { formatCurrency } from '@/utils/formatters';
 import {
   fiftyCentFareSavings,
   calculateSsafCost,
@@ -16,7 +17,14 @@ import {
 } from './engine';
 
 export function BrisbaneBudgetCalculator() {
-  const { weeklyNetPay } = useTeenProfile();
+  const { profile, weeklyNetPay: calculatedNetPay } = useTeenProfile();
+  const [customNetPay, setCustomNetPay] = useState<number | null>(null);
+
+  useEffect(() => {
+    setCustomNetPay(null);
+  }, [profile.age, profile.hoursPerWeek, profile.hourlyRate]);
+
+  const weeklyNetPay = customNetPay ?? calculatedNetPay;
 
   const [items, setItems] = useState<number[]>(BRISBANE_WEEKLY_BUDGET.map(i => i.weekly));
   const [tripsPerWeek, setTripsPerWeek] = useState<number>(10);
@@ -221,7 +229,7 @@ export function BrisbaneBudgetCalculator() {
               <NumberInput
                 label="Your Weekly Net Take-Home Pay / Allowance"
                 value={weeklyNetPay}
-                onChange={() => {}}
+                onChange={v => setCustomNetPay(v)}
                 min={0}
                 max={2000}
                 step={10}
@@ -328,9 +336,9 @@ export function BrisbaneBudgetCalculator() {
         />
         <StatCard
           label="Public Transport Cap"
-          value="$5.00/wk"
+          value={`${formatCurrency(fareSavings.newWeeklyCost, 2)}/wk`}
           color="green"
-          subtext="10 trips @ 50c flat Translink fare"
+          subtext={`${tripsPerWeek} trips @ 50c flat Translink fare`}
         />
       </div>
     </Card>

@@ -387,7 +387,7 @@ export function runDebtRecycling(
     portfolioValue: Math.round(portfolioValue),
     cgtIfSold: Math.round(cgtIfSold),
     netWealthPostCGT: Math.round(
-      portfolioValue - cgtIfSold - investLoanBal,
+      portfolioValue - cgtIfSold - investLoanBal - homeLoanBal,
     ),
     yearly,
   };

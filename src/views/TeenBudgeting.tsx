@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { teenBudgetingModule as moduleData } from '@/data/modules/teen-budgeting';
 import { TopicGuideAccordion } from '@/components/shared/TopicGuideAccordion';
 import { FirstPaycheckSplitter } from '@/calculators/teen-budget/FirstPaycheckSplitter';
@@ -9,9 +10,20 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { SmartImage } from '@/components/ui/SmartImage';
 import { usePageTitle } from '@/hooks/usePageTitle';
+import { useSearchParams } from '@/lib/router';
+import { useTeenProfile } from '@/context/TeenProfileContext';
 
 export function TeenBudgeting() {
   usePageTitle('Teen Budgeting · 50/30/20 Paycheck Plan');
+  const [searchParams] = useSearchParams();
+  const { applyAgePreset } = useTeenProfile();
+
+  useEffect(() => {
+    const rawAge = Number(searchParams.get('preset') ?? searchParams.get('age'));
+    if (Number.isInteger(rawAge) && rawAge >= 14 && rawAge <= 19) {
+      applyAgePreset(rawAge);
+    }
+  }, [searchParams, applyAgePreset]);
 
   return (
     <div className="space-y-8 animate-fade-in">

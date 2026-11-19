@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useSearchParams } from '@/lib/router';
 import { careersEmploymentModule as moduleData } from '@/data/modules/careers-employment';
 import { TopicGuideAccordion } from '@/components/shared/TopicGuideAccordion';
@@ -13,6 +14,7 @@ import { Briefcase, FileText, ShieldAlert, MessageSquare, Award, BookOpen, Clock
 import { Badge } from '@/components/ui/Badge';
 import { SmartImage } from '@/components/ui/SmartImage';
 import { usePageTitle } from '@/hooks/usePageTitle';
+import { useTeenProfile } from '@/context/TeenProfileContext';
 
 import { PrintShareFAB } from '@/components/shared/PrintShareFAB';
 
@@ -31,6 +33,7 @@ type TabId = (typeof TABS)[number]['id'];
 
 function readTab(searchParams: URLSearchParams): TabId {
   const raw = searchParams.get('tab');
+  if (raw === 'first-job' || raw === 'calculators') return 'calc';
   if (TABS.some(t => t.id === raw)) return raw as TabId;
   // Deep links like ?topic=ce-7 must land on the Q&A accordion tab
   if (searchParams.has('topic')) return 'topics';
@@ -39,13 +42,22 @@ function readTab(searchParams: URLSearchParams): TabId {
 
 export function CareersEmployment() {
   usePageTitle('Careers & Employment · First Job Pay');
+  const { applyAgePreset } = useTeenProfile();
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab = readTab(searchParams);
+
+  useEffect(() => {
+    const rawAge = Number(searchParams.get('preset') ?? searchParams.get('age'));
+    if (Number.isInteger(rawAge) && rawAge >= 14 && rawAge <= 19) {
+      applyAgePreset(rawAge);
+    }
+  }, [searchParams, applyAgePreset]);
 
   const setActiveTab = (id: TabId) => {
     setSearchParams(
       prev => {
         const cp = new URLSearchParams(prev);
+        cp.delete('topic');
         if (id === 'calc') cp.delete('tab');
         else cp.set('tab', id);
         return cp;

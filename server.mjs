@@ -18,6 +18,7 @@ const MIME = {
   '.jpg': 'image/jpeg',
   '.jpeg': 'image/jpeg',
   '.webp': 'image/webp',
+  '.avif': 'image/avif',
   '.svg': 'image/svg+xml',
   '.woff2': 'font/woff2',
   '.xml': 'application/xml',
@@ -49,9 +50,32 @@ async function findAvailablePort(startPort) {
   return 0;
 }
 
+const DIST_RESOLVED = path.resolve(DIST);
+
 const server = http.createServer((req, res) => {
-  const urlPath = decodeURIComponent(req.url.split('?')[0]);
-  let filePath = path.join(DIST, urlPath);
+  if (req.method !== 'GET' && req.method !== 'HEAD') {
+    res.writeHead(405, { 'Content-Type': 'text/plain', Allow: 'GET, HEAD' });
+    res.end('Method Not Allowed');
+    return;
+  }
+
+  let urlPath;
+  try {
+    urlPath = decodeURIComponent((req.url || '/').split('?')[0]);
+  } catch {
+    res.writeHead(400, { 'Content-Type': 'text/plain' });
+    res.end('400 Bad Request');
+    return;
+  }
+
+  let filePath = path.resolve(DIST_RESOLVED, '.' + urlPath);
+  if (filePath !== DIST_RESOLVED && !filePath.startsWith(DIST_RESOLVED + path.sep)) {
+    res.writeHead(403, { 'Content-Type': 'text/plain' });
+    res.end('403 Forbidden');
+    return;
+  }
+
+  let statusCode = 200;
 
   if (fs.existsSync(filePath) && fs.statSync(filePath).isDirectory()) {
     filePath = path.join(filePath, 'index.html');
@@ -61,7 +85,8 @@ const server = http.createServer((req, res) => {
     if (fs.existsSync(filePath + '.html')) {
       filePath = filePath + '.html';
     } else {
-      filePath = path.join(DIST, '404.html');
+      filePath = path.join(DIST_RESOLVED, '404.html');
+      statusCode = 404;
     }
   }
 
@@ -89,13 +114,19 @@ const server = http.createServer((req, res) => {
   headers['X-Frame-Options'] = 'DENY';
   headers['Referrer-Policy'] = 'strict-origin-when-cross-origin';
 
+  if (req.method === 'HEAD') {
+    res.writeHead(statusCode, headers);
+    res.end();
+    return;
+  }
+
   // Performance: Brotli/gzip compression for compressible content
   const acceptEncoding = req.headers['accept-encoding'] || '';
   if (COMPRESSIBLE_RE.test(contentType)) {
     if (acceptEncoding.includes('br')) {
       headers['Content-Encoding'] = 'br';
       headers['Vary'] = 'Accept-Encoding';
-      res.writeHead(200, headers);
+      res.writeHead(statusCode, headers);
       fs.createReadStream(filePath)
         .pipe(zlib.createBrotliCompress({ params: { [zlib.constants.BROTLI_PARAM_QUALITY]: 4 } }))
         .pipe(res);
@@ -103,17 +134,18 @@ const server = http.createServer((req, res) => {
     } else if (acceptEncoding.includes('gzip')) {
       headers['Content-Encoding'] = 'gzip';
       headers['Vary'] = 'Accept-Encoding';
-      res.writeHead(200, headers);
+      res.writeHead(statusCode, headers);
       fs.createReadStream(filePath).pipe(zlib.createGzip({ level: 6 })).pipe(res);
       return;
     }
   }
 
-  res.writeHead(200, headers);
+  res.writeHead(statusCode, headers);
   fs.createReadStream(filePath).pipe(res);
 });
 
-const PORT = parseInt(process.env.PORT || '48000', 10);
+const requestedPort = parseInt(process.env.PORT || '48000', 10);
+const PORT = process.env.PORT ? requestedPort : await findAvailablePort(requestedPort);
 server.listen(PORT, '0.0.0.0', () => {
   const activePort = server.address().port;
   console.log(`\n  🚀 AusFinance Suite Frontend Server Ready!`);

@@ -1,10 +1,10 @@
 /**
  * AusFinance Suite Service Worker
- * Version: 7.0.0
+ * Version: 7.13.0
  * Provides offline support, aggressive static asset caching, and background sync.
  */
 
-const CACHE_NAME = 'ausfinance-v7.1.0';
+const CACHE_NAME = 'ausfinance-v7.13.0';
 const STATIC_ASSETS = [
   '/',
   '/favicon.svg',
@@ -51,11 +51,11 @@ self.addEventListener('fetch', (event) => {
 
   // 1. Static hashed assets (_astro, fonts, images) -> Cache First
   if (
-    url.pathname.startsWith('/_astro/') ||
-    url.pathname.startsWith('/assets/') ||
+    url.pathname.includes('/_astro/') ||
+    url.pathname.includes('/assets/') ||
     url.hostname.includes('fonts.googleapis.com') ||
     url.hostname.includes('fonts.gstatic.com') ||
-    /\.(?:js|css|woff2?|png|jpg|jpeg|svg|webp|ico)$/i.test(url.pathname)
+    /\.(?:js|css|woff2?|png|jpg|jpeg|svg|webp|avif|ico)$/i.test(url.pathname)
   ) {
     event.respondWith(
       caches.match(request).then((cachedResponse) => {
@@ -100,6 +100,9 @@ self.addEventListener('fetch', (event) => {
 
   // 3. All other requests -> Network first with cache fallback
   event.respondWith(
-    fetch(request).catch(() => caches.match(request))
+    fetch(request).catch(async () => {
+      const cached = await caches.match(request);
+      return cached || new Response('', { status: 503, statusText: 'Offline' });
+    })
   );
 });

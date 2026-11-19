@@ -16,6 +16,7 @@ import {
   QLD_TEEN_RULES,
   QLD_15YO_BRISBANE_FIRST_JOB_DEEP_ANALYSIS,
 } from '@/data/brisbane-data';
+import { useEffect } from 'react';
 import { OFFICIAL_WEB_LINKS } from '@/data/statutory-links';
 import { useTeenProfile } from '@/context/TeenProfileContext';
 import { SmartImage } from '@/components/ui/SmartImage';
@@ -29,6 +30,7 @@ type BneTab = (typeof BNE_TABS)[number];
 
 function readBneTab(searchParams: URLSearchParams): BneTab {
   const raw = searchParams.get('tab');
+  if (raw === 'uni-compare') return 'unis';
   return BNE_TABS.includes(raw as BneTab) ? (raw as BneTab) : 'unis';
 }
 
@@ -57,15 +59,23 @@ const BRISBANE_WEB_SOURCES = [
 
 export function BrisbaneQLD() {
   usePageTitle('Brisbane, QLD · Living & Uni Guide');
-  const { profile, updateProfile } = useTeenProfile();
+  const { profile, updateProfile, applyAgePreset } = useTeenProfile();
   const [searchParams, setSearchParams] = useSearchParams();
   const tab = readBneTab(searchParams);
+
+  useEffect(() => {
+    const rawAge = Number(searchParams.get('preset') ?? searchParams.get('age'));
+    if (Number.isInteger(rawAge) && rawAge >= 14 && rawAge <= 19) {
+      applyAgePreset(rawAge);
+    }
+  }, [searchParams, applyAgePreset]);
 
   const setTab = (id: string) => {
     if (!BNE_TABS.includes(id as BneTab)) return;
     setSearchParams(
       prev => {
         const cp = new URLSearchParams(prev);
+        cp.delete('topic');
         if (id === 'unis') cp.delete('tab');
         else cp.set('tab', id);
         return cp;

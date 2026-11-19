@@ -4,6 +4,7 @@ import { Disclaimer } from '@/components/shared/Disclaimer';
 import { PrintResultButton } from '@/components/shared/PrintResultButton';
 import { ArrowLeft } from 'lucide-react';
 import { Link } from '@/lib/router';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 const SUPER_DRAWDOWN_TOPICS = [
   {
@@ -33,6 +34,7 @@ const SUPER_DRAWDOWN_TOPICS = [
 ];
 
 export function SuperDrawdown() {
+  usePageTitle('Super Drawdown & Age Pension Optimizer');
   return (
     <div className="space-y-8 pb-16">
       <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">

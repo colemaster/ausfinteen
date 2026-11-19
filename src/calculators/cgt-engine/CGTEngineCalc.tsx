@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import {
   calculateCGT,
   cgtOnDisposal,
@@ -8,7 +8,7 @@ import { OdometerCounter } from '@/components/shared/OdometerCounter';
 import { QuickPresetBar, type ScenarioPreset } from '../../components/ui/QuickPresetBar';
 import { CalculatorActions } from '../../components/shared/CalculatorActions';
 import { sound } from '@/lib/sound-synthesizer';
-import { exportToCSV, encodePlanToHash, generateSimpleQRCodeSVG } from '@/lib/share-state';
+import { exportToCSV, encodePlanToHash, decodePlanFromHash, generateSimpleQRCodeSVG } from '@/lib/share-state';
 import {
   FileText,
   Home,
@@ -60,7 +60,7 @@ const PRESETS: ScenarioPreset<CGTPreset>[] = [
   {
     id: 'rental-property',
     label: 'Investment Property ($920k)',
-    badge: 'Div 43 & 6-Yr',
+    badge: 'Div 43 & 50% Disc.',
     description: 'Property bought for $650k, sold for $920k after 3 years renting with Div 43 clawback',
     values: {
       assetType: 'property',
@@ -76,6 +76,30 @@ const PRESETS: ScenarioPreset<CGTPreset>[] = [
       priorLosses: 0,
       taxableIncome: 110000,
       rentedMonths: 36,
+      electedSixYear: false,
+      taxpayerEntity: 'individual',
+      isAustralianResident: true,
+    },
+  },
+  {
+    id: 'six-year-rule',
+    label: '6-Yr Absence Rule ($920k)',
+    badge: 's 118-145 Exempt',
+    description: 'Former main residence rented out for 48 months (under 6-year cap): 100% CGT exempt',
+    values: {
+      assetType: 'property',
+      purchasePrice: 650000,
+      salePrice: 920000,
+      ownershipMonths: 60,
+      buyingCosts: 28000,
+      renovations: 15000,
+      sellingCosts: 22000,
+      div43Clawback: 0,
+      holdingCosts: 0,
+      currentLosses: 0,
+      priorLosses: 0,
+      taxableIncome: 110000,
+      rentedMonths: 48,
       electedSixYear: true,
       taxpayerEntity: 'individual',
       isAustralianResident: true,
@@ -241,16 +265,39 @@ export function CGTEngineCalc() {
   const [div43Clawback, setDiv43Clawback] = useState<number>(8000); // Capital works depreciation
   const [currentLosses, setCurrentLosses] = useState<number>(0);
   const [priorLosses, setPriorLosses] = useState<number>(0);
-  const isMainResidence = true;
-  const wasRentedOut = true;
   const [taxableIncome, setTaxableIncome] = useState<number>(110000);
   // 6-Year Rule
   const [rentedMonths, setRentedMonths] = useState<number>(48);
-  const [electedSixYear, setElectedSixYear] = useState<boolean>(true);
+  const [electedSixYear, setElectedSixYear] = useState<boolean>(false);
+  const isMainResidence = assetType === 'property' && electedSixYear;
+  const wasRentedOut = assetType === 'property' && electedSixYear && rentedMonths > 0;
   const [showShareModal, setShowShareModal] = useState<boolean>(false);
   const [shareUrl, setShareUrl] = useState<string>('');
   const [activePreset, setActivePreset] = useState<string | undefined>(undefined);
   const [activeEducationalTab, setActiveEducationalTab] = useState<'minors' | 'elements' | 'losses' | 'sixyear'>('minors');
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.location.hash.includes('plan=')) return;
+    decodePlanFromHash<Partial<CGTPreset>>(window.location.hash).then(restored => {
+      if (!restored) return;
+      if (restored.assetType !== undefined) setAssetType(restored.assetType);
+      if (restored.taxpayerEntity !== undefined) setTaxpayerEntity(restored.taxpayerEntity);
+      if (restored.isAustralianResident !== undefined) setIsAustralianResident(restored.isAustralianResident);
+      if (restored.purchasePrice !== undefined) setPurchasePrice(restored.purchasePrice);
+      if (restored.salePrice !== undefined) setSalePrice(restored.salePrice);
+      if (restored.ownershipMonths !== undefined) setOwnershipMonths(restored.ownershipMonths);
+      if (restored.buyingCosts !== undefined) setBuyingCosts(restored.buyingCosts);
+      if (restored.renovations !== undefined) setRenovations(restored.renovations);
+      if (restored.sellingCosts !== undefined) setSellingCosts(restored.sellingCosts);
+      if (restored.div43Clawback !== undefined) setDiv43Clawback(restored.div43Clawback);
+      if (restored.holdingCosts !== undefined) setHoldingCosts(restored.holdingCosts);
+      if (restored.currentLosses !== undefined) setCurrentLosses(restored.currentLosses);
+      if (restored.priorLosses !== undefined) setPriorLosses(restored.priorLosses);
+      if (restored.taxableIncome !== undefined) setTaxableIncome(restored.taxableIncome);
+      if (restored.rentedMonths !== undefined) setRentedMonths(restored.rentedMonths);
+      if (restored.electedSixYear !== undefined) setElectedSixYear(restored.electedSixYear);
+    });
+  }, []);
 
   const handleApplyPreset = useCallback((preset: ScenarioPreset<CGTPreset>) => {
     setActivePreset(preset.id);
@@ -290,7 +337,7 @@ export function CGTEngineCalc() {
     setPriorLosses(0);
     setTaxableIncome(110000);
     setRentedMonths(48);
-    setElectedSixYear(true);
+    setElectedSixYear(false);
   }, []);
 
   // ATO section references for the current scenario (workflow model)
@@ -391,12 +438,15 @@ export function CGTEngineCalc() {
       purchasePrice,
       salePrice,
       ownershipMonths,
+      buyingCosts,
+      renovations,
+      sellingCosts,
+      div43Clawback,
       holdingCosts,
       currentLosses,
       priorLosses,
       taxableIncome,
-      isMainResidence,
-      wasRentedOut,
+      electedSixYear,
       rentedMonths,
     };
     const hash = await encodePlanToHash(state);
@@ -966,7 +1016,7 @@ export function CGTEngineCalc() {
                   <input
                     id="cgt-rented-months"
                     type="range"
-                    min={1}
+                    min={0}
                     max={120}
                     step={1}
                     value={rentedMonths}
@@ -1259,7 +1309,7 @@ export function CGTEngineCalc() {
                 </p>
                 <ul className="text-[10px] space-y-0.5 text-muted-foreground pt-1 list-disc list-inside">
                   <li>Full $18,200 adult tax-free threshold applies!</li>
-                  <li>Normal progressive tax brackets (16%, 30%, 37%, 45%)</li>
+                  <li>Normal progressive tax brackets (15%, 30%, 37%, 45%)</li>
                   <li>Low Income Tax Offset (LITO) up to $700 available</li>
                 </ul>
               </div>

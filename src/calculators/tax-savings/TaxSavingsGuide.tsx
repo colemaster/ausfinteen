@@ -18,7 +18,7 @@ const TABS = [
 
 const ASSUMPTIONS: Record<string, string[]> = {
   super: [
-    'Based on 2026-27 concessional contribution cap of $30,000.',
+    'Based on 2026-27 concessional contribution cap of $32,500.',
     'Division 293 applies when taxable income + concessional contributions > $250,000.',
     'Carry-forward unused cap available only if total super balance < $500,000.',
     'Projected balance uses annual compounding on employer SG + actual sacrifice (after 15% tax).',
@@ -37,9 +37,9 @@ const ASSUMPTIONS: Record<string, string[]> = {
     'Based on 2026-27 ATO rates.',
   ],
   brackets: [
-    'Stage 3 tax cuts apply from 1 July 2024.',
+    'Stage 3 tax cuts apply from 1 July 2024 (with 15% lower bracket from 1 July 2026).',
     'Medicare levy: 2% flat rate (with low-income reduction below $26,000).',
-    'HELP repayment based on 2026-27 ATO repayment thresholds.',
+    'HELP repayment based on 2026-27 ATO repayment thresholds ($69,528 minimum).',
     'LMITO (Low and Middle Income Tax Offset) ended 30 June 2022.',
   ],
 };
@@ -51,7 +51,7 @@ export function TaxSavingsGuide() {
   const [grossSalaryOverride, setGrossSalaryOverride] = useState(85000);
   const [investLoanBalOverride, setInvestLoanBalOverride] = useState(300000);
   const [rateOverride, setRateOverride] = useState(6.0);
-  const [margTaxOverride, setMargTaxOverride] = useState(34.5);
+  const [margTaxOverride, setMargTaxOverride] = useState(32);
 
   const [activeTab, setActiveTab] = useState('super');
 
@@ -77,7 +77,7 @@ export function TaxSavingsGuide() {
       <AboutCalc title="About this guide" concepts={[
         {
           term: 'What is salary sacrifice to superannuation?',
-          definition: 'You ask your employer to redirect part of your pre-tax salary into super. That money is taxed at 15% (the super contribution rate) instead of your marginal income tax rate. If you earn $85k, your marginal rate is ~34.5% — so sacrificing $10,000 saves $1,950 in tax, subject to the $30,000 annual concessional cap.',
+          definition: 'You ask your employer to redirect part of your pre-tax salary into super. That money is taxed at 15% (the super contribution rate) instead of your marginal income tax rate. If you earn $85k, your marginal rate is 32% (30% + 2% Medicare) — so sacrificing $10,000 saves $1,700 in tax, subject to the $32,500 annual concessional cap.',
           link: 'https://www.ato.gov.au/individuals-and-families/super-for-individuals-and-families/super/growing-and-keeping-track-of-your-super/salary-sacrificing-super',
           linkLabel: 'ATO: Salary sacrificing into super',
         },

@@ -50,17 +50,19 @@ import {
   QLD_VEHICLE_DUTY_RATES,
   ROADSIDE_ASSISTANCE_BENCHMARKS,
 } from '@/data/car-data';
+import { useEffect } from 'react';
 import { OFFICIAL_WEB_LINKS } from '@/data/statutory-links';
 import { SmartImage } from '@/components/ui/SmartImage';
 import { ModulePrevNext } from '@/components/shared/ModulePrevNext';
 import { usePageTitle } from '@/hooks/usePageTitle';
+import { useTeenProfile } from '@/context/TeenProfileContext';
 
 const CAR_TABS = ['licence', 'buying', 'fuel', 'parking'] as const;
 type CarTab = (typeof CAR_TABS)[number];
 
 function readCarTab(searchParams: URLSearchParams): CarTab {
   const raw = searchParams.get('tab');
-  if (raw === 'car-costs') return 'buying';
+  if (raw === 'car-costs' || raw === 'calculators') return 'buying';
   return CAR_TABS.includes(raw as CarTab) ? (raw as CarTab) : 'licence';
 }
 
@@ -81,14 +83,23 @@ const CAR_WEB_SOURCES = [
 
 export function CarDriving() {
   usePageTitle('Cars & Driving · QLD Licence');
+  const { applyAgePreset } = useTeenProfile();
   const [searchParams, setSearchParams] = useSearchParams();
   const tab = readCarTab(searchParams);
+
+  useEffect(() => {
+    const rawAge = Number(searchParams.get('preset') ?? searchParams.get('age'));
+    if (Number.isInteger(rawAge) && rawAge >= 14 && rawAge <= 19) {
+      applyAgePreset(rawAge);
+    }
+  }, [searchParams, applyAgePreset]);
 
   const setTab = (id: string) => {
     if (!CAR_TABS.includes(id as CarTab)) return;
     setSearchParams(
       prev => {
         const cp = new URLSearchParams(prev);
+        cp.delete('topic');
         if (id === 'licence') cp.delete('tab');
         else cp.set('tab', id);
         return cp;

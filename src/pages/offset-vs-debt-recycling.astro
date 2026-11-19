@@ -1,3 +1,16 @@
 ---
-return Astro.redirect('/careers-employment', 301);
+import Layout from "@/layouts/Layout.astro";
+import Breadcrumbs from "@/components/astro/Breadcrumbs.astro";
+import FinancialDisclaimer from "@/components/astro/FinancialDisclaimer.astro";
+import { OffsetVsDR } from "@/calculators/offset-vs-dr/OffsetVsDR";
 ---
+
+<Layout
+  title="Mortgage Offset vs Debt Recycling Calculator | AusFinance Suite"
+  description="Compare keeping cash in a 100% mortgage offset account against debt recycling into franked Australian ETFs with tax-deductible investment loan interest."
+  keywords="offset vs debt recycling calculator, debt recycling Australia, mortgage offset calculator, franking credits debt recycling"
+>
+  <Breadcrumbs items={[{ label: "Calculators", href: "/calculators" }, { label: "Offset vs Debt Recycling" }]} />
+  <OffsetVsDR client:idle />
+  <FinancialDisclaimer sourceYear="2026-27" />
+</Layout>

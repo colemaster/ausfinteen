@@ -5,11 +5,11 @@
 
 export const LANDING_STATS = {
   schoolCount: 101,
-  guideCount: 150,
+  guideCount: 192,
   feeFreeCount: 35,
   atarCutoffCount: 41,
-  topHisaRate: 5.50,
+  topHisaRate: 5.80,
   sgPercent: 12.0,
-  helpThreshold: 67000,
+  helpThreshold: 69528,
   flatFareCents: 50,
 } as const;

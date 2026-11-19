@@ -37,8 +37,9 @@ import { FinancialStressTest } from './FinancialStressTest';
 import { EVNovatedLease } from './EVNovatedLease';
 import { CalculatorsHub } from './CalculatorsHub';
 import { NotFound } from './NotFound';
+import { Portfolio } from './Portfolio';
 
-describe('All 21 Page Views Mount Successfully', () => {
+describe('All 22 Page Views Mount Successfully', () => {
   it('renders Landing without error', () => {
     const { container } = render(<Landing />);
     expect(container).toBeDefined();
@@ -141,6 +142,11 @@ describe('All 21 Page Views Mount Successfully', () => {
 
   it('renders NotFound without error', () => {
     const { container } = render(<NotFound />);
+    expect(container).toBeDefined();
+  });
+
+  it('renders Portfolio without error', () => {
+    const { container } = render(<Portfolio />);
     expect(container).toBeDefined();
   });
 });

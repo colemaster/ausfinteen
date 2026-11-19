@@ -1,9 +1,9 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { calculateEVNovatedLease, EV_LEASE_CONSTANTS } from './engine';
 import { OdometerCounter } from '@/components/shared/OdometerCounter';
 import { CalculatorActions } from '../../components/shared/CalculatorActions';
 import { sound } from '@/lib/sound-synthesizer';
-import { exportToCSV, encodePlanToHash, generateSimpleQRCodeSVG } from '@/lib/share-state';
+import { exportToCSV, encodePlanToHash, decodePlanFromHash, generateSimpleQRCodeSVG } from '@/lib/share-state';
 import {
   Zap,
   Car,
@@ -53,6 +53,30 @@ export function EVNovatedLeaseCalc() {
   const leaseRate = 8.25;
   const loanRate = 7.5;
   const opportunityRate = 5.5;
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const hash = window.location.hash;
+    if (hash.startsWith('#plan=')) {
+      const encoded = hash.slice('#plan='.length);
+      decodePlanFromHash<{
+        vehiclePrice?: number;
+        annualSalary?: number;
+        leaseTerm?: number;
+        powertrain?: 'BEV' | 'PHEV' | 'ICE';
+        phevGrandfathered?: boolean;
+        safeHarbourRate?: number;
+      }>(encoded).then(plan => {
+        if (!plan) return;
+        if (typeof plan.vehiclePrice === 'number') setVehiclePrice(plan.vehiclePrice);
+        if (typeof plan.annualSalary === 'number') setAnnualSalary(plan.annualSalary);
+        if (typeof plan.leaseTerm === 'number') setLeaseTerm(plan.leaseTerm);
+        if (plan.powertrain === 'BEV' || plan.powertrain === 'PHEV' || plan.powertrain === 'ICE') setPowertrain(plan.powertrain);
+        if (typeof plan.phevGrandfathered === 'boolean') setPhevGrandfathered(plan.phevGrandfathered);
+        if (typeof plan.safeHarbourRate === 'number') setSafeHarbourRate(plan.safeHarbourRate);
+      });
+    }
+  }, []);
 
   const result = useMemo(() => {
     return calculateEVNovatedLease({
@@ -274,7 +298,7 @@ export function EVNovatedLeaseCalc() {
           <div className={`text-xl sm:text-2xl font-extrabold ${result.isFBTExempt ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
             {result.isFBTExempt ? '100% Tax Free' : 'FBT Applies'}
           </div>
-          <span className="text-[10px] text-muted-foreground">Cap: ${EV_LEASE_CONSTANTS.fuelEfficientLCTLimit.toLocaleString()} (FY2026-27)</span>
+          <span className="text-[10px] text-muted-foreground">Cap: ${result.lctLimit.toLocaleString()} ({useIndexedLct ? 'FY2026-27' : 'FY2025-26'})</span>
         </div>
 
         <div className="p-4 rounded-2xl bg-card border border-border space-y-1">
@@ -632,7 +656,7 @@ export function EVNovatedLeaseCalc() {
               </p>
               <ul className="list-disc pl-4 space-y-0.5">
                 <li><strong>HECS / HELP loan repayments:</strong> Increases Repayment Income (RI), which can increase compulsory loan repayments.</li>
-                <li><strong>Medicare Levy Surcharge (MLS):</strong> Counted towards the $97k+ single / $194k+ family MLS threshold.</li>
+                <li><strong>Medicare Levy Surcharge (MLS):</strong> Counted towards the $105k+ single / $210k+ family MLS threshold.</li>
                 <li><strong>Division 293 tax:</strong> Assessed against the $250,000 high-income superannuation threshold.</li>
                 <li><strong>Centrelink Family Assistance:</strong> Assessed for Family Tax Benefit (FTB) and Child Care Subsidy (CCS) entitlement tests.</li>
               </ul>

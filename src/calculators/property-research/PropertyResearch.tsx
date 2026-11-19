@@ -170,7 +170,7 @@ export function PropertyResearch() {
           Property Research Tool
         </h1>
         <p className="text-sm text-[var(--muted-foreground)]">
-          130-point investment property checklist — suburb, location, and property scoring.
+          120-point investment property checklist — suburb, location, and property scoring.
         </p>
       </div>
 

@@ -703,7 +703,7 @@ export const AGE_PRESETS: Record<number, AgePreset> = {
     stageDescription: 'At 20, you are stepping into senior leadership, finishing your degree or trade apprenticeship, and moving toward 100% adult award rates ($34.76/hr casual). You are in prime position to start utilizing the First Home Super Saver Scheme (FHSSS) and accelerating long-term wealth creation.',
     legalRightsSummary: '90% of adult base ($31.29/hr casual), moving to 100% ($34.76/hr casual) after 6 months continuous service under General Retail Industry Award clause 16.3 and FWC [2026] FWCFB 75. Full adult employment rights, overtime penalties after 38 hours or 10 hours in a day, and compulsory 12% Super Guarantee on all earnings.',
     superRuleExplanation: '12.0% SG applies to all earnings. On 28 hrs/wk at $31.29/hr ($876.12/wk), employer pays $105.13/wk ($5,467/year) into super. Can begin voluntary concessional salary sacrifice into super to take advantage of the First Home Super Saver Scheme (FHSSS).',
-    taxExplanation: 'At 28 hrs/wk x $31.29/hr = $876.12/wk ($45,558/year). PAYG tax withheld is approx $95/wk (~$4,950/yr). Income approaches the lower threshold for HECS-HELP repayments ($67,000+). Full tax return deductions should be optimized annually.',
+    taxExplanation: 'At 28 hrs/wk x $31.29/hr = $876.12/wk ($45,558/year). PAYG tax withheld is approx $95/wk (~$4,950/yr). Income approaches the lower threshold for HECS-HELP repayments ($69,528+). Full tax return deductions should be optimized annually.',
     typicalBudget: {
       grossIncome: 876.12,
       estimatedTax: 95.00,

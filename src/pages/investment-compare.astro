@@ -1,3 +1,16 @@
 ---
-return Astro.redirect('/investing-shares', 301);
+import Layout from "@/layouts/Layout.astro";
+import Breadcrumbs from "@/components/astro/Breadcrumbs.astro";
+import FinancialDisclaimer from "@/components/astro/FinancialDisclaimer.astro";
+import { InvestmentCompare } from "@/calculators/investment-compare/InvestmentCompare";
 ---
+
+<Layout
+  title="Multi-Scenario Investment & Tax Comparison Calculator | AusFinance Suite"
+  description="Compare up to 4 investment scenarios side-by-side: taxable ETFs, Superannuation (15% tax), High-Interest Savings, and CGT-free vehicles with MER fee drag."
+  keywords="investment comparison calculator Australia, ETF vs super calculator, MER fee drag, after-tax investment return Australia"
+>
+  <Breadcrumbs items={[{ label: "Calculators", href: "/calculators" }, { label: "Investment Scenario Compare" }]} />
+  <InvestmentCompare client:idle />
+  <FinancialDisclaimer sourceYear="2026-27" />
+</Layout>

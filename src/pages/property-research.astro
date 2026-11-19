@@ -1,3 +1,16 @@
 ---
-return Astro.redirect('/car-driving', 301);
+import Layout from "@/layouts/Layout.astro";
+import Breadcrumbs from "@/components/astro/Breadcrumbs.astro";
+import FinancialDisclaimer from "@/components/astro/FinancialDisclaimer.astro";
+import { PropertyResearch } from "@/calculators/property-research/PropertyResearch";
 ---
+
+<Layout
+  title="120-Point Property Research & Suburb Due Diligence Scorer | AusFinance Suite"
+  description="Score Australian residential properties across 24 due-diligence criteria (Suburb, Intra-Suburb, Property), flood/bushfire dealbreakers, and net rental yield."
+  keywords="property research checklist Australia, suburb due diligence, rental yield calculator, property investment scorecard"
+>
+  <Breadcrumbs items={[{ label: "Calculators", href: "/calculators" }, { label: "Property Research Scorer" }]} />
+  <PropertyResearch client:idle />
+  <FinancialDisclaimer sourceYear="2026-27" />
+</Layout>
